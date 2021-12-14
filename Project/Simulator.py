@@ -9,14 +9,13 @@ class Subject(ABC):
     def attach(self, observer: Observer) -> None:
         pass
 
+    @abstractmethod
     def detach(self, observer: Observer) -> None:
-        self._observers.remove(observer)
+        pass
 
+    @abstractmethod
     def notify(self) -> None:
-        print("Subject: Notifying observers...")
-        _state = 1
-        for observer in self._observers:
-            observer.update(self)
+        pass
 
     @abstractmethod
     def exec(self) -> None:
@@ -24,43 +23,58 @@ class Subject(ABC):
 
 
 class Hello(Subject):
-    _state: int = 0
+    id = 0
     _observers: List[Observer] = []
 
     def attach(self, observer: Observer) -> None:
         print("Hello: Attached an observer.")
         self._observers.append(observer)
 
+    def detach(self, observer: Observer) -> None:
+        self._observers.remove(observer)
+
     def exec(self) -> None:
-        print("\nHello")
-        print("Subject: My state has just changed to: done")
+        print("Hello: My state has just changed to: done")
         self.notify()
+
+    def notify(self) -> None:
+        print("Hello: Notifying observers...")
+        for observer in self._observers:
+            observer.update(react_to_hello)
 
 
 class World(Subject):
-    _state: int = 0
+    id = 1
     _observers: List[Observer] = []
 
     def attach(self, observer: Observer) -> None:
         print("World: Attached an observer.")
         self._observers.append(observer)
 
+    def detach(self, observer: Observer) -> None:
+        self._observers.remove(observer)
+
     def exec(self) -> None:
-        print("\nWorld")
-        print("Subject: My state has just changed to: done")
+        print("World: My state has just changed to: done")
         self.notify()
 
+    def notify(self) -> None:
+        print("World: Notifying observers...")
+        for observer in self._observers:
+            observer.update(react_to_world)
 
-class Observer(ABC):
-    @abstractmethod
-    def update(self, subject: Subject) -> None:
-        pass
+
+class Observer:
+    def update(self, callback) -> None:
+        callback()
 
 
-class ConcreteObserver(Observer):
-    def update(self, subject: Subject) -> None:
-        if subject._state <= 1:
-            print("ConcreteObserver: Reacted to the event")
+def react_to_hello():
+    print("hello")
+
+
+def react_to_world():
+    print("world")
 
 
 if __name__ == "__main__":
@@ -69,13 +83,13 @@ if __name__ == "__main__":
     hello = Hello()
     world = World()
 
-    observer_a = ConcreteObserver()
+    observer_a = Observer()
     hello.attach(observer_a)
 
-    observer_b = ConcreteObserver()
+    observer_b = Observer()
     world.attach(observer_b)
 
-    observer_c = ConcreteObserver()
+    observer_c = Observer()
     hello.attach(observer_c)
     world.attach(observer_c)
 
