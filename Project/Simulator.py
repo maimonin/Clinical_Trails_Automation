@@ -40,7 +40,10 @@ class Hello(Subject):
     def notify(self) -> None:
         print("Hello: Notifying observers...")
         for observer in self._observers:
-            observer.update(react_to_hello)
+            if observer.role == "doctor":
+                observer.update(lambda: print("Hello doc"))
+            elif observer.role == "participant":
+                observer.update(lambda: print("Hello participant"))
 
 
 class World(Subject):
@@ -61,20 +64,18 @@ class World(Subject):
     def notify(self) -> None:
         print("World: Notifying observers...")
         for observer in self._observers:
-            observer.update(react_to_world)
+            if observer.role == "nurse":
+                observer.update(lambda: print("World nurse"))
+            elif observer.role == "participant":
+                observer.update(lambda: print("World participant"))
 
 
 class Observer:
+    def __init__(self, role):
+        self.role = role
+
     def update(self, callback) -> None:
         callback()
-
-
-def react_to_hello():
-    print("hello")
-
-
-def react_to_world():
-    print("world")
 
 
 if __name__ == "__main__":
@@ -83,13 +84,13 @@ if __name__ == "__main__":
     hello = Hello()
     world = World()
 
-    observer_a = Observer()
+    observer_a = Observer("doctor")
     hello.attach(observer_a)
 
-    observer_b = Observer()
+    observer_b = Observer("nurse")
     world.attach(observer_b)
 
-    observer_c = Observer()
+    observer_c = Observer("participant")
     hello.attach(observer_c)
     world.attach(observer_c)
 
