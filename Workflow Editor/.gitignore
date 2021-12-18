@@ -1,0 +1,9 @@
+# Default ignored files
+/workspace.xml
+/inspectionProfiles/
+/misc.xml
+/modules.xml
+/vcs.xml
+/Workflow Editor.iml
+.idea
+*.pyc
