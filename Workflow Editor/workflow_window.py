@@ -43,6 +43,8 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.readSettings()
 
         self.setWindowTitle("Workflow Editor")
+
+
     def updateWindowMenu(self):
         self.windowMenu.clear()
 
@@ -79,21 +81,29 @@ class WorkflowEditorWindow(NodeEditorWindow):
             action.setChecked(child is self.getCurrentNodeEditorWidget())
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
+
+
     def onWindowNodesToolbar(self):
         if self.nodesDock.isVisible():
             self.nodesDock.hide()
         else:
             self.nodesDock.show()
+
+
     def onFileNew(self):
         try:
             subwnd=self.createMdiChild()
             subwnd.show()
         except Exception as e:
             dumpException(e)
+
+
     def createMdiChild(self):
         nodeeditor = WorkflowSubWindow()
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
         return subwnd
+
+
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()
         if self.mdiArea.currentSubWindow():
@@ -101,11 +111,15 @@ class WorkflowEditorWindow(NodeEditorWindow):
         else:
             self.writeSettings()
             event.accept()
+
+
     def updateMenus(self):
         pass
+
     def setActiveSubWindow(self, window):
         if window:
             self.mdiArea.setActiveSubWindow(window)
+
     def createToolBars(self):
         pass
     def createStatusBar(self):
