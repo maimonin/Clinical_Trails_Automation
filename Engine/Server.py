@@ -1,18 +1,17 @@
+import json
 import socket
 from _thread import *
 import threading
 from random import randint
 
-import networkx as nx
-
-print_lock = threading.Lock()
+from Engine.User import User
 
 nurses = []
 doctors = []
 labs = []
 participants = {}
 
-workflow = nx.DiGraph()
+workflow = None
 
 
 def add_user(user, role):
@@ -36,33 +35,31 @@ def get_role(role):
         return nurses[randint(0, len(labs) - 1)]
 
 
-def addNode(node, participant_id, roles):
-    if not participant_id == -1:
-        participant = participants.get(participant_id)
-        node.attach(participant)
-    for role in roles:
-        node.attach(get_role(role))
-    log("node " + node.id + " is added")
+def addNode(json, roles):
+    id=0
+    log("node " + id + " is added")
 
 
 def request_data(participant, message, actor):
+    return None
 
 
+# user json
+#role
+#id
 
 def threaded(c):
-    while True:
-        data = c.recv(1024)
-        if not data:
-            print('Bye')
-            print_lock.release()
-            break
+    data = c.recv(1024)
+    if not data:
+        print('Bye')
 
-        # reverse the given string from client
-        data = data[::-1]
-
-        # send back reversed string to client
-        c.send(data)
-
+    user_data = json.loads(data)
+    json_obj = json.dumps(user_data)
+    useri = User(json_obj['role'],json_obj['id'], c)
+    if useri.role=="participant":
+        participants['id']=useri
+        workflow.attach(useri)
+        workflow.exec()
     # connection closed
     c.close()
 
@@ -87,9 +84,7 @@ def Main():
 
     while True:
         c, addr = s.accept()
-        print_lock.acquire()
         log('Connected to :', addr[0], ':', addr[1])
-
         start_new_thread(threaded, (c,))
     s.close()
 
