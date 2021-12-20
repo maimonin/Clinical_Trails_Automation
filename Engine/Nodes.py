@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import List
-
+from Engine import Data, Server
 from Engine.User import User
 
+node_id = 0
 
-class Subject(ABC):
+
+class Node(ABC):
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
@@ -22,49 +24,83 @@ class Subject(ABC):
         pass
 
 
-class Hello(Subject):
-    id = 0
-    _observers: List[User] = []
+class DataEntering(Node):
+    def __init__(self, role, next_node):
+        global node_id
+        self.id = node_id
+        self.role = role
+        self.next = next_node
+        node_id += 1
 
-    def attach(self, observer: User) -> None:
-        print("Hello: Attached an observer.")
-        self._observers.append(observer)
+    participants: List[User] = []
 
-    def detach(self, observer: User) -> None:
-        self._observers.remove(observer)
+    def attach(self, participant: User) -> None:
+        print("DataEntering: Attached an observer.")
+        self.participants.append(participant)
+
+    def detach(self, participant: User) -> None:
+        self.participants.remove(participant)
 
     def exec(self) -> None:
-        print("Hello: My state has just changed to: done")
         self.notify()
+        self.next.exec()
 
     def notify(self) -> None:
         print("Hello: Notifying observers...")
-        for observer in self._observers:
-            if observer.role == "doctor":
-                observer.update(lambda: print("Hello doc"))
-            elif observer.role == "participant":
-                observer.update(lambda: print("Hello participant"))
+        for participant in self.participants:
+            if self.role == "participant":
+                # ask server to send request to actors and receive answers
+                results = participant.update(lambda: print("I'm a participant"))
+                Data.add_data(results, participant)
+                self.detach(participant)
+                self.next.attach(participant)
+            else:
+                actor = Server.get_role(self.role)
+                # ask server to send request to actors and receive answers
+                results = actor.update(lambda: print("I'm a "+self.role))
+                Data.add_data(results, participant)
+                self.detach(participant)
+                self.next.attach(participant)
 
 
-class World(Subject):
-    id = 1
-    _observers: List[User] = []
+class Decision(Node):
+    def __init__(self, role, next_options, condition):
+        global node_id
+        self.id = node_id
+        self.role = role
+        self.nexts = next_options
+        self.condition = condition
+        node_id += 1
 
-    def attach(self, observer: User) -> None:
-        print("World: Attached an observer.")
-        self._observers.append(observer)
+    participants: List[User] = []
 
-    def detach(self, observer: User) -> None:
-        self._observers.remove(observer)
+    def attach(self, participant: User) -> None:
+        print("Decision: Attached an observer.")
+        self.participants.append(participant)
+
+    def detach(self, participant: User) -> None:
+        self.participants.remove(participant)
 
     def exec(self) -> None:
-        print("World: My state has just changed to: done")
         self.notify()
+        if condition():
+            self.nexts[0].exec()
+        else:
+            self.next[1].exec()
 
     def notify(self) -> None:
-        print("World: Notifying observers...")
-        for observer in self._observers:
-            if observer.role == "nurse":
-                observer.update(lambda: print("World nurse"))
-            elif observer.role == "participant":
-                observer.update(lambda: print("World participant"))
+        print("Decision: Notifying observers...")
+        for participant in self.participants:
+            if self.role == "participant":
+                # ask server to send request to actors and receive answers
+                results = participant.update(lambda: print("I'm a participant"))
+                Data.add_data(results, participant)
+                self.detach(participant)
+                self.next.attach(participant)
+            else:
+                actor = Server.get_role(self.role)
+                # ask server to send request to actors and receive answers
+                results = actor.update(lambda: print("I'm a "+self.role))
+                Data.add_data(results, participant)
+                self.detach(participant)
+                self.next.attach(participant)
