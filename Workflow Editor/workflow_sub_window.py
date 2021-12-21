@@ -1,6 +1,8 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import  NodeEditorWidget
+from qtpy import QtWidgets
+
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -16,10 +18,10 @@ class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
 
         super().initUI()
-        button = QPushButton('Start', self)
-        button.setToolTip('This is an example button')
-        button.move(100, 70)
-        button.clicked.connect(self.on_click)
+        # button = QPushButton('Start', self) used for POC for Arnon in the begininb
+        # button.setToolTip('This is an example button')
+        # button.move(100, 70)
+        # button.clicked.connect(self.on_click)
 
     def __init__(self):
         super().__init__()
@@ -49,9 +51,13 @@ class WorkflowSubWindow(NodeEditorWidget):
             mouse_position = event.pos()
             scene_position = self.scene.grScene.views()[0].mapToScene(mouse_position)
             try:
-                node=get_class_from_opcode(op_code)(self.scene)
-                node.setPos(scene_position.x(),scene_position.y())
-                self.scene.history.storeHistory("Created Node %s" % node.__class__.__name__)
+
+
+                from Windows.questionnaire_builder import  Ui_QuestionnaireBuild
+                QuestionnaireBuild = QtWidgets.QDialog()
+                ui = Ui_QuestionnaireBuild(lambda content,save:self.set_content_for_node_and_show(content,scene_position.x(),scene_position.y(),QuestionnaireBuild, save,op_code))
+                ui.setupUi(QuestionnaireBuild)
+                QuestionnaireBuild.exec_()
             except Exception as e : dumpException(e)
 
 
@@ -59,35 +65,42 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.accept()
         else:
             event.ignore()
-
-    def get_node_by_socket(self,socket):
-        for node in self.scene.nodes:
-            if len(node.inputs[0].edges) > 0 and node.inputs[0].edges[0].end_socket == socket:
-                return node
-        return None
-    def all_logic(self):
-        try:
-            current_node = None
-
-            for node in self.scene.nodes:
-                if len(node.inputs[0].edges) == 0:
-                    current_node = node
-                    break
-            x=current_node.content.edit.text().split('/')
-            print(x[0])
-            time.sleep(int(x[1]))
-            while current_node is not None and len(current_node.outputs[0].edges) != 0:
-                current_node = self.get_node_by_socket(current_node.outputs[0].edges[0].end_socket)
-                x = current_node.content.edit.text().split('/')
-                print(x[0])
-                time.sleep(int(x[1]))
-            # while (len(current_node.outputs[0]) != 0 ):
-            #     print(current_node.outputs[0].edges)
-            #     print('PyQt5 button click')
-        except Exception as e:
-            dumpException(e)
-        # doing something........
-    @pyqtSlot()
-    def on_click(self):
-        x=threading.Thread(target=self.all_logic)
-        x.start()
+    def set_content_for_node_and_show(self,content,x_pos,y_pos,window,save,op_code):
+        window.close()
+        if save:
+            node = get_class_from_opcode(op_code)(self.scene)
+            node.set_content(content)
+            node.setPos(x_pos, y_pos)
+            self.scene.history.storeHistory("Created Node %s" % node.__class__.__name__)
+            print(node.content)
+    # def get_node_by_socket(self,socket):
+    #     for node in self.scene.nodes:
+    #         if len(node.inputs[0].edges) > 0 and node.inputs[0].edges[0].end_socket == socket:
+    #             return node
+    #     return None
+    # def all_logic(self):
+    #     try:
+    #         current_node = None
+    #
+    #         for node in self.scene.nodes:
+    #             if len(node.inputs[0].edges) == 0:
+    #                 current_node = node
+    #                 break
+    #         x=current_node.content.edit.text().split('/')
+    #         print(x[0])
+    #         time.sleep(int(x[1]))
+    #         while current_node is not None and len(current_node.outputs[0].edges) != 0:
+    #             current_node = self.get_node_by_socket(current_node.outputs[0].edges[0].end_socket)
+    #             x = current_node.content.edit.text().split('/')
+    #             print(x[0])
+    #             time.sleep(int(x[1]))
+    #         # while (len(current_node.outputs[0]) != 0 ):
+    #         #     print(current_node.outputs[0].edges)
+    #         #     print('PyQt5 button click')
+    #     except Exception as e:
+    #         dumpException(e)
+    #     # doing something........
+    # @pyqtSlot()
+    # def on_click(self):
+    #     x=threading.Thread(target=self.all_logic)
+    #     x.start()

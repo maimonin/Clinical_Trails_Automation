@@ -13,13 +13,16 @@ from question_with_options import  Ui_MultipleChoiceQuestionAdd
 from open_question import Ui_OpenQuestion
 from nodeeditor.utils import dumpException
 class Ui_QuestionnaireBuild(object):
-    def __init__(self):
+    def __init__(self,callback):
         super().__init__()
+        self.callback_when_save=callback
         self._num_of_question=0
         self._questions_list=[]
+        self.questions=[]
     def setupUi(self, QuestionnaireBuild):
         QuestionnaireBuild.setObjectName("QuestionnaireBuild")
         QuestionnaireBuild.resize(837, 717)
+
         self.widget = QtWidgets.QWidget(QuestionnaireBuild)
         self.widget.setObjectName("centralwidget")
         self.add_multiple_choice_question_btn = QtWidgets.QPushButton(self.widget)
@@ -33,7 +36,7 @@ class Ui_QuestionnaireBuild(object):
         self._questions_list = QtWidgets.QListWidget(self.widget)
         self._questions_list.setGeometry(QtCore.QRect(20, 70, 431, 491))
         self._questions_list.setObjectName("questions_list")
-        self.add_line({'text':"ques1", 'type' : 'one choice'})
+
 
         self.add_one_choice_question_btn = QtWidgets.QPushButton(self.widget)
         self.add_one_choice_question_btn.setGeometry(QtCore.QRect(460, 230, 351, 91))
@@ -57,13 +60,18 @@ class Ui_QuestionnaireBuild(object):
         font.setPointSize(15)
         self.save_questionnaire_btn.setFont(font)
         self.save_questionnaire_btn.setObjectName("save_questionnaire_btn")
-        self.save_questionnaire_btn_2 = QtWidgets.QPushButton(self.widget)
-        self.save_questionnaire_btn_2.setGeometry(QtCore.QRect(230, 640, 191, 61))
+        self.save_questionnaire_btn.clicked.connect(self.save_questionnaire)
 
+
+
+        self.discard_btn = QtWidgets.QPushButton(self.widget)
+        self.discard_btn.setGeometry(QtCore.QRect(230, 640, 191, 61))
         font = QtGui.QFont()
         font.setPointSize(15)
-        self.save_questionnaire_btn_2.setFont(font)
-        self.save_questionnaire_btn_2.setObjectName("save_questionnaire_btn_2")
+        self.discard_btn.setFont(font)
+        self.discard_btn.setObjectName("discard_btn")
+        self.discard_btn.clicked.connect(self.discard)
+
         #QuestionnaireBuild.setCentralWidget(self.widget)
 
         self.retranslateUi(QuestionnaireBuild)
@@ -79,7 +87,7 @@ class Ui_QuestionnaireBuild(object):
         self.add_one_choice_question_btn.setText(_translate("QuestionnaireBuild", "Add One Choice Question"))
         self.add_open_question_btn.setText(_translate("QuestionnaireBuild", "Add Open Question"))
         self.save_questionnaire_btn.setText(_translate("QuestionnaireBuild", "Save Questionnaire"))
-        self.save_questionnaire_btn_2.setText(_translate("QuestionnaireBuild", "Discard"))
+        self.discard_btn.setText(_translate("QuestionnaireBuild", "Discard"))
     def add_open_question(self):
         try:
             self.new_window = QtWidgets.QDialog()
@@ -108,7 +116,12 @@ class Ui_QuestionnaireBuild(object):
         self._questions_list.addItem(item)
         item = self._questions_list.item(self._num_of_question)
         item.setText(_translate("QuestionnaireBuild", f"{question['text']} ; {question['type']}"))
+        self.questions.append(question)
         self._num_of_question += 1
+    def save_questionnaire(self):
+        self.callback_when_save(self.questions,True)
+    def discard(self):
+        self.callback_when_save(None, False)
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

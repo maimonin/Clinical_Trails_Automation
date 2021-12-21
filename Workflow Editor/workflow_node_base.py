@@ -27,7 +27,7 @@ class WorkflowNode(Node):
     def __init__(self, scene,inputs=[1],outputs=[1]) :
 
         super().__init__(scene,self.__class__.op_title,inputs,outputs)
-
+        self.onDoubleClicked(lambda:print("fsd"))
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
