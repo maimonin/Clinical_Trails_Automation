@@ -44,23 +44,20 @@ def request_data(participant, message, actor):
     return None
 
 
-# user json
-#role
-#id
+# {'role': 'nurse', 'id': 0}
 
 def threaded(c):
     data = c.recv(1024)
     if not data:
         print('Bye')
 
-    user_data = json.loads(data)
-    json_obj = json.dumps(user_data)
-    useri = User(json_obj['role'],json_obj['id'], c)
-    if useri.role == "participant":
-        participants['id']=useri
-        workflow.attach(useri)
+    user_dict = json.loads(data)
+    user = User(user_dict['role'], user_dict['id'], c)
+    log("user received")
+    if user.role == "participant":
+        participants['id'] = user
+        workflow.attach(user)
         workflow.exec()
-    # connection closed
     c.close()
 
 
