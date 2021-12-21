@@ -81,7 +81,7 @@ class Ui_MultipleChoiceQuestionAdd(object):
     def add_option(self):
         self.clean_feedback()
         if self.num_of_visible_options == 6:
-            self.feedback_label.setText("Cannot add more than 5 options!")
+            self.feedback_label.setText("Cannot add more than 6 options!")
         else:
             self.options[self.num_of_visible_options].setVisible(True)
             self.num_of_visible_options += 1
