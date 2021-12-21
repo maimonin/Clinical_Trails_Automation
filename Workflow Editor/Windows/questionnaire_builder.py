@@ -20,6 +20,7 @@ class Ui_QuestionnaireBuild(object):
     def setupUi(self, QuestionnaireBuild):
         QuestionnaireBuild.setObjectName("QuestionnaireBuild")
         QuestionnaireBuild.resize(837, 717)
+
         self.widget = QtWidgets.QWidget(QuestionnaireBuild)
         self.widget.setObjectName("centralwidget")
         self.add_multiple_choice_question_btn = QtWidgets.QPushButton(self.widget)
