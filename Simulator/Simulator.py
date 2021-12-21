@@ -3,6 +3,8 @@ import json
 import socket
 
 user_id = 0
+roles = ["nurse", "doctor", "investigator", "lab", "participant"]
+tabs = {}
 
 
 def Main():
@@ -12,11 +14,15 @@ def Main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
 
-    message = json.dumps({'role': 'nurse', 'id': 0})
-
     while True:
-        s.send(message.encode('ascii'))
-        data = s.recv(1024)
+        global user_id
+        for role in roles:
+            message = json.dumps({'role': role, 'id': user_id})
+            user_id += 1
+            s.send(message.encode('ascii'))
+            data = int(s.recv(1024))
+            tabs[data] = []
+            print("tab for "+str(data)+" opened")
 
         # ask the client whether he wants to continue
         ans = input('\nDo you want to continue(y/n) :')
