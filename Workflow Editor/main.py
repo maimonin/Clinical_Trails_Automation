@@ -3,7 +3,6 @@ import os, sys, inspect
 from PyQt5 import QtWidgets
 from qtpy.QtWidgets import QApplication
 
-from welcome_screen_py import WelcomeWindow
 from workflow_window import WorkflowEditorWindow
 sys.path.insert(0, os.path.join( os.path.dirname(__file__), "..", ".." ))
 

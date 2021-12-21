@@ -73,6 +73,9 @@ class Ui_Node_Details(object):
         self.node_title = QtWidgets.QLineEdit(self.widget)
         self.node_title.setGeometry(QtCore.QRect(40, 69, 141, 31))
         self.node_title.setObjectName("node_title")
+        self.node_time = QtWidgets.QLineEdit(self.widget)
+        self.node_time.setGeometry(QtCore.QRect(40, 20, 141, 31))
+        self.node_time.setObjectName("node_title")
 
         self.retranslateUi(Node_Details)
         QtCore.QMetaObject.connectSlotsByName(Node_Details)
@@ -95,6 +98,7 @@ class Ui_Node_Details(object):
         self.label_4.setText(_translate("Node_Details", "Add Actors"))
         self.label_5.setText(_translate("Node_Details", "Choose Actor In Charge"))
         self.node_title.setPlaceholderText(_translate("Node_Details", "Node Title"))
+        self.node_time.setPlaceholderText(_translate("Node_Details", "Node Time"))
 
     def add_line(self):
         try:
@@ -110,7 +114,7 @@ class Ui_Node_Details(object):
 
     def save_datails(self):
         self.callback({"actors" : self.actors, "title": self.node_title.text(), "actor in charge" :\
-            self.actor_in_charge_combo.currentText()}) #todo add time
+            self.actor_in_charge_combo.currentText(), "time": self.node_time.text()})
 if __name__ == "__main__":
     pass
     # import sys

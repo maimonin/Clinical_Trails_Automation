@@ -11,6 +11,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
 from add_test import Ui_Add_Test
+from node_details import Ui_Node_Details
+
 
 class Ui_Test_Builder(object):
     def __init__(self,callback):
@@ -18,6 +20,7 @@ class Ui_Test_Builder(object):
         self.callback=callback
         self._num_of_tests = 0
         self._test_list = []
+        self.details = {}
     def setupUi(self, Test_Builder):
         Test_Builder.setObjectName("Test_Builder")
         Test_Builder.resize(563, 640)
@@ -53,6 +56,14 @@ class Ui_Test_Builder(object):
         self.add_test_btn.setObjectName("add_test_btn")
         self.add_test_btn.clicked.connect(self.add_test)
 
+        self.add_node_details_btn = QtWidgets.QPushButton(self.widget)
+        self.add_node_details_btn.setGeometry(QtCore.QRect(340, 320, 171, 51))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.add_node_details_btn.setFont(font)
+        self.add_node_details_btn.setObjectName("add_node_details_btn")
+        self.add_node_details_btn.clicked.connect(self.add_node_details)
+
         self.retranslateUi(Test_Builder)
         QtCore.QMetaObject.connectSlotsByName(Test_Builder)
 
@@ -65,6 +76,18 @@ class Ui_Test_Builder(object):
         self.save_test_btn.setText(_translate("Test_Builder", "Save Tests"))
         self.discard_btn.setText(_translate("Test_Builder", "Discard"))
         self.add_test_btn.setText(_translate("Test_Builder", "Add New Test"))
+        self.add_node_details_btn.setText(_translate("Test_Builder", "Add Node Details"))
+
+    def add_node_details(self):
+        self.new_window = QtWidgets.QDialog()
+        ui = Ui_Node_Details(self.callback_from_node_details)
+        ui.setupUi(self.new_window)
+        self.new_window.exec_()
+
+    def callback_from_node_details(self,details):
+        self.new_window.close()
+        if details is not None:
+            self.details=details
 
     def add_test(self):
         try:
@@ -85,7 +108,8 @@ class Ui_Test_Builder(object):
     def discard(self):
         self.callback(None)
     def save_finish(self):
-        self.callback(self._test_list)
+        self.callback({"node_details": self.details, "tests": self._test_list})
+        # TODO : check details exist! if not, present a label
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
