@@ -12,9 +12,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from question_with_options import  Ui_MultipleChoiceQuestionAdd
 from open_question import Ui_OpenQuestion
 from nodeeditor.utils import dumpException
+from node_details import Ui_Node_Details
 class Ui_QuestionnaireBuild(object):
     def __init__(self,callback):
         super().__init__()
+        self.details = {}
         self.callback=callback
         self._num_of_question=0
         self._questions_list=[]
@@ -64,6 +66,8 @@ class Ui_QuestionnaireBuild(object):
 
 
 
+
+
         self.discard_btn = QtWidgets.QPushButton(self.widget)
         self.discard_btn.setGeometry(QtCore.QRect(230, 640, 191, 61))
         font = QtGui.QFont()
@@ -71,6 +75,15 @@ class Ui_QuestionnaireBuild(object):
         self.discard_btn.setFont(font)
         self.discard_btn.setObjectName("discard_btn")
         self.discard_btn.clicked.connect(self.discard)
+
+
+        self.add_node_details_btn = QtWidgets.QPushButton(self.widget)
+        self.add_node_details_btn.setGeometry(QtCore.QRect(460, 640, 201, 61))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.add_node_details_btn.setFont(font)
+        self.add_node_details_btn.setObjectName("add_node_details_btn")
+        self.add_node_details_btn.clicked.connect(self.add_node_details)
 
         #QuestionnaireBuild.setCentralWidget(self.widget)
 
@@ -88,6 +101,8 @@ class Ui_QuestionnaireBuild(object):
         self.add_open_question_btn.setText(_translate("QuestionnaireBuild", "Add Open Question"))
         self.save_questionnaire_btn.setText(_translate("QuestionnaireBuild", "Save Questionnaire"))
         self.discard_btn.setText(_translate("QuestionnaireBuild", "Discard"))
+        self.add_node_details_btn.setText(_translate("QuestionnaireBuild", "Add Node Details"))
+
     def add_open_question(self):
         try:
             self.new_window = QtWidgets.QDialog()
@@ -118,8 +133,18 @@ class Ui_QuestionnaireBuild(object):
         item.setText(_translate("QuestionnaireBuild", f"{question['text']} ; {question['type']}"))
         self.questions.append(question)
         self._num_of_question += 1
+    def add_node_details(self):
+        self.new_window = QtWidgets.QDialog()
+        ui = Ui_Node_Details(self.callback_from_node_details)
+        ui.setupUi(self.new_window)
+        self.new_window.exec_()
+    def callback_from_node_details(self,details):
+        self.new_window.close()
+        if details is not None:
+            self.details=details
     def save_questionnaire(self):
-        self.callback(self.questions)
+        self.callback({ "node_details" : self.details, "questions" : self.questions})
+        #TODO : check details exist! if not, present a label
     def discard(self):
         try:
             self.callback(None)

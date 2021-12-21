@@ -39,6 +39,7 @@ class WorkflowSubWindow(NodeEditorWidget):
         else:
             event.setAccepted(False)
     def onDrop(self,event):
+        self.scene.serialize()
         print("On drop")
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData= event.mimeData().data(LISTBOX_MIMETYPE)
@@ -61,6 +62,7 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.accept()
         else:
             event.ignore()
+    #TODO serialize, and send the json to server
 
     # def get_node_by_socket(self,socket):
     #     for node in self.scene.nodes:

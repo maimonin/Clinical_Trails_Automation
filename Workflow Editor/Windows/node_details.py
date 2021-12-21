@@ -13,10 +13,11 @@ from nodeeditor.utils import dumpException
 
 
 class Ui_Node_Details(object):
-    def __init__(self):
+    def __init__(self,callback):
         super().__init__()
         self.actors=[]
         self.actors_count=0
+        self.callback=callback
     def setupUi(self, Node_Details):
         Node_Details.setObjectName("Node_Details")
         Node_Details.resize(371, 645)
@@ -29,6 +30,8 @@ class Ui_Node_Details(object):
         font.setPointSize(15)
         self.save_details_btn.setFont(font)
         self.save_details_btn.setObjectName("save_details_btn")
+        self.save_details_btn.clicked.connect(self.save_datails)
+
         self.actors_comboBox = QtWidgets.QComboBox(self.widget)
         self.actors_comboBox.setGeometry(QtCore.QRect(40, 240, 171, 31))
         self.actors_comboBox.setObjectName("actors_comboBox")
@@ -105,12 +108,15 @@ class Ui_Node_Details(object):
         except Exception as e:
             dumpException(e)
 
-
+    def save_datails(self):
+        self.callback({"actors" : self.actors, "title": self.node_title.text(), "actor in charge" :\
+            self.actor_in_charge_combo.currentText()}) #todo add time
 if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Node_Details = QtWidgets.QDialog()
-    ui = Ui_Node_Details()
-    ui.setupUi(Node_Details)
-    Node_Details.show()
-    sys.exit(app.exec_())
+    pass
+    # import sys
+    # app = QtWidgets.QApplication(sys.argv)
+    # Node_Details = QtWidgets.QDialog()
+    # # ui = Ui_Node_Details()
+    # ui.setupUi(Node_Details)
+    # Node_Details.show()
+    # sys.exit(app.exec_())

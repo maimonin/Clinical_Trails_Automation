@@ -33,6 +33,8 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         if content is None:
             self.remove()
         else:
+            print(content)
+
             self.content = content
 
 @register_node(OP_NODE_DATA_ENTRY)
@@ -58,7 +60,6 @@ class WorkflowNode_DataEntry(WorkflowNode):
             if content is None:
                 self.remove() #  remove node
             else:
-                print(content)
                 self.content=content
         except Exception as e : dumpException(e)
 # @register_node(OP_NODE_STRING)
