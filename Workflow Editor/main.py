@@ -13,12 +13,12 @@ from nodeeditor.node_editor_window import NodeEditorWindow
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    welcome_window= WelcomeWindow()
-    widget = QtWidgets.QStackedWidget()
-    widget.addWidget(welcome_window)
-    widget.setFixedHeight(800)
-    widget.setFixedWidth(800)
-    widget.show()
+    # welcome_window= WelcomeWindow()
+    # widget = QtWidgets.QStackedWidget()
+    # widget.addWidget(welcome_window)
+    # widget.setFixedHeight(800)
+    # widget.setFixedWidth(800)
+    # widget.show()
     wnd = WorkflowEditorWindow()
     wnd.show()
     # wnd.nodeeditor.addNodes()
