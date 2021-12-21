@@ -33,10 +33,10 @@ class DataEntering(Node):
     def __init__(self, role, next_node, titly):
         global node_id
         self.id = node_id
-        self.title=titly
+        self.title = titly
         self.role = role
         self.next = next_node
-        self.lock= threading.Lock()
+        self.lock = threading.Lock()
         node_id += 1
 
     participants: List[User] = []
@@ -75,13 +75,13 @@ class DataEntering(Node):
         return len(self.participants) != 0
 
 class Decision(Node):
-    def __init__(self,next_options, condition, titly):
+    def __init__(self, next_options, condition, titly):
         global node_id
         self.id = node_id
-        self.title=titly
+        self.title = titly
         self.nexts = next_options
         self.condition = condition
-        self.lock= threading.Lock()
+        self.lock = threading.Lock()
         node_id += 1
 
     participants: List[User] = []
