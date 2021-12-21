@@ -46,7 +46,7 @@
      <string notr="true">color:rgb(110, 217, 255)</string>
     </property>
     <property name="text">
-     <string>Trial Details</string>
+     <string>Trial Actors</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -75,42 +75,102 @@ color: rgb(255, 255, 255);</string>
      <string>Next</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>170</y>
+      <width>711</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:rgb(110, 217, 255)</string>
+    </property>
+    <property name="text">
+     <string>The default actors are Doctor, Nurse, Technician, Investigator and Participant.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>230</y>
+      <width>581</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color:rgb(110, 217, 255)</string>
+    </property>
+    <property name="text">
+     <string>You can add additional actors:</string>
+    </property>
+   </widget>
    <widget class="QLineEdit" name="lineEdit">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>230</y>
-      <width>221</width>
+      <x>60</x>
+      <y>320</y>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 8pt &quot;Times New Roman&quot;;
-font: 12pt &quot;MS Shell Dlg 2&quot;;
-color: rgb(110, 217, 255);</string>
+     <string notr="true">color:rgb(138, 138, 138)</string>
     </property>
     <property name="text">
-     <string>Trial Name</string>
+     <string>actor</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>300</y>
-      <width>221</width>
+      <x>200</x>
+      <y>320</y>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>Times New Roman</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">font: 8pt &quot;Times New Roman&quot;;
-font: 12pt &quot;MS Shell Dlg 2&quot;;
-color: rgb(110, 217, 255);</string>
+     <string notr="true">background-color:rgb(110, 217, 255);
+color:;
+color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Number Of Groups</string>
+     <string>Add</string>
     </property>
    </widget>
+   <zorder>label_3</zorder>
+   <zorder>label</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>label_2</zorder>
+   <zorder>lineEdit</zorder>
+   <zorder>pushButton_3</zorder>
   </widget>
  </widget>
  <resources/>
