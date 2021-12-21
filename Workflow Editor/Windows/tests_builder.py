@@ -13,13 +13,14 @@ from nodeeditor.utils import dumpException
 from add_test import Ui_Add_Test
 
 class Ui_Test_Builder(object):
-    def __init__(self):
+    def __init__(self,callback):
         super().__init__()
+        self.callback=callback
         self._num_of_tests = 0
         self._test_list = []
     def setupUi(self, Test_Builder):
-        Add_Test.setObjectName("Test_Builder")
-        Add_Test.resize(563, 640)
+        Test_Builder.setObjectName("Test_Builder")
+        Test_Builder.resize(563, 640)
         self.widget = QtWidgets.QWidget(Test_Builder)
         self.window = Test_Builder
         self.widget.setGeometry(QtCore.QRect(-1, -1, 561, 641))
@@ -33,12 +34,17 @@ class Ui_Test_Builder(object):
         font.setPointSize(15)
         self.save_test_btn.setFont(font)
         self.save_test_btn.setObjectName("save_test_btn")
+        self.save_test_btn.clicked.connect(self.save_finish)
+
+
         self.discard_btn = QtWidgets.QPushButton(self.widget)
         self.discard_btn.setGeometry(QtCore.QRect(230, 560, 191, 61))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.discard_btn.setFont(font)
         self.discard_btn.setObjectName("discard_btn")
+        self.discard_btn.clicked.connect(self.discard)
+
         self.add_test_btn = QtWidgets.QPushButton(self.widget)
         self.add_test_btn.setGeometry(QtCore.QRect(340, 250, 171, 51))
         font = QtGui.QFont()
@@ -47,8 +53,8 @@ class Ui_Test_Builder(object):
         self.add_test_btn.setObjectName("add_test_btn")
         self.add_test_btn.clicked.connect(self.add_test)
 
-        self.retranslateUi(Add_Test)
-        QtCore.QMetaObject.connectSlotsByName(Add_Test)
+        self.retranslateUi(Test_Builder)
+        QtCore.QMetaObject.connectSlotsByName(Test_Builder)
 
     def retranslateUi(self, Add_Test):
         _translate = QtCore.QCoreApplication.translate
@@ -76,12 +82,15 @@ class Ui_Test_Builder(object):
         item = self.listWidget.item(self._num_of_tests)
         item.setText(_translate("Test_Builder", f"{test['name']}"))
         self._num_of_tests += 1
-
+    def discard(self):
+        self.callback(None)
+    def save_finish(self):
+        self.callback(self._test_list)
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Add_Test = QtWidgets.QDialog()
-    ui = Ui_Test_Builder()
+    ui = Ui_Test_Builder(lambda x: x)
     ui.setupUi(Add_Test)
     Add_Test.show()
     sys.exit(app.exec_())

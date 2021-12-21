@@ -15,7 +15,7 @@ from nodeeditor.utils import dumpException
 class Ui_QuestionnaireBuild(object):
     def __init__(self,callback):
         super().__init__()
-        self.callback_when_save=callback
+        self.callback=callback
         self._num_of_question=0
         self._questions_list=[]
         self.questions=[]
@@ -119,9 +119,11 @@ class Ui_QuestionnaireBuild(object):
         self.questions.append(question)
         self._num_of_question += 1
     def save_questionnaire(self):
-        self.callback_when_save(self.questions,True)
+        self.callback(self.questions)
     def discard(self):
-        self.callback_when_save(None, False)
+        try:
+            self.callback(None)
+        except Exception as e : dumpException(e)
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
