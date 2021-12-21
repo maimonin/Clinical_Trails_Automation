@@ -5,25 +5,17 @@ user_id = 0
 
 
 def Main():
-    # local host IP '127.0.0.1'
     host = '127.0.0.1'
-
-    # Define the port on which you want to connect
-    port = 12345
+    port = 8000
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # connect to server on local computer
     s.connect((host, port))
 
-    # message you send to server
     message = "shaurya says geeksforgeeks"
     while True:
-
-        # message sent to server
         s.send(message.encode('ascii'))
 
-        # messaga received from server
+        # message received from server
         data = s.recv(1024)
 
         # print the received message
@@ -36,7 +28,7 @@ def Main():
             continue
         else:
             break
-    # close the connection
+
     s.close()
 
 
