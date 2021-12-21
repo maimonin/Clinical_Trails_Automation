@@ -3,15 +3,16 @@ import socket
 from _thread import *
 import threading
 from random import randint
-
 from Engine.User import User
 
 nurses = []
 doctors = []
+investigators = []
 labs = []
 participants = {}
 
 workflow = None
+print_lock = threading.Lock()
 
 
 def add_user(user, role):
@@ -19,6 +20,8 @@ def add_user(user, role):
         nurses.append(user)
     elif role == "doctor":
         doctors.append(user)
+    elif role == "investigator":
+        investigators.append(user)
     elif role == "lab":
         labs.append(user)
     elif role == "participant":
@@ -47,17 +50,21 @@ def request_data(participant, message, actor):
 # {'role': 'nurse', 'id': 0}
 
 def threaded(c):
-    data = c.recv(1024)
-    if not data:
-        print('Bye')
+    while True:
+        data = c.recv(1024)
+        if not data:
+            print('Bye')
+            print_lock.release()
+            break
 
-    user_dict = json.loads(data)
-    user = User(user_dict['role'], user_dict['id'], c)
-    log("user received")
-    if user.role == "participant":
-        participants['id'] = user
-        workflow.attach(user)
-        workflow.exec()
+        user_dict = json.loads(data)
+        user = User(user_dict['role'], user_dict['id'], c)
+        log("user " + user_dict['role'] + " received")
+        c.send(str(user_dict['id']).encode('ascii'))
+        if user.role == "participant":
+            participants['id'] = user
+            workflow.attach(user)
+            workflow.exec()
     c.close()
 
 
@@ -83,6 +90,7 @@ def Main():
     while True:
         c, addr = s.accept()
         log('Connected to client')
+        print_lock.acquire()
         start_new_thread(threaded, (c,))
     s.close()
 
