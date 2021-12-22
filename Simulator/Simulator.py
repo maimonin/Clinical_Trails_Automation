@@ -1,4 +1,3 @@
-# Import socket module
 import json
 import socket
 
@@ -17,7 +16,7 @@ def Main():
     while True:
         global user_id
         for role in roles:
-            message = json.dumps({'role': role, 'id': user_id})
+            message = json.dumps({'sender': 'simulator', 'role': role, 'id': user_id})
             user_id += 1
             s.send(message.encode('ascii'))
             data = int(s.recv(1024))
