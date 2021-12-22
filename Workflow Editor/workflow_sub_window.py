@@ -1,3 +1,6 @@
+import json
+import socket
+
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import  NodeEditorWidget
@@ -93,4 +96,15 @@ class WorkflowSubWindow(NodeEditorWidget):
     #     # doing something........
     # @pyqtSlot()
     def on_click(self):
-         print("clicked")
+        print("clicked")
+        try:
+            f = open('data.json')
+            data = json.load(f)
+            data['sender']="editor"
+            host = '127.0.0.1'
+            port = 8000
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((host, port))
+            s.send(json.dumps(data).encode('ascii'))
+        except Exception as e:
+            dumpException(e)

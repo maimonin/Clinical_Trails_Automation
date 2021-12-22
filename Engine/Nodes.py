@@ -1,8 +1,6 @@
 import threading
 from abc import ABC, abstractmethod
 from typing import List
-from Engine import Data, Server
-from Engine.Server import log
 from Engine.User import User
 
 
@@ -29,12 +27,12 @@ class Node(ABC):
 
 
 class DataEntering(Node):
-    def __init__(self, node_id, title, role, form, next_node):
+    def __init__(self, node_id, title, role, form):
         self.id = node_id
         self.title = title
         self.role = role
         self.form = form
-        self.next = next_node
+        self.next = None
         self.lock = threading.Lock()
 
     participants: List[User] = []
@@ -56,7 +54,7 @@ class DataEntering(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            log("participant id" + participant.id + " in data entering node with title: " + self.title)
+            #log("participant id" + participant.id + " in data entering node with title: " + self.title)
             if self.role == "participant":
                 # ask server to send request to actors and receive answers
                 results = participant.update(lambda: print("I'm a participant"))
@@ -109,7 +107,7 @@ class Decision(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            log("participant id" + participant.id + "in decision node with title: " + self.title)
+            #log("participant id" + participant.id + "in decision node with title: " + self.title)
             self.detach(participant)
             if self.condition(participant):
                 self.next_list[0].attach(participant)
@@ -137,6 +135,6 @@ class String_Node(Node):
     def notify(self) -> None:
         print("String node: Notifying observers...")
         for participant in self.participants:
-            log("participant id" + participant.id + "in string node with title: " + self.title)
-            Server.send_feedback(participant.socket, self.text)
+            #log("participant id" + participant.id + "in string node with title: " + self.title)
+            #Server.send_feedback(participant.socket, self.text)
             self.detach(participant)

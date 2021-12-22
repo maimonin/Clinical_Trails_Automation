@@ -1,0 +1,97 @@
+{
+    "id": 1661335264272,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1661335436016,
+            "title": "Questionnaire",
+            "pos_x": -143.0,
+            "pos_y": -150.0,
+            "inputs": [
+                {
+                    "id": 1661384554336,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1661384554384,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "q1",
+                    "actor in charge": "Nurse",
+                    "time": "20"
+                },
+                "questions": [
+                    {
+                        "text": "what's up??",
+                        "type": "open"
+                    }
+                ]
+            },
+            "op_code": 1
+        },
+        {
+            "id": 1661335435968,
+            "title": "Data Entry",
+            "pos_x": 381.0,
+            "pos_y": -102.0,
+            "inputs": [
+                {
+                    "id": 1661384645936,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1661384663680,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "test1",
+                    "actor in charge": "Nurse",
+                    "time": "50"
+                },
+                "tests": [
+                    {
+                        "name": "cbc",
+                        "instructions": "take red and blue",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "50"
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 1661384664880,
+            "edge_type": 2,
+            "start": 1661384554384,
+            "end": 1661384645936
+        }
+    ]
+}
