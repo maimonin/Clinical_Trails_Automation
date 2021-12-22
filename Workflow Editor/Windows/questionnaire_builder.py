@@ -9,18 +9,21 @@
 import time
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from question_with_options import  Ui_MultipleChoiceQuestionAdd
+from question_with_options import Ui_MultipleChoiceQuestionAdd
 from open_question import Ui_OpenQuestion
 from nodeeditor.utils import dumpException
 from node_details import Ui_Node_Details
+
+
 class Ui_QuestionnaireBuild(object):
-    def __init__(self,callback):
+    def __init__(self, callback):
         super().__init__()
         self.details = {}
-        self.callback=callback
-        self._num_of_question=0
-        self._questions_list=[]
-        self.questions=[]
+        self.callback = callback
+        self._num_of_question = 0
+        self._questions_list = []
+        self.questions = []
+
     def setupUi(self, QuestionnaireBuild):
         QuestionnaireBuild.setObjectName("QuestionnaireBuild")
         QuestionnaireBuild.resize(837, 717)
@@ -38,7 +41,6 @@ class Ui_QuestionnaireBuild(object):
         self._questions_list = QtWidgets.QListWidget(self.widget)
         self._questions_list.setGeometry(QtCore.QRect(20, 70, 431, 491))
         self._questions_list.setObjectName("questions_list")
-
 
         self.add_one_choice_question_btn = QtWidgets.QPushButton(self.widget)
         self.add_one_choice_question_btn.setGeometry(QtCore.QRect(460, 230, 351, 91))
@@ -64,10 +66,6 @@ class Ui_QuestionnaireBuild(object):
         self.save_questionnaire_btn.setObjectName("save_questionnaire_btn")
         self.save_questionnaire_btn.clicked.connect(self.save_questionnaire)
 
-
-
-
-
         self.discard_btn = QtWidgets.QPushButton(self.widget)
         self.discard_btn.setGeometry(QtCore.QRect(230, 640, 191, 61))
         font = QtGui.QFont()
@@ -75,7 +73,6 @@ class Ui_QuestionnaireBuild(object):
         self.discard_btn.setFont(font)
         self.discard_btn.setObjectName("discard_btn")
         self.discard_btn.clicked.connect(self.discard)
-
 
         self.add_node_details_btn = QtWidgets.QPushButton(self.widget)
         self.add_node_details_btn.setGeometry(QtCore.QRect(460, 640, 201, 61))
@@ -85,7 +82,7 @@ class Ui_QuestionnaireBuild(object):
         self.add_node_details_btn.setObjectName("add_node_details_btn")
         self.add_node_details_btn.clicked.connect(self.add_node_details)
 
-        #QuestionnaireBuild.setCentralWidget(self.widget)
+        # QuestionnaireBuild.setCentralWidget(self.widget)
 
         self.retranslateUi(QuestionnaireBuild)
         QtCore.QMetaObject.connectSlotsByName(QuestionnaireBuild)
@@ -109,23 +106,28 @@ class Ui_QuestionnaireBuild(object):
             ui = Ui_OpenQuestion(self.add_line)
             ui.setupUi(self.new_window)
             self.new_window.exec_()
-        except Exception as e : dumpException(e)
+        except Exception as e:
+            dumpException(e)
+
     def add_checkbox_question(self):
         try:
             self.new_window = QtWidgets.QDialog()
-            ui = Ui_MultipleChoiceQuestionAdd(self.add_line,"multy")
+            ui = Ui_MultipleChoiceQuestionAdd(self.add_line, "multy")
             ui.setupUi(self.new_window)
             self.new_window.exec_()
-        except Exception as e : dumpException(e)
+        except Exception as e:
+            dumpException(e)
 
     def add_radiobox_question(self):
         try:
             self.new_window = QtWidgets.QDialog()
-            ui = Ui_MultipleChoiceQuestionAdd(self.add_line,"one choice")
+            ui = Ui_MultipleChoiceQuestionAdd(self.add_line, "one choice")
             ui.setupUi(self.new_window)
             self.new_window.exec_()
-        except Exception as e : dumpException(e)
-    def add_line(self,question):
+        except Exception as e:
+            dumpException(e)
+
+    def add_line(self, question):
         _translate = QtCore.QCoreApplication.translate
         item = QtWidgets.QListWidgetItem()
         self._questions_list.addItem(item)
@@ -133,24 +135,32 @@ class Ui_QuestionnaireBuild(object):
         item.setText(_translate("QuestionnaireBuild", f"{question['text']} ; {question['type']}"))
         self.questions.append(question)
         self._num_of_question += 1
+
     def add_node_details(self):
         self.new_window = QtWidgets.QDialog()
         ui = Ui_Node_Details(self.callback_from_node_details)
         ui.setupUi(self.new_window)
         self.new_window.exec_()
-    def callback_from_node_details(self,details):
+
+    def callback_from_node_details(self, details):
         self.new_window.close()
         if details is not None:
-            self.details=details
+            self.details = details
+
     def save_questionnaire(self):
-        self.callback({ "node_details" : self.details, "questions" : self.questions})
-        #TODO : check details exist! if not, present a label
+        self.callback({"node_details": self.details, "questions": self.questions})
+        # TODO : check details exist! if not, present a label
+
     def discard(self):
         try:
             self.callback(None)
-        except Exception as e : dumpException(e)
+        except Exception as e:
+            dumpException(e)
+
+
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     QuestionnaireBuild = QtWidgets.QDialog()
     ui = Ui_QuestionnaireBuild()
