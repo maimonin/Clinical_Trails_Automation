@@ -1,5 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
+
+from win_deciosionNode import Ui_Decision_Node
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -53,6 +55,31 @@ class WorkflowNode_DataEntry(WorkflowNode):
         ui = Ui_Test_Builder(lambda content: self.callback_from_window(content,DataEntryBuild))
         ui.setupUi(DataEntryBuild)
         DataEntryBuild.exec_()
+
+    def callback_from_window(self,content,window):
+        try:
+            window.close()
+            if content is None:
+                self.remove() #  remove node
+            else:
+                self.content=content
+        except Exception as e : dumpException(e)
+
+@register_node(OP_NODE_DECISION)
+class WorkflowNode_Decision(WorkflowNode):
+    icon = "images/decision.png"
+    op_code = OP_NODE_DECISION
+    op_title = "Decision"
+    content_label_objname = "workflow_node_decision"
+
+    def initInnerClasses(self):
+        # self.content=WorkflowInputContent(self)
+        self.grNode = WorkflowGraphicNode(self)
+    def drop_action(self):
+        Decision_Node = QtWidgets.QDialog()
+        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content,Decision_Node))
+        ui.setupUi(Decision_Node)
+        Decision_Node.exec_()
 
     def callback_from_window(self,content,window):
         try:

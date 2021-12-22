@@ -1,3 +1,2 @@
 socket bound to port
 socket is listening
-Connected to client

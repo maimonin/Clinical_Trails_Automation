@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
 
-traitCounter = 0;
+testCounter = 0;
 
 class Ui_TestCond(object):
     def __init__(self,questions):
@@ -89,7 +89,7 @@ class Ui_TestCond(object):
 
     def save_condition(self):
         try:
-            global traitCounter
+            global testCounter
             testCounter+=1
             if self.testCond_bool_positive.isChecked() or self.testCond_bool_false.isChecked():
                 q={"title": "test condition "+str(testCounter), "test":self.testCond_test_text.text(),"positive": self.testCond_bool_positive.isChecked(),"negative": self.testCond_bool_false.isChecked()}

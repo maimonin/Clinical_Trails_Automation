@@ -14,12 +14,13 @@ from win_test_condition import Ui_TestCond
 from win_trait_condition import Ui_TraitCond
 from nodeeditor.utils import dumpException
 
-class Ui_Dialog(object):
-    def __init__(self):
+class Ui_Decision_Node(object):
+    def __init__(self, callback):
         super().__init__()
         self.details = {}
         self._num_of_question = 0
         self.questions = []
+        self.callback=callback
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -27,7 +28,7 @@ class Ui_Dialog(object):
         self.widget = QtWidgets.QWidget(Dialog)
         self.widget.setGeometry(QtCore.QRect(9, 9, 791, 631))
         self.widget.setObjectName("widget")
-
+        self.window=Dialog
         self.decision_addCond_questionnaire = QtWidgets.QPushButton(self.widget)
         self.decision_addCond_questionnaire.setGeometry(QtCore.QRect(520, 280, 191, 61))
         self.decision_addCond_questionnaire.setObjectName("decision_addCond_questionnaire")
@@ -46,11 +47,12 @@ class Ui_Dialog(object):
         self.decision_save = QtWidgets.QPushButton(self.widget)
         self.decision_save.setGeometry(QtCore.QRect(40, 560, 101, 61))
         self.decision_save.setObjectName("decision_save")
-
+        self.decision_save.clicked.connect(self.save_finish)
         self.decision_discard = QtWidgets.QPushButton(self.widget)
         self.decision_discard.setGeometry(QtCore.QRect(160, 560, 101, 61))
         self.decision_discard.setObjectName("decision_discard")
 
+        self.decision_discard.clicked.connect(self.discard)
         self.decision_edit = QtWidgets.QPushButton(self.widget)
         self.decision_edit.setGeometry(QtCore.QRect(280, 560, 101, 61))
         self.decision_edit.setObjectName("decision_edit")
@@ -106,11 +108,15 @@ class Ui_Dialog(object):
         self.questions.append(question)
         self._num_of_question += 1
 
+    def discard(self):
+        self.callback(None)
+    def save_finish(self):
+        self.callback({"node_details": self.details, "condition": self.questions})
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
+    ui = Ui_Decision_Node()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

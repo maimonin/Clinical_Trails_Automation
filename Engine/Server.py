@@ -91,10 +91,11 @@ def threaded(c):
                     nodes[node['id']] = parse_Questionnaire(node)
                 elif node['title'] == 'Data Entry':
                     nodes[node['id']] = parse_Test(node)
-                for out in node['outputs']:
-                    outputs[out['id']]=node['id']
-                for inp in node['inputs']:
-                    inputs[inp['id']] = node['id']
+                if node['title'] != 'Decision':
+                    for out in node['outputs']:
+                        outputs[out['id']]=node['id']
+                    for inp in node['inputs']:
+                        inputs[inp['id']] = node['id']
             first_node=data_dict['nodes'][0]['id']
             workflow=nodes[first_node]
             for edge in data_dict['edges']:

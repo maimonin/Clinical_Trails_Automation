@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Workflow Editor" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Engine" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Simulator" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Workflow Editor/Windows/decisionNode" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
