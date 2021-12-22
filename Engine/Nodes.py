@@ -5,8 +5,6 @@ from Engine import Data, Server
 from Engine.Server import log
 from Engine.User import User
 
-node_id = 0
-
 
 class Node(ABC):
     @abstractmethod
@@ -24,20 +22,20 @@ class Node(ABC):
     @abstractmethod
     def exec(self) -> None:
         pass
+
     @abstractmethod
     def has_actors(self):
         pass
 
 
 class DataEntering(Node):
-    def __init__(self, role, next_node, titly):
-        global node_id
+    def __init__(self, node_id, title, role, form, next_node):
         self.id = node_id
-        self.title = titly
+        self.title = title
         self.role = role
+        self.form = form
         self.next = next_node
         self.lock = threading.Lock()
-        node_id += 1
 
     participants: List[User] = []
 
@@ -54,11 +52,11 @@ class DataEntering(Node):
 
     def notify(self) -> None:
         self.lock.acquire()
-        participants2=self.participants.copy()
-        self.participants=[]
+        participants2 = self.participants.copy()
+        self.participants = []
         self.lock.release()
         for participant in participants2:
-            log("participant id"+ participant.id + " in data entering node with title: " + self.title)
+            log("participant id" + participant.id + " in data entering node with title: " + self.title)
             if self.role == "participant":
                 # ask server to send request to actors and receive answers
                 results = participant.update(lambda: print("I'm a participant"))
@@ -74,15 +72,16 @@ class DataEntering(Node):
     def has_actors(self):
         return len(self.participants) != 0
 
+
 class Decision(Node):
-    def __init__(self, next_options, condition, titly):
-        global node_id
+    def __init__(self, node_id, title, actors, form, next_options, condition):
         self.id = node_id
-        self.title = titly
-        self.nexts = next_options
+        self.title = title
+        self.form = form
+        self.actors = actors
+        self.next_list = next_options
         self.condition = condition
         self.lock = threading.Lock()
-        node_id += 1
 
     participants: List[User] = []
 
@@ -95,13 +94,13 @@ class Decision(Node):
 
     def exec(self) -> None:
         self.notify()
-        if self.nexts[0].has_actors():
-            self.nexts[0].exec()
-        if self.nexts[1].has_actors():
-            self.nexts[1].exec()
+        if self.next_list[0].has_actors():
+            self.next_list[0].exec()
+        if self.next_list[1].has_actors():
+            self.next_list[1].exec()
 
     def has_actors(self):
-        return len(self.participants)==0
+        return len(self.participants) == 0
 
     def notify(self) -> None:
         print("Decision: Notifying observers...")
@@ -113,6 +112,31 @@ class Decision(Node):
             log("participant id" + participant.id + "in decision node with title: " + self.title)
             self.detach(participant)
             if self.condition(participant):
-                self.nexts[0].attach(participant)
+                self.next_list[0].attach(participant)
             else:
-                self.nexts[1].attach(participant)
+                self.next_list[1].attach(participant)
+
+
+class String_Node(Node):
+    def __init__(self, node_id, title, actors, text, next_node):
+        self.id = node_id
+        self.title = title
+        self.actors = actors
+        self.text = text
+        self.next = next_node
+
+    participants: List[User] = []
+
+    def attach(self, participant: User) -> None:
+        print("String node: Attached an observer.")
+        self.participants.append(participant)
+
+    def detach(self, participant: User) -> None:
+        self.participants.remove(participant)
+
+    def notify(self) -> None:
+        print("String node: Notifying observers...")
+        for participant in self.participants:
+            log("participant id" + participant.id + "in string node with title: " + self.title)
+            Server.send_feedback(participant.socket, self.text)
+            self.detach(participant)
