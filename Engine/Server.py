@@ -57,15 +57,24 @@ def threaded(c):
             print_lock.release()
             break
 
-        user_dict = json.loads(data)
-        user = User(user_dict['role'], user_dict['id'], c)
-        log("user " + user_dict['role'] + " received")
-        c.send(str(user_dict['id']).encode('ascii'))
-        if user.role == "participant":
-            participants['id'] = user
-            workflow.attach(user)
-            workflow.exec()
+        data_dict = json.loads(data)
+        if data_dict['sender'] == 'simulator':
+            user_dict = data_dict
+            user = User(user_dict['role'], user_dict['id'], c)
+            log("user " + user_dict['role'] + " received")
+            c.send(str(user_dict['id']).encode('ascii'))
+            if user.role == "participant":
+                participants['id'] = user
+                workflow.attach(user)
+                workflow.exec()
+        else:
+            continue
+
     c.close()
+
+
+def send_feedback(user_socket, text):
+    user_socket.send(text.encode('ascii'))
 
 
 def log(message):
