@@ -1,34 +1,28 @@
 # Import socket module
+import json
 import socket
 
 user_id = 0
+roles = ["nurse", "doctor", "investigator", "lab", "participant"]
+tabs = {}
 
 
 def Main():
-    # local host IP '127.0.0.1'
     host = '127.0.0.1'
-
-    # Define the port on which you want to connect
-    port = 12345
+    port = 8000
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # connect to server on local computer
     s.connect((host, port))
 
-    # message you send to server
-    message = "shaurya says geeksforgeeks"
     while True:
-
-        # message sent to server
-        s.send(message.encode('ascii'))
-
-        # messaga received from server
-        data = s.recv(1024)
-
-        # print the received message
-        # here it would be a reverse of sent message
-        print('Received from the server :', str(data.decode('ascii')))
+        global user_id
+        for role in roles:
+            message = json.dumps({'role': role, 'id': user_id})
+            user_id += 1
+            s.send(message.encode('ascii'))
+            data = int(s.recv(1024))
+            tabs[data] = []
+            print("tab for "+str(data)+" opened")
 
         # ask the client whether he wants to continue
         ans = input('\nDo you want to continue(y/n) :')
@@ -36,7 +30,7 @@ def Main():
             continue
         else:
             break
-    # close the connection
+
     s.close()
 
 

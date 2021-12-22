@@ -3,15 +3,16 @@ import socket
 from _thread import *
 import threading
 from random import randint
-
 from Engine.User import User
 
 nurses = []
 doctors = []
+investigators = []
 labs = []
 participants = {}
 
 workflow = None
+print_lock = threading.Lock()
 
 
 def add_user(user, role):
@@ -19,6 +20,8 @@ def add_user(user, role):
         nurses.append(user)
     elif role == "doctor":
         doctors.append(user)
+    elif role == "investigator":
+        investigators.append(user)
     elif role == "lab":
         labs.append(user)
     elif role == "participant":
@@ -36,7 +39,7 @@ def get_role(role):
 
 
 def addNode(json, roles):
-    id=0
+    id = 0
     log("node " + id + " is added")
 
 
@@ -44,39 +47,41 @@ def request_data(participant, message, actor):
     return None
 
 
-# user json
-#role
-#id
+# {'role': 'nurse', 'id': 0}
 
 def threaded(c):
-    data = c.recv(1024)
-    if not data:
-        print('Bye')
+    while True:
+        data = c.recv(1024)
+        if not data:
+            print('Bye')
+            print_lock.release()
+            break
 
-    user_data = json.loads(data)
-    json_obj = json.dumps(user_data)
-    useri = User(json_obj['role'],json_obj['id'], c)
-    if useri.role=="participant":
-        participants['id']=useri
-        workflow.attach(useri)
-        workflow.exec()
-    # connection closed
+        user_dict = json.loads(data)
+        user = User(user_dict['role'], user_dict['id'], c)
+        log("user " + user_dict['role'] + " received")
+        c.send(str(user_dict['id']).encode('ascii'))
+        if user.role == "participant":
+            participants['id'] = user
+            workflow.attach(user)
+            workflow.exec()
     c.close()
 
 
 def log(message):
-    f = open("Logger.txt", "w")
+    f = open("Logger.txt", "a")
     f.write(message + '\n')
     f.close()
 
 
 def Main():
-    host = "localhost"
+    open('Logger.txt', 'w').close()
+    host = ""
     port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
 
-    log("socket binded to port")
+    log("socket bound to port")
 
     # put the socket into listening mode
     s.listen(5)
@@ -84,7 +89,8 @@ def Main():
 
     while True:
         c, addr = s.accept()
-        log('Connected to :', addr[0], ':', addr[1])
+        log('Connected to client')
+        print_lock.acquire()
         start_new_thread(threaded, (c,))
     s.close()
 
