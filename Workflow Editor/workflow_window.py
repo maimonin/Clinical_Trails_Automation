@@ -141,3 +141,5 @@ class WorkflowEditorWindow(NodeEditorWindow):
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
+
+

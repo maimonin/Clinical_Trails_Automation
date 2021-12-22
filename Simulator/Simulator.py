@@ -23,7 +23,6 @@ def Main():
             data = int(s.recv(1024))
             tabs[data] = []
             print("tab for "+str(data)+" opened")
-
         # ask the client whether he wants to continue
         ans = input('\nDo you want to continue(y/n) :')
         if ans == 'y':

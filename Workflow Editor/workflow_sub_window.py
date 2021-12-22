@@ -1,7 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import  NodeEditorWidget
-from qtpy import QtWidgets
+from qtpy import QtWidgets, QtCore
 
 from workflow_conf import *
 from workflow_node_base import *
@@ -18,10 +18,10 @@ class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
 
         super().initUI()
-        # button = QPushButton('Start', self) used for POC for Arnon in the begininb
-        # button.setToolTip('This is an example button')
-        # button.move(100, 70)
-        # button.clicked.connect(self.on_click)
+        button = QPushButton('Start', self)
+        button.setToolTip('This is an example button')
+        button.move(100, 70)
+        button.clicked.connect(self.on_click)
 
     def __init__(self):
         super().__init__()
@@ -92,6 +92,5 @@ class WorkflowSubWindow(NodeEditorWidget):
     #         dumpException(e)
     #     # doing something........
     # @pyqtSlot()
-    # def on_click(self):
-    #     x=threading.Thread(target=self.all_logic)
-    #     x.start()
+    def on_click(self):
+         print("clicked")
