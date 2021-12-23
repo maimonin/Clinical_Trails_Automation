@@ -13,10 +13,16 @@ from nodeeditor.utils import dumpException
 
 
 class Ui_multy_question_gui(object):
+    def __init__(self, q):
+        super().__init__()
+        self.next = None
+        self.callback = None
+        self.q = q
+
     def setupUi(self, multi_question_gui):
         multi_question_gui.setObjectName("open_question_gui")
         multi_question_gui.resize(700, 800)
-        self.window=multi_question_gui
+        self.window = multi_question_gui
         self.widget = QtWidgets.QWidget(multi_question_gui)
         self.widget.setGeometry(QtCore.QRect(-1, -1, 700, 800))
         self.widget.setObjectName("widget")
@@ -52,35 +58,68 @@ class Ui_multy_question_gui(object):
         self.retranslateUi(multi_question_gui)
         QtCore.QMetaObject.connectSlotsByName(multi_question_gui)
 
+    @property
+    def get_ans(self):
+        ans = []
+        if self.checkBox1.isChecked():
+            ans.append(self.checkBox1.text())
+        if self.checkBox1.isChecked():
+            ans.append(self.checkBox_2.text())
+        if self.checkBox_3.isChecked():
+            ans.append(self.checkBox_3.text())
+        if self.checkBox_4.isChecked():
+            ans.append(self.checkBox_4.text())
+        if self.checkBox_5.isChecked():
+            ans.append(self.checkBox_5.text())
+        if self.checkBox_6.isChecked():
+            ans.append(self.checkBox_6.text())
+        return ans
+
     def next_on_click(self):
-        if self.next==None:
-            self.save_questionnaire()
+        self.callback({"question": self.q, "answer": self.get_ans})
+        if self.next is None:
+            self.window.close()
         else:
             try:
+                self.window.close()
                 self.new_window = QtWidgets.QDialog()
                 self.next.setupUi(self.new_window)
                 self.new_window.exec_()
             except Exception as e:
                 dumpException(e)
+
     def retranslateUi(self, open_question_gui):
         _translate = QtCore.QCoreApplication.translate
         open_question_gui.setWindowTitle(_translate("open_question_gui", "Dialog"))
-        self.quetion_txt.setText(_translate("open_question_gui", "Question"))
-        if next==None:
+        self.quetion_txt.setText(_translate("open_question_gui", self.q['text']))
+        if next == None:
             self.next_btn.setText(_translate("open_question_gui", "Finish"))
         else:
             self.next_btn.setText(_translate("open_question_gui", "Next"))
         self.groupBox.setTitle(_translate("open_question_gui", "Choose One Answer"))
-        self.checkBox1.setText(_translate("open_question_gui", "Answer 1"))
-        self.checkBox_2.setText(_translate("open_question_gui", "Answer 2"))
-        self.checkBox_3.setText(_translate("open_question_gui", "Answer 3"))
-        self.checkBox_4.setText(_translate("open_question_gui", "Answer 4"))
-        self.checkBox_6.setText(_translate("open_question_gui", "Answer 6"))
-        self.checkBox_5.setText(_translate("open_question_gui", "Answer 5"))
+        self.checkBox1.setText(_translate("open_question_gui", self.q['options'][0]))
+        self.checkBox_2.setText(_translate("open_question_gui", self.q['options'][1]))
+        if(len(self.q['options'])>2):
+            self.checkBox_3.setText(_translate("open_question_gui", self.q['options'][2]))
+        else:
+            self.checkBox_3.setVisible(False)
+        if (len(self.q['options']) > 3):
+            self.checkBox_4.setText(_translate("open_question_gui", self.q['options'][3]))
+        else:
+            self.checkBox_4.setVisible(False)
+        if (len(self.q['options']) > 5):
+            self.checkBox_6.setText(_translate("open_question_gui", self.q['options'][5]))
+        else:
+            self.checkBox_6.setVisible(False)
+        if (len(self.q['options']) > 4):
+            self.checkBox_5.setText(_translate("open_question_gui", self.q['options'][4]))
+        else:
+            self.checkBox_5.setVisible(False)
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     open_question_gui = QtWidgets.QDialog()
     ui = Ui_multy_question_gui()

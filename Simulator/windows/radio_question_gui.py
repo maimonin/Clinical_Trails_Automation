@@ -13,9 +13,11 @@ from nodeeditor.utils import dumpException
 
 
 class Ui_radio_question_gui(object):
-    def __init__(self):
+    def __init__(self, q):
         super().__init__()
         self.next=None
+        self.callback=None
+        self.q=q
 
     def setupUi(self, open_radio_gui):
         open_radio_gui.setObjectName("open_question_gui")
@@ -55,32 +57,61 @@ class Ui_radio_question_gui(object):
         self.retranslateUi(open_radio_gui)
         QtCore.QMetaObject.connectSlotsByName(open_radio_gui)
 
+    def get_ans(self):
+        if self.radioButton1.isChecked():
+            return self.radioButton1.text()
+        if self.radioButton_2.isChecked():
+            return self.radioButton_2.text()
+        if self.radioButton_3.isChecked():
+            return self.radioButton_3.text()
+        if self.radioButton_4.isChecked():
+            return self.radioButton_4.text()
+        if self.radioButton_5.isChecked():
+            return self.radioButton_5.text()
+        if self.radioButton_6.isChecked():
+            return self.radioButton_6.text()
+
     def next_on_click(self):
+        self.callback({"question": self.q, "answer": self.get_ans()})
         if self.next==None:
-            self.save_questionnaire()
+            self.window.close()
         else:
             try:
+                self.window.close()
                 self.new_window = QtWidgets.QDialog()
                 self.next.setupUi(self.new_window)
                 self.new_window.exec_()
             except Exception as e:
                 dumpException(e)
 
-    def save_questionnaire(self):
-        print('lala')
 
     def retranslateUi(self, open_question_gui):
         _translate = QtCore.QCoreApplication.translate
         open_question_gui.setWindowTitle(_translate("open_question_gui", "Dialog"))
-        self.quetion_txt.setText(_translate("open_question_gui", "Question"))
-        self.next_btn.setText(_translate("open_question_gui", "Next"))
+        self.quetion_txt.setText(_translate("open_question_gui", self.q["text"]))
+        if next == None:
+            self.next_btn.setText(_translate("open_question_gui", "Finish"))
+        else:
+            self.next_btn.setText(_translate("open_question_gui", "Next"))
         self.groupBox.setTitle(_translate("open_question_gui", "Choose One Answer"))
-        self.radioButton1.setText(_translate("open_question_gui", "Answer 1"))
-        self.radioButton_2.setText(_translate("open_question_gui", "Answer 2"))
-        self.radioButton_3.setText(_translate("open_question_gui", "Answer 3"))
-        self.radioButton_4.setText(_translate("open_question_gui", "Answer 4"))
-        self.radioButton_6.setText(_translate("open_question_gui", "Answer 6"))
-        self.radioButton_5.setText(_translate("open_question_gui", "Answer 5"))
+        self.radioButton1.setText(_translate("open_question_gui", self.q['options'][0]))
+        self.radioButton_2.setText(_translate("open_question_gui", self.q['options'][0]))
+        if (len(self.q['options']) > 2):
+            self.radioButton_3.setText(_translate("open_question_gui", self.q['options'][2]))
+        else:
+            self.radioButton_3.setVisible(False)
+        if (len(self.q['options']) > 3):
+            self.radioButton_4.setText(_translate("open_question_gui", self.q['options'][3]))
+        else:
+            self.radioButton_4.setVisible(False)
+        if (len(self.q['options']) > 5):
+            self.radioButton_6.setText(_translate("open_question_gui", self.q['options'][5]))
+        else:
+            self.radioButton_6.setVisible(False)
+        if (len(self.q['options']) > 4):
+            self.radioButton_5.setText(_translate("open_question_gui", self.q['options'][4]))
+        else:
+            self.radioButton_5.setVisible(False)
 
 
 if __name__ == "__main__":
