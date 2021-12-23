@@ -21,14 +21,26 @@ def Main():
     while True:
         global user_id
         for user in users:
-            message = json.dumps({'sender': 'simulator', 'role': user["role"], 'id': user_id})
+            message = json.dumps({'sender': 'simulator', 'type': 'add user', 'role': user["role"], 'id': user_id})
             user_id += 1
             s.send(message.encode('ascii'))
             data = s.recv(1024)
             data_json = json.loads(data)
             if data_json['type'] == 'connect':
                 tabs[int(data_json['id'])] = []
-                print("tab for "+str(data_json['id'])+" opened")
+                print("tab for " + str(data_json['id']) + " opened")
+            elif data_json['type'] == 'notification':
+                tabs[data_json['user']].append(data_json('notification'))
+            elif data_json['type'] == 'questions':
+                tabs[data_json['user']].append("fill out form")
+                for question in data_json['questions']:
+                    print(question)
+                    if question['type'] == 'multi':
+                        print(question['options'])
+                    ans = input('\n')
+                    s.send(json.dumps(
+                        {'sender': 'simulator', 'type': 'answer', 'id': data_json['user'],
+                         'answer': ans}).encode('ascii'))
 
         # ask the client whether he wants to continue
         ans = input('\nDo you want to continue(y/n) :')
