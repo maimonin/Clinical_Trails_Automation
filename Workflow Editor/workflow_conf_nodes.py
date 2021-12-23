@@ -21,21 +21,32 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     content_label_objname = "workflow_node_questionnaire"
 
     def initInnerClasses(self):
-        # self.content=WorkflowInputContent(self)
-        self.grNode = WorkflowGraphicNode(self)
+        self.content=WorkflowContent_with_button(self,)
+        self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicNode_wide(self)
     def drop_action(self):
         from Windows.questionnaire_builder import Ui_QuestionnaireBuild
         QuestionnaireBuild = QtWidgets.QDialog()
         ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content,QuestionnaireBuild))
         ui.setupUi(QuestionnaireBuild)
         QuestionnaireBuild.exec_()
+        self.onDoubleClicked(self.edit_nodes_details)
 
+        # self.
     def callback_from_window(self, content, window):
+        print(content)
         window.close()
         if content is None:
             self.remove()
         else:
             self.content = content
+    def edit_nodes_details(self):
+        from Windows.questionnaire_builder import Ui_QuestionnaireBuild
+        QuestionnaireBuild = QtWidgets.QDialog()
+        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.content)
+        ui.setupUi(QuestionnaireBuild)
+        QuestionnaireBuild.exec_()
+
 
 @register_node(OP_NODE_DATA_ENTRY)
 class WorkflowNode_DataEntry(WorkflowNode):
@@ -45,7 +56,8 @@ class WorkflowNode_DataEntry(WorkflowNode):
     content_label_objname = "workflow_node_data_entry"
 
     def initInnerClasses(self):
-        # self.content=WorkflowInputContent(self)
+        self.content=WorkflowContent_with_button(self,)
+        self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicNode(self)
     def drop_action(self):
         from Windows.tests_builder import Ui_Test_Builder
@@ -62,7 +74,12 @@ class WorkflowNode_DataEntry(WorkflowNode):
             else:
                 self.content=content
         except Exception as e : dumpException(e)
-
+    def edit_nodes_details(self):
+        from Windows.tests_builder import Ui_Test_Builder
+        DataEntryBuild = QtWidgets.QDialog()
+        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content,DataEntryBuild),data=self.content)
+        ui.setupUi(DataEntryBuild)
+        DataEntryBuild.exec_()
 @register_node(OP_NODE_DECISION)
 class WorkflowNode_Decision(WorkflowNode):
     icon = "images/decision.png"
@@ -71,7 +88,8 @@ class WorkflowNode_Decision(WorkflowNode):
     content_label_objname = "workflow_node_decision"
 
     def initInnerClasses(self):
-        # self.content=WorkflowInputContent(self)
+        self.content = WorkflowContent_with_button(self, )
+        self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicNode(self)
     def drop_action(self):
         Decision_Node = QtWidgets.QDialog()
@@ -79,6 +97,11 @@ class WorkflowNode_Decision(WorkflowNode):
         ui.setupUi(Decision_Node)
         Decision_Node.exec_()
 
+    def edit_nodes_details(self):
+        Decision_Node = QtWidgets.QDialog()
+        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content,Decision_Node),data=self.content)
+        ui.setupUi(Decision_Node)
+        Decision_Node.exec_()
     def callback_from_window(self,content,window):
         try:
             window.close()
@@ -87,13 +110,13 @@ class WorkflowNode_Decision(WorkflowNode):
             else:
                 self.content=content
         except Exception as e : dumpException(e)
-# @register_node(OP_NODE_STRING)
-# class WorkflowNode_SimpleString(WorkflowNode):
-#     icon = "images/str.png"
-#     op_code = OP_NODE_STRING
-#     op_title = "Simple String"
-#     content_label_objname = "workflow_node_string"
-#
+@register_node(OP_NODE_STRING)
+class WorkflowNode_SimpleString(WorkflowNode):
+    icon = "images/str.png"
+    op_code = OP_NODE_STRING
+    op_title = "Simple String"
+    content_label_objname = "workflow_node_string"
+
 #     def initInnerClasses(self):
 #         self.content=WorkflowInputContent(self)
 #         self.grNode = WorkflowGraphicNode(self)

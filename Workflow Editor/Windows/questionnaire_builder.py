@@ -22,13 +22,14 @@ quesionnaire_num = 0
 
 class Ui_QuestionnaireBuild(object):
 
-    def __init__(self, callback):
+    def __init__(self, callback,data=None):
         super().__init__()
         self.details = {}
         self.callback = callback
         self._num_of_question = 0
         self._questions_list = []
         self.questions = []
+        self.data=data
 
     def setupUi(self, QuestionnaireBuild):
         QuestionnaireBuild.setObjectName("QuestionnaireBuild")
@@ -92,7 +93,8 @@ class Ui_QuestionnaireBuild(object):
 
         self.retranslateUi(QuestionnaireBuild)
         QtCore.QMetaObject.connectSlotsByName(QuestionnaireBuild)
-
+        if self.data is not None:
+            self.fill_edit_details()
     def retranslateUi(self, QuestionnaireBuild):
         _translate = QtCore.QCoreApplication.translate
         QuestionnaireBuild.setWindowTitle(_translate("QuestionnaireBuild", "Build Questionnaire"))
@@ -105,6 +107,13 @@ class Ui_QuestionnaireBuild(object):
         self.save_questionnaire_btn.setText(_translate("QuestionnaireBuild", "Save Questionnaire"))
         self.discard_btn.setText(_translate("QuestionnaireBuild", "Discard"))
         self.add_node_details_btn.setText(_translate("QuestionnaireBuild", "Add Node Details"))
+    def fill_edit_details(self):
+
+        self.details =self.data["node_details"]
+        print(self.questions)
+        for question in self.data["questions"]:
+            self.add_line(question)
+
 
     def add_open_question(self):
         try:
@@ -134,6 +143,7 @@ class Ui_QuestionnaireBuild(object):
             dumpException(e)
 
     def add_line(self, question):
+        print(f"add line: {question}")
         _translate = QtCore.QCoreApplication.translate
         item = QtWidgets.QListWidgetItem()
         self._questions_list.addItem(item)
@@ -144,7 +154,7 @@ class Ui_QuestionnaireBuild(object):
 
     def add_node_details(self):
         self.new_window = QtWidgets.QDialog()
-        ui = Ui_Node_Details(self.callback_from_node_details)
+        ui = Ui_Node_Details(self.callback_from_node_details,details=self.details)
         ui.setupUi(self.new_window)
         self.new_window.exec_()
 
@@ -164,6 +174,8 @@ class Ui_QuestionnaireBuild(object):
             self.callback(None)
         except Exception as e:
             dumpException(e)
+
+
 
 
 if __name__ == "__main__":
