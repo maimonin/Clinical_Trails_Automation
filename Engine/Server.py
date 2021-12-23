@@ -60,13 +60,19 @@ def parse_Decision(node_dict):
     conditions = content['condition']
     combined_condition = []
     for condition in conditions:
+        print(condition['type'])
         if condition['type'] == 'trait condition':
+            print("adding condition")
             combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
         # elif condition['questionnaire condition']:
         #     combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
-        elif condition['test condition']:
+        elif condition['type'] == 'test condition':
             combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
-    node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
+    print(node_dict['id'])
+    print(node_details['title'])
+    print(node_details['actor in charge'])
+    print(combined_condition)
+    node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], combined_condition)
     return node
 
 

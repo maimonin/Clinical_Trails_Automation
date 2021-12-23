@@ -76,6 +76,7 @@ def participant_simulation(user):
         register_user(user, s)
         while True:
             data = s.recv(5000)
+            print(data)
             data_json = json.loads(data)
             # if data_json['type'] == 'notification':
             #     tabs[data_json['user']].append(data_json('notification'))

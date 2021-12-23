@@ -70,13 +70,13 @@ class Questionnaire(Node):
 
 
 class Decision(Node):
-    def __init__(self, node_id, title, actors, form, next_options, condition):
+    def __init__(self, node_id, title, actors, form, next_options, conditions):
         self.id = node_id
         self.title = title
         self.form = form
         self.actors = actors
         self.next_list = next_options
-        self.condition = condition
+        self.conditions = conditions
         self.lock = threading.Lock()
 
     participants: List[User] = []
@@ -106,10 +106,10 @@ class Decision(Node):
         self.lock.release()
         for participant in participants2:
             log("participant id" + participant.id + "in decision node with title: " + self.title)
-            if self.condition(participant):
-                self.next_list[0].attach(participant)
-            else:
-                self.next_list[1].attach(participant)
+            for condition in self.conditions:
+                if not condition(participant):
+                    self.next_list[1].attach(participant)
+            self.next_list[0].attach(participant)
 
 
 class StringNode(Node):
