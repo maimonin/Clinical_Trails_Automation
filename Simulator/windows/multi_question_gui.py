@@ -78,6 +78,7 @@ class Ui_multy_question_gui(object):
     def next_on_click(self):
         self.callback({"question": self.q, "answer": self.get_ans})
         if self.next is None:
+            print("here")
             self.window.close()
         else:
             try:
@@ -92,9 +93,10 @@ class Ui_multy_question_gui(object):
         _translate = QtCore.QCoreApplication.translate
         open_question_gui.setWindowTitle(_translate("open_question_gui", "Dialog"))
         self.quetion_txt.setText(_translate("open_question_gui", self.q['text']))
-        if next == None:
+        if self.next is None:
             self.next_btn.setText(_translate("open_question_gui", "Finish"))
         else:
+            print("here")
             self.next_btn.setText(_translate("open_question_gui", "Next"))
         self.groupBox.setTitle(_translate("open_question_gui", "Choose One Answer"))
         self.checkBox1.setText(_translate("open_question_gui", self.q['options'][0]))

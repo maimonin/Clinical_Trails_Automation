@@ -2,4 +2,7 @@ socket bound to port
 socket is listening
 Connected to client
 Connected to client
-Connected to client
+user participant received
+Questionnaire: Attached an observer.
+user participant received
+Questionnaire: Attached an observer.

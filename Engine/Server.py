@@ -88,7 +88,7 @@ def register_user( user_dict, c):
             c.close()
         else:
             # start participant's workflow
-            user = add_user(user_dict['role'], user_dict['id'], c)
+            user = add_user(user_dict['role'],user_dict['sex'], user_dict['age'], user_dict['id'], c)
             workflows[user_dict["workflow"]].attach(user)
             workflows[user_dict["workflow"]].exec()
 

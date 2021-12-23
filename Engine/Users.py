@@ -34,7 +34,7 @@ def add_user(role, sex, age, user_id, socket):
         labs.append(user)
     elif role == "participant":
         participants[user.id] = user
-    log("user " + user.id + " is added")
+#    log("user " + user.id + " is added")
     return user
 
 
@@ -48,7 +48,7 @@ def get_role(role):
 
 
 def answer_questionnaire( questions, s):
-    s.send(json.dumps({'type': 'questionnaire', 'questions': questions}))
+    s.send(json.dumps({'type': 'questionnaire', 'questions': questions}).encode('ascii'))
     ans = s.recv(5000)
     return json.loads(ans)
 

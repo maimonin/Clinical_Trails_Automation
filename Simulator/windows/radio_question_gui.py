@@ -89,7 +89,7 @@ class Ui_radio_question_gui(object):
         _translate = QtCore.QCoreApplication.translate
         open_question_gui.setWindowTitle(_translate("open_question_gui", "Dialog"))
         self.quetion_txt.setText(_translate("open_question_gui", self.q["text"]))
-        if next == None:
+        if self.next == None:
             self.next_btn.setText(_translate("open_question_gui", "Finish"))
         else:
             self.next_btn.setText(_translate("open_question_gui", "Next"))

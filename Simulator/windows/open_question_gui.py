@@ -44,7 +44,7 @@ class Ui_open_question_gui(object):
         open_question_gui.setWindowTitle(_translate("open_question_gui", "Dialog"))
         self.question_txt.setText(_translate("open_question_gui", self.q['text']))
         self.textEdit.setPlaceholderText(_translate("open_question_gui", "Answer"))
-        if next == None:
+        if self.next == None:
             self.pushButton.setText(_translate("open_question_gui", "Finish"))
         else:
             self.pushButton.setText(_translate("open_question_gui", "Next"))
