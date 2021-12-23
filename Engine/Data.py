@@ -2,7 +2,7 @@ answers = {}
 tests = {}
 
 
-def add_data(results, participant):
+def add_questionnaire(results, participant):
     if participant in answers:
         answers[participant].append(results)
     else:

@@ -2,7 +2,9 @@ import json
 import socket
 from _thread import *
 import threading
-from Engine.Nodes import DataEntering
+
+from Data import add_questionnaire
+from Engine.Nodes import Questionnaire
 from Logger import log
 from Users import add_user
 
@@ -13,44 +15,46 @@ OP_NODE_DATA_ENTRY = 2
 OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
 
+
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = DataEntering(node_dict['id'], node_details['title'], node_details['actor in charge'], content['questions'])
+    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actor in charge'], content['questions'])
     return node
 
 
 def parse_Test(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = DataEntering(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
+    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
     return node
+
 
 def parse_Decision(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = DataEntering(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
+    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
     return node
+
 
 def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = DataEntering(node_dict['id'], node_details['title'], node_details['actors'], content['text'])
+    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actors'], content['text'])
     return node
+
 
 def register_user(self, user_dict, c):
     add_user(user_dict['role'], user_dict['id'], c)
     log("user " + user_dict['role'] + " received")
-    connected = json.dumps({'type': 'connect', 'id': user_dict['id']})
-    c.send(connected.encode('ascii'))
     if user_dict['role'] == "participant":
         if len(workflows) == 0:
             print("No workflow yet")
             c.close()
         else:
             # start participant's workflow
-            add_user(user_dict['role'], user_dict['id'], c)
-            workflows[user_dict["workflow"]].attach(user_dict['id'])
+            user = add_user(user_dict['role'], user_dict['id'], c)
+            workflows[user_dict["workflow"]].attach(user)
             workflows[user_dict["workflow"]].exec()
 
 
@@ -91,9 +95,8 @@ def threaded(c):
             print('Bye')
             print_lock.release()
             break
-
         data_dict = json.loads(data)
-        if data_dict['sender'] == 'simulator':
+        if data_dict['sender'] == 'simulator' and data_dict['type'] == 'add user':
             register_user(data_dict, c)
         else:
             new_workflow(data_dict, c)

@@ -1,7 +1,11 @@
+import json
 import threading
 from abc import ABC, abstractmethod
 from typing import List
-from Engine.Users import User
+
+from Data import add_questionnaire
+from Engine.Users import User, get_role, answer_questionnaire
+from Logger import log
 
 
 class Node(ABC):
@@ -26,19 +30,18 @@ class Node(ABC):
         pass
 
 
-class DataEntering(Node):
-    def __init__(self, node_id, title, role, form):
+class Questionnaire(Node):
+    def __init__(self, node_id, title, form):
         self.id = node_id
         self.title = title
-        self.role = role
         self.form = form
-        self.next = None
+        self.next_nodes = []
         self.lock = threading.Lock()
 
     participants: List[User] = []
 
     def attach(self, participant: User) -> None:
-        print("DataEntering: Attached an observer.")
+        print("Questionnaire: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -46,7 +49,8 @@ class DataEntering(Node):
 
     def exec(self) -> None:
         self.notify()
-        self.next.exec()
+        for next_node in self.next_nodes:
+            next_node.exec()
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -54,18 +58,17 @@ class DataEntering(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            #log("participant id" + participant.id + " in data entering node with title: " + self.title)
-            if self.role == "participant":
-                # ask server to send request to actors and receive answers
-                results = participant.update(lambda: print("I'm a participant"))
-                Data.add_data(results, participant)
-                self.next.attach(participant)
-            else:
-                actor = Server.get_role(self.role)
-                # ask server to send request to actors and receive answers
-                results = actor.update(lambda: print("I'm a "+self.role))
-                Data.add_data(results, participant)
-                self.next.attach(participant)
+            log("participant " + participant.id + " in data questionnaire with title: " + self.title)
+            # send questionnaire to participant
+            answers = answer_questionnaire(participant, self.form, participant.socket)
+            add_questionnaire(answers, participant)
+            self.next.attach(participant)
+        else:
+            actor = get_role(self.role)
+            # ask server to send request to actors and receive answers
+            results = actor.update(lambda: print("I'm a "+self.role))
+            add_questionnaire(results, participant)
+            self.next.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0
