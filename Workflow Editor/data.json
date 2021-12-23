@@ -33,7 +33,7 @@
                     "actor in charge": "Nurse",
                     "time": "20"
                 },
-                "questions": [
+               , "questions": [
                     {
                         "text": "how are you?",
                         "type": "open"
