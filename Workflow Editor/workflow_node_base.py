@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
-
+from nodeeditor.node_serializable import Serializable
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -27,7 +27,18 @@ class WorkflowNode(Node):
     def __init__(self, scene,inputs=[1],outputs=[1]) :
 
         super().__init__(scene,self.__class__.op_title,inputs,outputs)
-
+        self.onDoubleClicked(lambda:print("fsd"))
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
+    def drop_action(self):
+        pass
+    def callback_from_window(self, content, window):
+        pass
+    def serialize(self):
+        res = super().serialize()
+        ser_content = self.content.serialize() if isinstance(self.content, Serializable) else {}
+        print(self.content)
+        res['content']=self.content
+        res['op_code'] = self.__class__.op_code
+        return res

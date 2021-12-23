@@ -21,8 +21,6 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
 
-
-
         if DEBUG:
             print("Registered nodes:")
             pp(WORKFLOW_NODES)
@@ -112,7 +110,12 @@ class WorkflowEditorWindow(NodeEditorWindow):
             self.writeSettings()
             event.accept()
 
-
+    def getCurrentNodeEditorWidget(self):
+        """ we're returning NodeEditorWidget here... """
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            return activeSubWindow.widget()
+        return None
     def updateMenus(self):
         pass
 
@@ -138,3 +141,5 @@ class WorkflowEditorWindow(NodeEditorWindow):
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
+
+
