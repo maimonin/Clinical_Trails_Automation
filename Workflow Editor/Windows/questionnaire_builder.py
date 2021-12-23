@@ -14,8 +14,11 @@ from open_question import Ui_OpenQuestion
 from nodeeditor.utils import dumpException
 from node_details import Ui_Node_Details
 
+quesionnaire_num = 0
+
 
 class Ui_QuestionnaireBuild(object):
+
     def __init__(self, callback):
         super().__init__()
         self.details = {}
@@ -148,7 +151,9 @@ class Ui_QuestionnaireBuild(object):
             self.details = details
 
     def save_questionnaire(self):
-        self.callback({"node_details": self.details, "questions": self.questions})
+        global quesionnaire_num
+        quesionnaire_num +=1
+        self.callback({"node_details": self.details, "questions": self.questions,"qusetionnaire_number": quesionnaire_num})
         # TODO : check details exist! if not, present a label
 
     def discard(self):
