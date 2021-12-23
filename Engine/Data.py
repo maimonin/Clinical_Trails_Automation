@@ -1,13 +1,5 @@
-questionnaires = []
 answers = {}
-
-# class result:
-#     res_type
-#     instructions
-#     res_low
-#     res_high
-#     date
-#     value
+tests = {}
 
 
 def add_data(results, participant):
