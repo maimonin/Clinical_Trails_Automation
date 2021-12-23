@@ -1,25 +1,25 @@
 {
-    "id": 1609538414624,
+    "id": 1811764326704,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1609565448368,
-            "title": "Decision",
-            "pos_x": 385.0,
-            "pos_y": -158.0,
+            "id": 1811791355856,
+            "title": "Questionnaire",
+            "pos_x": 110.0,
+            "pos_y": 29.0,
             "inputs": [
                 {
-                    "id": 1609565472032,
+                    "id": 1811791397456,
                     "index": 0,
-                    "multi_edges": false,
+                    "multi_edges": true,
                     "position": 3,
                     "socket_type": 1
                 }
             ],
             "outputs": [
                 {
-                    "id": 1609565472080,
+                    "id": 1811791397504,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -28,17 +28,10 @@
             ],
             "content": {
                 "node_details": {},
-                "condition": [
-                    {
-                        "title": "trait condition 1",
-                        "age": true,
-                        "gender": "male",
-                        "min": 12,
-                        "max": 1
-                    }
-                ]
+                "questions": [],
+                "qusetionnaire_number": 1
             },
-            "op_code": 3
+            "op_code": 1
         }
     ],
     "edges": []

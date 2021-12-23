@@ -16,13 +16,13 @@ from nodeeditor.utils import dumpException
 from node_details import Ui_Node_Details
 
 class Ui_Decision_Node(object):
-    def __init__(self, callback):
+    def __init__(self, callback,data=None):
         super().__init__()
         self.details = {}
         self._num_of_question = 0
         self.questions = []
         self.callback=callback
-
+        self.data=data
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(812, 645)
@@ -61,12 +61,18 @@ class Ui_Decision_Node(object):
         self.decision_edit.clicked.connect(self.add_node_details)
 
         self.questions_list = QtWidgets.QListWidget(self.widget)
+        self.questions_list.itemClicked.connect(self.clicked)
         self.questions_list.setGeometry(QtCore.QRect(30, 30, 431, 491))
         self.questions_list.setObjectName("questions_list")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
+        if self.data is not None:
+            self.fill_data()
+    def clicked(self,item):
+        print(f"event, item clicked: {item.__str__()}")
+        # item.
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
@@ -107,18 +113,21 @@ class Ui_Decision_Node(object):
         item = QtWidgets.QListWidgetItem()
         self.questions_list.addItem(item)
         item = self.questions_list.item(self._num_of_question)
+        print(item.__str__())
         item.setText(_translate("Dialog", f"{question['title']}"))
+
         self.questions.append(question)
         self._num_of_question += 1
         print(question)
     def discard(self):
         self.callback(None)
     def save_finish(self):
+
         self.callback({"node_details": self.details, "condition": self.questions})
 
     def add_node_details(self):
         self.new_window = QtWidgets.QDialog()
-        ui = Ui_Node_Details(self.callback_from_node_details)
+        ui = Ui_Node_Details(self.callback_from_node_details,self.details)
         ui.setupUi(self.new_window)
         self.new_window.exec_()
 
@@ -126,6 +135,12 @@ class Ui_Decision_Node(object):
         self.new_window.close()
         if details is not None:
             self.details = details
+
+    def fill_data(self):
+        self.details =self.data["node_details"]
+        for condition in self.data["condition"]:
+            self.add_line(condition)
+
 
 if __name__ == "__main__":
     import sys

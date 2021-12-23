@@ -93,7 +93,7 @@ class Ui_TestCond(object):
             global testCounter
             testCounter+=1
             q={ "title": "test condition "+str(testCounter), \
-                "type":"test condition ",
+                "type":"test condition",
                 "test":self.testCond_test_text.text(),
                 }
 

@@ -16,12 +16,13 @@ from node_details import Ui_Node_Details
 
 
 class Ui_Test_Builder(object):
-    def __init__(self ,callback):
+    def __init__(self ,callback,data=None):
         super().__init__()
         self.callback =callback
         self._num_of_tests = 0
         self._test_list = []
         self.details = {}
+        self.data=data
     def setupUi(self, Test_Builder):
         Test_Builder.setObjectName("Test_Builder")
         Test_Builder.resize(563, 640)
@@ -67,7 +68,8 @@ class Ui_Test_Builder(object):
 
         self.retranslateUi(Test_Builder)
         QtCore.QMetaObject.connectSlotsByName(Test_Builder)
-
+        if self.data is not None:
+            self.load_data()
     def retranslateUi(self, Add_Test):
         _translate = QtCore.QCoreApplication.translate
         Add_Test.setWindowTitle(_translate("Test_Builder", "Dialog"))
@@ -80,8 +82,9 @@ class Ui_Test_Builder(object):
         self.add_node_details_btn.setText(_translate("Test_Builder", "Add Node Details"))
 
     def add_node_details(self):
+
         self.new_window = QtWidgets.QDialog()
-        ui = Ui_Node_Details(self.callback_from_node_details)
+        ui = Ui_Node_Details(self.callback_from_node_details,details=self.details)
         ui.setupUi(self.new_window)
         self.new_window.exec_()
 
@@ -111,6 +114,16 @@ class Ui_Test_Builder(object):
     def save_finish(self):
         self.callback({"node_details": self.details, "tests": self._test_list})
         # TODO : check details exist! if not, present a label
+
+    def load_data(self):
+        self.details =self.data["node_details"]
+
+        print(f"data in test is: {self.data}")
+        for test in self.data["tests"]:
+            self.add_line(test)
+        pass
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

@@ -9,15 +9,29 @@ class WorkflowGraphicNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
         self.width = 160
-        self.height = 74
+        self.height = 70
         self.edge_size = 5
         self.edge_padding=8
 
 
+class WorkflowGraphicNode_wide(QDMGraphicsNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 160
+        self.height = 100
+        self.edge_size = 5
+        self.edge_padding=8
+class WorkflowContent_with_button(QDMNodeContentWidget):
+    def initUI(self):
+        button=QPushButton("Edit",self)
+        self.btn=button
+    def connect_callback(self,callback):
+        self.btn.clicked.connect(callback)
+
 class WorkflowContent(QDMNodeContentWidget):
     def initUI(self):
         lbl = QLabel("", self)
-
+        button=QPushButton("raviv",self)
 class WorkflowNode(Node):
     icon=""
     op_code = 0
@@ -27,7 +41,6 @@ class WorkflowNode(Node):
     def __init__(self, scene,inputs=[1],outputs=[1]) :
 
         super().__init__(scene,self.__class__.op_title,inputs,outputs)
-        self.onDoubleClicked(lambda:print("fsd"))
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
@@ -45,3 +58,5 @@ class WorkflowNode(Node):
         res['content']=self.content
         res['op_code'] = self.__class__.op_code
         return res
+    def edit_nodes_details(self):
+        pass # To be implemented in each node

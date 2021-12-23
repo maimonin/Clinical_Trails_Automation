@@ -17,11 +17,12 @@ from nodeeditor.utils import dumpException
 
 
 class Ui_Node_Details(object):
-    def __init__(self,callback):
+    def __init__(self,callback,details=None):
         super().__init__()
         self.actors=[]
         self.actors_count=0
         self.callback=callback
+        self.details=None if details == {} else details
     def setupUi(self, Node_Details):
         Node_Details.setObjectName("Node_Details")
         Node_Details.resize(371, 645)
@@ -53,7 +54,7 @@ class Ui_Node_Details(object):
         font.setPointSize(8)
         self.add_actor_btn.setFont(font)
         self.add_actor_btn.setObjectName("add_actor_btn")
-        self.add_actor_btn.clicked.connect(self.add_line)
+        self.add_actor_btn.clicked.connect(self.add_actor_btn_click)
         self.actor_in_charge_combo = QtWidgets.QComboBox(self.widget)
         self.actor_in_charge_combo.setGeometry(QtCore.QRect(40, 150, 171, 31))
         self.actor_in_charge_combo.setObjectName("actor_in_charge_combo")
@@ -83,7 +84,15 @@ class Ui_Node_Details(object):
 
         self.retranslateUi(Node_Details)
         QtCore.QMetaObject.connectSlotsByName(Node_Details)
+        if self.details is not None:
+            self.load_details()
 
+    def load_details(self):
+        self.node_time.setText(self.details["time"])
+        self.node_title.setText(self.details["title"])
+        for actor in self.details["actors"]:
+            self.add_line(actor)
+        self.actor_in_charge_combo.setCurrentText(self.details["actor in charge"])
     def retranslateUi(self, Node_Details):
         _translate = QtCore.QCoreApplication.translate
         Node_Details.setWindowTitle(_translate("Node_Details", "Dialog"))
@@ -104,27 +113,30 @@ class Ui_Node_Details(object):
         self.node_title.setPlaceholderText(_translate("Node_Details", "Node Title"))
         self.node_time.setPlaceholderText(_translate("Node_Details", "Node Time"))
 
-    def add_line(self):
-        try:
-            self.actors.append(self.actors_comboBox.currentText())
-            _translate = QtCore.QCoreApplication.translate
-            item = QtWidgets.QListWidgetItem()
-            self.listWidget.addItem(item)
-            item = self.listWidget.item(self.actors_count)
-            item.setText(_translate("Node_Details", f"{self.actors_comboBox.currentText()}"))
-            self.actors_count += 1
-        except Exception as e:
-            dumpException(e)
+    def add_line(self,actor):
 
+        self.actors.append(actor)
+        _translate = QtCore.QCoreApplication.translate
+        item = QtWidgets.QListWidgetItem()
+        self.listWidget.addItem(item)
+        item = self.listWidget.item(self.actors_count)
+        item.setText(_translate("Node_Details", f"{actor}"))
+        self.actors_count += 1
+    def add_actor_btn_click(self):
+        self.add_line(self.actors_comboBox.currentText())
+#todo delete line by double click in the list
     def save_datails(self):
         self.callback({"actors" : self.actors, "title": self.node_title.text(), "actor in charge" :\
             self.actor_in_charge_combo.currentText(), "time": self.node_time.text()})
+
+
+
 if __name__ == "__main__":
     pass
-    # import sys
-    # app = QtWidgets.QApplication(sys.argv)
-    # Node_Details = QtWidgets.QDialog()
-    # # ui = Ui_Node_Details()
-    # ui.setupUi(Node_Details)
-    # Node_Details.show()
-    # sys.exit(app.exec_())
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Node_Details = QtWidgets.QDialog()
+    ui = Ui_Node_Details(None)
+    ui.setupUi(Node_Details)
+    Node_Details.show()
+    sys.exit(app.exec_())
