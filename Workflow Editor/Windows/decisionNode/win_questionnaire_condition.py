@@ -84,6 +84,7 @@ class Ui_QuestionnaireDialog(object):
             questCounter += 1
 
             q={"title": "questionnaire condition " + str(questCounter),
+               "type":"questionnaire condition ",
                "qNumber": self.questionnaire_questtionaire_number.value(),
                "ansNumber": self.questionnaire_answerNumber.value(),
                "include": self.questionnaire_include_text.text(),

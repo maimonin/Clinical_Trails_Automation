@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
-from conditions import create_test_one_choice,create_test_range
+from conditions import *
 traitCounter = 0;
 
 class Ui_TraitCond(object):
@@ -108,19 +108,21 @@ class Ui_TraitCond(object):
             global traitCounter
             traitCounter+=1
             q={"title": "trait condition " + str(traitCounter),
-               "tests":[]}
+               "type" : "trait condition ",
+               }
             if self.traitCondition_sex_check.isChecked():
-                q["tests"].append(create_test_one_choice("gender","male" if self.traitCondition_sex_male.isChecked() else "female"))
-            # if self.traitCondition_sex_check.isChecked() and self.traitCondition_sex_male.isChecked():
-            #     q={"age": self.traitCondition_sex_check.isChecked(),
-            #        "gender": "male"}
-            # elif self.traitCondition_sex_check.isChecked() and self.traitCondition_sex_female.isChecked():
-            #     q={"gender": "female"}
-            if self.traitCondition_age_check.isChecked():
-                q["tests"].append(create_test_range("age",self.traitCondition_between_min.value(),self.traitCondition_between_max.value()))
-            if(self.traitCondition_custom_text.text()!=""):
-                q["tests"].append(create_test_one_choice(self.traitCondition_custom_text.text(),"positive" if self.traitCondition_customRadio_positive.isChecked() else "negative"))
-            print(q)
+                q["test"]="gender"
+                q["satisfy"] = create_satisfy_one_choice("male" if self.traitCondition_sex_male.isChecked() else "female")
+            elif self.traitCondition_age_check.isChecked():
+                q["test"]="age"
+                q["satisfy"] = create_satisfy_range(self.traitCondition_between_min.value(),self.traitCondition_between_max.value())
+            elif(self.traitCondition_custom_text.text()!=""):
+                q["test"] = self.traitCondition_custom_text.text()
+                q["satisfy"] = create_satisfy_one_choice("positive" if self.traitCondition_customRadio_positive.isChecked() else "negative")
+
+            else:
+                #TODO notify user this is not ok
+                return
             # TODO: add support for custom
             self.func(q)
             self.exit_window()
