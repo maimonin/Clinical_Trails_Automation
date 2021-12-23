@@ -1,9 +1,6 @@
-
-
-
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'win_questionnaire_condition.ui'
+# Form implementation generated from reading ui file 'win_test_condition.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -14,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
 
-questCounter = 0
+testCounter = 0;
 
 class Ui_TestCond(object):
     def __init__(self,questions):
@@ -25,48 +22,56 @@ class Ui_TestCond(object):
     def setupUi(self, Dialog):
         self.window = Dialog
         Dialog.setObjectName("Dialog")
-        Dialog.resize(701, 490)
-        self.check_answer_no_lbl = QtWidgets.QLabel(Dialog)
-        self.check_answer_no_lbl.setGeometry(QtCore.QRect(260, 80, 120, 16))
-        self.check_answer_no_lbl.setObjectName("check_answer_no_lbl")
+        Dialog.resize(703, 487)
+        self.widget = QtWidgets.QWidget(Dialog)
+        self.widget.setGeometry(QtCore.QRect(0, 10, 701, 471))
+        self.widget.setObjectName("widget")
 
-        self.questionnaire_answerNumber = QtWidgets.QSpinBox(Dialog)
-        self.questionnaire_answerNumber.setGeometry(QtCore.QRect(380, 80, 42, 22))
-        self.questionnaire_answerNumber.setObjectName("questionnaire_answerNumber")
+        self.testFor_lbl = QtWidgets.QLabel(self.widget)
+        self.testFor_lbl.setGeometry(QtCore.QRect(50, 20, 70, 13))
+        self.testFor_lbl.setObjectName("label")
 
-        self.questionnaire_radio_include = QtWidgets.QRadioButton(Dialog)
-        self.questionnaire_radio_include.setGeometry(QtCore.QRect(70, 130, 82, 17))
-        self.questionnaire_radio_include.setObjectName("questionnaire_radio_include")
+        self.testCond_test_text = QtWidgets.QLineEdit(self.widget)
+        self.testCond_test_text.setGeometry(QtCore.QRect(110, 20, 113, 20))
+        self.testCond_test_text.setObjectName("testCond_test_text")
 
-        self.questionnaire_radio_exclude = QtWidgets.QRadioButton(Dialog)
-        self.questionnaire_radio_exclude.setGeometry(QtCore.QRect(70, 170, 82, 17))
-        self.questionnaire_radio_exclude.setObjectName("questionnaire_radio_exclude")
+        self.between_lbl = QtWidgets.QLabel(self.widget)
+        self.between_lbl.setGeometry(QtCore.QRect(120, 70, 70, 16))
+        self.between_lbl.setObjectName("label_2")
 
-        self.questionnaire_save = QtWidgets.QPushButton(Dialog)
-        self.questionnaire_save.setGeometry(QtCore.QRect(40, 400, 101, 61))
-        self.questionnaire_save.setObjectName("questionnaire_save")
-        self.questionnaire_save.clicked.connect(self.save_condition)
+        self.testCond_between_min = QtWidgets.QSpinBox(self.widget)
+        self.testCond_between_min.setGeometry(QtCore.QRect(200, 70, 42, 22))
+        self.testCond_between_min.setObjectName("testCond_between_min")
 
-        self.questionnaire_discard = QtWidgets.QPushButton(Dialog)
-        self.questionnaire_discard.setGeometry(QtCore.QRect(160, 400, 101, 61))
-        self.questionnaire_discard.setObjectName("questionnaire_discard")
-        self.questionnaire_discard.clicked.connect(self.exit_window)
+        self.and_lbl = QtWidgets.QLabel(self.widget)
+        self.and_lbl.setGeometry(QtCore.QRect(270, 70, 47, 13))
+        self.and_lbl.setObjectName("label_3")
 
-        self.questionnaire_include_text = QtWidgets.QLineEdit(Dialog)
-        self.questionnaire_include_text.setGeometry(QtCore.QRect(160, 130, 113, 20))
-        self.questionnaire_include_text.setObjectName("questionnaire_include_text")
+        self.testCond_between_max = QtWidgets.QSpinBox(self.widget)
+        self.testCond_between_max.setGeometry(QtCore.QRect(310, 70, 42, 22))
+        self.testCond_between_max.setObjectName("testCond_between_max")
 
-        self.questionnaire_exclude_text = QtWidgets.QLineEdit(Dialog)
-        self.questionnaire_exclude_text.setGeometry(QtCore.QRect(160, 170, 113, 20))
-        self.questionnaire_exclude_text.setObjectName("questionnaire_exclude_text")
+        self.or_lbl = QtWidgets.QLabel(self.widget)
+        self.or_lbl.setGeometry(QtCore.QRect(100, 110, 47, 13))
+        self.or_lbl.setObjectName("label_4")
 
-        self.questionnaire_no_lb = QtWidgets.QLabel(Dialog)
-        self.questionnaire_no_lb.setGeometry(QtCore.QRect(60, 80, 180, 20))
-        self.questionnaire_no_lb.setObjectName("questionnaire_no_lb")
+        self.testCond_bool_positive = QtWidgets.QRadioButton(self.widget)
+        self.testCond_bool_positive.setGeometry(QtCore.QRect(130, 160, 82, 25))
+        self.testCond_bool_positive.setObjectName("testCond_bool_positive")
 
-        self.questionnaire_questtionaire_number = QtWidgets.QSpinBox(Dialog)
-        self.questionnaire_questtionaire_number.setGeometry(QtCore.QRect(180, 80, 42, 22))
-        self.questionnaire_questtionaire_number.setObjectName("questionnaire_questtionaire_number")
+        self.testCond_bool_false = QtWidgets.QRadioButton(self.widget)
+        self.testCond_bool_false.setGeometry(QtCore.QRect(210, 160, 82, 25))
+        self.testCond_bool_false.setObjectName("testCond_bool_false")
+
+        self.testCond_discard = QtWidgets.QPushButton(self.widget)
+        self.testCond_discard.setGeometry(QtCore.QRect(170, 370, 101, 61))
+        self.testCond_discard.setObjectName("testCond_discard")
+        self.testCond_discard.clicked.connect(self.exit_window)
+
+        self.testCond_save = QtWidgets.QPushButton(self.widget)
+        self.testCond_save.setGeometry(QtCore.QRect(40, 370, 101, 61))
+        self.testCond_save.setObjectName("testCond_save")
+        self.testCond_save.clicked.connect(self.save_condition)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -74,38 +79,39 @@ class Ui_TestCond(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.check_answer_no_lbl.setText(_translate("Dialog", "check answer #"))
-        self.questionnaire_radio_include.setText(_translate("Dialog", "include"))
-        self.questionnaire_radio_exclude.setText(_translate("Dialog", "exclude"))
-        self.questionnaire_save.setText(_translate("Dialog", "Save"))
-        self.questionnaire_discard.setText(_translate("Dialog", "Discard"))
-        self.questionnaire_no_lb.setText(_translate("Dialog", "questionnaire #"))
+        self.testFor_lbl.setText(_translate("Dialog", "test for"))
+        self.between_lbl.setText(_translate("Dialog", "between"))
+        self.and_lbl.setText(_translate("Dialog", "and"))
+        self.or_lbl.setText(_translate("Dialog", "or"))
+        self.testCond_bool_positive.setText(_translate("Dialog", "positive"))
+        self.testCond_bool_false.setText(_translate("Dialog", "negative"))
+        self.testCond_discard.setText(_translate("Dialog", "Discard"))
+        self.testCond_save.setText(_translate("Dialog", "Save"))
 
     def save_condition(self):
         try:
-            global questCounter
-            questCounter += 1
+            global testCounter
+            testCounter+=1
+            if self.testCond_bool_positive.isChecked() or self.testCond_bool_false.isChecked():
+                q={"title": "test condition "+str(testCounter), "test":self.testCond_test_text.text(),"positive": self.testCond_bool_positive.isChecked(),"negative": self.testCond_bool_false.isChecked()}
+            else:
+                q={"title" :"test condition "+str(testCounter),
+                    "test": self.testCond_test_text.text(),
+                    "min" : self.testCond_between_min.value() ,
+                   "max": self.testCond_between_max.value()}
 
-            q={"title": "questionnaire condition " + str(questCounter),
-               "qNumber": self.questionnaire_questtionaire_number.value(),
-               "ansNumber": self.questionnaire_answerNumber.value(),
-               "include": self.questionnaire_include_text.text(),
-               "exclude": self.questionnaire_exclude_text.text()
-               }
             self.func(q)
             self.exit_window()
-        except Exception as e:
-            dumpException(e)
+        except Exception as e : dumpException(e)
 
     def exit_window(self):
         self.window.close()
-
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_QuestionnaireDialog(lambda x : x)
+    ui = Ui_TestCond()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
