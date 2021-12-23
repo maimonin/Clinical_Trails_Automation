@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'C:\Users\Raviv Gilady\Desktop\temp dir\tests_builder.ui'
@@ -15,9 +16,9 @@ from node_details import Ui_Node_Details
 
 
 class Ui_Test_Builder(object):
-    def __init__(self,callback):
+    def __init__(self ,callback):
         super().__init__()
-        self.callback=callback
+        self.callbac k =callback
         self._num_of_tests = 0
         self._test_list = []
         self.details = {}
@@ -34,7 +35,7 @@ class Ui_Test_Builder(object):
         self.save_test_btn = QtWidgets.QPushButton(self.widget)
         self.save_test_btn.setGeometry(QtCore.QRect(20, 560, 201, 61))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.save_test_btn.setFont(font)
         self.save_test_btn.setObjectName("save_test_btn")
         self.save_test_btn.clicked.connect(self.save_finish)
@@ -43,7 +44,7 @@ class Ui_Test_Builder(object):
         self.discard_btn = QtWidgets.QPushButton(self.widget)
         self.discard_btn.setGeometry(QtCore.QRect(230, 560, 191, 61))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.discard_btn.setFont(font)
         self.discard_btn.setObjectName("discard_btn")
         self.discard_btn.clicked.connect(self.discard)
@@ -51,7 +52,7 @@ class Ui_Test_Builder(object):
         self.add_test_btn = QtWidgets.QPushButton(self.widget)
         self.add_test_btn.setGeometry(QtCore.QRect(340, 250, 171, 51))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_test_btn.setFont(font)
         self.add_test_btn.setObjectName("add_test_btn")
         self.add_test_btn.clicked.connect(self.add_test)
@@ -59,7 +60,7 @@ class Ui_Test_Builder(object):
         self.add_node_details_btn = QtWidgets.QPushButton(self.widget)
         self.add_node_details_btn.setGeometry(QtCore.QRect(340, 320, 171, 51))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_node_details_btn.setFont(font)
         self.add_node_details_btn.setObjectName("add_node_details_btn")
         self.add_node_details_btn.clicked.connect(self.add_node_details)
@@ -84,10 +85,10 @@ class Ui_Test_Builder(object):
         ui.setupUi(self.new_window)
         self.new_window.exec_()
 
-    def callback_from_node_details(self,details):
+    def callback_from_node_details(self ,details):
         self.new_window.close()
         if details is not None:
-            self.details=details
+            self.detail s =details
 
     def add_test(self):
         try:
@@ -97,7 +98,7 @@ class Ui_Test_Builder(object):
             self.new_window.exec_()
         except Exception as e : dumpException(e)
 
-    def add_line(self,test):
+    def add_line(self ,test):
         self._test_list.append(test)
         _translate = QtCore.QCoreApplication.translate
         item = QtWidgets.QListWidgetItem()

@@ -13,6 +13,7 @@ from win_questionnaire_condition import Ui_QuestionnaireDialog
 from win_test_condition import Ui_TestCond
 from win_trait_condition import Ui_TraitCond
 from nodeeditor.utils import dumpException
+from node_details import Ui_Node_Details
 
 class Ui_Decision_Node(object):
     def __init__(self, callback):
@@ -30,17 +31,17 @@ class Ui_Decision_Node(object):
         self.widget.setObjectName("widget")
         self.window=Dialog
         self.decision_addCond_questionnaire = QtWidgets.QPushButton(self.widget)
-        self.decision_addCond_questionnaire.setGeometry(QtCore.QRect(520, 280, 191, 61))
+        self.decision_addCond_questionnaire.setGeometry(QtCore.QRect(520, 280, 250, 61))
         self.decision_addCond_questionnaire.setObjectName("decision_addCond_questionnaire")
         self.decision_addCond_questionnaire.clicked.connect(self.add_cond_questionnaire)
 
         self.decision_addCond_test = QtWidgets.QPushButton(self.widget)
-        self.decision_addCond_test.setGeometry(QtCore.QRect(520, 210, 191, 61))
+        self.decision_addCond_test.setGeometry(QtCore.QRect(520, 210, 250, 61))
         self.decision_addCond_test.setObjectName("decision_addCond_test")
         self.decision_addCond_test.clicked.connect(self.add_cond_test)
 
         self.decision_addCond_trait = QtWidgets.QPushButton(self.widget)
-        self.decision_addCond_trait.setGeometry(QtCore.QRect(520, 140, 191, 61))
+        self.decision_addCond_trait.setGeometry(QtCore.QRect(520, 140, 250, 61))
         self.decision_addCond_trait.setObjectName("decision_addCond_trait")
         self.decision_addCond_trait.clicked.connect(self.add_cond_trait)
 
@@ -48,14 +49,16 @@ class Ui_Decision_Node(object):
         self.decision_save.setGeometry(QtCore.QRect(40, 560, 101, 61))
         self.decision_save.setObjectName("decision_save")
         self.decision_save.clicked.connect(self.save_finish)
+
         self.decision_discard = QtWidgets.QPushButton(self.widget)
         self.decision_discard.setGeometry(QtCore.QRect(160, 560, 101, 61))
         self.decision_discard.setObjectName("decision_discard")
 
         self.decision_discard.clicked.connect(self.discard)
         self.decision_edit = QtWidgets.QPushButton(self.widget)
-        self.decision_edit.setGeometry(QtCore.QRect(280, 560, 101, 61))
+        self.decision_edit.setGeometry(QtCore.QRect(280, 560, 150, 61))
         self.decision_edit.setObjectName("decision_edit")
+        self.decision_edit.clicked.connect(self.add_node_details)
 
         self.questions_list = QtWidgets.QListWidget(self.widget)
         self.questions_list.setGeometry(QtCore.QRect(30, 30, 431, 491))
@@ -72,7 +75,7 @@ class Ui_Decision_Node(object):
         self.decision_addCond_trait.setText(_translate("Dialog", "add trait condition"))
         self.decision_save.setText(_translate("Dialog", "Save"))
         self.decision_discard.setText(_translate("Dialog", "Discard"))
-        self.decision_edit.setText(_translate("Dialog", "Edit Node details"))
+        self.decision_edit.setText(_translate("Dialog", "Add Node details"))
 
     def add_cond_questionnaire(self):
         try:
@@ -112,6 +115,18 @@ class Ui_Decision_Node(object):
         self.callback(None)
     def save_finish(self):
         self.callback({"node_details": self.details, "condition": self.questions})
+
+    def add_node_details(self):
+        self.new_window = QtWidgets.QDialog()
+        ui = Ui_Node_Details(self.callback_from_node_details)
+        ui.setupUi(self.new_window)
+        self.new_window.exec_()
+
+    def callback_from_node_details(self, details):
+        self.new_window.close()
+        if details is not None:
+            self.details = details
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

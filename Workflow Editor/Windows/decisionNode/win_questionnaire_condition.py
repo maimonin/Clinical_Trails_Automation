@@ -1,3 +1,5 @@
+
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'win_questionnaire_condition.ui'
@@ -23,12 +25,12 @@ class Ui_QuestionnaireDialog(object):
         self.window = Dialog
         Dialog.setObjectName("Dialog")
         Dialog.resize(701, 490)
-        self.label = QtWidgets.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(260, 80, 101, 16))
-        self.label.setObjectName("label")
+        self.check_answer_no_lbl = QtWidgets.QLabel(Dialog)
+        self.check_answer_no_lbl.setGeometry(QtCore.QRect(260, 80, 120, 16))
+        self.check_answer_no_lbl.setObjectName("check_answer_no_lbl")
 
         self.questionnaire_answerNumber = QtWidgets.QSpinBox(Dialog)
-        self.questionnaire_answerNumber.setGeometry(QtCore.QRect(350, 80, 42, 22))
+        self.questionnaire_answerNumber.setGeometry(QtCore.QRect(380, 80, 42, 22))
         self.questionnaire_answerNumber.setObjectName("questionnaire_answerNumber")
 
         self.questionnaire_radio_include = QtWidgets.QRadioButton(Dialog)
@@ -57,9 +59,9 @@ class Ui_QuestionnaireDialog(object):
         self.questionnaire_exclude_text.setGeometry(QtCore.QRect(160, 170, 113, 20))
         self.questionnaire_exclude_text.setObjectName("questionnaire_exclude_text")
 
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setGeometry(QtCore.QRect(80, 80, 101, 16))
-        self.label_2.setObjectName("label_2")
+        self.questionnaire_no_lb = QtWidgets.QLabel(Dialog)
+        self.questionnaire_no_lb.setGeometry(QtCore.QRect(60, 80, 180, 20))
+        self.questionnaire_no_lb.setObjectName("questionnaire_no_lb")
 
         self.questionnaire_questtionaire_number = QtWidgets.QSpinBox(Dialog)
         self.questionnaire_questtionaire_number.setGeometry(QtCore.QRect(180, 80, 42, 22))
@@ -71,20 +73,21 @@ class Ui_QuestionnaireDialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label.setText(_translate("Dialog", "check answer no"))
+        self.check_answer_no_lbl.setText(_translate("Dialog", "check answer #"))
         self.questionnaire_radio_include.setText(_translate("Dialog", "include"))
         self.questionnaire_radio_exclude.setText(_translate("Dialog", "exclude"))
         self.questionnaire_save.setText(_translate("Dialog", "Save"))
         self.questionnaire_discard.setText(_translate("Dialog", "Discard"))
-        self.label_2.setText(_translate("Dialog", "questionnaire no"))
+        self.questionnaire_no_lb.setText(_translate("Dialog", "questionnaire #"))
 
     def save_condition(self):
         try:
             global questCounter
             questCounter += 1
-
             q={"title": "questionnaire condition " + str(questCounter),
+
                "type":"questionnaire condition ",
+
                "qNumber": self.questionnaire_questtionaire_number.value(),
                "ansNumber": self.questionnaire_answerNumber.value(),
                "include": self.questionnaire_include_text.text(),
@@ -103,7 +106,8 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_QuestionnaireDialog(lambda x: x)
+    ui = Ui_QuestionnaireDialog(lambda x : x)
+
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
