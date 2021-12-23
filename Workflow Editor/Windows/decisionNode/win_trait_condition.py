@@ -108,7 +108,7 @@ class Ui_TraitCond(object):
             global traitCounter
             traitCounter+=1
             q={"title": "trait condition " + str(traitCounter),
-               "type" : "trait condition ",
+               "type" : "trait condition    ",
                }
             if self.traitCondition_sex_check.isChecked():
                 q["test"]="gender"
@@ -123,7 +123,6 @@ class Ui_TraitCond(object):
             else:
                 #TODO notify user this is not ok
                 return
-            # TODO: add support for custom
             self.func(q)
             self.exit_window()
         except Exception as e : dumpException(e)
