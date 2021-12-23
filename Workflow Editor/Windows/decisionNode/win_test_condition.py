@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
-
+from conditions import create_satisfy_range,create_satisfy_positive_or_negative_one_choice
 testCounter = 0;
 
 class Ui_TestCond(object):
@@ -92,13 +92,15 @@ class Ui_TestCond(object):
         try:
             global testCounter
             testCounter+=1
+            q={ "title": "test condition "+str(testCounter), \
+                "type":"test condition ",
+                "test":self.testCond_test_text.text(),
+                }
+
             if self.testCond_bool_positive.isChecked() or self.testCond_bool_false.isChecked():
-                q={"title": "test condition "+str(testCounter), "test":self.testCond_test_text.text(),"positive": self.testCond_bool_positive.isChecked(),"negative": self.testCond_bool_false.isChecked()}
+                q["satisfy"]=create_satisfy_positive_or_negative_one_choice(self.testCond_bool_positive.isChecked())
             else:
-                q={"title" :"test condition "+str(testCounter),
-                    "test": self.testCond_test_text.text(),
-                    "min" : self.testCond_between_min.value() ,
-                   "max": self.testCond_between_max.value()}
+                q["satisfy"]= create_satisfy_range(self.testCond_between_min.value(),self.testCond_between_max.value())
 
             self.func(q)
             self.exit_window()
@@ -111,7 +113,8 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_TestCond()
+    ui = Ui_TestCond(None)
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
+

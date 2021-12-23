@@ -31,6 +31,9 @@ class WorkflowNode(Node):
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
+    def initSettings(self):
+        super().initSettings()
+        self.input_multi_edged= True
     def drop_action(self):
         pass
     def callback_from_window(self, content, window):

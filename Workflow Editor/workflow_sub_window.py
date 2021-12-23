@@ -3,7 +3,7 @@ import socket
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from nodeeditor.node_editor_widget import  NodeEditorWidget
+from nodeeditor.node_editor_widget import NodeEditorWidget
 from qtpy import QtWidgets, QtCore
 
 from workflow_conf import *
@@ -14,8 +14,8 @@ from PyQt5.QtCore import pyqtSlot
 import time
 import threading
 
-
 DEBUG = False
+
 
 class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
@@ -31,22 +31,23 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
-        self.scene.addDropListener(self.  onDrop)
+        self.scene.addDropListener(self.onDrop)
 
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendlyFilename())
 
-    def onDragEnter(self,event):
+    def onDragEnter(self, event):
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             event.acceptProposedAction()
         else:
             event.setAccepted(False)
-    def onDrop(self,event):
+
+    def onDrop(self, event):
         self.scene.serialize()
         print("On drop")
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
-            eventData= event.mimeData().data(LISTBOX_MIMETYPE)
-            dataStream = QDataStream(eventData,QIODevice.ReadOnly)
+            eventData = event.mimeData().data(LISTBOX_MIMETYPE)
+            dataStream = QDataStream(eventData, QIODevice.ReadOnly)
             pixmap = QPixmap()
             dataStream >> pixmap
             op_code = dataStream.readInt()
@@ -58,14 +59,15 @@ class WorkflowSubWindow(NodeEditorWidget):
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
                 node.drop_action()
-            except Exception as e : dumpException(e)
-
+            except Exception as e:
+                dumpException(e)
 
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:
             event.ignore()
-    #TODO serialize, and send the json to server
+
+    # TODO serialize, and send the json to server
 
     # def get_node_by_socket(self,socket):
     #     for node in self.scene.nodes:
@@ -100,7 +102,7 @@ class WorkflowSubWindow(NodeEditorWidget):
         try:
             f = open('data.json')
             data = json.load(f)
-            data['sender']="editor"
+            data['sender'] = "editor"
             host = '127.0.0.1'
             port = 8000
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

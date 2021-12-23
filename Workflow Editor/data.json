@@ -1,55 +1,16 @@
 {
-    "id": 1244822386720,
+    "id": 1609538414624,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1244856035072,
-            "title": "Questionnaire",
-            "pos_x": 48.0,
-            "pos_y": -131.0,
-            "inputs": [
-                {
-                    "id": 1244856071024,
-                    "index": 0,
-                    "multi_edges": false,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1244856071072,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "q1",
-                    "actor in charge": "Nurse",
-                    "time": "20"
-                },
-                "questions": [
-                    {
-                        "text": "how are you?",
-                        "type": "open"
-                    }
-                ]
-            },
-            "op_code": 1
-        },
-        {
-            "id": 1244856193664,
+            "id": 1609565448368,
             "title": "Decision",
-            "pos_x": 478.0,
-            "pos_y": -23.0,
+            "pos_x": 385.0,
+            "pos_y": -158.0,
             "inputs": [
                 {
-                    "id": 1244856193472,
+                    "id": 1609565472032,
                     "index": 0,
                     "multi_edges": false,
                     "position": 3,
@@ -58,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1244856193760,
+                    "id": 1609565472080,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -70,26 +31,15 @@
                 "condition": [
                     {
                         "title": "trait condition 1",
-                        "min": 2,
-                        "max": 3
-                    },
-                    {
-                        "title": "test condition 1",
-                        "test": "cbc",
-                        "min": 1,
-                        "max": 3
+                        "age": true,
+                        "gender": "male",
+                        "min": 12,
+                        "max": 1
                     }
                 ]
             },
             "op_code": 3
         }
     ],
-    "edges": [
-        {
-            "id": 1244856193328,
-            "edge_type": 2,
-            "start": 1244856071072,
-            "end": 1244856193472
-        }
-    ]
+    "edges": []
 }

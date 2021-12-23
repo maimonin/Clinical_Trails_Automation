@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
-
+from conditions import *
 traitCounter = 0;
 
 class Ui_TraitCond(object):
@@ -107,19 +107,22 @@ class Ui_TraitCond(object):
         try:
             global traitCounter
             traitCounter+=1
-            q={}
-            if self.traitCondition_sex_check.isChecked() and self.traitCondition_sex_male.isChecked():
-                q={"title": "trait condition " + str(traitCounter),
-                   "age": self.traitCondition_sex_check.isChecked(),
-                   "gender": "male"}
-            elif self.traitCondition_sex_check.isChecked() and self.traitCondition_sex_female.isChecked():
-                q={"title": "trait condition " + str(traitCounter),
-                   "gender": "female"}
-            if self.traitCondition_age_check.isChecked():
-                q["title"] = "trait condition " + str(traitCounter)
-                q["min"] = self.traitCondition_between_min.value()
-                q["max"] = self.traitCondition_between_max.value()
+            q={"title": "trait condition " + str(traitCounter),
+               "type" : "trait condition ",
+               }
+            if self.traitCondition_sex_check.isChecked():
+                q["test"]="gender"
+                q["satisfy"] = create_satisfy_one_choice("male" if self.traitCondition_sex_male.isChecked() else "female")
+            elif self.traitCondition_age_check.isChecked():
+                q["test"]="age"
+                q["satisfy"] = create_satisfy_range(self.traitCondition_between_min.value(),self.traitCondition_between_max.value())
+            elif(self.traitCondition_custom_text.text()!=""):
+                q["test"] = self.traitCondition_custom_text.text()
+                q["satisfy"] = create_satisfy_one_choice("positive" if self.traitCondition_customRadio_positive.isChecked() else "negative")
 
+            else:
+                #TODO notify user this is not ok
+                return
             # TODO: add support for custom
             self.func(q)
             self.exit_window()
@@ -133,7 +136,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_TraitCond()
+    ui = Ui_TraitCond(lambda x:x)
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

@@ -110,7 +110,7 @@ class Ui_Decision_Node(object):
         item.setText(_translate("Dialog", f"{question['title']}"))
         self.questions.append(question)
         self._num_of_question += 1
-
+        print(question)
     def discard(self):
         self.callback(None)
     def save_finish(self):
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Decision_Node()
+    ui = Ui_Decision_Node(lambda x:x)
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

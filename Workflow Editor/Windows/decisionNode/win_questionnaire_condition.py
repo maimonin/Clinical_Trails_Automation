@@ -86,6 +86,8 @@ class Ui_QuestionnaireDialog(object):
             questCounter += 1
             q={"title": "questionnaire condition " + str(questCounter),
 
+               "type":"questionnaire condition ",
+
                "qNumber": self.questionnaire_questtionaire_number.value(),
                "ansNumber": self.questionnaire_answerNumber.value(),
                "include": self.questionnaire_include_text.text(),
@@ -105,6 +107,7 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_QuestionnaireDialog(lambda x : x)
+
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

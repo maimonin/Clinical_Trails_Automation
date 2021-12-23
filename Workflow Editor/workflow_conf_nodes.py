@@ -35,8 +35,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         if content is None:
             self.remove()
         else:
-            print(content)
-
             self.content = content
 
 @register_node(OP_NODE_DATA_ENTRY)
