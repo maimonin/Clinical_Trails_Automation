@@ -75,7 +75,7 @@ class Ui_Decision_Node(object):
         self.decision_addCond_trait.setText(_translate("Dialog", "add trait condition"))
         self.decision_save.setText(_translate("Dialog", "Save"))
         self.decision_discard.setText(_translate("Dialog", "Discard"))
-        self.decision_edit.setText(_translate("Dialog", "Edit Node details"))
+        self.decision_edit.setText(_translate("Dialog", "Add Node details"))
 
     def add_cond_questionnaire(self):
         try:
