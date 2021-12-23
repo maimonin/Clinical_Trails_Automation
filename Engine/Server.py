@@ -2,9 +2,7 @@ import json
 import socket
 from _thread import *
 import threading
-
-from Data import add_questionnaire
-from Engine.Nodes import Questionnaire
+from Engine.Nodes import Questionnaire, TestNode, Decision
 from Logger import log
 from Users import add_user
 
@@ -19,33 +17,67 @@ OP_NODE_STRING = 4
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actor in charge'], content['questions'])
+    node = Questionnaire(node_dict['id'], node_details['title'], content['questions'])
     return node
 
 
 def parse_Test(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
+    node = TestNode(node_dict['id'], node_details['title'], content['tests'], node_details['actor in charge'])
     return node
+
+
+def parse_trait_condition(satisfy, trait):
+    if satisfy['type'] == 'range':
+        values = satisfy['value']
+        return lambda patient: True if values['min'] <= trait <= values['max'] else False
+    else:
+        return lambda patient: True if trait == satisfy['value'] else False
+
+
+# def parse_questionnaire_condition(satisfy, trait):
+#     if satisfy['type'] == 'range':
+#         values = satisfy['value']
+#         return lambda patient: True if values['min'] <= trait <= values['max'] else False
+#     else:
+#         return lambda patient: True if trait == satisfy['value'] else False
+
+
+def parse_test_condition(satisfy, test_name):
+
+    if satisfy['type'] == 'range':
+        values = satisfy['value']
+        return lambda patient: True if values['min'] <= trait <= values['max'] else False
+    else:
+        return lambda patient: True if trait == satisfy['value'] else False
 
 
 def parse_Decision(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
+    conditions = content['condition']
+    combined_condition = []
+    for condition in conditions:
+        if condition['type'] == 'trait condition':
+            combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
+        # elif condition['questionnaire condition']:
+        #     combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
+        elif condition['test condition']:
+            combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
+    node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
     return node
 
 
 def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], node_details['actors'], content['text'])
+    node = Questionnaire(node_dict['id'], node_details['title'], content['text'])
     return node
 
 
 def register_user(self, user_dict, c):
-    add_user(user_dict['role'], user_dict['id'], c)
+    add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
     log("user " + user_dict['role'] + " received")
     if user_dict['role'] == "participant":
         if len(workflows) == 0:

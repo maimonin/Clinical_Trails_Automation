@@ -6,12 +6,12 @@ host = '127.0.0.1'
 port = 8000
 
 user_id = 0
-users = [{"name": "nurse", "role": "nurse"},
-         {"name": "investigator", "role": "investigator"},
-         {"name": "lab", "role": "lab"},
-         {"name": "doctor", "role": "doctor"},
-         {"name": "participant1", "role": "participant", "workflow": 0},
-         {"name": "participant2", "role": "participant", "workflow": 0}]
+users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
+         {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
+         {"name": "lab", "role": "lab", "sex": "male", "age": 30},
+         {"name": "doctor", "role": "doctor", "sex": "female", "age": 30},
+         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
+         {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 
 def participant_simulation(self, user):
