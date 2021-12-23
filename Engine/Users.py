@@ -47,7 +47,7 @@ def get_role(role):
         return nurses[randint(0, len(labs) - 1)]
 
 
-def answer_questionnaire( questions, s):
+def answer_questionnaire(questions, s):
     s.send(json.dumps({'type': 'questionnaire', 'questions': questions}).encode('ascii'))
     ans = s.recv(5000)
     return json.loads(ans)

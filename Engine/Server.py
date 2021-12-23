@@ -77,27 +77,23 @@ def parse_String_Node(node_dict):
     return node
 
 
-def register_user( user_dict, c):
-    print("user")
-    print(user_dict)
-    add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
-    log("user " + user_dict['role'] + " received")
-    if user_dict['role'] == "participant":
+def register_user(user_dict, c):
+    user = add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
+    log("user " + user.role + " received")
+    if user.role == "participant":
         if len(workflows) == 0:
             print("No workflow yet")
             c.close()
         else:
             # start participant's workflow
-            user = add_user(user_dict['role'],user_dict['sex'], user_dict['age'], user_dict['id'], c)
             workflows[user_dict["workflow"]].attach(user)
             workflows[user_dict["workflow"]].exec()
 
 
-def new_workflow( data_dict, c):
+def new_workflow(data_dict, c):
     nodes = {}
     outputs = {}
     inputs = {}
-    print(data_dict)
     for node in data_dict['nodes']:
         if node['op_code'] == OP_NODE_QUESTIONNAIRE:
             nodes[node['id']] = parse_Questionnaire(node)
@@ -119,7 +115,7 @@ def new_workflow( data_dict, c):
         first = nodes[first_id]
         second = nodes[second_id]
         # label= edge['label']
-        first.next = second
+        first.next_nodes.append(second)
 
 
 def threaded(c):
@@ -131,7 +127,6 @@ def threaded(c):
             break
         data_dict = json.loads(data)
         if data_dict['sender'] == 'simulator':
-            print("got here")
             register_user(data_dict, c)
         else:
             new_workflow(data_dict, c)
@@ -159,7 +154,6 @@ def Main():
 
     while True:
         c, addr = s.accept()
-        print("here")
         log('Connected to client')
         start_new_thread(threaded, (c,))
     s.close()

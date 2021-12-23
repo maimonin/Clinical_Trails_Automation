@@ -58,7 +58,7 @@ class Questionnaire(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-#            log("participant " + participant.id + " in data questionnaire with title: " + self.title)
+            log("participant " + str(participant.id) + " in data questionnaire with title: " + self.title)
             # send questionnaire to participant
             answers = answer_questionnaire(self.form, participant.socket)
             add_questionnaire(answers, participant)
