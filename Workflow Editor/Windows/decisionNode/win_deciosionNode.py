@@ -30,17 +30,17 @@ class Ui_Decision_Node(object):
         self.widget.setObjectName("widget")
         self.window=Dialog
         self.decision_addCond_questionnaire = QtWidgets.QPushButton(self.widget)
-        self.decision_addCond_questionnaire.setGeometry(QtCore.QRect(520, 280, 191, 61))
+        self.decision_addCond_questionnaire.setGeometry(QtCore.QRect(520, 280, 250, 61))
         self.decision_addCond_questionnaire.setObjectName("decision_addCond_questionnaire")
         self.decision_addCond_questionnaire.clicked.connect(self.add_cond_questionnaire)
 
         self.decision_addCond_test = QtWidgets.QPushButton(self.widget)
-        self.decision_addCond_test.setGeometry(QtCore.QRect(520, 210, 191, 61))
+        self.decision_addCond_test.setGeometry(QtCore.QRect(520, 210, 250, 61))
         self.decision_addCond_test.setObjectName("decision_addCond_test")
         self.decision_addCond_test.clicked.connect(self.add_cond_test)
 
         self.decision_addCond_trait = QtWidgets.QPushButton(self.widget)
-        self.decision_addCond_trait.setGeometry(QtCore.QRect(520, 140, 191, 61))
+        self.decision_addCond_trait.setGeometry(QtCore.QRect(520, 140, 250, 61))
         self.decision_addCond_trait.setObjectName("decision_addCond_trait")
         self.decision_addCond_trait.clicked.connect(self.add_cond_trait)
 
@@ -54,7 +54,7 @@ class Ui_Decision_Node(object):
 
         self.decision_discard.clicked.connect(self.discard)
         self.decision_edit = QtWidgets.QPushButton(self.widget)
-        self.decision_edit.setGeometry(QtCore.QRect(280, 560, 101, 61))
+        self.decision_edit.setGeometry(QtCore.QRect(280, 560, 150, 61))
         self.decision_edit.setObjectName("decision_edit")
 
         self.questions_list = QtWidgets.QListWidget(self.widget)

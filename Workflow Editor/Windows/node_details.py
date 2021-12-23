@@ -1,3 +1,7 @@
+
+
+
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'C:\Users\Raviv Gilady\Desktop\temp dir\node_details.ui'
@@ -27,7 +31,7 @@ class Ui_Node_Details(object):
         self.save_details_btn = QtWidgets.QPushButton(self.widget)
         self.save_details_btn.setGeometry(QtCore.QRect(40, 470, 201, 61))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.save_details_btn.setFont(font)
         self.save_details_btn.setObjectName("save_details_btn")
         self.save_details_btn.clicked.connect(self.save_datails)
@@ -46,7 +50,7 @@ class Ui_Node_Details(object):
         self.add_actor_btn = QtWidgets.QPushButton(self.widget)
         self.add_actor_btn.setGeometry(QtCore.QRect(220, 240, 101, 31))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_actor_btn.setFont(font)
         self.add_actor_btn.setObjectName("add_actor_btn")
         self.add_actor_btn.clicked.connect(self.add_line)
