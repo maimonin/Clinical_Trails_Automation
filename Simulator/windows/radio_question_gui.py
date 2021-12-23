@@ -9,45 +9,65 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from nodeeditor.utils import dumpException
 
 
-class Ui_open_question_gui(object):
-    def setupUi(self, open_question_gui):
-        open_question_gui.setObjectName("open_question_gui")
-        open_question_gui.resize(687, 422)
-        self.widget = QtWidgets.QWidget(open_question_gui)
-        self.widget.setGeometry(QtCore.QRect(-1, -1, 691, 421))
+class Ui_radio_question_gui(object):
+    def __init__(self):
+        super().__init__()
+        self.next=None
+
+    def setupUi(self, open_radio_gui):
+        open_radio_gui.setObjectName("open_question_gui")
+        open_radio_gui.resize(700, 800)
+        self.window=open_radio_gui
+        self.widget = QtWidgets.QWidget(open_radio_gui)
+        self.widget.setGeometry(QtCore.QRect(-1, -1, 700, 800))
         self.widget.setObjectName("widget")
         self.quetion_txt = QtWidgets.QLabel(self.widget)
         self.quetion_txt.setGeometry(QtCore.QRect(60, 30, 181, 51))
         self.quetion_txt.setObjectName("quetion_txt")
         self.next_btn = QtWidgets.QPushButton(self.widget)
-        self.next_btn.setGeometry(QtCore.QRect(60, 290, 75, 23))
+        self.next_btn.setGeometry(QtCore.QRect(60, 650, 100, 50))
         self.next_btn.setObjectName("next_btn")
+        self.next_btn.clicked.connect(self.next_on_click)
         self.groupBox = QtWidgets.QGroupBox(self.widget)
-        self.groupBox.setGeometry(QtCore.QRect(60, 80, 341, 201))
+        self.groupBox.setGeometry(QtCore.QRect(60, 100, 600, 500))
         self.groupBox.setObjectName("groupBox")
         self.radioButton1 = QtWidgets.QRadioButton(self.groupBox)
-        self.radioButton1.setGeometry(QtCore.QRect(10, 20, 83, 18))
+        self.radioButton1.setGeometry(QtCore.QRect(10, 50, 300, 30))
         self.radioButton1.setObjectName("radioButton1")
         self.radioButton_2 = QtWidgets.QRadioButton(self.groupBox)
-        self.radioButton_2.setGeometry(QtCore.QRect(10, 50, 83, 18))
+        self.radioButton_2.setGeometry(QtCore.QRect(10, 90, 300, 30))
         self.radioButton_2.setObjectName("radioButton_2")
         self.radioButton_3 = QtWidgets.QRadioButton(self.groupBox)
-        self.radioButton_3.setGeometry(QtCore.QRect(10, 80, 83, 18))
+        self.radioButton_3.setGeometry(QtCore.QRect(10, 130, 300, 30))
         self.radioButton_3.setObjectName("radioButton_3")
         self.radioButton_4 = QtWidgets.QRadioButton(self.groupBox)
-        self.radioButton_4.setGeometry(QtCore.QRect(10, 110, 83, 18))
+        self.radioButton_4.setGeometry(QtCore.QRect(10, 170, 300, 30))
         self.radioButton_4.setObjectName("radioButton_4")
         self.radioButton_6 = QtWidgets.QRadioButton(self.groupBox)
-        self.radioButton_6.setGeometry(QtCore.QRect(10, 170, 83, 18))
+        self.radioButton_6.setGeometry(QtCore.QRect(10,250 , 300, 30))
         self.radioButton_6.setObjectName("radioButton_6")
         self.radioButton_5 = QtWidgets.QRadioButton(self.groupBox)
-        self.radioButton_5.setGeometry(QtCore.QRect(10, 140, 83, 18))
+        self.radioButton_5.setGeometry(QtCore.QRect(10, 210, 300, 30))
         self.radioButton_5.setObjectName("radioButton_5")
+        self.retranslateUi(open_radio_gui)
+        QtCore.QMetaObject.connectSlotsByName(open_radio_gui)
 
-        self.retranslateUi(open_question_gui)
-        QtCore.QMetaObject.connectSlotsByName(open_question_gui)
+    def next_on_click(self):
+        if self.next==None:
+            self.save_questionnaire()
+        else:
+            try:
+                self.new_window = QtWidgets.QDialog()
+                self.next.setupUi(self.new_window)
+                self.new_window.exec_()
+            except Exception as e:
+                dumpException(e)
+
+    def save_questionnaire(self):
+        print('lala')
 
     def retranslateUi(self, open_question_gui):
         _translate = QtCore.QCoreApplication.translate
@@ -67,7 +87,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     open_question_gui = QtWidgets.QDialog()
-    ui = Ui_open_question_gui()
+    ui = Ui_radio_question_gui()
     ui.setupUi(open_question_gui)
     open_question_gui.show()
     sys.exit(app.exec_())
