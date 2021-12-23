@@ -21,6 +21,9 @@ class User:
     def update(self, callback) -> None:
         callback()
 
+    def get_traits(self):
+        return {"sex": self.sex, "age": self.age}
+
 
 def add_user(role, sex, age, user_id, socket):
     user = User(role, sex, age, user_id, socket)
@@ -34,7 +37,7 @@ def add_user(role, sex, age, user_id, socket):
         labs.append(user)
     elif role == "participant":
         participants[user.id] = user
-#    log("user " + user.id + " is added")
+    log("user " + str(user.id) + " is added")
     return user
 
 
@@ -50,6 +53,7 @@ def get_role(role):
 def answer_questionnaire(questions, s):
     s.send(json.dumps({'type': 'questionnaire', 'questions': questions}).encode('ascii'))
     ans = s.recv(5000)
+    log("answering questionnaire")
     return json.loads(ans)
 
 
@@ -63,4 +67,7 @@ def take_test(user_id, test, in_charge, s):
     form = {'test': test, 'patient': user_id}
     get_role(in_charge).socket.send(json.dumps(form).encode('ascii'))
     results = get_role(in_charge).socket(5000)
+    log("taking a test")
     return json.loads(results)
+
+

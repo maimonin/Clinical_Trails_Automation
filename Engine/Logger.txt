@@ -1,3 +1,14 @@
 socket bound to port
 socket is listening
 Connected to client
+created workflow
+Connected to client
+user 0 is added
+user participant received
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 0 in decision node with title: decision
+Questionnaire: Attached an observer.
+participant 0 in data questionnaire with title: q1
+answering questionnaire
+adding questionnaire of 0

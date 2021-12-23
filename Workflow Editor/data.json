@@ -1,16 +1,16 @@
 {
-    "id": 1811764326704,
+    "id": 2577014857056,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1811791355856,
-            "title": "Questionnaire",
-            "pos_x": 110.0,
-            "pos_y": 29.0,
+            "id": 2577015348288,
+            "title": "Decision",
+            "pos_x": -72.0,
+            "pos_y": -151.0,
             "inputs": [
                 {
-                    "id": 1811791397456,
+                    "id": 2577015384288,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1811791397504,
+                    "id": 2577015384336,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -27,12 +27,130 @@
                 }
             ],
             "content": {
-                "node_details": {},
-                "questions": [],
+                "node_details": {
+                    "actors": [],
+                    "title": "decision",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "condition": [
+                    {
+                        "title": "trait condition 1",
+                        "type": "trait condition    ",
+                        "test": "age",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 20,
+                                "max": 30
+                            }
+                        }
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2577015453152,
+            "title": "Questionnaire",
+            "pos_x": -149.0,
+            "pos_y": 113.0,
+            "inputs": [
+                {
+                    "id": 2577015453392,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2577015453440,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "q1",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "questions": [
+                    {
+                        "text": "what you doin",
+                        "options": [
+                            "good",
+                            "bad"
+                        ],
+                        "type": "multi"
+                    }
+                ],
                 "qusetionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2577015517920,
+            "title": "Questionnaire",
+            "pos_x": 270.0,
+            "pos_y": 142.0,
+            "inputs": [
+                {
+                    "id": 2577015518400,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2577015518448,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "q2",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "questions": [
+                    {
+                        "text": "where you at?",
+                        "options": [
+                            "home",
+                            "hackathon"
+                        ],
+                        "type": "multi"
+                    }
+                ],
+                "qusetionnaire_number": 2
             },
             "op_code": 1
         }
     ],
-    "edges": []
+    "edges": [
+        {
+            "id": 2577015453488,
+            "edge_type": 2,
+            "start": 2577015384336,
+            "end": 2577015453392
+        },
+        {
+            "id": 2577015518640,
+            "edge_type": 2,
+            "start": 2577015384336,
+            "end": 2577015518400
+        }
+    ]
 }
