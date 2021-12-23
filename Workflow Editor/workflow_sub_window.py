@@ -102,7 +102,9 @@ class WorkflowSubWindow(NodeEditorWidget):
         try:
             f = open('data.json')
             data = json.load(f)
+            print(data)
             data['sender'] = "editor"
+            data['workflow_id']=0
             host = '127.0.0.1'
             port = 8000
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

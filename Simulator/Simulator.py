@@ -1,5 +1,6 @@
 import json
 import socket
+import threading
 from _thread import start_new_thread
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -21,7 +22,7 @@ users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 
-def create_questionnaire(self, questions,call):
+def create_questionnaire(questions,call):
     first = None
     prev = None
     for q in questions:
@@ -39,7 +40,7 @@ def create_questionnaire(self, questions,call):
         prev = curr
     return first
 
-def create_tests(self, tests,call):
+def create_tests(tests,call):
     first = None
     prev = None
     for t in tests:
@@ -52,7 +53,8 @@ def create_tests(self, tests,call):
         prev = curr
     return first
 
-def participant_simulation(self, user):
+def participant_simulation( user):
+    print("here")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     register_user(user, s)
@@ -81,25 +83,23 @@ def participant_simulation(self, user):
    # elif data_json['type'] == 'test':
 
 
-def register_user(self, user, s):
+def register_user(user, s):
     global user_id
-    message = json.dumps({'sender': 'simulator', 'type': 'add user', 'role': user["role"], 'id': user_id})
+    print("lala")
+    dict={'sender': 'simulator', 'type': 'add user', 'id': user_id}.update(user)
+    message = json.dumps(dict)
     user_id += 1
     s.send(message.encode('ascii'))
 
 
 def Main():
+    threads=[]
     for user in users:
         if user['role'] == 'participant':
-            start_new_thread(participant_simulation, (user,))
-    while True:
-        # ask the client whether he wants to continue
-        ans = input('\nDo you want to continue(y/n) :')
-        if ans == 'y':
-            continue
-        else:
-            break
-
-
+            threads.append(threading.Thread(target=participant_simulation, args=(user,)))
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
 if __name__ == '__main__':
     Main()

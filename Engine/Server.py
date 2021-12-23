@@ -76,7 +76,9 @@ def parse_String_Node(node_dict):
     return node
 
 
-def register_user(self, user_dict, c):
+def register_user( user_dict, c):
+    print("user")
+    print(user_dict)
     add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
     log("user " + user_dict['role'] + " received")
     if user_dict['role'] == "participant":
@@ -90,7 +92,7 @@ def register_user(self, user_dict, c):
             workflows[user_dict["workflow"]].exec()
 
 
-def new_workflow(self, data_dict, c):
+def new_workflow( data_dict, c):
     nodes = {}
     outputs = {}
     inputs = {}
@@ -122,13 +124,13 @@ def new_workflow(self, data_dict, c):
 def threaded(c):
     global workflows
     while True:
-        data = c.recv(5000)
+        data = c.recv(100000)
         if not data:
             print('Bye')
-            print_lock.release()
             break
         data_dict = json.loads(data)
-        if data_dict['sender'] == 'simulator' and data_dict['type'] == 'add user':
+        if data_dict['sender'] == 'simulator':
+            print("got here")
             register_user(data_dict, c)
         else:
             new_workflow(data_dict, c)
@@ -156,8 +158,8 @@ def Main():
 
     while True:
         c, addr = s.accept()
+        print("here")
         log('Connected to client')
-        print_lock.acquire()
         start_new_thread(threaded, (c,))
     s.close()
 

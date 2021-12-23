@@ -1,8 +1,5 @@
 socket bound to port
 socket is listening
 Connected to client
-user nurse received
-user investigator received
-user lab received
-user doctor received
-user participant received
+Connected to client
+Connected to client
