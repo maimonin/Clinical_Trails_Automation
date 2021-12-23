@@ -18,7 +18,7 @@ from node_details import Ui_Node_Details
 class Ui_Test_Builder(object):
     def __init__(self ,callback):
         super().__init__()
-        self.callbac k =callback
+        self.callback =callback
         self._num_of_tests = 0
         self._test_list = []
         self.details = {}
@@ -88,7 +88,7 @@ class Ui_Test_Builder(object):
     def callback_from_node_details(self ,details):
         self.new_window.close()
         if details is not None:
-            self.detail s =details
+            self.details =details
 
     def add_test(self):
         try:
