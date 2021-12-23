@@ -1,7 +1,7 @@
 import threading
 from abc import ABC, abstractmethod
 from typing import List
-from Engine.User import User
+from Engine.Users import User
 
 
 class Node(ABC):
@@ -115,7 +115,7 @@ class Decision(Node):
                 self.next_list[1].attach(participant)
 
 
-class String_Node(Node):
+class StringNode(Node):
     def __init__(self, node_id, title, actors, text, next_node):
         self.id = node_id
         self.title = title
