@@ -2,6 +2,8 @@ import json
 import socket
 from _thread import *
 import threading
+
+from Data import get_test_result
 from Engine.Nodes import Questionnaire, TestNode, Decision
 from Logger import log
 from Users import add_user
@@ -45,12 +47,11 @@ def parse_trait_condition(satisfy, trait):
 
 
 def parse_test_condition(satisfy, test_name):
-
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return lambda patient: True if values['min'] <= trait <= values['max'] else False
+        return lambda patient: True if values['min'] <= get_test_result(patient, test_name) <= values['max'] else False
     else:
-        return lambda patient: True if trait == satisfy['value'] else False
+        return lambda patient: True if get_test_result(patient, test_name) == satisfy['value'] else False
 
 
 def parse_Decision(node_dict):

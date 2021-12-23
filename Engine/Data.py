@@ -21,9 +21,11 @@ def add_test(name, results, participant):
 
 
 def get_test_result(participant, test_name):
-    #for i in range()
-    print("lsls")
-
+    for test in reversed(tests[participant]):
+        if test[0] == test_name:
+            return test[1]
+        else:
+            return None
 
 
 def get_data(participant):
