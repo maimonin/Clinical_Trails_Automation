@@ -1,3 +1,6 @@
+
+
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'C:\Users\Raviv Gilady\Desktop\computers\Clinical_Trails_Automation\Workflow Editor\Windows\Questions Windows\questionnaire_builder.ui'
@@ -14,8 +17,11 @@ from open_question import Ui_OpenQuestion
 from nodeeditor.utils import dumpException
 from node_details import Ui_Node_Details
 
+quesionnaire_num = 0
+
 
 class Ui_QuestionnaireBuild(object):
+
     def __init__(self, callback):
         super().__init__()
         self.details = {}
@@ -33,7 +39,7 @@ class Ui_QuestionnaireBuild(object):
         self.add_multiple_choice_question_btn = QtWidgets.QPushButton(self.widget)
         self.add_multiple_choice_question_btn.setGeometry(QtCore.QRect(460, 120, 351, 91))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_multiple_choice_question_btn.setFont(font)
         self.add_multiple_choice_question_btn.setObjectName("add_multiple_choice_question_btn")
         self.add_multiple_choice_question_btn.clicked.connect(self.add_checkbox_question)
@@ -47,13 +53,13 @@ class Ui_QuestionnaireBuild(object):
         self.add_one_choice_question_btn.clicked.connect(self.add_radiobox_question)
 
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_one_choice_question_btn.setFont(font)
         self.add_one_choice_question_btn.setObjectName("add_one_choice_question_btn")
         self.add_open_question_btn = QtWidgets.QPushButton(self.widget)
         self.add_open_question_btn.setGeometry(QtCore.QRect(460, 340, 351, 91))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_open_question_btn.setFont(font)
         self.add_open_question_btn.setObjectName("add_open_question_btn")
         self.add_open_question_btn.clicked.connect(self.add_open_question)
@@ -61,7 +67,7 @@ class Ui_QuestionnaireBuild(object):
         self.save_questionnaire_btn = QtWidgets.QPushButton(self.widget)
         self.save_questionnaire_btn.setGeometry(QtCore.QRect(20, 640, 201, 61))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.save_questionnaire_btn.setFont(font)
         self.save_questionnaire_btn.setObjectName("save_questionnaire_btn")
         self.save_questionnaire_btn.clicked.connect(self.save_questionnaire)
@@ -69,7 +75,7 @@ class Ui_QuestionnaireBuild(object):
         self.discard_btn = QtWidgets.QPushButton(self.widget)
         self.discard_btn.setGeometry(QtCore.QRect(230, 640, 191, 61))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.discard_btn.setFont(font)
         self.discard_btn.setObjectName("discard_btn")
         self.discard_btn.clicked.connect(self.discard)
@@ -77,7 +83,7 @@ class Ui_QuestionnaireBuild(object):
         self.add_node_details_btn = QtWidgets.QPushButton(self.widget)
         self.add_node_details_btn.setGeometry(QtCore.QRect(460, 640, 201, 61))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.add_node_details_btn.setFont(font)
         self.add_node_details_btn.setObjectName("add_node_details_btn")
         self.add_node_details_btn.clicked.connect(self.add_node_details)
@@ -112,7 +118,7 @@ class Ui_QuestionnaireBuild(object):
     def add_checkbox_question(self):
         try:
             self.new_window = QtWidgets.QDialog()
-            ui = Ui_MultipleChoiceQuestionAdd(self.add_line, "multy")
+            ui = Ui_MultipleChoiceQuestionAdd(self.add_line, "multi")
             ui.setupUi(self.new_window)
             self.new_window.exec_()
         except Exception as e:
@@ -148,7 +154,9 @@ class Ui_QuestionnaireBuild(object):
             self.details = details
 
     def save_questionnaire(self):
-        self.callback({"node_details": self.details, "questions": self.questions})
+        global quesionnaire_num
+        quesionnaire_num +=1
+        self.callback({"node_details": self.details, "questions": self.questions,"qusetionnaire_number": quesionnaire_num})
         # TODO : check details exist! if not, present a label
 
     def discard(self):

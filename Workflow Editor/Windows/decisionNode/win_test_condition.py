@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
-
+from conditions import create_satisfy_range,create_satisfy_positive_or_negative_one_choice
 testCounter = 0;
 
 class Ui_TestCond(object):
@@ -26,40 +26,41 @@ class Ui_TestCond(object):
         self.widget = QtWidgets.QWidget(Dialog)
         self.widget.setGeometry(QtCore.QRect(0, 10, 701, 471))
         self.widget.setObjectName("widget")
-        self.label = QtWidgets.QLabel(self.widget)
-        self.label.setGeometry(QtCore.QRect(50, 20, 47, 13))
-        self.label.setObjectName("label")
+
+        self.testFor_lbl = QtWidgets.QLabel(self.widget)
+        self.testFor_lbl.setGeometry(QtCore.QRect(50, 20, 70, 13))
+        self.testFor_lbl.setObjectName("label")
 
         self.testCond_test_text = QtWidgets.QLineEdit(self.widget)
         self.testCond_test_text.setGeometry(QtCore.QRect(110, 20, 113, 20))
         self.testCond_test_text.setObjectName("testCond_test_text")
 
-        self.label_2 = QtWidgets.QLabel(self.widget)
-        self.label_2.setGeometry(QtCore.QRect(120, 70, 47, 16))
-        self.label_2.setObjectName("label_2")
+        self.between_lbl = QtWidgets.QLabel(self.widget)
+        self.between_lbl.setGeometry(QtCore.QRect(120, 70, 70, 16))
+        self.between_lbl.setObjectName("label_2")
 
         self.testCond_between_min = QtWidgets.QSpinBox(self.widget)
-        self.testCond_between_min.setGeometry(QtCore.QRect(180, 70, 42, 22))
+        self.testCond_between_min.setGeometry(QtCore.QRect(200, 70, 42, 22))
         self.testCond_between_min.setObjectName("testCond_between_min")
 
-        self.label_3 = QtWidgets.QLabel(self.widget)
-        self.label_3.setGeometry(QtCore.QRect(240, 70, 47, 13))
-        self.label_3.setObjectName("label_3")
+        self.and_lbl = QtWidgets.QLabel(self.widget)
+        self.and_lbl.setGeometry(QtCore.QRect(270, 70, 47, 13))
+        self.and_lbl.setObjectName("label_3")
 
         self.testCond_between_max = QtWidgets.QSpinBox(self.widget)
-        self.testCond_between_max.setGeometry(QtCore.QRect(270, 70, 42, 22))
+        self.testCond_between_max.setGeometry(QtCore.QRect(310, 70, 42, 22))
         self.testCond_between_max.setObjectName("testCond_between_max")
 
-        self.label_4 = QtWidgets.QLabel(self.widget)
-        self.label_4.setGeometry(QtCore.QRect(100, 110, 47, 13))
-        self.label_4.setObjectName("label_4")
+        self.or_lbl = QtWidgets.QLabel(self.widget)
+        self.or_lbl.setGeometry(QtCore.QRect(100, 110, 47, 13))
+        self.or_lbl.setObjectName("label_4")
 
         self.testCond_bool_positive = QtWidgets.QRadioButton(self.widget)
-        self.testCond_bool_positive.setGeometry(QtCore.QRect(130, 160, 82, 17))
+        self.testCond_bool_positive.setGeometry(QtCore.QRect(130, 160, 82, 25))
         self.testCond_bool_positive.setObjectName("testCond_bool_positive")
 
         self.testCond_bool_false = QtWidgets.QRadioButton(self.widget)
-        self.testCond_bool_false.setGeometry(QtCore.QRect(210, 160, 82, 17))
+        self.testCond_bool_false.setGeometry(QtCore.QRect(210, 160, 82, 25))
         self.testCond_bool_false.setObjectName("testCond_bool_false")
 
         self.testCond_discard = QtWidgets.QPushButton(self.widget)
@@ -78,10 +79,10 @@ class Ui_TestCond(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label.setText(_translate("Dialog", "test for"))
-        self.label_2.setText(_translate("Dialog", "between"))
-        self.label_3.setText(_translate("Dialog", "and"))
-        self.label_4.setText(_translate("Dialog", "or"))
+        self.testFor_lbl.setText(_translate("Dialog", "test for"))
+        self.between_lbl.setText(_translate("Dialog", "between"))
+        self.and_lbl.setText(_translate("Dialog", "and"))
+        self.or_lbl.setText(_translate("Dialog", "or"))
         self.testCond_bool_positive.setText(_translate("Dialog", "positive"))
         self.testCond_bool_false.setText(_translate("Dialog", "negative"))
         self.testCond_discard.setText(_translate("Dialog", "Discard"))
@@ -91,13 +92,15 @@ class Ui_TestCond(object):
         try:
             global testCounter
             testCounter+=1
+            q={ "title": "test condition "+str(testCounter), \
+                "type":"test condition ",
+                "test":self.testCond_test_text.text(),
+                }
+
             if self.testCond_bool_positive.isChecked() or self.testCond_bool_false.isChecked():
-                q={"title": "test condition "+str(testCounter), "test":self.testCond_test_text.text(),"positive": self.testCond_bool_positive.isChecked(),"negative": self.testCond_bool_false.isChecked()}
+                q["satisfy"]=create_satisfy_positive_or_negative_one_choice(self.testCond_bool_positive.isChecked())
             else:
-                q={"title" :"test condition "+str(testCounter),
-                    "test": self.testCond_test_text.text(),
-                    "min" : self.testCond_between_min.value() ,
-                   "max": self.testCond_between_max.value()}
+                q["satisfy"]= create_satisfy_range(self.testCond_between_min.value(),self.testCond_between_max.value())
 
             self.func(q)
             self.exit_window()
@@ -110,7 +113,8 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_TestCond()
+    ui = Ui_TestCond(None)
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
+

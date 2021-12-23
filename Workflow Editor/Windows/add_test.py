@@ -1,3 +1,7 @@
+
+
+
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'C:\Users\Raviv Gilady\Desktop\temp dir\add_test.ui'
@@ -68,7 +72,7 @@ class Ui_Add_Test(object):
         self.save_test_btn = QtWidgets.QPushButton(self.widget)
         self.save_test_btn.setGeometry(QtCore.QRect(50, 500, 121, 41))
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.save_test_btn.setFont(font)
         self.save_test_btn.setObjectName("save_questionnaire_btn")
         self.save_test_btn.clicked.connect(self.save_test)
@@ -76,7 +80,7 @@ class Ui_Add_Test(object):
         self.discard_btn.setGeometry(QtCore.QRect(180, 500, 121, 41))
         self.discard_btn.clicked.connect(self.exit_window)
         font = QtGui.QFont()
-        font.setPointSize(15)
+        font.setPointSize(8)
         self.discard_btn.setFont(font)
         self.discard_btn.setObjectName("save_questionnaire_btn_2")
         self.retranslateUi(Add_Test)

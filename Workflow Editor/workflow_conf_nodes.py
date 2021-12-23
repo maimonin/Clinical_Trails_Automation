@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 
-from win_deciosionNode import Ui_Decision_Node
+from Windows.decisionNode.win_deciosionNode import Ui_Decision_Node
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -35,8 +35,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         if content is None:
             self.remove()
         else:
-            print(content)
-
             self.content = content
 
 @register_node(OP_NODE_DATA_ENTRY)
