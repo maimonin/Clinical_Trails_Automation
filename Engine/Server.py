@@ -60,6 +60,7 @@ def parse_Decision(node_dict):
     conditions = content['condition']
     combined_condition = []
     for condition in conditions:
+        print("lalas")
         if condition['type'] == 'trait condition':
             print("adding condition")
             combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
