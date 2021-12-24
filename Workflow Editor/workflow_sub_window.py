@@ -100,8 +100,10 @@ class WorkflowSubWindow(NodeEditorWidget):
     def on_click(self):
         print("clicked")
         try:
+
             f = open('data.json')
             data = json.load(f)
+            print(data)
             data['sender'] = "editor"
             host = '127.0.0.1'
             port = 8000

@@ -8,10 +8,17 @@ from nodeeditor.utils import dumpException
 
 
 class WorkflowInputContent(QDMNodeContentWidget):
+    def __init__(self,node,callback):
+        super().__init__(node)
+        self.callback=callback
     def initUI(self):
-        self.edit= QLineEdit("String",self)
+        self.edit= QLineEdit("",self)
         self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)
+        self.edit.textChanged.connect( lambda: self.callback(self.edit.text()))
+        # self.edit.changeEvent()
+
+        #callback(self.edit.text())
 
 @register_node(OP_NODE_QUESTIONNAIRE)
 class WorkflowNode_Questionnaire(WorkflowNode):
@@ -38,16 +45,15 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         window.close()
         if content is None:
             self.remove()
+
         else:
-            self.content = content
+            self.data = content
     def edit_nodes_details(self):
         from Windows.questionnaire_builder import Ui_QuestionnaireBuild
         QuestionnaireBuild = QtWidgets.QDialog()
-        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.content)
+        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.data)
         ui.setupUi(QuestionnaireBuild)
         QuestionnaireBuild.exec_()
-
-
 @register_node(OP_NODE_DATA_ENTRY)
 class WorkflowNode_DataEntry(WorkflowNode):
     icon = "images/data_entry.png"
@@ -72,12 +78,12 @@ class WorkflowNode_DataEntry(WorkflowNode):
             if content is None:
                 self.remove() #  remove node
             else:
-                self.content=content
+                self.data=content
         except Exception as e : dumpException(e)
     def edit_nodes_details(self):
         from Windows.tests_builder import Ui_Test_Builder
         DataEntryBuild = QtWidgets.QDialog()
-        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content,DataEntryBuild),data=self.content)
+        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content,DataEntryBuild),data=self.data)
         ui.setupUi(DataEntryBuild)
         DataEntryBuild.exec_()
 @register_node(OP_NODE_DECISION)
@@ -99,7 +105,7 @@ class WorkflowNode_Decision(WorkflowNode):
 
     def edit_nodes_details(self):
         Decision_Node = QtWidgets.QDialog()
-        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content,Decision_Node),data=self.content)
+        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content,Decision_Node),data=self.data)
         ui.setupUi(Decision_Node)
         Decision_Node.exec_()
     def callback_from_window(self,content,window):
@@ -108,7 +114,7 @@ class WorkflowNode_Decision(WorkflowNode):
             if content is None:
                 self.remove() #  remove node
             else:
-                self.content=content
+                self.data=content
         except Exception as e : dumpException(e)
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
@@ -116,7 +122,12 @@ class WorkflowNode_SimpleString(WorkflowNode):
     op_code = OP_NODE_STRING
     op_title = "Simple String"
     content_label_objname = "workflow_node_string"
-
+    def initInnerClasses(self):
+        self.content = WorkflowInputContent(self,self.save_data_when_changed)
+        self.grNode = WorkflowGraphicNode(self)
+        self.data="String"
+    def save_data_when_changed(self,text):
+        self.data=text
 #     def initInnerClasses(self):
 #         self.content=WorkflowInputContent(self)
 #         self.grNode = WorkflowGraphicNode(self)
