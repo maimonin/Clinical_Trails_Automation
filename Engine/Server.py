@@ -2,78 +2,140 @@ import json
 import socket
 from _thread import *
 import threading
-from Engine.Nodes import DataEntering
+
+from Data import get_test_result
+from Engine.Nodes import Questionnaire, TestNode, Decision
 from Logger import log
 from Users import add_user
 
 workflows = {}
 print_lock = threading.Lock()
+OP_NODE_QUESTIONNAIRE = 1
+OP_NODE_DATA_ENTRY = 2
+OP_NODE_DECISION = 3
+OP_NODE_STRING = 4
 
 
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = DataEntering(node_dict['id'], node_details['title'], node_details['actor in charge'], content['questions'])
+    node = Questionnaire(node_dict['id'], node_details['title'], content['questions'])
     return node
 
 
 def parse_Test(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = DataEntering(node_dict['id'], node_details['title'], node_details['actor in charge'], content['tests'])
+    node = TestNode(node_dict['id'], node_details['title'], content['tests'], node_details['actor in charge'])
     return node
+
+
+def parse_trait_condition(satisfy, trait):
+    if satisfy['type'] == 'range':
+        values = satisfy['value']
+        return lambda patient: True if values['min'] <= trait <= values['max'] else False
+    else:
+        return lambda patient: True if trait == satisfy['value'] else False
+
+
+# def parse_questionnaire_condition(satisfy, trait):
+#     if satisfy['type'] == 'range':
+#         values = satisfy['value']
+#         return lambda patient: True if values['min'] <= trait <= values['max'] else False
+#     else:
+#         return lambda patient: True if trait == satisfy['value'] else False
+
+
+def parse_test_condition(satisfy, test_name):
+    if satisfy['type'] == 'range':
+        values = satisfy['value']
+        return lambda patient: True if values['min'] <= get_test_result(patient, test_name) <= values['max'] else False
+    else:
+        return lambda patient: True if get_test_result(patient, test_name) == satisfy['value'] else False
+
+
+def parse_Decision(node_dict):
+    content = node_dict['content']
+    node_details = content['node_details']
+    conditions = content['condition']
+    combined_condition = []
+    for condition in conditions:
+        print("lalas")
+        if condition['type'] == 'trait condition':
+            print("adding condition")
+            combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
+        # elif condition['questionnaire condition']:
+        #     combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
+        elif condition['type'] == 'test condition':
+            combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
+    print(node_dict['id'])
+    print(node_details['title'])
+    print(node_details['actor in charge'])
+    print(combined_condition)
+    node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], combined_condition)
+    return node
+
+
+def parse_String_Node(node_dict):
+    content = node_dict['content']
+    node_details = content['node_details']
+    node = Questionnaire(node_dict['id'], node_details['title'], content['text'])
+    return node
+
+
+def register_user(user_dict, c):
+    user = add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
+    log("user " + user.role + " received")
+    if user.role == "participant":
+        if len(workflows) == 0:
+            print("No workflow yet")
+            c.close()
+        else:
+            # start participant's workflow
+            workflows[user_dict["workflow"]].attach(user)
+            workflows[user_dict["workflow"]].exec()
+
+
+def new_workflow(data_dict, c):
+    nodes = {}
+    outputs = {}
+    inputs = {}
+    for node in data_dict['nodes']:
+        if node['op_code'] == OP_NODE_QUESTIONNAIRE:
+            nodes[node['id']] = parse_Questionnaire(node)
+        elif node['op_code'] == OP_NODE_DATA_ENTRY:
+            nodes[node['id']] = parse_Test(node)
+        elif node['op_code'] == OP_NODE_DECISION:
+            nodes[node['id']] = parse_Decision(node)
+        elif node['op_code'] == OP_NODE_STRING:
+            nodes[node['id']] = parse_String_Node(node)
+        for out in node['outputs']:
+            outputs[out['id']] = node['id']
+        for inp in node['inputs']:
+            inputs[inp['id']] = node['id']
+    first_node = data_dict['nodes'][0]['id']
+    workflows[data_dict["workflow_id"]] = nodes[first_node]
+    for edge in data_dict['edges']:
+        first_id = outputs[edge['start']]
+        second_id = inputs[edge['end']]
+        first = nodes[first_id]
+        second = nodes[second_id]
+        # label= edge['label']
+        first.next_nodes.append(second)
 
 
 def threaded(c):
     global workflows
     while True:
-        data = c.recv(5000)
+        data = c.recv(100000)
         if not data:
             print('Bye')
-            print_lock.release()
             break
-
         data_dict = json.loads(data)
         if data_dict['sender'] == 'simulator':
-            user_dict = data_dict
-            add_user(user_dict['role'], user_dict['id'], c)
-            log("user " + user_dict['role'] + " received")
-            connected = json.dumps({'type': 'connect', 'id': user_dict['id']})
-            c.send(connected.encode('ascii'))
-            if user_dict['role'] == "participant":
-                if len(workflows) == 0:
-                    print("No workflow yet")
-                    c.close()
-                else:
-                    # start participant's workflow
-                    add_user(user_dict['role'], user_dict['id'], c)
-                    workflows[user_dict["workflow"]].attach(user_dict['id'])
-                    workflows[user_dict["workflow"]].exec()
+            register_user(data_dict, c)
         else:
-            nodes = {}
-            outputs = {}
-            inputs = {}
-            print(data_dict)
-            for node in data_dict['nodes']:
-                if node['title'] == 'Questionnaire':
-                    nodes[node['id']] = parse_Questionnaire(node)
-                elif node['title'] == 'Data Entry':
-                    nodes[node['id']] = parse_Test(node)
-                if node['title'] != 'Decision':
-                    for out in node['outputs']:
-                        outputs[out['id']] = node['id']
-                    for inp in node['inputs']:
-                        inputs[inp['id']] = node['id']
-            first_node = data_dict['nodes'][0]['id']
-            workflows[data_dict["workflow_id"]] = nodes[first_node]
-            for edge in data_dict['edges']:
-                first_id = outputs[edge['start']]
-                second_id = inputs[edge['end']]
-                first = nodes[first_id]
-                second = nodes[second_id]
-                # label= edge['label']
-                first.next = second
-
+            new_workflow(data_dict, c)
             break
 
     c.close()
@@ -99,7 +161,6 @@ def Main():
     while True:
         c, addr = s.accept()
         log('Connected to client')
-        print_lock.acquire()
         start_new_thread(threaded, (c,))
     s.close()
 

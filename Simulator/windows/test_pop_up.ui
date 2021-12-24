@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>773</width>
+    <height>557</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>19</x>
+     <y>19</y>
+     <width>741</width>
+     <height>521</height>
+    </rect>
+   </property>
+   <widget class="QLabel" name="static1_lbl">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>80</y>
+      <width>161</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Update: participant</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="nameHolder_lbl">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>80</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>nameHolder</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="static2_lbl">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>110</y>
+      <width>101</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>has arrived.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="static3_lbl">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>160</y>
+      <width>231</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Please perform test:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="testHolder_lbl">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>210</y>
+      <width>361</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>testHolder</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="instructionHolder_lbl">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>240</y>
+      <width>381</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>instructionHolder</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
