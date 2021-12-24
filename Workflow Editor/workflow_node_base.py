@@ -3,6 +3,7 @@ from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_serializable import Serializable
+from nodeeditor.utils import dumpException
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -32,6 +33,8 @@ class WorkflowContent(QDMNodeContentWidget):
     def initUI(self):
         lbl = QLabel("", self)
         button=QPushButton("raviv",self)
+
+
 class WorkflowNode(Node):
     icon=""
     op_code = 0
@@ -41,6 +44,7 @@ class WorkflowNode(Node):
     def __init__(self, scene,inputs=[1],outputs=[1]) :
 
         super().__init__(scene,self.__class__.op_title,inputs,outputs)
+        self.data = None
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
@@ -51,12 +55,23 @@ class WorkflowNode(Node):
         pass
     def callback_from_window(self, content, window):
         pass
+
     def serialize(self):
-        res = super().serialize()
-        ser_content = self.content.serialize() if isinstance(self.content, Serializable) else {}
-        print(self.content)
-        res['content']=self.content
-        res['op_code'] = self.__class__.op_code
+        try:
+            res = super().serialize()
+            # ser_content = self.content.serialize() if isinstance(self.content, Serializable) else {}
+
+            res['content']=self.data if self.data is not None else "" # changed it from content to data due to issues,Raviv.
+            res['op_code'] = self.__class__.op_code
+        except Exception as e: dumpException(e)
         return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        print("deserialize")
+        res = super().deserialize(data, hashmap, restore_id)
+        self.data = data['content']
+        print("Deserialized node base '%s'" % self.__class__.__name__, "res:", res)
+        return res
+
     def edit_nodes_details(self):
         pass # To be implemented in each node
