@@ -100,6 +100,7 @@ class WorkflowSubWindow(NodeEditorWidget):
     def on_click(self):
         print("clicked")
         try:
+
             f = open('data.json')
             data = json.load(f)
             print(data)

@@ -164,9 +164,14 @@ class Ui_QuestionnaireBuild(object):
             self.details = details
 
     def save_questionnaire(self):
-        global quesionnaire_num
-        quesionnaire_num +=1
-        self.callback({"node_details": self.details, "questions": self.questions,"qusetionnaire_number": quesionnaire_num})
+        if self.data is None:
+            global quesionnaire_num
+            quesionnaire_num +=1
+            number=quesionnaire_num
+        else:
+            number=self.data["qusetionnaire_number"]
+        self.callback({"node_details": self.details, "questions": self.questions,"qusetionnaire_number": number})
+
         # TODO : check details exist! if not, present a label
 
     def discard(self):
