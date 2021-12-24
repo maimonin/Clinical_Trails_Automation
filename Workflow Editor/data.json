@@ -1,16 +1,16 @@
 {
-    "id": 1811764326704,
+    "id": 2084642730864,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1811791355856,
+            "id": 2084671013456,
             "title": "Questionnaire",
-            "pos_x": 110.0,
-            "pos_y": 29.0,
+            "pos_x": -600.0,
+            "pos_y": 36.0,
             "inputs": [
                 {
-                    "id": 1811791397456,
+                    "id": 2084671041200,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1811791397504,
+                    "id": 2084671041248,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -27,12 +27,221 @@
                 }
             ],
             "content": {
-                "node_details": {},
-                "questions": [],
+                "node_details": {
+                    "actors": [],
+                    "title": "q1",
+                    "actor in charge": "Nurse",
+                    "time": "20"
+                },
+                "questions": [
+                    {
+                        "text": "hi how are you?",
+                        "type": "open"
+                    }
+                ],
                 "qusetionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2084671139552,
+            "title": "Decision",
+            "pos_x": -268.0,
+            "pos_y": 59.0,
+            "inputs": [
+                {
+                    "id": 2084671139312,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2084671139024,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "d1",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "condition": [
+                    {
+                        "title": "trait condition 1",
+                        "type": "trait condition    ",
+                        "test": "gender",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "female"
+                        }
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2084674097696,
+            "title": "Questionnaire",
+            "pos_x": 107.0,
+            "pos_y": -112.0,
+            "inputs": [
+                {
+                    "id": 2084674097936,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2084674097984,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "q2",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "questions": [
+                    {
+                        "text": "how you doing?",
+                        "options": [
+                            "good",
+                            "bad",
+                            "terrible"
+                        ],
+                        "type": "multi"
+                    }
+                ],
+                "qusetionnaire_number": 2
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2084674098128,
+            "title": "Questionnaire",
+            "pos_x": 22.0,
+            "pos_y": 168.0,
+            "inputs": [
+                {
+                    "id": 2084674146416,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2084674146464,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "q3",
+                    "actor in charge": "Nurse",
+                    "time": "6"
+                },
+                "questions": [
+                    {
+                        "text": "lala",
+                        "options": [
+                            "lolol",
+                            "pppp",
+                            "iiii"
+                        ],
+                        "type": "one choice"
+                    }
+                ],
+                "qusetionnaire_number": 3
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2084674146800,
+            "title": "Questionnaire",
+            "pos_x": 394.0,
+            "pos_y": 216.0,
+            "inputs": [
+                {
+                    "id": 2084674146992,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2084674147040,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "q4",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "questions": [
+                    {
+                        "text": "blood pre",
+                        "type": "open"
+                    }
+                ],
+                "qusetionnaire_number": 4
             },
             "op_code": 1
         }
     ],
-    "edges": []
+    "edges": [
+        {
+            "id": 2084671139696,
+            "edge_type": 2,
+            "start": 2084671041248,
+            "end": 2084671139312
+        },
+        {
+            "id": 2084674098080,
+            "edge_type": 2,
+            "start": 2084671139024,
+            "end": 2084674097936
+        },
+        {
+            "id": 2084674146608,
+            "edge_type": 2,
+            "start": 2084671139024,
+            "end": 2084674146416
+        },
+        {
+            "id": 2084674147424,
+            "edge_type": 2,
+            "start": 2084674146464,
+            "end": 2084674146992
+        }
+    ]
 }

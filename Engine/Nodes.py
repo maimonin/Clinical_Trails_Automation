@@ -142,7 +142,7 @@ class StringNode(Node):
         log("String node: Notifying observers...")
         for participant in participants2:
             log("participant id" + participant.id + "in string node with title: " + self.title)
-            participant.socket.send(json.dumps({'type': 'string', 'text': self.text}))
+            participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}))
 
     def has_actors(self):
         return len(self.participants) != 0
