@@ -1,8 +1,11 @@
+from Logger import log
+
 answers = {}
 tests = {}
 
 
 def add_questionnaire(results, participant):
+    log("adding questionnaire of " + str(participant.id))
     if participant in answers:
         answers[participant].append(results)
     else:
@@ -12,6 +15,7 @@ def add_questionnaire(results, participant):
 
 
 def add_test(name, results, participant):
+    log("adding test of " + str(participant))
     if participant in tests:
         tests[participant].append((name, results))
     else:
@@ -21,6 +25,7 @@ def add_test(name, results, participant):
 
 
 def get_test_result(participant, test_name):
+    log("getting test of " + str(participant))
     for test in reversed(tests[participant]):
         if test[0] == test_name:
             return test[1]

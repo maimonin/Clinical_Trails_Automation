@@ -78,7 +78,8 @@ def participant_simulation(user):
             data = s.recv(5000)
             print(data)
             data_json = json.loads(data)
-            # if data_json['type'] == 'notification':
+            if data_json['type'] == 'notification':
+                print("notification")
             #     tabs[data_json['user']].append(data_json('notification'))
             if data_json['type'] == 'questionnaire':
                 ans = []
@@ -108,6 +109,18 @@ def participant_simulation(user):
         dumpException(e)
 
 
+def staff_simulation(user):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((host, port))
+        register_user(user, s)
+        while True:
+            data = s.recv(5000)
+            print(data)
+    except Exception as e:
+        dumpException(e)
+
+
 def register_user(user, s):
     global user_id
     user_dict = {'sender': 'simulator', 'type': 'add user', 'id': user_id}
@@ -122,6 +135,8 @@ def Main():
     for user in users:
         if user['role'] == 'participant':
             threads.append(threading.Thread(target=participant_simulation, args=(user,)))
+        else:
+            threads.append(threading.Thread(target=staff_simulation, args=(user,)))
     for t in threads:
         t.start()
     for t in threads:

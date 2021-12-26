@@ -37,8 +37,7 @@ class Questionnaire(Node):
         self.form = form
         self.next_nodes = []
         self.lock = threading.Lock()
-
-    participants: List[User] = []
+        self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         log("Questionnaire: Attached an observer.")
@@ -70,19 +69,17 @@ class Questionnaire(Node):
 
 
 class Decision(Node):
-    def __init__(self, node_id, title, actors, form, next_options, conditions):
+    def __init__(self, node_id, title, actors, conditions):
         self.id = node_id
         self.title = title
-        self.form = form
         self.actors = actors
-        self.next_list = next_options
+        self.next_nodes = []
         self.conditions = conditions
         self.lock = threading.Lock()
-
-    participants: List[User] = []
+        self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
-        print("Decision: Attached an observer.")
+        log("Decision: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -90,26 +87,32 @@ class Decision(Node):
 
     def exec(self) -> None:
         self.notify()
-        if self.next_list[0].has_actors():
-            self.next_list[0].exec()
-        if self.next_list[1].has_actors():
-            self.next_list[1].exec()
+        if self.next_nodes[0].has_actors():
+            self.next_nodes[0].exec()
+        if self.next_nodes[1].has_actors():
+            self.next_nodes[1].exec()
 
     def has_actors(self):
-        return len(self.participants) == 0
+        return len(self.participants) != 0
 
     def notify(self) -> None:
-        print("Decision: Notifying observers...")
+        log("Decision: Notifying observers...")
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            log("participant id" + participant.id + "in decision node with title: " + self.title)
+            log("participant id " + str(participant.id) + " in decision node with title: " + self.title)
+            satisfies = True
             for condition in self.conditions:
                 if not condition(participant):
-                    self.next_list[1].attach(participant)
-            self.next_list[0].attach(participant)
+                    satisfies = False
+            if satisfies:
+                log("condition was met")
+                self.next_nodes[0].attach(participant)
+            else:
+                log("condition wasn't met")
+                self.next_nodes[1].attach(participant)
 
 
 class StringNode(Node):
@@ -119,8 +122,7 @@ class StringNode(Node):
         self.text = text
         self.next_nodes = []
         self.lock = threading.Lock()
-
-    participants: List[User] = []
+        self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         log("String node: Attached an observer.")
@@ -156,8 +158,7 @@ class TestNode(Node):
         self.in_charge = in_charge
         self.next_nodes = []
         self.lock = threading.Lock()
-
-    participants: List[User] = []
+        self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         log("String node: Attached an observer.")
@@ -178,7 +179,7 @@ class TestNode(Node):
         self.lock.release()
         log("String node: Notifying observers...")
         for participant in participants2:
-            log("participant " + participant.id + " in test with title: " + self.title)
+            log("participant " + str(participant.id) + " in test with title: " + self.title)
             for test in self.tests:
                 results = take_test(participant.id, test, self.in_charge, participant.socket)
                 add_test(test['name'], results, participant)

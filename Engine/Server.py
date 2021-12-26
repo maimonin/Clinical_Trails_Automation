@@ -33,7 +33,7 @@ def parse_Test(node_dict):
 def parse_trait_condition(satisfy, trait):
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return lambda patient: True if values['min'] <= trait <= values['max'] else False
+        return lambda patient: True if values['min'] <= patient.get_traits()[trait] <= values['max'] else False
     else:
         return lambda patient: True if trait == satisfy['value'] else False
 
@@ -60,18 +60,12 @@ def parse_Decision(node_dict):
     conditions = content['condition']
     combined_condition = []
     for condition in conditions:
-        print("lalas")
-        if condition['type'] == 'trait condition':
-            print("adding condition")
+        if condition['type'].rstrip() == 'trait condition':
             combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
         # elif condition['questionnaire condition']:
         #     combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
-        elif condition['type'] == 'test condition':
+        elif condition['type'].rstrip() == 'test condition':
             combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
-    print(node_dict['id'])
-    print(node_details['title'])
-    print(node_details['actor in charge'])
-    print(combined_condition)
     node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], combined_condition)
     return node
 
@@ -122,6 +116,7 @@ def new_workflow(data_dict, c):
         second = nodes[second_id]
         # label= edge['label']
         first.next_nodes.append(second)
+    log("created workflow")
 
 
 def threaded(c):
