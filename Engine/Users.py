@@ -75,7 +75,7 @@ def take_test(user_id, test, in_charge, s):
                                                'instructions': test['instructions'],
                                                'patient': user_id}))
     s.send(json.dumps({'type': 'notification', 'text': "show up to "+test['name']}))
-    form = {'test': test, 'patient': user_id}
+    form = {'type': 'test data entry','test': test, 'patient': user_id}
     get_role(in_charge).socket.send(json.dumps(form).encode('ascii'))
     results = get_role(in_charge).socket(5000)
     log("taking a test")
