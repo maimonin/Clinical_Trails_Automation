@@ -3,12 +3,25 @@ socket is listening
 Connected to client
 created workflow
 Connected to client
+Connected to client
 user 0 is added
+Connected to client
+user nurse received
+user 1 is added
+Connected to client
+user 2 is added
+user investigator received
+user lab received
+Connected to client
+user 3 is added
+user doctor received
+user 4 is added
 user participant received
-Decision: Attached an observer.
-Decision: Notifying observers...
-participant id 0 in decision node with title: decision
 Questionnaire: Attached an observer.
-participant 0 in data questionnaire with title: q1
+participant 4 in data questionnaire with title: a
 answering questionnaire
-adding questionnaire of 0
+adding questionnaire of 4
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: b
+Connected to client
+Connected to client

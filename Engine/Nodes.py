@@ -107,16 +107,11 @@ class Decision(Node):
             for condition in self.conditions:
                 if not condition(participant):
                     satisfies = False
-            print(satisfies)
             if satisfies:
-                print(self.next_nodes[0].title)
-                print(self.next_nodes[0].has_actors())
-                print(self.next_nodes[1].has_actors())
+                log("condition was met")
                 self.next_nodes[0].attach(participant)
-                print(self.next_nodes[0].has_actors())
-                print(self.next_nodes[1].has_actors())
             else:
-                print(self.next_nodes[1].title)
+                log("condition wasn't met")
                 self.next_nodes[1].attach(participant)
 
 
@@ -184,7 +179,7 @@ class TestNode(Node):
         self.lock.release()
         log("String node: Notifying observers...")
         for participant in participants2:
-            log("participant " + participant.id + " in test with title: " + self.title)
+            log("participant " + str(participant.id) + " in test with title: " + self.title)
             for test in self.tests:
                 results = take_test(participant.id, test, self.in_charge, participant.socket)
                 add_test(test['name'], results, participant)
