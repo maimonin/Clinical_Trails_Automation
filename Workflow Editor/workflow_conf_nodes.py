@@ -2,13 +2,14 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 
 from Windows.decisionNode.win_deciosionNode import Ui_Decision_Node
+from Windows.string_node import Ui_string_node
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
 
 
 class WorkflowInputContent(QDMNodeContentWidget):
-    def __init__(self,node,callback):
+    def __init__(self, node, callback):
         super().__init__(node)
         self.callback=callback
     def initUI(self):
@@ -97,6 +98,7 @@ class WorkflowNode_Decision(WorkflowNode):
         self.content = WorkflowContent_with_button(self, )
         self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicNode(self)
+
     def drop_action(self):
         Decision_Node = QtWidgets.QDialog()
         ui = Ui_Decision_Node(lambda content: self.callback_from_window(content,Decision_Node))
@@ -108,26 +110,89 @@ class WorkflowNode_Decision(WorkflowNode):
         ui = Ui_Decision_Node(lambda content: self.callback_from_window(content,Decision_Node),data=self.data)
         ui.setupUi(Decision_Node)
         Decision_Node.exec_()
+
     def callback_from_window(self,content,window):
         try:
             window.close()
             if content is None:
                 self.remove() #  remove node
             else:
-                self.data=content
+                self.data = content
         except Exception as e : dumpException(e)
+
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
     icon = "images/str.png"
     op_code = OP_NODE_STRING
     op_title = "Simple String"
     content_label_objname = "workflow_node_string"
+
     def initInnerClasses(self):
-        self.content = WorkflowInputContent(self,self.save_data_when_changed)
+        self.content = WorkflowContent_with_button(self, )
+        self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicNode(self)
-        self.data="String"
-    def save_data_when_changed(self,text):
-        self.data=text
+
+    def save_data_when_changed(self, text):
+        self.data = text
+
+    def drop_action(self):
+        String_Node = QtWidgets.QDialog()
+        ui = Ui_string_node(lambda content: self.callback_from_window(content, String_Node))
+        ui.setupUi(String_Node)
+        String_Node.exec_()
+
+    def callback_from_window(self, content, window):
+        try:
+            window.close()
+            if content is None:
+                self.remove()  # remove node
+            else:
+                self.data = content
+        except Exception as e:
+            dumpException(e)
+
+    def edit_nodes_details(self):
+        String_Node = QtWidgets.QDialog()
+        ui = Ui_string_node(lambda content: self.callback_from_window(content,String_Node),data=self.data)
+        ui.setupUi(String_Node)
+        String_Node.exec_()
+
+
+@register_node(OP_NODE_TIME_CONSTRAINT)
+class WorkflowNode_TimeConstraint(WorkflowNode):
+    icon = "images/time.png"
+    op_code = OP_NODE_TIME_CONSTRAINT
+    op_title = "Time Constraint"
+    content_label_objname = "workflow_node_time_constraint"
+
+    def initInnerClasses(self):
+        self.content = WorkflowInputContent(self, self.save_data_when_changed)
+        self.grNode = WorkflowGraphicNode(self)
+        self.data = "String"
+
+
+    def save_data_when_changed(self, text):
+        # TODO check for correct input - 0 as default
+        # TODO change to dict by inbar request
+        self.data = text
+
+    # TODO keep implement
+    # def drop_action(self):
+    #     Time_constraint_node = QtWidgets.QDialog()
+    #     ui = Ui_string_node(lambda content: self.callback_from_window(content, Time_constraint_node))
+    #     ui.setupUi(Time_constraint_node)
+    #     Time_constraint_node.exec_()
+    #
+    # def callback_from_window(self, content, window):
+    #     try:
+    #         window.close()
+    #         if content is None:
+    #             self.remove()  # remove node
+    #         else:
+    #             self.data = content
+    #     except Exception as e:
+    #         dumpException(e)
+
 #     def initInnerClasses(self):
 #         self.content=WorkflowInputContent(self)
 #         self.grNode = WorkflowGraphicNode(self)
