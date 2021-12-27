@@ -143,7 +143,7 @@ class StringNode(Node):
         self.lock.release()
         log("String node: Notifying observers...")
         for participant in participants2:
-            log("participant id" + participant.id + "in string node with title: " + self.title)
+            log("participant id" + str(participant.id) + "in string node with title: " + self.title)
             participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
 
     def has_actors(self):
