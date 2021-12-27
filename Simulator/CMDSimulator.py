@@ -99,6 +99,9 @@ def actor_simulation(user):
                 val=input(f"{user['name']}:  patient with id {data_json['patient']} is about to arrive please take test: {data_json['name']}  \n")
                 lock.release()
                 s.send(json.dumps({"test": data_json['name'], 'result':val}).encode('ascii'))
+            elif data_json['type'] == 'terminate':
+                s.close()
+                break
 
     except Exception as e:
         dumpException(e)
