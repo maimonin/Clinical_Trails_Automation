@@ -31,21 +31,27 @@ def handel_open_question(q):
 
 
 def handel_radio_question(q):
-    print(q['test'])
-    for opt, i in q['options'], range((q['options'])):
+    print(q['text'])
+    i=0
+    for opt in q['options']:
         print(str(i) + ". " + opt)
+        i+=1
     val = input("type answer number:")
+    val = int(val)
     return {"question":q,"answer":q['options'][val]}
 
 
 def handel_multi_question(q):
     ans = []
-    print(q['test'])
-    for opt, i in q['options'], range((q['options'])):
+    print(q['text'])
+    i=0
+    for opt in q['options']:
         print(str(i) + ". " + opt)
+        i+=1
     val = input("type answer number:")
     while val != -1:
         val = input("type answer number or -1 to finish:")
+        val=int(val)
         if val != -1:
             ans.append(q['options'][val])
     return {"question":q,"answer":ans}
@@ -61,7 +67,7 @@ def handel_questionnaire(questions, participant):
         elif q['type'] == 'radio':
             answers.append(handel_radio_question(q))
         else:
-            answers + handel_multi_question(q)
+            answers.append(handel_multi_question(q))
     lock.release()
     return answers
 
@@ -81,7 +87,7 @@ def actor_simulation(user):
                 print(user["name"]+"got notfication: "+data_json['text'])
                 lock.release()
             if data_json['type'] == 'questionnaire':
-                ans = handel_questionnaire(data_json['questions'])
+                ans = handel_questionnaire(data_json['questions'],user)
                 s.send(json.dumps({"answers": ans}).encode('ascii'))
             elif data_json['type'] == 'test':
                 lock.acquire()
