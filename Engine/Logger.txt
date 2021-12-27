@@ -5,23 +5,134 @@ created workflow
 Connected to client
 Connected to client
 user 0 is added
+user nurse received
+Connected to client
+user 1 is added
+Connected to client
+user 2 is added
+user investigator received
+Connected to client
+user 3 is added
+user lab received
+user doctor received
+user 4 is added
+user participant received
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q1
+answering questionnaire
+adding questionnaire of 4
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 4 in decision node with title: d1
+condition wasn't met
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q3
+answering questionnaire
+Connected to client
+Connected to client
+user 0 is added
+Connected to client
+user 1 is added
+user nurse received
+user 2 is added
+Connected to client
+user investigator received
+user lab received
+user 3 is added
+Connected to client
+user doctor received
+user 4 is added
+user participant received
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q1
+answering questionnaire
+adding questionnaire of 4
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 4 in decision node with title: d1
+condition wasn't met
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q3
+answering questionnaire
+Connected to client
+Connected to client
+user 0 is added
 Connected to client
 user nurse received
 user 1 is added
+Connected to client
+user investigator received
+user 3 is added
+user lab received
+Connected to client
+user doctor received
+user 4 is added
+user participant received
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q1
+answering questionnaire
+adding questionnaire of 4
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 4 in decision node with title: d1
+condition wasn't met
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q3
+answering questionnaire
+Connected to client
+Connected to client
+user 0 is added
+Connected to client
+user 1 is added
+user nurse received
 Connected to client
 user 2 is added
 user investigator received
 user lab received
 Connected to client
 user 3 is added
-user doctor received
 user 4 is added
+user doctor received
 user participant received
 Questionnaire: Attached an observer.
-participant 4 in data questionnaire with title: a
+participant 4 in data questionnaire with title: q1
+answering questionnaire
+adding questionnaire of 4
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 4 in decision node with title: d1
+condition wasn't met
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q3
+answering questionnaire
+Connected to client
+Connected to client
+user 0 is added
+Connected to client
+user 1 is added
+user nurse received
+user investigator received
+Connected to client
+user 2 is added
+Connected to client
+user 3 is added
+user lab received
+user 4 is added
+user doctor received
+user participant received
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q1
+answering questionnaire
+adding questionnaire of 4
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 4 in decision node with title: d1
+condition wasn't met
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: q3
 answering questionnaire
 adding questionnaire of 4
 Questionnaire: Attached an observer.
-participant 4 in data questionnaire with title: b
-Connected to client
-Connected to client
+participant 4 in data questionnaire with title: q4
+answering questionnaire
+adding questionnaire of 4
