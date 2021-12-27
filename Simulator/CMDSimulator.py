@@ -84,7 +84,7 @@ def actor_simulation(user):
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()
-                print(user["name"]+"got notfication: "+data_json['text'])
+                print(user["name"]+"got notification: "+data_json['text'])
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handel_questionnaire(data_json['questions'],user)
