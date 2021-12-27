@@ -110,7 +110,7 @@ def register_user(user, s):
 def Main():
     threads = []
     for user in users:
-        threads.append(threading.Thread(target=participant_simulation, args=(user,)))
+        threads.append(threading.Thread(target=actor_simulation, args=(user,)))
     for t in threads:
         t.start()
     for t in threads:
