@@ -4,7 +4,7 @@ from _thread import *
 import threading
 
 from Data import get_test_result
-from Engine.Nodes import Questionnaire, TestNode, Decision
+from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode
 from Logger import log
 from Users import add_user
 
@@ -71,9 +71,7 @@ def parse_Decision(node_dict):
 
 
 def parse_String_Node(node_dict):
-    content = node_dict['content']
-    node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], content['text'])
+    node = StringNode(node_dict['id'], node_dict['title'], node_dict['content'])
     return node
 
 

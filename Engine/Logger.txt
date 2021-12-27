@@ -1,3 +1,21 @@
 socket bound to port
 socket is listening
 Connected to client
+created workflow
+Connected to client
+Connected to client
+user 0 is added
+Connected to client
+user investigator received
+user 1 is added
+Connected to client
+user 2 is added
+user nurse received
+Connected to client
+user 3 is added
+user lab received
+user doctor received
+user 4 is added
+user participant received
+Questionnaire: Attached an observer.
+participant 4 in data questionnaire with title: one

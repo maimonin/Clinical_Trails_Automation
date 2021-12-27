@@ -43,16 +43,16 @@ def add_user(role, sex, age, user_id, socket):
 
 
 def get_role(role):
-    if role == "nurse":
+    if role.lower() == "nurse":
         return nurses[0]
 #        return nurses[randint(0, len(nurses) - 1)]
-    if role == "doctor":
+    if role.lower() == "doctor":
         return doctors[0]
 #        return nurses[randint(0, len(doctors) - 1)]
-    if role == "investigator":
+    if role.lower() == "investigator":
         return investigators[0]
 #        return investigators[randint(0, len(investigators) - 1)]
-    if role == "lab":
+    if role.lower() == "lab":
         return labs[0]
 #        return nurses[randint(0, len(labs) - 1)]
 
