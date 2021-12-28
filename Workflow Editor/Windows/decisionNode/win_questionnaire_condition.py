@@ -67,14 +67,6 @@ class Ui_QuestionnaireDialog(object):
         self.check_ans_4.setGeometry(QtCore.QRect(230, 220, 41, 31))
         self.check_ans_4.setObjectName("check_ans_4")
 
-        self.check_ans_7 = QtWidgets.QCheckBox(Dialog)
-        self.check_ans_7.setGeometry(QtCore.QRect(380, 220, 41, 31))
-        self.check_ans_7.setObjectName("check_ans_7")
-
-        self.check_ans_8 = QtWidgets.QCheckBox(Dialog)
-        self.check_ans_8.setGeometry(QtCore.QRect(430, 220, 41, 31))
-        self.check_ans_8.setObjectName("check_ans_8")
-
         self.check_ans_6 = QtWidgets.QCheckBox(Dialog)
         self.check_ans_6.setGeometry(QtCore.QRect(330, 220, 41, 31))
         self.check_ans_6.setObjectName("check_ans_6")
@@ -83,9 +75,6 @@ class Ui_QuestionnaireDialog(object):
         self.check_ans_5.setGeometry(QtCore.QRect(280, 220, 41, 31))
         self.check_ans_5.setObjectName("check_ans_5")
 
-        self.check_ans_9 = QtWidgets.QCheckBox(Dialog)
-        self.check_ans_9.setGeometry(QtCore.QRect(480, 220, 41, 31))
-        self.check_ans_9.setObjectName("check_ans_9")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -102,11 +91,8 @@ class Ui_QuestionnaireDialog(object):
         self.check_ans_2.setText(_translate("Dialog", "2"))
         self.check_ans_3.setText(_translate("Dialog", "3"))
         self.check_ans_4.setText(_translate("Dialog", "4"))
-        self.check_ans_7.setText(_translate("Dialog", "7"))
-        self.check_ans_8.setText(_translate("Dialog", "8"))
         self.check_ans_6.setText(_translate("Dialog", "6"))
         self.check_ans_5.setText(_translate("Dialog", "5"))
-        self.check_ans_9.setText(_translate("Dialog", "9"))
 
     def acceptedAnswers(self):
         retList = []
@@ -123,12 +109,6 @@ class Ui_QuestionnaireDialog(object):
             retList.append(5)
         if(self.check_ans_6.isChecked()):
             retList.append(6)
-        if(self.check_ans_7.isChecked()):
-            retList.append(7)
-        if(self.check_ans_8.isChecked()):
-            retList.append(8)
-        if(self.check_ans_9.isChecked()):
-            retList.append(9)
 
         return retList
 
