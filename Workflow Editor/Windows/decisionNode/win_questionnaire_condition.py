@@ -1,8 +1,6 @@
-
-
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'win_questionnaire_condition.ui'
+# Form implementation generated from reading ui file '.\win_questionnaire_condition.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -16,30 +14,20 @@ from nodeeditor.utils import dumpException
 questCounter = 0
 
 class Ui_QuestionnaireDialog(object):
-    def __init__(self,questions):
+    def __init__(self, callback):
         super().__init__()
-        self.func=questions
-
+        self.callback = callback
 
     def setupUi(self, Dialog):
         self.window = Dialog
         Dialog.setObjectName("Dialog")
         Dialog.resize(701, 490)
-        self.check_answer_no_lbl = QtWidgets.QLabel(Dialog)
-        self.check_answer_no_lbl.setGeometry(QtCore.QRect(260, 80, 120, 16))
-        self.check_answer_no_lbl.setObjectName("check_answer_no_lbl")
-
+        self.label = QtWidgets.QLabel(Dialog)
+        self.label.setGeometry(QtCore.QRect(260, 80, 101, 21))
+        self.label.setObjectName("label")
         self.questionnaire_answerNumber = QtWidgets.QSpinBox(Dialog)
-        self.questionnaire_answerNumber.setGeometry(QtCore.QRect(380, 80, 42, 22))
+        self.questionnaire_answerNumber.setGeometry(QtCore.QRect(350, 80, 42, 22))
         self.questionnaire_answerNumber.setObjectName("questionnaire_answerNumber")
-
-        self.questionnaire_radio_include = QtWidgets.QRadioButton(Dialog)
-        self.questionnaire_radio_include.setGeometry(QtCore.QRect(70, 130, 82, 17))
-        self.questionnaire_radio_include.setObjectName("questionnaire_radio_include")
-
-        self.questionnaire_radio_exclude = QtWidgets.QRadioButton(Dialog)
-        self.questionnaire_radio_exclude.setGeometry(QtCore.QRect(70, 170, 82, 17))
-        self.questionnaire_radio_exclude.setObjectName("questionnaire_radio_exclude")
 
         self.questionnaire_save = QtWidgets.QPushButton(Dialog)
         self.questionnaire_save.setGeometry(QtCore.QRect(40, 400, 101, 61))
@@ -51,21 +39,53 @@ class Ui_QuestionnaireDialog(object):
         self.questionnaire_discard.setObjectName("questionnaire_discard")
         self.questionnaire_discard.clicked.connect(self.exit_window)
 
-        self.questionnaire_include_text = QtWidgets.QLineEdit(Dialog)
-        self.questionnaire_include_text.setGeometry(QtCore.QRect(160, 130, 113, 20))
-        self.questionnaire_include_text.setObjectName("questionnaire_include_text")
-
-        self.questionnaire_exclude_text = QtWidgets.QLineEdit(Dialog)
-        self.questionnaire_exclude_text.setGeometry(QtCore.QRect(160, 170, 113, 20))
-        self.questionnaire_exclude_text.setObjectName("questionnaire_exclude_text")
-
-        self.questionnaire_no_lb = QtWidgets.QLabel(Dialog)
-        self.questionnaire_no_lb.setGeometry(QtCore.QRect(60, 80, 180, 20))
-        self.questionnaire_no_lb.setObjectName("questionnaire_no_lb")
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2.setGeometry(QtCore.QRect(80, 80, 101, 21))
+        self.label_2.setObjectName("label_2")
 
         self.questionnaire_questtionaire_number = QtWidgets.QSpinBox(Dialog)
         self.questionnaire_questtionaire_number.setGeometry(QtCore.QRect(180, 80, 42, 22))
         self.questionnaire_questtionaire_number.setObjectName("questionnaire_questtionaire_number")
+
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3.setGeometry(QtCore.QRect(80, 140, 121, 41))
+        self.label_3.setObjectName("label_3")
+
+        self.check_ans_1 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_1.setGeometry(QtCore.QRect(80, 220, 41, 31))
+        self.check_ans_1.setObjectName("check_ans_1")
+
+        self.check_ans_2 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_2.setGeometry(QtCore.QRect(130, 220, 41, 31))
+        self.check_ans_2.setObjectName("check_ans_2")
+
+        self.check_ans_3 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_3.setGeometry(QtCore.QRect(180, 220, 41, 31))
+        self.check_ans_3.setObjectName("check_ans_3")
+
+        self.check_ans_4 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_4.setGeometry(QtCore.QRect(230, 220, 41, 31))
+        self.check_ans_4.setObjectName("check_ans_4")
+
+        self.check_ans_7 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_7.setGeometry(QtCore.QRect(380, 220, 41, 31))
+        self.check_ans_7.setObjectName("check_ans_7")
+
+        self.check_ans_8 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_8.setGeometry(QtCore.QRect(430, 220, 41, 31))
+        self.check_ans_8.setObjectName("check_ans_8")
+
+        self.check_ans_6 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_6.setGeometry(QtCore.QRect(330, 220, 41, 31))
+        self.check_ans_6.setObjectName("check_ans_6")
+
+        self.check_ans_5 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_5.setGeometry(QtCore.QRect(280, 220, 41, 31))
+        self.check_ans_5.setObjectName("check_ans_5")
+
+        self.check_ans_9 = QtWidgets.QCheckBox(Dialog)
+        self.check_ans_9.setGeometry(QtCore.QRect(480, 220, 41, 31))
+        self.check_ans_9.setObjectName("check_ans_9")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -73,41 +93,69 @@ class Ui_QuestionnaireDialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.check_answer_no_lbl.setText(_translate("Dialog", "check answer #"))
-        self.questionnaire_radio_include.setText(_translate("Dialog", "include"))
-        self.questionnaire_radio_exclude.setText(_translate("Dialog", "exclude"))
+        self.label.setText(_translate("Dialog", "question no"))
         self.questionnaire_save.setText(_translate("Dialog", "Save"))
         self.questionnaire_discard.setText(_translate("Dialog", "Discard"))
-        self.questionnaire_no_lb.setText(_translate("Dialog", "questionnaire #"))
+        self.label_2.setText(_translate("Dialog", "questionnaire no"))
+        self.label_3.setText(_translate("Dialog", "accepted answers:"))
+        self.check_ans_1.setText(_translate("Dialog", "1"))
+        self.check_ans_2.setText(_translate("Dialog", "2"))
+        self.check_ans_3.setText(_translate("Dialog", "3"))
+        self.check_ans_4.setText(_translate("Dialog", "4"))
+        self.check_ans_7.setText(_translate("Dialog", "7"))
+        self.check_ans_8.setText(_translate("Dialog", "8"))
+        self.check_ans_6.setText(_translate("Dialog", "6"))
+        self.check_ans_5.setText(_translate("Dialog", "5"))
+        self.check_ans_9.setText(_translate("Dialog", "9"))
+
+    def acceptedAnswers(self):
+        retList = []
+
+        if(self.check_ans_1.isChecked()):
+            retList.append(1)
+        if(self.check_ans_2.isChecked()):
+            retList.append(2)
+        if(self.check_ans_3.isChecked()):
+            retList.append(3)
+        if(self.check_ans_4.isChecked()):
+            retList.append(4)
+        if(self.check_ans_5.isChecked()):
+            retList.append(5)
+        if(self.check_ans_6.isChecked()):
+            retList.append(6)
+        if(self.check_ans_7.isChecked()):
+            retList.append(7)
+        if(self.check_ans_8.isChecked()):
+            retList.append(8)
+        if(self.check_ans_9.isChecked()):
+            retList.append(9)
+
+        return retList
 
     def save_condition(self):
         try:
             global questCounter
             questCounter += 1
-            q={"title": "questionnaire condition " + str(questCounter),
-
-               "type":"questionnaire condition",
-
-               "qNumber": self.questionnaire_questtionaire_number.value(),
-               "ansNumber": self.questionnaire_answerNumber.value(),
-               "include": self.questionnaire_include_text.text(),
-               "exclude": self.questionnaire_exclude_text.text()
+            q = {"title": "questionnaire condition " + str(questCounter),
+               "type": "questionnaire condition",
+               "questionnaireNumber": self.questionnaire_questtionaire_number.value(),
+               "questionNumber": self.questionnaire_answerNumber.value(),
+               "acceptedAnswers": self.acceptedAnswers()
                }
-            self.func(q)
+            self.callback(q)
             self.exit_window()
+
         except Exception as e:
             dumpException(e)
 
     def exit_window(self):
         self.window.close()
 
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_QuestionnaireDialog(lambda x : x)
-
+    ui = Ui_QuestionnaireDialog()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
