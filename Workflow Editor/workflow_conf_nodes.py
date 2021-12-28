@@ -178,38 +178,3 @@ class WorkflowNode_TimeConstraint(WorkflowNode):
                 self.data = {"type" : "string", "value": n}
         except Exception:
             pass
-
-
-
-    # TODO keep implement
-    # def drop_action(self):
-    #     Time_constraint_node = QtWidgets.QDialog()
-    #     ui = Ui_string_node(lambda content: self.callback_from_window(content, Time_constraint_node))
-    #     ui.setupUi(Time_constraint_node)
-    #     Time_constraint_node.exec_()
-    #
-    # def callback_from_window(self, content, window):
-    #     try:
-    #         window.close()
-    #         if content is None:
-    #             self.remove()  # remove node
-    #         else:
-    #             self.data = content
-    #     except Exception as e:
-    #         dumpException(e)
-
-#     def initInnerClasses(self):
-#         self.content=WorkflowInputContent(self)
-#         self.grNode = WorkflowGraphicNode(self)
-#     def set_content(self,content):
-#         self.content=content
-# @register_node(OP_NODE_STRING)
-# class WorkflowNode_Decision(WorkflowNode):
-#     icon = "images/descision.png"
-#     op_code = OP_NODE_STRING
-#     op_title = "Simple String"
-#     content_label_objname = "workflow_node_string"
-#
-#     def initInnerClasses(self):
-#         self.content=WorkflowInputContent(self)
-#         self.grNode = WorkflowGraphicNode(self)
