@@ -168,13 +168,18 @@ class WorkflowNode_TimeConstraint(WorkflowNode):
     def initInnerClasses(self):
         self.content = WorkflowInputContent(self, self.save_data_when_changed)
         self.grNode = WorkflowGraphicNode(self)
-        self.data = "String"
+        self.data = {"time": 0}
 
 
     def save_data_when_changed(self, text):
-        # TODO check for correct input - 0 as default
-        # TODO change to dict by inbar request
-        self.data = text
+        try:
+            n = int(text)
+            if(n >= 0):
+                self.data = {"type" : "string", "value": n}
+        except Exception:
+            pass
+
+
 
     # TODO keep implement
     # def drop_action(self):
