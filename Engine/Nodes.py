@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from Data import add_questionnaire, add_test
-from Engine.Users import User, get_role, answer_questionnaire, take_test
+from Engine.Users import User, answer_questionnaire, take_test, get_role
 from Logger import log
 
 
@@ -31,21 +31,22 @@ class Node(ABC):
         pass
 
 
-def end_test(node):
+def end_test(node, participants):
     if len(node.next_nodes) == 0:
-        for participant in node.participants:
+        for participant in participants:
             log("closing connection with " + str(participant.id))
             participant.socket.send(json.dumps({'type': 'terminate'}).encode('ascii'))
 
 
 class Questionnaire(Node):
-    def __init__(self, node_id, title, form):
+    def __init__(self, node_id, title, form,qnumber):
         self.id = node_id
         self.title = title
         self.form = form
         self.next_nodes = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
+        self.qnumber=qnumber
 
     def attach(self, participant: User) -> None:
         log("Questionnaire: Attached an observer.")
@@ -56,7 +57,6 @@ class Questionnaire(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -69,9 +69,11 @@ class Questionnaire(Node):
             log("participant " + str(participant.id) + " in data questionnaire with title: " + self.title)
             # send questionnaire to participant
             answers = answer_questionnaire(self.form, participant.socket)
+            answers.update({'qusetionnaire_number':self.qnumber})
             add_questionnaire(answers, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
+        end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -110,6 +112,7 @@ class Decision(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
+        print(len(self.conditions))
         for participant in participants2:
             log("participant id " + str(participant.id) + " in decision node with title: " + self.title)
             satisfies = True
@@ -131,7 +134,8 @@ class StringNode(Node):
         self.text = text
         self.next_nodes = []
         self.lock = threading.Lock()
-        self.participants = actors
+        self.actors=actors
+        self.participants = []
 
     def attach(self, participant: User) -> None:
         log("String node: Attached an observer.")
@@ -142,7 +146,6 @@ class StringNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -152,12 +155,16 @@ class StringNode(Node):
         self.participants = []
         self.lock.release()
         log("String node: Notifying observers...")
-        print(participants2)
         for participant in participants2:
-            log("participant id" + str(participant.id) + "in string node with title: " + self.title)
+            log("participant id " + str(participant.id) + " in string node with title: " + self.title)
             participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
+        for role in self.actors:
+            r=get_role(role)
+            if r is not None:
+                r.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
+        end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -182,7 +189,6 @@ class TestNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -199,6 +205,7 @@ class TestNode(Node):
                 add_test(test['name'], results, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
+        end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -222,7 +229,6 @@ class TimeNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -238,6 +244,7 @@ class TimeNode(Node):
             time.sleep(self.time)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
+        end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0

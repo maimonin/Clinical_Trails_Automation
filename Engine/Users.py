@@ -17,7 +17,7 @@ class User:
         callback()
 
     def get_traits(self):
-        return {"sex": self.sex, "age": self.age}
+        return {"gender": self.sex, "age": self.age}
 
 
 def add_user(role, sex, age, user_id, socket):
@@ -61,13 +61,9 @@ def get_role(role):
 
 
 def answer_questionnaire(questions, s):
-    print("1")
     s.send(json.dumps({'type': 'questionnaire', 'questions': questions}).encode('ascii'))
-    print("2")
     ans = s.recv(5000)
-    print("3")
     log("answering questionnaire")
-    print("4")
     return json.loads(ans)
 
 
@@ -76,11 +72,12 @@ def take_test(user_id, test, in_charge, s):
     for role in test['staff']:
         get_role(role).socket.send(json.dumps({'type': 'test', 'name': test['name'],
                                                'instructions': test['instructions'],
-                                               'patient': user_id}))
-    s.send(json.dumps({'type': 'notification', 'text': "show up to "+test['name']}))
+                                               'patient': user_id}).encode('ascii'))
+    s.send(json.dumps({'type': 'notification', 'text': "show up to "+test['name']}).encode('ascii'))
     form = {'type': 'test data entry','test': test, 'patient': user_id}
-    get_role(in_charge).socket.send(json.dumps(form).encode('ascii'))
-    results = get_role(in_charge).socket(5000)
+    r=get_role(in_charge)
+    r.socket.send(json.dumps(form).encode('ascii'))
+    results = r.socket.recv(5000)
     log("taking a test")
     return json.loads(results)
 

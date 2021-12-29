@@ -3,6 +3,7 @@ import socket
 from _thread import *
 import threading
 
+import Data
 from Data import get_test_result
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode
 from Logger import log
@@ -21,7 +22,7 @@ OP_NODE_TIME = 5
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], content['questions'])
+    node = Questionnaire(node_dict['id'], node_details['title'], content['questions'], content['qusetionnaire_number'])
     return node
 
 
@@ -37,21 +38,17 @@ def parse_trait_condition(satisfy, trait):
         values = satisfy['value']
         return lambda patient: True if values['min'] <= patient.get_traits()[trait] <= values['max'] else False
     else:
-        return lambda patient: True if trait == satisfy['value'] else False
+        return lambda patient: True if patient.get_traits()[trait] == satisfy['value'] else False
 
 
-# def parse_questionnaire_condition(satisfy, trait):
-#     if satisfy['type'] == 'range':
-#         values = satisfy['value']
-#         return lambda patient: True if values['min'] <= trait <= values['max'] else False
-#     else:
-#         return lambda patient: True if trait == satisfy['value'] else False
+def parse_questionnaire_condition(questionnaireNumber, questionNumber,acceptedAnswers):
+        return lambda patient: Data.check_data(patient,questionnaireNumber,questionNumber,acceptedAnswers)
 
 
 def parse_test_condition(satisfy, test_name):
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return lambda patient: True if values['min'] <= get_test_result(patient, test_name) <= values['max'] else False
+        return lambda patient: True if values['min'] <= int(get_test_result(patient, test_name)) <= values['max'] else False
     else:
         return lambda patient: True if get_test_result(patient, test_name) == satisfy['value'] else False
 
@@ -64,8 +61,9 @@ def parse_Decision(node_dict):
     for condition in conditions:
         if condition['type'].rstrip() == 'trait condition':
             combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
-        # elif condition['questionnaire condition']:
-        #     combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
+        elif condition['type'].rstrip() == 'questionnaire condition':
+            print(condition)
+            combined_condition.append(parse_questionnaire_condition(condition['questionnaireNumber'],condition['questionNumber'], condition['acceptedAnswers']))
         elif condition['type'].rstrip() == 'test condition':
             combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
     node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], combined_condition)
@@ -75,11 +73,7 @@ def parse_Decision(node_dict):
 def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    actors = []
-    for role in node_details['actors']:
-        if role != 'Participant':
-            actors.append(get_role(role))
-    node = StringNode(node_dict['id'], node_details['title'], content['text'], actors)
+    node = StringNode(node_dict['id'], node_details['title'], content['text'], node_details['actors'])
     return node
 
 
@@ -143,11 +137,11 @@ def threaded(c):
         print(data_dict)
         if data_dict['sender'] == 'simulator':
             register_user(data_dict, c)
+            break
         else:
             new_workflow(data_dict, c)
             break
 
-    c.close()
 
 
 def send_feedback(user_socket, text):
@@ -157,6 +151,7 @@ def send_feedback(user_socket, text):
 def Main():
     open('Logger.txt', 'w').close()
     user_lists.init()
+    Data.init()
     host = ""
     port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
