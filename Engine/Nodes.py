@@ -30,6 +30,13 @@ class Node(ABC):
         pass
 
 
+def end_test(node):
+    if len(node.next_nodes) == 0:
+        for participant in node.participants:
+            log("closing connection with " + str(participant.id))
+            participant.socket.send(json.dumps({'type': 'terminate'}).encode('ascii'))
+
+
 class Questionnaire(Node):
     def __init__(self, node_id, title, form):
         self.id = node_id
@@ -48,6 +55,7 @@ class Questionnaire(Node):
 
     def exec(self) -> None:
         self.notify()
+        end_test
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -116,13 +124,13 @@ class Decision(Node):
 
 
 class StringNode(Node):
-    def __init__(self, node_id, title, text):
+    def __init__(self, node_id, title, text, actors):
         self.id = node_id
         self.title = title
         self.text = text
         self.next_nodes = []
         self.lock = threading.Lock()
-        self.participants: List[User] = []
+        self.participants = actors
 
     def attach(self, participant: User) -> None:
         log("String node: Attached an observer.")
@@ -133,6 +141,7 @@ class StringNode(Node):
 
     def exec(self) -> None:
         self.notify()
+        end_test
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -143,6 +152,10 @@ class StringNode(Node):
         self.lock.release()
         log("String node: Notifying observers...")
         for participant in participants2:
+            if participant != 'Participant':
+                participant = get_role(participant)
+            if participant is None:
+                continue
             log("participant id" + str(participant.id) + "in string node with title: " + self.title)
             participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
 
@@ -169,6 +182,7 @@ class TestNode(Node):
 
     def exec(self) -> None:
         self.notify()
+        end_test
         for next_node in self.next_nodes:
             next_node.exec()
 
