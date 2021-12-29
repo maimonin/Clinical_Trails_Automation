@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'win_trait_condition.ui'
+# Form implementation generated from reading ui file '.\win_trait_condition.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -11,45 +11,28 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from nodeeditor.utils import dumpException
 from conditions import *
-traitCounter = 0;
 
-class Ui_TraitCond(object):
+traitCounter = 0
 
-    def __init__(self,questions):
+
+class Ui_add_trait(object):
+    def __init__(self, callback):
         super().__init__()
-        self.func=questions
+        self.func = callback
 
-
-    def setupUi(self, Dialog):
-        self.window = Dialog
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(717, 502)
-        self.widget = QtWidgets.QWidget(Dialog)
-        self.widget.setGeometry(QtCore.QRect(0, 0, 691, 481))
+    def setupUi(self, add_trait):
+        self.window = add_trait
+        add_trait.setObjectName("add_trait")
+        add_trait.resize(717, 502)
+        self.widget = QtWidgets.QWidget(add_trait)
+        self.widget.setGeometry(QtCore.QRect(20, -10, 691, 481))
         self.widget.setObjectName("widget")
-
-        self.traitCondition_age_check = QtWidgets.QCheckBox(self.widget)
-        self.traitCondition_age_check.setGeometry(QtCore.QRect(130, 80, 51, 31))
-        self.traitCondition_age_check.setObjectName("traitCondition_age_check")
-
-        self.between_lbl = QtWidgets.QLabel(self.widget)
-        self.between_lbl.setGeometry(QtCore.QRect(190, 90, 70, 13))
-        self.between_lbl.setObjectName("label")
-        self.and_lbl = QtWidgets.QLabel(self.widget)
-        self.and_lbl.setGeometry(QtCore.QRect(340, 90, 47, 13))
-        self.and_lbl.setObjectName("label_2")
-
-        self.traitCondition_sex_check = QtWidgets.QCheckBox(self.widget)
-        self.traitCondition_sex_check.setGeometry(QtCore.QRect(130, 170, 51, 21))
-        self.traitCondition_sex_check.setObjectName("traitCondition_sex_check")
-
-        self.traitCondition_sex_male = QtWidgets.QRadioButton(self.widget)
-        self.traitCondition_sex_male.setGeometry(QtCore.QRect(200, 170, 82, 17))
-        self.traitCondition_sex_male.setObjectName("traitCondition_sex_male")
-
-        self.traitCondition_sex_female = QtWidgets.QRadioButton(self.widget)
-        self.traitCondition_sex_female.setGeometry(QtCore.QRect(280, 170, 82, 17))
-        self.traitCondition_sex_female.setObjectName("traitCondition_sex_female")
+        self.label = QtWidgets.QLabel(self.widget)
+        self.label.setGeometry(QtCore.QRect(190, 90, 47, 13))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.widget)
+        self.label_2.setGeometry(QtCore.QRect(340, 90, 47, 13))
+        self.label_2.setObjectName("label_2")
 
         self.traitCondition_save = QtWidgets.QPushButton(self.widget)
         self.traitCondition_save.setGeometry(QtCore.QRect(60, 410, 101, 61))
@@ -62,7 +45,7 @@ class Ui_TraitCond(object):
         self.traitCondition_discard.clicked.connect(self.exit_window)
 
         self.traitCondition_between_min = QtWidgets.QSpinBox(self.widget)
-        self.traitCondition_between_min.setGeometry(QtCore.QRect(280, 90, 42, 22))
+        self.traitCondition_between_min.setGeometry(QtCore.QRect(260, 90, 42, 22))
         self.traitCondition_between_min.setObjectName("traitCondition_between_min")
 
         self.traitCondition_between_max = QtWidgets.QSpinBox(self.widget)
@@ -70,62 +53,94 @@ class Ui_TraitCond(object):
         self.traitCondition_between_max.setObjectName("traitCondition_between_max")
 
         self.traitCondition_custom_text = QtWidgets.QLineEdit(self.widget)
-        self.traitCondition_custom_text.setGeometry(QtCore.QRect(180, 220, 113, 20))
+        self.traitCondition_custom_text.setGeometry(QtCore.QRect(200, 240, 113, 20))
         self.traitCondition_custom_text.setObjectName("traitCondition_custom_text")
 
-        self.custom_lbl = QtWidgets.QLabel(self.widget)
-        self.custom_lbl.setGeometry(QtCore.QRect(100, 220, 70, 13))
-        self.custom_lbl.setObjectName("label_3")
+        self.radio_custom = QtWidgets.QRadioButton(self.widget)
+        self.radio_custom.setGeometry(QtCore.QRect(80, 240, 101, 31))
+        self.radio_custom.setObjectName("radio_custom")
 
-        self.traitCondition_customRadio_positive = QtWidgets.QRadioButton(self.widget)
-        self.traitCondition_customRadio_positive.setGeometry(QtCore.QRect(140, 270, 82, 17))
-        self.traitCondition_customRadio_positive.setObjectName("traitCondition_customRadio_positive")
+        self.radio_sex = QtWidgets.QRadioButton(self.widget)
+        self.radio_sex.setGeometry(QtCore.QRect(80, 160, 101, 31))
+        self.radio_sex.setObjectName("radio_sex")
 
-        self.traitCondition_customRadio_negative = QtWidgets.QRadioButton(self.widget)
-        self.traitCondition_customRadio_negative.setGeometry(QtCore.QRect(220, 270, 82, 17))
-        self.traitCondition_customRadio_negative.setObjectName("traitCondition_customRadio_negative")
+        self.radio_age = QtWidgets.QRadioButton(self.widget)
+        self.radio_age.setGeometry(QtCore.QRect(80, 80, 101, 31))
+        self.radio_age.setObjectName("radio_age")
 
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.widget_2 = QtWidgets.QWidget(self.widget)
+        self.widget_2.setGeometry(QtCore.QRect(180, 270, 271, 91))
+        self.widget_2.setObjectName("widget_2")
 
-    def retranslateUi(self, Dialog):
+        self.radio_custom_positive = QtWidgets.QRadioButton(self.widget_2)
+        self.radio_custom_positive.setGeometry(QtCore.QRect(20, 20, 91, 41))
+        self.radio_custom_positive.setObjectName("radio_custom_positive")
+
+        self.radio_custom_negative = QtWidgets.QRadioButton(self.widget_2)
+        self.radio_custom_negative.setGeometry(QtCore.QRect(100, 20, 91, 41))
+        self.radio_custom_negative.setObjectName("radio_custom_negative")
+
+        self.widget_3 = QtWidgets.QWidget(self.widget)
+        self.widget_3.setGeometry(QtCore.QRect(170, 140, 271, 80))
+        self.widget_3.setObjectName("widget_3")
+
+        self.radio_sex_male = QtWidgets.QRadioButton(self.widget_3)
+        self.radio_sex_male.setGeometry(QtCore.QRect(20, 30, 91, 31))
+        self.radio_sex_male.setObjectName("radio_sex_male")
+
+        self.radio_sex_female = QtWidgets.QRadioButton(self.widget_3)
+        self.radio_sex_female.setGeometry(QtCore.QRect(90, 30, 91, 31))
+        self.radio_sex_female.setObjectName("radio_sex_female")
+
+        self.retranslateUi(add_trait)
+        QtCore.QMetaObject.connectSlotsByName(add_trait)
+
+    def retranslateUi(self, add_trait):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.traitCondition_age_check.setText(_translate("Dialog", "age"))
-        self.between_lbl.setText(_translate("Dialog", "Between"))
-        self.and_lbl.setText(_translate("Dialog", "and"))
-        self.traitCondition_sex_check.setText(_translate("Dialog", "sex"))
-        self.traitCondition_sex_male.setText(_translate("Dialog", "Male"))
-        self.traitCondition_sex_female.setText(_translate("Dialog", "Female"))
-        self.traitCondition_save.setText(_translate("Dialog", "Save"))
-        self.traitCondition_discard.setText(_translate("Dialog", "Discard"))
-        self.custom_lbl.setText(_translate("Dialog", "custom"))
-        self.traitCondition_customRadio_positive.setText(_translate("Dialog", "positive"))
-        self.traitCondition_customRadio_negative.setText(_translate("Dialog", "negative"))
+        add_trait.setWindowTitle(_translate("add_trait", "Add Trait Condition"))
+        self.label.setText(_translate("add_trait", "Between"))
+        self.label_2.setText(_translate("add_trait", "and"))
+        self.traitCondition_save.setText(_translate("add_trait", "Save"))
+        self.traitCondition_discard.setText(_translate("add_trait", "Discard"))
+        self.radio_custom.setText(_translate("add_trait", "custom"))
+        self.radio_sex.setText(_translate("add_trait", "sex"))
+        self.radio_age.setText(_translate("add_trait", "age"))
+        self.radio_custom_positive.setText(_translate("add_trait", "Positive"))
+        self.radio_custom_negative.setText(_translate("add_trait", "Negative"))
+        self.radio_sex_male.setText(_translate("add_trait", "Male"))
+        self.radio_sex_female.setText(_translate("add_trait", "Female"))
 
     def save_condition(self):
         try:
             global traitCounter
-            traitCounter+=1
-            q={"title": "trait condition " + str(traitCounter),
-               "type" : "trait condition    ",
-               }
-            if self.traitCondition_sex_check.isChecked():
-                q["test"]="gender"
-                q["satisfy"] = create_satisfy_one_choice("male" if self.traitCondition_sex_male.isChecked() else "female")
-            elif self.traitCondition_age_check.isChecked():
-                q["test"]="age"
-                q["satisfy"] = create_satisfy_range(self.traitCondition_between_min.value(),self.traitCondition_between_max.value())
-            elif(self.traitCondition_custom_text.text()!=""):
+            traitCounter += 1
+            q = {"title": "trait condition " + str(traitCounter),
+                 "type": "trait condition    ",
+                 }
+            if self.radio_sex.isChecked():
+                q["test"] = "gender"
+                if self.radio_sex_male.isChecked():
+                    q["satisfy"] = {"type": "one_choice", "value": "male"}
+                elif self.radio_sex_female.isChecked():
+                    q["satisfy"] = {"type": "one_choice", "value": "female"}
+            elif self.radio_age.isChecked():
+                q["test"] = "age"
+                q["satisfy"] = {"type": "range", "value": {"min": self.traitCondition_between_min.value(),
+                                                           "max": self.traitCondition_between_max.value()}}
+            elif self.radio_custom.isChecked() and (self.traitCondition_custom_text.text() != ""):
                 q["test"] = self.traitCondition_custom_text.text()
-                q["satisfy"] = create_satisfy_one_choice("positive" if self.traitCondition_customRadio_positive.isChecked() else "negative")
+                if self.radio_custom_positive:
+                    q["satisfy"] = {"type": "one_choice", "value": "positive"}
+                elif self.radio_custom_negative:
+                    q["satisfy"] = {"type": "one_choice", "value": "negative"}
 
-            else:
-                #TODO notify user this is not ok
-                return
+            # else:
+                # TODO notify user this is not ok
+
             self.func(q)
             self.exit_window()
-        except Exception as e : dumpException(e)
+        except Exception as e:
+            dumpException(e)
 
     def exit_window(self):
         self.window.close()
@@ -133,9 +148,10 @@ class Ui_TraitCond(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
-    ui = Ui_TraitCond(lambda x:x)
-    ui.setupUi(Dialog)
-    Dialog.show()
+    add_trait = QtWidgets.QDialog()
+    ui = Ui_add_trait()
+    ui.setupUi(add_trait)
+    add_trait.show()
     sys.exit(app.exec_())

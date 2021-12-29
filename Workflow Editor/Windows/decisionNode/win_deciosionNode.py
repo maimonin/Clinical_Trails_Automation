@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from win_questionnaire_condition import Ui_QuestionnaireDialog
 from win_test_condition import Ui_TestCond
-from win_trait_condition import Ui_TraitCond
+from win_trait_condition import Ui_add_trait
 from nodeeditor.utils import dumpException
 from node_details import Ui_Node_Details
 
@@ -105,7 +105,7 @@ class Ui_Decision_Node(object):
     def add_cond_trait(self):
         try:
             self.new_window = QtWidgets.QDialog()
-            ui = Ui_TraitCond(self.add_line)
+            ui = Ui_add_trait(self.add_line)
             ui.setupUi(self.new_window)
             self.new_window.exec_()
         except Exception as e:

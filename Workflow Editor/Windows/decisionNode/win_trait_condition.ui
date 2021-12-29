@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>add_trait</class>
+ <widget class="QDialog" name="add_trait">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,30 +11,17 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Add Trait Condition</string>
   </property>
   <widget class="QWidget" name="widget" native="true">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
+     <x>20</x>
+     <y>-10</y>
      <width>691</width>
      <height>481</height>
     </rect>
    </property>
-   <widget class="QCheckBox" name="traitCondition_age_check">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>80</y>
-      <width>51</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>age</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -59,45 +46,6 @@
     </property>
     <property name="text">
      <string>and</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="traitCondition_sex_check">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>170</y>
-      <width>51</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>sex</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="traitCondition_sex_male">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>170</y>
-      <width>82</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Male</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="traitCondition_sex_female">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>170</y>
-      <width>82</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Female</string>
     </property>
    </widget>
    <widget class="QPushButton" name="traitCondition_save">
@@ -149,51 +97,123 @@
    <widget class="QLineEdit" name="traitCondition_custom_text">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>220</y>
+      <x>200</x>
+      <y>240</y>
       <width>113</width>
       <height>20</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QRadioButton" name="radio_custom">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>220</y>
-      <width>47</width>
-      <height>13</height>
+      <x>80</x>
+      <y>240</y>
+      <width>101</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>custom</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="traitCondition_customRadio_positive">
+   <widget class="QRadioButton" name="radio_sex">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>270</y>
-      <width>82</width>
-      <height>17</height>
+      <x>80</x>
+      <y>160</y>
+      <width>101</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>positive</string>
+     <string>sex</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="traitCondition_customRadio_negative">
+   <widget class="QRadioButton" name="radio_age">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>270</y>
-      <width>82</width>
-      <height>17</height>
+      <x>80</x>
+      <y>80</y>
+      <width>101</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>negative</string>
+     <string>age</string>
     </property>
+   </widget>
+   <widget class="QWidget" name="widget_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>270</y>
+      <width>271</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <widget class="QRadioButton" name="radio_custom_positive">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Positive</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radio_custom_negative">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>20</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Negative</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="widget_3" native="true">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>140</y>
+      <width>271</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <widget class="QRadioButton" name="radio_sex_male">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Male</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radio_sex_female">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>30</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Female</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
