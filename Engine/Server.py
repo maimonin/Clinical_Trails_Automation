@@ -37,15 +37,15 @@ def parse_trait_condition(satisfy, trait):
         values = satisfy['value']
         return lambda patient: True if values['min'] <= patient.get_traits()[trait] <= values['max'] else False
     else:
+        return lambda patient: True if patient.get_traits()[trait] == satisfy['value'] else False
+
+
+def parse_questionnaire_condition(satisfy, trait):
+    if satisfy['type'] == 'range':
+        values = satisfy['value']
+        return lambda patient: True if values['min'] <= trait <= values['max'] else False
+    else:
         return lambda patient: True if trait == satisfy['value'] else False
-
-
-# def parse_questionnaire_condition(satisfy, trait):
-#     if satisfy['type'] == 'range':
-#         values = satisfy['value']
-#         return lambda patient: True if values['min'] <= trait <= values['max'] else False
-#     else:
-#         return lambda patient: True if trait == satisfy['value'] else False
 
 
 def parse_test_condition(satisfy, test_name):
@@ -64,8 +64,8 @@ def parse_Decision(node_dict):
     for condition in conditions:
         if condition['type'].rstrip() == 'trait condition':
             combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
-        # elif condition['questionnaire condition']:
-        #     combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
+        elif condition['type'].rstrip() == 'questionnaire condition':
+            combined_condition.append(parse_questionnaire_condition(condition['satisfy'], condition['test']))
         elif condition['type'].rstrip() == 'test condition':
             combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
     node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], combined_condition)
@@ -140,7 +140,6 @@ def threaded(c):
             print('Bye')
             break
         data_dict = json.loads(data)
-        print(data_dict)
         if data_dict['sender'] == 'simulator':
             register_user(data_dict, c)
         else:

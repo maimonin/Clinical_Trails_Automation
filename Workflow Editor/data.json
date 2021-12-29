@@ -1,16 +1,16 @@
 {
-    "id": 2779821605504,
+    "id": 2169991935648,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2779844833632,
-            "title": "Simple String",
-            "pos_x": 81.0,
-            "pos_y": -147.0,
+            "id": 2169992008032,
+            "title": "Data Entry",
+            "pos_x": 103.0,
+            "pos_y": -107.0,
             "inputs": [
                 {
-                    "id": 2779844873664,
+                    "id": 2169992007936,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,95 @@
             ],
             "outputs": [
                 {
-                    "id": 2779844873712,
+                    "id": 2169992007984,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "1",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "tests": [
+                    {
+                        "name": "test1",
+                        "instructions": "be happy",
+                        "staff": [],
+                        "duration": ""
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2169992010192,
+            "title": "Decision",
+            "pos_x": 145.0,
+            "pos_y": 76.0,
+            "inputs": [
+                {
+                    "id": 2169992109072,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2169992109120,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "1",
+                    "actor in charge": "Nurse",
+                    "time": "1"
+                },
+                "condition": [
+                    {
+                        "title": "test condition 1",
+                        "type": "test condition",
+                        "test": "test1",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 0,
+                                "max": 10
+                            }
+                        }
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2169992109456,
+            "title": "Simple String",
+            "pos_x": 73.0,
+            "pos_y": 233.0,
+            "inputs": [
+                {
+                    "id": 2169992109648,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2169992109696,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -31,47 +119,18 @@
                     "actors": [],
                     "title": "1"
                 },
-                "text": "hello"
+                "text": "yes"
             },
             "op_code": 4
         },
         {
-            "id": 2779844833584,
-            "title": "Time Constraint",
-            "pos_x": 161.0,
-            "pos_y": 51.0,
-            "inputs": [
-                {
-                    "id": 2779844912704,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2779844912752,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "type": "string",
-                "value": 3
-            },
-            "op_code": 5
-        },
-        {
-            "id": 2779844957664,
+            "id": 2169991936992,
             "title": "Simple String",
-            "pos_x": 222.0,
-            "pos_y": 255.0,
+            "pos_x": 430.0,
+            "pos_y": 233.0,
             "inputs": [
                 {
-                    "id": 2779844957952,
+                    "id": 2169991937184,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -80,7 +139,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2779844958000,
+                    "id": 2169991937424,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -90,25 +149,31 @@
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "3"
+                    "title": "1"
                 },
-                "text": "world"
+                "text": "no"
             },
             "op_code": 4
         }
     ],
     "edges": [
         {
-            "id": 2779844913568,
+            "id": 2169992109264,
             "edge_type": 2,
-            "start": 2779844873712,
-            "end": 2779844912704
+            "start": 2169992007984,
+            "end": 2169992109072
         },
         {
-            "id": 2779844958144,
+            "id": 2169991935696,
             "edge_type": 2,
-            "start": 2779844912752,
-            "end": 2779844957952
+            "start": 2169992109120,
+            "end": 2169992109648
+        },
+        {
+            "id": 2169991937712,
+            "edge_type": 2,
+            "start": 2169992109120,
+            "end": 2169991937184
         }
     ]
 }

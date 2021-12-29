@@ -17,7 +17,7 @@ class User:
         callback()
 
     def get_traits(self):
-        return {"sex": self.sex, "age": self.age}
+        return {"gender": self.sex, "age": self.age}
 
 
 def add_user(role, sex, age, user_id, socket):
