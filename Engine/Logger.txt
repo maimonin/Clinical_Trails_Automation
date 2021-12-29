@@ -6,14 +6,14 @@ Connected to client
 Connected to client
 user 0 is added
 Connected to client
-user 1 is added
 user nurse received
-Connected to client
-user 2 is added
+user 1 is added
 user investigator received
+user 2 is added
+Connected to client
+user lab received
 Connected to client
 user 3 is added
-user lab received
 user doctor received
 user 4 is added
 user participant received
