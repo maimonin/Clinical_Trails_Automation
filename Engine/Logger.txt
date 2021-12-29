@@ -7,15 +7,22 @@ Connected to client
 user 0 is added
 Connected to client
 user 1 is added
-user nurse received
 Connected to client
+user nurse received
 user 2 is added
 user investigator received
 Connected to client
-user 3 is added
 user lab received
+user 3 is added
 user doctor received
 user 4 is added
 user participant received
 String node: Attached an observer.
 String node: Notifying observers...
+participant id4in string node with title: 1
+Time node: Attached an observer.
+Time node: Notifying observers...
+participant 4 in time with title: Time Constraint
+String node: Attached an observer.
+String node: Notifying observers...
+participant id4in string node with title: 3
