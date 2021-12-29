@@ -26,7 +26,6 @@ class User:
 
 
 def add_user(role, sex, age, user_id, socket):
-    print(len(nurses))
     user = User(role, sex, age, user_id, socket)
     if role == "nurse":
         nurses.append(user)
@@ -43,18 +42,26 @@ def add_user(role, sex, age, user_id, socket):
 
 
 def get_role(role):
-    if role.lower() == "nurse":
-        return nurses[0]
-#        return nurses[randint(0, len(nurses) - 1)]
-    if role.lower() == "doctor":
-        return doctors[0]
-#        return nurses[randint(0, len(doctors) - 1)]
-    if role.lower() == "investigator":
-        return investigators[0]
-#        return investigators[randint(0, len(investigators) - 1)]
-    if role.lower() == "lab":
-        return labs[0]
-#        return nurses[randint(0, len(labs) - 1)]
+    if str(role).lower() == "nurse":
+        if len(nurses) == 0:
+            print("no available nurse")
+            return None
+        return nurses[randint(0, len(nurses) - 1)]
+    if str(role).lower() == "doctor":
+        if len(doctors) == 0:
+            print("no available doctor")
+            return None
+        return doctors[randint(0, len(doctors) - 1)]
+    if str(role).lower() == "investigator":
+        if len(investigators) == 0:
+            print("no available investigator")
+            return None
+        return investigators[randint(0, len(investigators) - 1)]
+    if str(role).lower() == "lab":
+        if len(labs) == 0:
+            print("no available lab worker")
+            return None
+        return labs[randint(0, len(labs) - 1)]
 
 
 def answer_questionnaire(questions, s):
