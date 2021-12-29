@@ -32,7 +32,7 @@ def get_test_result(participant, test_name):
     log("getting test of " + str(participant))
     for test in reversed(tests[participant]):
         if test[0] == test_name:
-            return test[1]
+            return test[1]['result']
         else:
             return None
 

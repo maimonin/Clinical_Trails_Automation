@@ -6,19 +6,48 @@ Connected to client
 Connected to client
 user 0 is added
 Connected to client
+user 1 is added
 user nurse received
-Connected to client
+user nurse received
 user 2 is added
-user nurse received
-user 3 is added
 Connected to client
 user investigator received
+Connected to client
+user 3 is added
+Connected to client
 user 4 is added
 user lab received
+user 5 is added
 Connected to client
 user doctor received
-user 5 is added
+user 6 is added
 user participant received
 String node: Attached an observer.
+user participant received
 String node: Notifying observers...
+String node: Attached an observer.
 participant 5 in test with title: 1
+String node: Notifying observers...
+participant 6 in test with title: 1
+taking a test
+adding test of <Users.User object at 0x00000131B129F190>
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 5 in decision node with title: 1
+getting test of <Users.User object at 0x00000131B129F190>
+condition wasn't met
+String node: Attached an observer.
+String node: Notifying observers...
+participant id 5 in string node with title: 1
+closing connection with 5
+taking a test
+adding test of <Users.User object at 0x00000131B129F280>
+Decision: Attached an observer.
+Decision: Notifying observers...
+participant id 6 in decision node with title: 1
+getting test of <Users.User object at 0x00000131B129F280>
+condition was met
+String node: Attached an observer.
+String node: Notifying observers...
+participant id 6 in string node with title: 1
+closing connection with 6

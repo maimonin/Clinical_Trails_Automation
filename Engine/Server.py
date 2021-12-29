@@ -48,7 +48,7 @@ def parse_questionnaire_condition(questionnaireNumber, questionNumber,acceptedAn
 def parse_test_condition(satisfy, test_name):
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return lambda patient: True if values['min'] <= get_test_result(patient, test_name) <= values['max'] else False
+        return lambda patient: True if values['min'] <= int(get_test_result(patient, test_name)) <= values['max'] else False
     else:
         return lambda patient: True if get_test_result(patient, test_name) == satisfy['value'] else False
 
@@ -137,6 +137,7 @@ def threaded(c):
         print(data_dict)
         if data_dict['sender'] == 'simulator':
             register_user(data_dict, c)
+            break
         else:
             new_workflow(data_dict, c)
             break

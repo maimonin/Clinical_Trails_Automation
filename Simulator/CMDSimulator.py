@@ -12,8 +12,8 @@ users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30},
-         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30}]
-#  {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
+         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
+         {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -89,7 +89,6 @@ def actor_simulation(user, s):
                 lock.release()
             elif data_json['type'] == 'test data entry':
                 lock.acquire()
-                print(data_json)
                 val = input(
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")
@@ -115,7 +114,6 @@ def register_user(user, s):
 def Main():
     threads = []
     for user in users:
-        print(user)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, port))
         register_user(user, s)

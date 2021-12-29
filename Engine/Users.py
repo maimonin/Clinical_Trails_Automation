@@ -61,13 +61,9 @@ def get_role(role):
 
 
 def answer_questionnaire(questions, s):
-    print("1")
     s.send(json.dumps({'type': 'questionnaire', 'questions': questions}).encode('ascii'))
-    print("2")
     ans = s.recv(5000)
-    print("3")
     log("answering questionnaire")
-    print("4")
     return json.loads(ans)
 
 
