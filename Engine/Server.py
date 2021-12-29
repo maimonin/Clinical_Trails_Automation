@@ -4,9 +4,9 @@ from _thread import *
 import threading
 
 from Data import get_test_result
-from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode
+from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode
 from Logger import log
-from Users import add_user
+from Users import add_user, get_role
 
 workflows = {}
 print_lock = threading.Lock()
@@ -14,6 +14,7 @@ OP_NODE_QUESTIONNAIRE = 1
 OP_NODE_DATA_ENTRY = 2
 OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
+OP_NODE_TIME = 5
 
 
 def parse_Questionnaire(node_dict):
@@ -73,7 +74,17 @@ def parse_Decision(node_dict):
 def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = StringNode(node_dict['id'], node_details['title'], content['text'], node_details['actors'])
+    actors = []
+    for role in node_details['actors']:
+        if role != 'Participant':
+            actors.append(get_role(role))
+    node = StringNode(node_dict['id'], node_details['title'], content['text'], actors)
+    return node
+
+
+def parse_Time_Node(node_dict):
+    content = node_dict['content']
+    node = TimeNode(node_dict['id'], node_dict['title'], int(content['value']))
     return node
 
 
@@ -103,6 +114,8 @@ def new_workflow(data_dict, c):
             nodes[node['id']] = parse_Decision(node)
         elif node['op_code'] == OP_NODE_STRING:
             nodes[node['id']] = parse_String_Node(node)
+        elif node['op_code'] == OP_NODE_TIME:
+            nodes[node['id']] = parse_Time_Node(node)
         for out in node['outputs']:
             outputs[out['id']] = node['id']
         for inp in node['inputs']:
@@ -114,7 +127,6 @@ def new_workflow(data_dict, c):
         second_id = inputs[edge['end']]
         first = nodes[first_id]
         second = nodes[second_id]
-        # label= edge['label']
         first.next_nodes.append(second)
     log("created workflow")
 
