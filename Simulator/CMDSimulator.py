@@ -73,7 +73,6 @@ def actor_simulation(user, s):
     try:
         while True:
             data = s.recv(5000)
-            print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()
