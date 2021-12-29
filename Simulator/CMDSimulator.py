@@ -16,6 +16,7 @@ port = 8000
 
 user_id = 0
 users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
+        {"name": "nurse2", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30},
@@ -80,7 +81,7 @@ def actor_simulation(user,s):
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()
-                print(user["name"] + "got notification: " + data_json['text'])
+                print(user["name"] + " got notification: " + data_json['text'])
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handel_questionnaire(data_json['questions'], user)
@@ -117,6 +118,7 @@ def register_user(user, s):
 def Main():
     threads = []
     for user in users:
+        print(user)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((host, port))
         register_user(user, s)

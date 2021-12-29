@@ -7,7 +7,7 @@ from Data import get_test_result
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode
 from Logger import log
 from Users import add_user
-
+import user_lists
 workflows = {}
 print_lock = threading.Lock()
 OP_NODE_QUESTIONNAIRE = 1
@@ -143,6 +143,7 @@ def send_feedback(user_socket, text):
 
 def Main():
     open('Logger.txt', 'w').close()
+    user_lists.init()
     host = ""
     port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
