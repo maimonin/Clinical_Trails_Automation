@@ -3,14 +3,13 @@ socket is listening
 Connected to client
 created workflow
 Connected to client
+Connected to client
 user 0 is added
 Connected to client
 user nurse received
 Connected to client
-user 1 is added
-Connected to client
-user nurse received
 user 2 is added
+user nurse received
 user 3 is added
 Connected to client
 user investigator received
@@ -20,15 +19,6 @@ Connected to client
 user doctor received
 user 5 is added
 user participant received
-Questionnaire: Attached an observer.
-participant 5 in data questionnaire with title: q1
-answering questionnaire
-adding questionnaire of 5
-Decision: Attached an observer.
-Decision: Notifying observers...
-participant id 5 in decision node with title: d1
-condition was met
 String node: Attached an observer.
 String node: Notifying observers...
-participant id 5 in string node with title: s1
-closing connection with 5
+participant 5 in test with title: 1

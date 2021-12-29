@@ -1,16 +1,16 @@
 {
-    "id": 1798010506448,
+    "id": 2169991935648,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1798038789040,
-            "title": "Questionnaire",
-            "pos_x": -277.0,
-            "pos_y": -59.0,
+            "id": 2169992008032,
+            "title": "Data Entry",
+            "pos_x": 103.0,
+            "pos_y": -107.0,
             "inputs": [
                 {
-                    "id": 1798038820944,
+                    "id": 2169992007936,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1798038820992,
+                    "id": 2169992007984,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -29,32 +29,29 @@
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "q1",
+                    "title": "1",
                     "actor in charge": "Nurse",
-                    "time": "2"
+                    "time": "1"
                 },
-                "questions": [
+                "tests": [
                     {
-                        "text": "how are you?",
-                        "options": [
-                            "good",
-                            "bad"
-                        ],
-                        "type": "multi"
+                        "name": "test1",
+                        "instructions": "be happy",
+                        "staff": [],
+                        "duration": ""
                     }
-                ],
-                "qusetionnaire_number": 1
+                ]
             },
-            "op_code": 1
+            "op_code": 2
         },
         {
-            "id": 1798038789088,
+            "id": 2169992010192,
             "title": "Decision",
-            "pos_x": 25.0,
-            "pos_y": -27.0,
+            "pos_x": 145.0,
+            "pos_y": 76.0,
             "inputs": [
                 {
-                    "id": 1798038925424,
+                    "id": 2169992109072,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -63,7 +60,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1798038925472,
+                    "id": 2169992109120,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -73,32 +70,35 @@
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "d1",
+                    "title": "1",
                     "actor in charge": "Nurse",
-                    "time": "3"
+                    "time": "1"
                 },
                 "condition": [
                     {
-                        "title": "questionnaire condition 1",
-                        "type": "questionnaire condition",
-                        "questionnaireNumber": 1,
-                        "questionNumber": 1,
-                        "acceptedAnswers": [
-                            1
-                        ]
+                        "title": "test condition 1",
+                        "type": "test condition",
+                        "test": "test1",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 0,
+                                "max": 10
+                            }
+                        }
                     }
                 ]
             },
             "op_code": 3
         },
         {
-            "id": 1798071777840,
+            "id": 2169992109456,
             "title": "Simple String",
-            "pos_x": 381.0,
-            "pos_y": -127.0,
+            "pos_x": 73.0,
+            "pos_y": 233.0,
             "inputs": [
                 {
-                    "id": 1798071778128,
+                    "id": 2169992109648,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -107,7 +107,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1798071778176,
+                    "id": 2169992109696,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -116,23 +116,21 @@
             ],
             "content": {
                 "node_details": {
-                    "actors": [
-                        "Nurse"
-                    ],
-                    "title": "s1"
+                    "actors": [],
+                    "title": "1"
                 },
-                "text": "node1"
+                "text": "yes"
             },
             "op_code": 4
         },
         {
-            "id": 1798071778464,
+            "id": 2169991936992,
             "title": "Simple String",
-            "pos_x": 412.0,
-            "pos_y": 115.0,
+            "pos_x": 430.0,
+            "pos_y": 233.0,
             "inputs": [
                 {
-                    "id": 1798071778704,
+                    "id": 2169991937184,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -141,7 +139,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1798071778752,
+                    "id": 2169991937424,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -150,34 +148,32 @@
             ],
             "content": {
                 "node_details": {
-                    "actors": [
-                        "Nurse"
-                    ],
-                    "title": "s2"
+                    "actors": [],
+                    "title": "1"
                 },
-                "text": "node2"
+                "text": "no"
             },
             "op_code": 4
         }
     ],
     "edges": [
         {
-            "id": 1798071725504,
+            "id": 2169992109264,
             "edge_type": 2,
-            "start": 1798038820992,
-            "end": 1798038925424
+            "start": 2169992007984,
+            "end": 2169992109072
         },
         {
-            "id": 1798071778368,
+            "id": 2169991935696,
             "edge_type": 2,
-            "start": 1798038925472,
-            "end": 1798071778128
+            "start": 2169992109120,
+            "end": 2169992109648
         },
         {
-            "id": 1798071778848,
+            "id": 2169991937712,
             "edge_type": 2,
-            "start": 1798038925472,
-            "end": 1798071778704
+            "start": 2169992109120,
+            "end": 2169991937184
         }
     ]
 }

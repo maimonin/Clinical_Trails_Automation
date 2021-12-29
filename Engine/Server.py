@@ -134,13 +134,13 @@ def threaded(c):
             print('Bye')
             break
         data_dict = json.loads(data)
+        print(data_dict)
         if data_dict['sender'] == 'simulator':
             register_user(data_dict, c)
         else:
             new_workflow(data_dict, c)
             break
 
-    c.close()
 
 
 def send_feedback(user_socket, text):

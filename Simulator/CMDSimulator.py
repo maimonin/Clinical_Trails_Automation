@@ -85,16 +85,16 @@ def actor_simulation(user, s):
                 lock.acquire()
                 print(
                     f"{user['name']}:  patient with id {data_json['patient']} is about to arrive please take test:"
-                    f" {data_json['name']}  \n"
-                    f"the instructions for this test are: {data_json['instructions']}")
+                    f" {data_json['name']}  \nthe instructions for this test are: {data_json['instructions']}")
                 lock.release()
             elif data_json['type'] == 'test data entry':
                 lock.acquire()
+                print(data_json)
                 val = input(
-                    f"{user['name']}:  patient with id {data_json['patient']} is about to arrive please take test: "
-                    f"{data_json['name']}  \n")
+                    f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
+                    f"{data_json['test']['name']}  \nplease enter the results:")
                 lock.release()
-                s.send(json.dumps({"test": data_json['name'], 'result': val}).encode('ascii'))
+                s.send(json.dumps({"test": data_json['test']['name'], 'result': val}).encode('ascii'))
             elif data_json['type'] == 'terminate':
                 s.close()
                 break
