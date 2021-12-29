@@ -1,5 +1,6 @@
 import json
 import threading
+import time
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -55,7 +56,7 @@ class Questionnaire(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test
+        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -141,7 +142,7 @@ class StringNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test
+        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -151,13 +152,12 @@ class StringNode(Node):
         self.participants = []
         self.lock.release()
         log("String node: Notifying observers...")
+        print(participants2)
         for participant in participants2:
-            if participant != 'Participant':
-                participant = get_role(participant)
-            if participant is None:
-                continue
             log("participant id" + str(participant.id) + "in string node with title: " + self.title)
             participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
+            for next_node in self.next_nodes:
+                next_node.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -182,7 +182,7 @@ class TestNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        end_test
+        end_test(self)
         for next_node in self.next_nodes:
             next_node.exec()
 
@@ -197,6 +197,45 @@ class TestNode(Node):
             for test in self.tests:
                 results = take_test(participant.id, test, self.in_charge, participant.socket)
                 add_test(test['name'], results, participant)
+            for next_node in self.next_nodes:
+                next_node.attach(participant)
+
+    def has_actors(self):
+        return len(self.participants) != 0
+
+
+class TimeNode(Node):
+    def __init__(self, node_id, title, sleep_time):
+        self.id = node_id
+        self.title = title
+        self.time = sleep_time
+        self.lock = threading.Lock()
+        self.next_nodes = []
+        self.participants: List[User] = []
+
+    def attach(self, participant: User) -> None:
+        log("Time node: Attached an observer.")
+        self.participants.append(participant)
+
+    def detach(self, participant: User) -> None:
+        self.participants.remove(participant)
+
+    def exec(self) -> None:
+        self.notify()
+        end_test(self)
+        for next_node in self.next_nodes:
+            next_node.exec()
+
+    def notify(self) -> None:
+        self.lock.acquire()
+        participants2 = self.participants.copy()
+        self.participants = []
+        self.lock.release()
+        log("Time node: Notifying observers...")
+        print(participants2)
+        for participant in participants2:
+            log("participant " + str(participant.id) + " in time with title: " + self.title)
+            time.sleep(self.time)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
 
