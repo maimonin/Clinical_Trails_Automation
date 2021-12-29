@@ -1,6 +1,3 @@
-
-
-
 def init():
     global nurses
     global doctors

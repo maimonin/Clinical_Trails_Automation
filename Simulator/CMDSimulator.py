@@ -31,7 +31,9 @@ def handle_radio_question(q):
         i += 1
     val = input("type answer number:")
     val = int(val)
-    return {"question": q, "answer": q['options'][val]}
+    ans=[]
+    ans.append(val+1)
+    return {"question": q, "answer":ans}
 
 
 def handle_multi_question(q):
@@ -42,11 +44,13 @@ def handle_multi_question(q):
         print(str(i) + ". " + opt)
         i += 1
     val = input("type answer number:")
+    val=int(val)
+    ans.append(val+1)
     while val != -1:
         val = input("type answer number or -1 to finish:")
         val = int(val)
         if val != -1:
-            ans.append(q['options'][val])
+            ans.append(val+1)
     return {"question": q, "answer": ans}
 
 

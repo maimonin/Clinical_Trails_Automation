@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from Data import add_questionnaire, add_test
-from Engine.Users import User, answer_questionnaire, take_test
+from Engine.Users import User, answer_questionnaire, take_test, get_role
 from Logger import log
 
 
@@ -39,13 +39,14 @@ def end_test(node, participants):
 
 
 class Questionnaire(Node):
-    def __init__(self, node_id, title, form):
+    def __init__(self, node_id, title, form,qnumber):
         self.id = node_id
         self.title = title
         self.form = form
         self.next_nodes = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
+        self.qnumber=qnumber
 
     def attach(self, participant: User) -> None:
         log("Questionnaire: Attached an observer.")
@@ -68,6 +69,7 @@ class Questionnaire(Node):
             log("participant " + str(participant.id) + " in data questionnaire with title: " + self.title)
             # send questionnaire to participant
             answers = answer_questionnaire(self.form, participant.socket)
+            answers.update({'qusetionnaire_number':self.qnumber})
             add_questionnaire(answers, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
@@ -132,7 +134,8 @@ class StringNode(Node):
         self.text = text
         self.next_nodes = []
         self.lock = threading.Lock()
-        self.participants = actors
+        self.actors=actors
+        self.participants = []
 
     def attach(self, participant: User) -> None:
         log("String node: Attached an observer.")
@@ -157,6 +160,10 @@ class StringNode(Node):
             participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
+        for role in self.actors:
+            r=get_role(role)
+            if r is not None:
+                r.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
         end_test(self, participants2)
 
     def has_actors(self):
