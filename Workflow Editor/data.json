@@ -1,107 +1,16 @@
 {
-    "id": 1321683266816,
+    "id": 2408264746608,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1321706409888,
-            "title": "Questionnaire",
-            "pos_x": 13.0,
-            "pos_y": -141.0,
-            "inputs": [
-                {
-                    "id": 1321706441888,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1321706441936,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "one",
-                    "actor in charge": "Nurse",
-                    "time": "1"
-                },
-                "questions": [
-                    {
-                        "text": "blood pressure",
-                        "type": "open"
-                    },
-                    {
-                        "text": "glucose",
-                        "type": "open"
-                    }
-                ],
-                "qusetionnaire_number": 1
-            },
-            "op_code": 1
-        },
-        {
-            "id": 1321706551904,
-            "title": "Decision",
-            "pos_x": 11.0,
-            "pos_y": 13.0,
-            "inputs": [
-                {
-                    "id": 1321706551664,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1321706551616,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "two",
-                    "actor in charge": "Nurse",
-                    "time": "1"
-                },
-                "condition": [
-                    {
-                        "title": "trait condition 1",
-                        "type": "trait condition    ",
-                        "test": "age",
-                        "satisfy": {
-                            "type": "range",
-                            "value": {
-                                "min": 20,
-                                "max": 40
-                            }
-                        }
-                    }
-                ]
-            },
-            "op_code": 3
-        },
-        {
-            "id": 1321709639904,
+            "id": 2408288105808,
             "title": "Simple String",
-            "pos_x": -85.0,
-            "pos_y": 176.0,
+            "pos_x": 221.0,
+            "pos_y": -51.0,
             "inputs": [
                 {
-                    "id": 1321709640144,
+                    "id": 2408288141808,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -110,33 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1321709640192,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": "three",
-            "op_code": 4
-        },
-        {
-            "id": 1321709641632,
-            "title": "Data Entry",
-            "pos_x": 268.0,
-            "pos_y": 121.0,
-            "inputs": [
-                {
-                    "id": 1321709703424,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1321709703472,
+                    "id": 2408288141856,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -145,76 +28,15 @@
             ],
             "content": {
                 "node_details": {
-                    "actors": [],
-                    "title": "four",
-                    "actor in charge": "Nurse",
-                    "time": "1"
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "hello"
                 },
-                "tests": [
-                    {
-                        "name": "hemoglobin",
-                        "instructions": "be happy",
-                        "staff": [
-                            "",
-                            "nurse"
-                        ],
-                        "duration": "1"
-                    }
-                ]
+                "text": "hi"
             },
-            "op_code": 2
-        },
-        {
-            "id": 1321709704624,
-            "title": "Simple String",
-            "pos_x": 267.0,
-            "pos_y": 223.0,
-            "inputs": [
-                {
-                    "id": 1321709705584,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1321709705536,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": "five",
             "op_code": 4
         }
     ],
-    "edges": [
-        {
-            "id": 1321706488928,
-            "edge_type": 2,
-            "start": 1321706441936,
-            "end": 1321706551664
-        },
-        {
-            "id": 1321709640720,
-            "edge_type": 2,
-            "start": 1321706551616,
-            "end": 1321709640144
-        },
-        {
-            "id": 1321709703616,
-            "edge_type": 2,
-            "start": 1321706551616,
-            "end": 1321709703424
-        },
-        {
-            "id": 1321709705872,
-            "edge_type": 2,
-            "start": 1321709703472,
-            "end": 1321709705584
-        }
-    ]
+    "edges": []
 }

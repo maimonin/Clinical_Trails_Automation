@@ -71,7 +71,9 @@ def parse_Decision(node_dict):
 
 
 def parse_String_Node(node_dict):
-    node = StringNode(node_dict['id'], node_dict['title'], node_dict['content'])
+    content = node_dict['content']
+    node_details = content['node_details']
+    node = StringNode(node_dict['id'], node_details['title'], content['text'], node_details['actors'])
     return node
 
 
@@ -125,6 +127,7 @@ def threaded(c):
             print('Bye')
             break
         data_dict = json.loads(data)
+        print(data_dict)
         if data_dict['sender'] == 'simulator':
             register_user(data_dict, c)
         else:

@@ -16,13 +16,14 @@ from nodeeditor.utils import dumpException
 from node_details import Ui_Node_Details
 
 class Ui_Decision_Node(object):
-    def __init__(self, callback,data=None):
+    def __init__(self, callback, data=None):
         super().__init__()
         self.details = {}
         self._num_of_question = 0
         self.questions = []
-        self.callback=callback
-        self.data=data
+        self.callback = callback
+        self.data = data
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(812, 645)
@@ -53,8 +54,8 @@ class Ui_Decision_Node(object):
         self.decision_discard = QtWidgets.QPushButton(self.widget)
         self.decision_discard.setGeometry(QtCore.QRect(160, 560, 101, 61))
         self.decision_discard.setObjectName("decision_discard")
-
         self.decision_discard.clicked.connect(self.discard)
+
         self.decision_edit = QtWidgets.QPushButton(self.widget)
         self.decision_edit.setGeometry(QtCore.QRect(280, 560, 150, 61))
         self.decision_edit.setObjectName("decision_edit")
@@ -70,9 +71,11 @@ class Ui_Decision_Node(object):
 
         if self.data is not None:
             self.fill_data()
+
     def clicked(self,item):
         print(f"event, item clicked: {item.__str__()}")
         # item.
+
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
@@ -119,8 +122,10 @@ class Ui_Decision_Node(object):
         self.questions.append(question)
         self._num_of_question += 1
         print(question)
+
     def discard(self):
         self.callback(None)
+
     def save_finish(self):
 
         self.callback({"node_details": self.details, "condition": self.questions})
