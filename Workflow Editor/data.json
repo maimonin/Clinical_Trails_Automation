@@ -1,16 +1,16 @@
 {
-    "id": 2169991935648,
+    "id": 2711399828688,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2169992008032,
-            "title": "Data Entry",
-            "pos_x": 103.0,
-            "pos_y": -107.0,
+            "id": 2711428085936,
+            "title": "Questionnaire",
+            "pos_x": -141.0,
+            "pos_y": -154.0,
             "inputs": [
                 {
-                    "id": 2169992007936,
+                    "id": 2711428142416,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2169992007984,
+                    "id": 2711428142464,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -29,151 +29,92 @@
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "1",
+                    "title": "questionnaire1",
                     "actor in charge": "Nurse",
-                    "time": "1"
+                    "time": "20"
+                },
+                "questions": [
+                    {
+                        "text": "Choose your pain level in a scale of 1-5",
+                        "options": [
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5"
+                        ],
+                        "type": "multi"
+                    },
+                    {
+                        "text": "Choose one or more conditions you're suffering from",
+                        "options": [
+                            "Anemia",
+                            "High Blood Pressure",
+                            "Cancer"
+                        ],
+                        "type": "one choice"
+                    },
+                    {
+                        "text": "Enter side effects you have been suffering from in the last week",
+                        "type": "open"
+                    }
+                ],
+                "qusetionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2711400168224,
+            "title": "Data Entry",
+            "pos_x": 356.0,
+            "pos_y": -45.0,
+            "inputs": [
+                {
+                    "id": 2711400169088,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2711400169424,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "BloodTest1",
+                    "actor in charge": "Lab Technician",
+                    "time": "20"
                 },
                 "tests": [
                     {
-                        "name": "test1",
-                        "instructions": "be happy",
-                        "staff": [],
-                        "duration": ""
+                        "name": "CBC",
+                        "instructions": "Use a lavender top tube.",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "10"
                     }
                 ]
             },
             "op_code": 2
-        },
-        {
-            "id": 2169992010192,
-            "title": "Decision",
-            "pos_x": 145.0,
-            "pos_y": 76.0,
-            "inputs": [
-                {
-                    "id": 2169992109072,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2169992109120,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "1",
-                    "actor in charge": "Nurse",
-                    "time": "1"
-                },
-                "condition": [
-                    {
-                        "title": "test condition 1",
-                        "type": "test condition",
-                        "test": "test1",
-                        "satisfy": {
-                            "type": "range",
-                            "value": {
-                                "min": 0,
-                                "max": 10
-                            }
-                        }
-                    }
-                ]
-            },
-            "op_code": 3
-        },
-        {
-            "id": 2169992109456,
-            "title": "Simple String",
-            "pos_x": 73.0,
-            "pos_y": 233.0,
-            "inputs": [
-                {
-                    "id": 2169992109648,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2169992109696,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "1"
-                },
-                "text": "yes"
-            },
-            "op_code": 4
-        },
-        {
-            "id": 2169991936992,
-            "title": "Simple String",
-            "pos_x": 430.0,
-            "pos_y": 233.0,
-            "inputs": [
-                {
-                    "id": 2169991937184,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2169991937424,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "1"
-                },
-                "text": "no"
-            },
-            "op_code": 4
         }
     ],
     "edges": [
         {
-            "id": 2169992109264,
+            "id": 2711400169328,
             "edge_type": 2,
-            "start": 2169992007984,
-            "end": 2169992109072
-        },
-        {
-            "id": 2169991935696,
-            "edge_type": 2,
-            "start": 2169992109120,
-            "end": 2169992109648
-        },
-        {
-            "id": 2169991937712,
-            "edge_type": 2,
-            "start": 2169992109120,
-            "end": 2169991937184
+            "start": 2711428142464,
+            "end": 2711400169088
         }
     ]
 }

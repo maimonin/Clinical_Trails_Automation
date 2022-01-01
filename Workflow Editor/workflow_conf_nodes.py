@@ -55,11 +55,11 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.data)
         ui.setupUi(QuestionnaireBuild)
         QuestionnaireBuild.exec_()
-@register_node(OP_NODE_DATA_ENTRY)
+@register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
-    icon = "images/data_entry.png"
-    op_code = OP_NODE_DATA_ENTRY
-    op_title = "Data Entry"
+    icon = "images/test_icon.png"
+    op_code = OP_NODE_Test
+    op_title = "Test"
     content_label_objname = "workflow_node_data_entry"
 
     def initInnerClasses(self):
