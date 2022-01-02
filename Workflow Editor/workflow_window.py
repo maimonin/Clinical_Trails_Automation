@@ -96,9 +96,11 @@ class WorkflowEditorWindow(NodeEditorWindow):
             dumpException(e)
 
 
-    def createMdiChild(self):
-        nodeeditor = WorkflowSubWindow()
+    def createMdiChild(self, child_widget=None):
+        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow()
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
+        # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        # nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
 
 
@@ -125,6 +127,31 @@ class WorkflowEditorWindow(NodeEditorWindow):
 
     def createToolBars(self):
         pass
+    def onFileOpen(self):
+        fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file', self.getFileDialogDirectory(), self.getFileDialogFilter())
+
+        try:
+            for fname in fnames:
+                if fname:
+                    existing = self.findMdiChild(fname)
+                    if existing:
+                        self.mdiArea.setActiveSubWindow(existing)
+                    else:
+                        # we need to create new subWindow and open the file
+                        nodeeditor = WorkflowSubWindow()
+                        if nodeeditor.fileLoad(fname):
+                            self.statusBar().showMessage("File %s loaded" % fname, 5000)
+                            nodeeditor.setTitle()
+                            subwnd = self.createMdiChild(nodeeditor)
+                            subwnd.show()
+                        else:
+                            nodeeditor.close()
+        except Exception as e: dumpException(e)
+    def findMdiChild(self, filename):
+        for window in self.mdiArea.subWindowList():
+            if window.widget().filename == filename:
+                return window
+        return None
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
     def createNodesDock(self):
