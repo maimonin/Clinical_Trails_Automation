@@ -1,16 +1,16 @@
 {
-    "id": 1520264843904,
+    "id": 1239784461600,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1520288072032,
+            "id": 1239784462224,
             "title": "Questionnaire",
-            "pos_x": -91.0,
-            "pos_y": -164.0,
+            "pos_x": 62.0,
+            "pos_y": -19.0,
             "inputs": [
                 {
-                    "id": 1520288107968,
+                    "id": 1239784462656,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1520288108016,
+                    "id": 1239784462704,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -29,30 +29,18 @@
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "one",
+                    "title": "2",
                     "actor in charge": "Nurse",
-                    "time": "3"
+                    "time": "1"
                 },
                 "questions": [
                     {
-                        "text": "how are you?",
+                        "text": "f",
                         "options": [
-                            "good",
-                            "bad"
+                            "fff",
+                            "f"
                         ],
                         "type": "multi"
-                    },
-                    {
-                        "text": "sick?",
-                        "options": [
-                            "yes",
-                            "no"
-                        ],
-                        "type": "one choice"
-                    },
-                    {
-                        "text": "blood?",
-                        "type": "open"
                     }
                 ],
                 "qusetionnaire_number": 1

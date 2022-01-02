@@ -34,22 +34,20 @@ class Node(ABC):
 def end_test(node, participants):
     if len(node.next_nodes) == 0:
         for participant in participants:
-            log("closing connection with " + str(participant.id))
             participant.socket.send(json.dumps({'type': 'terminate'}).encode('ascii'))
 
 
 class Questionnaire(Node):
-    def __init__(self, node_id, title, form,qnumber):
+    def __init__(self, node_id, title, form, number):
         self.id = node_id
         self.title = title
         self.form = form
         self.next_nodes = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
-        self.qnumber=qnumber
+        self.number = number
 
     def attach(self, participant: User) -> None:
-        log("Questionnaire: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -66,10 +64,9 @@ class Questionnaire(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            log("participant " + str(participant.id) + " in data questionnaire with title: " + self.title)
             # send questionnaire to participant
             answers = answer_questionnaire(self.form, participant.socket)
-            answers.update({'qusetionnaire_number':self.qnumber})
+            answers.update({'questionnaire_number': self.number})
             add_questionnaire(answers, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
@@ -90,7 +87,6 @@ class Decision(Node):
         self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
-        log("Decision: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -107,23 +103,19 @@ class Decision(Node):
         return len(self.participants) != 0
 
     def notify(self) -> None:
-        log("Decision: Notifying observers...")
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
         print(len(self.conditions))
         for participant in participants2:
-            log("participant id " + str(participant.id) + " in decision node with title: " + self.title)
             satisfies = True
             for condition in self.conditions:
                 if not condition(participant):
                     satisfies = False
             if satisfies:
-                log("condition was met")
                 self.next_nodes[0].attach(participant)
             else:
-                log("condition wasn't met")
                 self.next_nodes[1].attach(participant)
 
 
@@ -134,11 +126,10 @@ class StringNode(Node):
         self.text = text
         self.next_nodes = []
         self.lock = threading.Lock()
-        self.actors=actors
+        self.actors = actors
         self.participants = []
 
     def attach(self, participant: User) -> None:
-        log("String node: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -154,14 +145,12 @@ class StringNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        log("String node: Notifying observers...")
         for participant in participants2:
-            log("participant id " + str(participant.id) + " in string node with title: " + self.title)
             participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         for role in self.actors:
-            r=get_role(role)
+            r = get_role(role)
             if r is not None:
                 r.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
         end_test(self, participants2)
@@ -181,7 +170,6 @@ class TestNode(Node):
         self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
-        log("String node: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -197,9 +185,7 @@ class TestNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        log("String node: Notifying observers...")
         for participant in participants2:
-            log("participant " + str(participant.id) + " in test with title: " + self.title)
             for test in self.tests:
                 results = take_test(participant.id, test, self.in_charge, participant.socket)
                 add_test(test['name'], results, participant)
@@ -221,7 +207,6 @@ class TimeNode(Node):
         self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
-        log("Time node: Attached an observer.")
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -237,10 +222,8 @@ class TimeNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        log("Time node: Notifying observers...")
         print(participants2)
         for participant in participants2:
-            log("participant " + str(participant.id) + " in time with title: " + self.title)
             time.sleep(self.time)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
