@@ -67,10 +67,10 @@ class WorkflowNode(Node):
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        print("deserialize")
         res = super().deserialize(data, hashmap, restore_id)
         self.data = data['content']
-        print("Deserialized node base '%s'" % self.__class__.__name__, "res:", res)
+        self.op_code=data['op_code']
+        # print("Deserialized node base '%s'" % self.__class__.__name__, "res:", res)
         return res
 
     def edit_nodes_details(self):
