@@ -32,7 +32,10 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
-
+        self.scene.setNodeClassSelector(self.getNodeClassFromData)
+    def getNodeClassFromData(self, data):
+        if 'op_code' not in data: return Node
+        return get_class_from_opcode(data['op_code'])
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendlyFilename())
 
@@ -66,7 +69,11 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.accept()
         else:
             event.ignore()
+    def fileLoad(self, filename):
+        if super().fileLoad(filename):
+            return True
 
+        return False
     # TODO serialize, and send the json to server
 
     # def get_node_by_socket(self,socket):
