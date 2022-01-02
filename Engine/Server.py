@@ -134,7 +134,6 @@ def threaded(c):
             print('Bye')
             break
         data_dict = json.loads(data)
-        print(data_dict)
         if data_dict['sender'] == 'simulator':
             register_user(data_dict, c)
             break
@@ -157,15 +156,11 @@ def Main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
 
-    log("socket bound to port")
-
     # put the socket into listening mode
     s.listen(5)
-    log("socket is listening")
 
     while True:
         c, addr = s.accept()
-        log('Connected to client')
         start_new_thread(threaded, (c,))
     s.close()
 

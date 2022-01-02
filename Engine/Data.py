@@ -1,5 +1,6 @@
 from Logger import log
 
+
 def init():
     global answers
     global tests
@@ -9,12 +10,15 @@ def init():
 
 def add_questionnaire(results, participant):
     log("adding questionnaire of " + str(participant.id))
-    print(results)
+    message = 'participant '+str(participant.id)+' answers: '
+    for result in results['answers']:
+        print(result)
+        message += '\n\t'+result['question']['text']+": "+str(result['answer'])
+    log(message)
     if participant in answers:
-        answers[participant][results['qusetionnaire_number']]=results['answers']
+        answers[participant][results['qusetionnaire_number']] = results['answers']
     else:
-        ans = {}
-        ans[results['qusetionnaire_number']]=results['answers']
+        ans = {results['qusetionnaire_number']: results['answers']}
         answers[participant] = ans
 
 
@@ -42,5 +46,5 @@ def get_data(participant):
 
 
 def check_data(participant, questionnaireNumber, questionNumber, acceptedAnswers):
-    ans=answers[participant][questionnaireNumber][questionNumber - 1]['answer']
-    return ans== acceptedAnswers
+    ans = answers[participant][questionnaireNumber][questionNumber - 1]['answer']
+    return ans == acceptedAnswers
