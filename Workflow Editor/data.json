@@ -1,16 +1,16 @@
 {
-    "id": 2450059830992,
+    "id": 2242522691136,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2450059833248,
+            "id": 2242546849056,
             "title": "Simple String",
-            "pos_x": 95.0,
-            "pos_y": -39.0,
+            "pos_x": -15.0,
+            "pos_y": -146.0,
             "inputs": [
                 {
-                    "id": 2450059866320,
+                    "id": 2242546880960,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2450059866368,
+                    "id": 2242546881008,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -31,12 +31,90 @@
                     "actors": [
                         "Nurse"
                     ],
-                    "title": "1"
+                    "title": "one"
                 },
-                "text": "hi"
+                "text": "hello"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2242546910544,
+            "title": "Time Constraint",
+            "pos_x": -10.0,
+            "pos_y": -28.0,
+            "inputs": [
+                {
+                    "id": 2242546947648,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2242546947696,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "type": "time",
+                "Hours": 5,
+                "Minutes": 0,
+                "Seconds": 0
+            },
+            "op_code": 5
+        },
+        {
+            "id": 2242546948368,
+            "title": "Simple String",
+            "pos_x": 64.0,
+            "pos_y": 228.0,
+            "inputs": [
+                {
+                    "id": 2242546948608,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2242546948656,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "one"
+                },
+                "text": "world"
             },
             "op_code": 4
         }
     ],
-    "edges": []
+    "edges": [
+        {
+            "id": 2242546948704,
+            "edge_type": 2,
+            "start": 2242546881008,
+            "end": 2242546947648
+        },
+        {
+            "id": 2242546984944,
+            "edge_type": 2,
+            "start": 2242546947696,
+            "end": 2242546948608
+        }
+    ]
 }
