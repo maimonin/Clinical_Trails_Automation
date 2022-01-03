@@ -1,6 +1,7 @@
 import json
 import threading
 import time
+from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
 from Data import add_questionnaire, add_test
@@ -66,8 +67,13 @@ class Questionnaire(Node):
 
     def exec(self) -> None:
         self.notify()
+        i=0
         for next_node in self.next_nodes:
-            next_node.exec()
+            if i==len(self.next_nodes)-1:
+                next_node.exec()
+            else:
+                start_new_thread(next_node.exec, ())
+            i+=1
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -156,8 +162,13 @@ class StringNode(Node):
 
     def exec(self) -> None:
         self.notify()
+        i=0
         for next_node in self.next_nodes:
-            next_node.exec()
+            if i == len(self.next_nodes) - 1:
+                next_node.exec()
+            else:
+                start_new_thread(next_node.exec, ())
+            i += 1
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -201,8 +212,13 @@ class TestNode(Node):
 
     def exec(self) -> None:
         self.notify()
+        i = 0
         for next_node in self.next_nodes:
-            next_node.exec()
+            if i == len(self.next_nodes) - 1:
+                next_node.exec()
+            else:
+                start_new_thread(next_node.exec, ())
+            i += 1
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -248,8 +264,13 @@ class TimeNode(Node):
 
     def exec(self) -> None:
         self.notify()
+        i = 0
         for next_node in self.next_nodes:
-            next_node.exec()
+            if i == len(self.next_nodes) - 1:
+                next_node.exec()
+            else:
+                start_new_thread(next_node.exec, ())
+            i += 1
 
     def notify(self) -> None:
         self.lock.acquire()
