@@ -204,10 +204,10 @@ class TestNode(Node):
 
 
 class TimeNode(Node):
-    def __init__(self, node_id, title, sleep_time):
+    def __init__(self, node_id, hours, minutes, second):
         self.id = node_id
-        self.title = title
-        self.time = sleep_time
+        self.sleep_time = second + 60*minutes + 3600*hours
+        print(self.sleep_time)
         self.lock = threading.Lock()
         self.next_nodes = []
         self.participants: List[User] = []
@@ -230,7 +230,7 @@ class TimeNode(Node):
         self.lock.release()
         print(participants2)
         for participant in participants2:
-            time.sleep(self.time)
+            time.sleep(self.sleep_time)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)

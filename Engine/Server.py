@@ -82,13 +82,13 @@ def parse_Decision(node_dict):
 def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = StringNode(node_dict['id'], node_details['title'], content['text'], node_details['actors'])
+    node = StringNode(node_dict['id'], node_dict['title'], content['text'], node_details['actors'])
     return node
 
 
 def parse_Time_Node(node_dict):
     content = node_dict['content']
-    node = TimeNode(node_dict['id'], node_dict['title'], int(content['value']))
+    node = TimeNode(node_dict['id'], int(content['Hours']), int(content['Minutes']), int(content['Seconds']))
     return node
 
 
