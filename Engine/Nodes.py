@@ -67,13 +67,13 @@ class Questionnaire(Node):
 
     def exec(self) -> None:
         self.notify()
-        i=0
+        threads = []
         for next_node in self.next_nodes:
-            if i==len(self.next_nodes)-1:
-                next_node.exec()
-            else:
-                start_new_thread(next_node.exec, ())
-            i+=1
+            threads.append(threading.Thread(target=next_node.exec, args=()))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -162,13 +162,13 @@ class StringNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        i=0
+        threads = []
         for next_node in self.next_nodes:
-            if i == len(self.next_nodes) - 1:
-                next_node.exec()
-            else:
-                start_new_thread(next_node.exec, ())
-            i += 1
+            threads.append(threading.Thread(target=next_node.exec, args=()))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -212,13 +212,13 @@ class TestNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        i = 0
+        threads = []
         for next_node in self.next_nodes:
-            if i == len(self.next_nodes) - 1:
-                next_node.exec()
-            else:
-                start_new_thread(next_node.exec, ())
-            i += 1
+            threads.append(threading.Thread(target=next_node.exec, args=()))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -264,13 +264,13 @@ class TimeNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        i = 0
+        threads=[]
         for next_node in self.next_nodes:
-            if i == len(self.next_nodes) - 1:
-                next_node.exec()
-            else:
-                start_new_thread(next_node.exec, ())
-            i += 1
+            threads.append(threading.Thread(target=next_node.exec, args=()))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
     def notify(self) -> None:
         self.lock.acquire()
