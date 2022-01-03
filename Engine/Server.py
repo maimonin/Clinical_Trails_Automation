@@ -8,6 +8,7 @@ from Data import get_test_result
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode
 from Logger import log
 import user_lists
+from Test import Test
 from Users import add_user, get_role
 
 workflows = {}
@@ -22,14 +23,19 @@ OP_NODE_TIME = 5
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], content['questions'], content['questionnaire_number'])
+    node = Questionnaire(node_dict['id'], node_details['title'], node_details['time'], content['questions'], content['questionnaire_number'])
     return node
 
 
 def parse_Test(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = TestNode(node_dict['id'], node_details['title'], content['tests'], node_details['actor in charge'])
+    tests = []
+    for test_data in content['tests']:
+        print(test_data)
+        test = Test(test_data['name'], test_data['duration'], test_data['instructions'], test_data['staff'])
+        tests.append(test)
+    node = TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
     return node
 
 
@@ -88,7 +94,6 @@ def parse_Time_Node(node_dict):
 
 def register_user(user_dict, c):
     user = add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
-    log("user " + user.role + " received")
     if user.role == "participant":
         if len(workflows) == 0:
             print("No workflow yet")

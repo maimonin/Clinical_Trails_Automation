@@ -1,4 +1,5 @@
 import json
+import time
 from random import randint
 
 from Logger import log
@@ -68,14 +69,15 @@ def answer_questionnaire(questions, s):
 
 # name, instructions, staff
 def take_test(user_id, test, in_charge, s):
-    for role in test['staff']:
-        get_role(role).socket.send(json.dumps({'type': 'test', 'name': test['name'],
-                                               'instructions': test['instructions'],
+    for role in test.staff:
+        get_role(role).socket.send(json.dumps({'type': 'test', 'name': test.name,
+                                               'instructions': test.instructions,
                                                'patient': user_id}).encode('ascii'))
-    s.send(json.dumps({'type': 'notification', 'text': "show up to " + test['name']}).encode('ascii'))
-    form = {'type': 'test data entry', 'test': test, 'patient': user_id}
+    s.send(json.dumps({'type': 'notification', 'text': "show up to " + test.name}).encode('ascii'))
+    log("participant with id " + str(user_id) + " taking a test")
+    time.sleep(int(test.duration))
+    form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
     r = get_role(in_charge)
     r.socket.send(json.dumps(form).encode('ascii'))
     results = r.socket.recv(5000)
-    log("taking a test")
     return json.loads(results)

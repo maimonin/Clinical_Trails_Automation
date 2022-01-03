@@ -1,8 +1,16 @@
 {
+    "id": 2455122857792,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
+            "id": 2455201450496,
+            "title": "Test",
+            "pos_x": 41.0,
+            "pos_y": -127.0,
+            "inputs": [
+                {
+                    "id": 2455201450880,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -11,6 +19,7 @@
             ],
             "outputs": [
                 {
+                    "id": 2455201450928,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -19,14 +28,35 @@
             ],
             "content": {
                 "node_details": {
-                    "actors": [],
+                    "actors": [
+                        "Nurse",
+                        "Doctor"
+                    ],
+                    "title": "tests",
                     "actor in charge": "Nurse",
-                    "time": "20"
+                    "time": "5"
                 },
-                "questions": [
+                "tests": [
+                    {
+                        "name": "blood test",
+                        "instructions": "take blood",
+                        "staff": [
+                            "nurse"
+                        ],
+                        "duration": "5"
+                    },
+                    {
+                        "name": "physical",
+                        "instructions": "connect to physical",
+                        "staff": [
+                            "doctor"
+                        ],
+                        "duration": "10"
                     }
-                ],
-                "questionnaire_number": 1
+                ]
             },
-            "op_code": 1
+            "op_code": 2
+        }
+    ],
+    "edges": []
 }

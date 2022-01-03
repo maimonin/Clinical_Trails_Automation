@@ -37,9 +37,10 @@ def end_test(node, participants):
 
 
 class Questionnaire(Node):
-    def __init__(self, node_id, title, form, number):
+    def __init__(self, node_id, title, duration, form, number):
         self.id = node_id
         self.title = title
+        self.duration = duration
         self.form = form
         self.next_nodes = []
         self.lock = threading.Lock()
@@ -66,6 +67,7 @@ class Questionnaire(Node):
             # send questionnaire to participant
             answers = answer_questionnaire(self.form, participant.socket)
             answers.update({'questionnaire_number': self.number})
+            time.sleep(int(self.duration))
             add_questionnaire(answers, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
@@ -187,7 +189,7 @@ class TestNode(Node):
         for participant in participants2:
             for test in self.tests:
                 results = take_test(participant.id, test, self.in_charge, participant.socket)
-                add_test(test['name'], results, participant)
+                add_test(test.name, results, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)
