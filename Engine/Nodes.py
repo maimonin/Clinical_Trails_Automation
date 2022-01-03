@@ -4,11 +4,15 @@ import time
 from abc import ABC, abstractmethod
 from typing import List
 from Data import add_questionnaire, add_test
-from Engine.Users import User, answer_questionnaire, take_test, get_role
-from Logger import log
+from Engine.Users import User, answer_questionnaire, take_test
+from user_lists import get_role
 
 
 class Node(ABC):
+    def __init__(self):
+        self.min_time = None
+        self.max_time = None
+
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
@@ -36,8 +40,15 @@ def end_test(node, participants):
             participant.socket.send(json.dumps({'type': 'terminate'}).encode('ascii'))
 
 
+def set_time(node, min_time, max_time):
+    print(2)
+    node.min_time = min_time
+    node.max_time = max_time
+
+
 class Questionnaire(Node):
     def __init__(self, node_id, title, duration, form, number):
+        super(Questionnaire, self).__init__()
         self.id = node_id
         self.title = title
         self.duration = duration
@@ -64,6 +75,8 @@ class Questionnaire(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
+            if self.min_time is not None:
+                time.sleep(self.min_time)
             # send questionnaire to participant
             answers = answer_questionnaire(self.form, participant.socket)
             answers.update({'questionnaire_number': self.number})
@@ -78,10 +91,10 @@ class Questionnaire(Node):
 
 
 class Decision(Node):
-    def __init__(self, node_id, title, actors, conditions):
+    def __init__(self, node_id, title, conditions):
+        super(Decision, self).__init__()
         self.id = node_id
         self.title = title
-        self.actors = actors
         self.next_nodes = []
         self.conditions = conditions
         self.lock = threading.Lock()
@@ -108,8 +121,9 @@ class Decision(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        print(len(self.conditions))
         for participant in participants2:
+            if self.min_time is not None:
+                time.sleep(self.min_time)
             satisfies = True
             for condition in self.conditions:
                 if not condition(participant):
@@ -122,6 +136,7 @@ class Decision(Node):
 
 class StringNode(Node):
     def __init__(self, node_id, title, text, actors):
+        super(StringNode, self).__init__()
         self.id = node_id
         self.title = title
         self.text = text
@@ -149,16 +164,18 @@ class StringNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        print(self.actors)
         for participant in participants2:
+            print(participant.role)
+            if self.min_time is not None:
+                time.sleep(self.min_time)
             if self.actors.__contains__(participant.role):
-                participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
+                participant.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         for role in self.actors:
             r = get_role(role)
             if r is not None:
-                r.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
+                r.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
         # end_test(self, participants2)
 
     def has_actors(self):
@@ -167,6 +184,7 @@ class StringNode(Node):
 
 class TestNode(Node):
     def __init__(self, node_id, title, tests, in_charge):
+        super(TestNode, self).__init__()
         self.id = node_id
         self.title = title
         self.tests = tests
@@ -192,9 +210,18 @@ class TestNode(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
+            if self.min_time is not None:
+                time.sleep(self.min_time)
+            remaining = self.max_time - self.min_time
             for test in self.tests:
-                results = take_test(participant.id, test, self.in_charge, participant.socket)
+                results = take_test(participant.id, test, remaining, self.in_charge, participant.socket)
+                if results is None:
+                    print("come back tomorrow")
+                    break
                 add_test(test.name, results, participant)
+                remaining -= test.duration
+                if remaining <= 0:
+                    print("tests timing doesn't make sense")
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)
@@ -204,10 +231,11 @@ class TestNode(Node):
 
 
 class TimeNode(Node):
-    def __init__(self, node_id, hours, minutes, second):
+    def __init__(self, node_id, min_time, max_time):
+        super(TimeNode, self).__init__()
         self.id = node_id
-        self.sleep_time = second + 60*minutes + 3600*hours
-        print(self.sleep_time)
+        self.min_time = min_time
+        self.max_time = max_time
         self.lock = threading.Lock()
         self.next_nodes = []
         self.participants: List[User] = []
@@ -228,9 +256,7 @@ class TimeNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        print(participants2)
         for participant in participants2:
-            time.sleep(self.sleep_time)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)

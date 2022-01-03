@@ -1,16 +1,16 @@
 {
-    "id": 2242522691136,
+    "id": 1962472748608,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2242546849056,
+            "id": 1962511389984,
             "title": "Simple String",
-            "pos_x": -15.0,
-            "pos_y": -146.0,
+            "pos_x": 148.0,
+            "pos_y": -170.0,
             "inputs": [
                 {
-                    "id": 2242546880960,
+                    "id": 1962511421888,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2242546881008,
+                    "id": 1962511421936,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -38,13 +38,13 @@
             "op_code": 4
         },
         {
-            "id": 2242546910544,
+            "id": 1962511389936,
             "title": "Time Constraint",
-            "pos_x": -10.0,
-            "pos_y": -28.0,
+            "pos_x": 153.0,
+            "pos_y": -57.0,
             "inputs": [
                 {
-                    "id": 2242546947648,
+                    "id": 1962511463664,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -53,7 +53,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2242546947696,
+                    "id": 1962511463712,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -61,21 +61,27 @@
                 }
             ],
             "content": {
-                "type": "time",
-                "Hours": 5,
-                "Minutes": 0,
-                "Seconds": 0
+                "Min": {
+                    "Hours": 0,
+                    "Minutes": 0,
+                    "Seconds": 5
+                },
+                "Max": {
+                    "Hours": 0,
+                    "Minutes": 0,
+                    "Seconds": 10
+                }
             },
             "op_code": 5
         },
         {
-            "id": 2242546948368,
+            "id": 1962511465104,
             "title": "Simple String",
-            "pos_x": 64.0,
-            "pos_y": 228.0,
+            "pos_x": 231.0,
+            "pos_y": 165.0,
             "inputs": [
                 {
-                    "id": 2242546948608,
+                    "id": 1962511465392,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -84,7 +90,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2242546948656,
+                    "id": 1962511465440,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -96,7 +102,7 @@
                     "actors": [
                         "Doctor"
                     ],
-                    "title": "one"
+                    "title": "two"
                 },
                 "text": "world"
             },
@@ -105,16 +111,16 @@
     ],
     "edges": [
         {
-            "id": 2242546948704,
+            "id": 1962511465488,
             "edge_type": 2,
-            "start": 2242546881008,
-            "end": 2242546947648
+            "start": 1962511421936,
+            "end": 1962511463664
         },
         {
-            "id": 2242546984944,
+            "id": 1962511526256,
             "edge_type": 2,
-            "start": 2242546947696,
-            "end": 2242546948608
+            "start": 1962511463712,
+            "end": 1962511465392
         }
     ]
 }

@@ -5,11 +5,10 @@ import threading
 
 import Data
 from Data import get_test_result
-from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode
+from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time
 from Logger import log
 import user_lists
 from Test import Test
-from Users import add_user, get_role
 
 workflows = {}
 print_lock = threading.Lock()
@@ -23,7 +22,8 @@ OP_NODE_TIME = 5
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], node_details['time'], content['questions'], content['questionnaire_number'])
+    node = Questionnaire(node_dict['id'], node_details['title'], node_details['time'], content['questions'],
+                         content['questionnaire_number'])
     return node
 
 
@@ -32,7 +32,6 @@ def parse_Test(node_dict):
     node_details = content['node_details']
     tests = []
     for test_data in content['tests']:
-        print(test_data)
         test = Test(test_data['name'], test_data['duration'], test_data['instructions'], test_data['staff'])
         tests.append(test)
     node = TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
@@ -47,8 +46,8 @@ def parse_trait_condition(satisfy, trait):
         return lambda patient: True if patient.get_traits()[trait] == satisfy['value'] else False
 
 
-def parse_questionnaire_condition(questionnaireNumber, questionNumber, acceptedAnswers):
-    return lambda patient: Data.check_data(patient, questionnaireNumber, questionNumber, acceptedAnswers)
+def parse_questionnaire_condition(questionnaire_number, question_number, accepted_answers):
+    return lambda patient: Data.check_data(patient, questionnaire_number, question_number, accepted_answers)
 
 
 def parse_test_condition(satisfy, test_name):
@@ -69,13 +68,12 @@ def parse_Decision(node_dict):
         if condition['type'].rstrip() == 'trait condition':
             combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
         elif condition['type'].rstrip() == 'questionnaire condition':
-            print(condition)
             combined_condition.append(
                 parse_questionnaire_condition(condition['questionnaireNumber'], condition['questionNumber'],
                                               condition['acceptedAnswers']))
         elif condition['type'].rstrip() == 'test condition':
             combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
-    node = Decision(node_dict['id'], node_details['title'], node_details['actor in charge'], combined_condition)
+    node = Decision(node_dict['id'], node_details['title'], combined_condition)
     return node
 
 
@@ -88,12 +86,19 @@ def parse_String_Node(node_dict):
 
 def parse_Time_Node(node_dict):
     content = node_dict['content']
-    node = TimeNode(node_dict['id'], int(content['Hours']), int(content['Minutes']), int(content['Seconds']))
+    min_time = int(content["Min"]['Seconds']) + 60*int(content["Min"]['Minutes']) + 3600*int(content["Min"]['Hours'])
+    max_time = int(content["Max"]['Seconds']) + 60*int(content["Max"]['Minutes']) + 3600*int(content["Max"]['Hours'])
+    node = TimeNode(node_dict['id'], min_time, max_time)
     return node
 
 
+def add_times(time_node, other_node):
+    print(1)
+    set_time(other_node, time_node.min_time, time_node.max_time)
+
+
 def register_user(user_dict, c):
-    user = add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
+    user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
     if user.role == "participant":
         if len(workflows) == 0:
             print("No workflow yet")
@@ -104,7 +109,7 @@ def register_user(user_dict, c):
             workflows[user_dict["workflow"]].exec()
 
 
-def new_workflow(data_dict, c):
+def new_workflow(data_dict):
     nodes = {}
     outputs = {}
     inputs = {}
@@ -130,6 +135,9 @@ def new_workflow(data_dict, c):
         second_id = inputs[edge['end']]
         first = nodes[first_id]
         second = nodes[second_id]
+        if isinstance(first, TimeNode):
+            print(0)
+            add_times(first, second)
         first.next_nodes.append(second)
     log("created workflow")
 
@@ -146,7 +154,7 @@ def threaded(c):
             register_user(data_dict, c)
             break
         else:
-            new_workflow(data_dict, c)
+            new_workflow(data_dict)
             break
 
 
