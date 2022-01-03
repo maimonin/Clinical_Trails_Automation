@@ -68,11 +68,18 @@ def handle_questionnaire(questions, participant):
     lock.release()
     return answers
 
+def get_data(s):
+    data=""
+    curr = s.recv(1)
+    while curr!="@":
+        data+=curr
+        curr = s.recv(1)
+    return data
 
 def actor_simulation(user, s):
     try:
         while True:
-            data = s.recv(5000)
+            data=get_data(s)
             print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':

@@ -18,6 +18,14 @@ OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
 OP_NODE_TIME = 5
 
+def get_data(s):
+    data=""
+    curr = s.recv(1)
+    while curr!="@":
+        data+=curr
+        curr = s.recv(1)
+    return data
+
 
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
@@ -145,7 +153,7 @@ def new_workflow(data_dict):
 def threaded(c):
     global workflows
     while True:
-        data = c.recv(100000)
+        data = get_data(c)
         if not data:
             print('Bye')
             break

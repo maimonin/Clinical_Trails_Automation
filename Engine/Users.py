@@ -4,6 +4,13 @@ import Scheduler
 from Logger import log
 import user_lists
 
+def get_data(s):
+    data=""
+    curr = s.recv(1)
+    while curr!="@":
+        data+=curr
+        curr = s.recv(1)
+    return data
 
 class User:
     def __init__(self, role, sex, age, user_id, socket):
@@ -22,7 +29,7 @@ class User:
 
 def answer_questionnaire(questions, s):
     s.send(json.dumps({'type': 'questionnaire', 'questions': questions}).encode('ascii'))
-    ans = s.recv(5000)
+    ans = get_data(s)
     log("answering questionnaire")
     return json.loads(ans)
 
@@ -42,5 +49,5 @@ def take_test(user_id, test, remaining_time, in_charge, s):
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
     r = Scheduler.get_role(in_charge)
     r.socket.send(json.dumps(form).encode('ascii'))
-    results = r.socket.recv(5000)
+    results = get_data(s)
     return json.loads(results)
