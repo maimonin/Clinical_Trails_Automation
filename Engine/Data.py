@@ -9,7 +9,7 @@ def init():
 
 
 def add_questionnaire(results, participant):
-    log("adding questionnaire of " + str(participant.id))
+    log("adding questionnaire of participant with id " + str(participant.id))
     message = 'participant ' + str(participant.id) + ' answers: '
     for result in results['answers']:
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
