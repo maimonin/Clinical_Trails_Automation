@@ -3,7 +3,6 @@ import threading
 import time
 from abc import ABC, abstractmethod
 from typing import List
-
 from Data import add_questionnaire, add_test
 from Engine.Users import User, answer_questionnaire, take_test, get_role
 from Logger import log
