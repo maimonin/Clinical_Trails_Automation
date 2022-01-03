@@ -1,16 +1,16 @@
 {
-    "id": 2455122857792,
+    "id": 2450059830992,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2455201450496,
-            "title": "Test",
-            "pos_x": 41.0,
-            "pos_y": -127.0,
+            "id": 2450059833248,
+            "title": "Simple String",
+            "pos_x": 95.0,
+            "pos_y": -39.0,
             "inputs": [
                 {
-                    "id": 2455201450880,
+                    "id": 2450059866320,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2455201450928,
+                    "id": 2450059866368,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -29,33 +29,13 @@
             "content": {
                 "node_details": {
                     "actors": [
-                        "Nurse",
-                        "Doctor"
+                        "Nurse"
                     ],
-                    "title": "tests",
-                    "actor in charge": "Nurse",
-                    "time": "5"
+                    "title": "1"
                 },
-                "tests": [
-                    {
-                        "name": "blood test",
-                        "instructions": "take blood",
-                        "staff": [
-                            "nurse"
-                        ],
-                        "duration": "5"
-                    },
-                    {
-                        "name": "physical",
-                        "instructions": "connect to physical",
-                        "staff": [
-                            "doctor"
-                        ],
-                        "duration": "10"
-                    }
-                ]
+                "text": "hi"
             },
-            "op_code": 2
+            "op_code": 4
         }
     ],
     "edges": []

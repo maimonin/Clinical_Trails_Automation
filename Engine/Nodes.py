@@ -127,8 +127,11 @@ class StringNode(Node):
         self.text = text
         self.next_nodes = []
         self.lock = threading.Lock()
-        self.actors = actors
         self.participants = []
+        lower_actors = []
+        for actor in actors:
+            lower_actors.append(str(actor).lower())
+        self.actors = lower_actors
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
@@ -146,15 +149,17 @@ class StringNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
+        print(self.actors)
         for participant in participants2:
-            participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
+            if self.actors.__contains__(participant.role):
+                participant.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         for role in self.actors:
             r = get_role(role)
             if r is not None:
                 r.socket.send(json.dumps({'type': 'notification', 'text': self.text}).encode('ascii'))
-        end_test(self, participants2)
+        # end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
