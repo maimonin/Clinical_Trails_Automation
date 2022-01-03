@@ -18,8 +18,16 @@ class WorkflowGraphicNode(QDMGraphicsNode):
 class WorkflowGraphicNode_wide(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
-        self.width = 160
+        self.width = 300
         self.height = 100
+        self.edge_size = 5
+        self.edge_padding=8
+
+class WorkflowGraphicNode_long(QDMGraphicsNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 160
+        self.height = 150
         self.edge_size = 5
         self.edge_padding=8
 class WorkflowContent_with_button(QDMNodeContentWidget):

@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
+from qtpy import QtCore
 
 from Windows.decisionNode.win_deciosionNode import Ui_Decision_Node
 from Windows.string_node import Ui_string_node
@@ -17,6 +18,34 @@ class WorkflowInputContent(QDMNodeContentWidget):
         self.edit.setAlignment(Qt.AlignLeft)
         self.edit.setObjectName(self.node.content_label_objname)
         self.edit.textChanged.connect( lambda: self.callback(self.edit.text()))
+        # self.edit.changeEvent()
+
+        #callback(self.edit.text())
+
+class WorkflowTimeInputContent(QDMNodeContentWidget):
+    def __init__(self, node, callback):
+        super().__init__(node)
+        self.callback=callback
+    def initUI(self):
+        self.groupBox = QtWidgets.QGroupBox(self)
+        self.groupBox.setObjectName("groupBox")
+        self.groupBox.setFixedHeight(300)
+        self.groupBox.setFixedWidth(100)
+        self.edit_second= QtWidgets.QLineEdit(self.groupBox)
+        self.edit_second.setPlaceholderText('seconds')
+        self.edit_second.setObjectName(self.node.content_label_objname+'_seconds')
+        self.edit_second.setGeometry(QtCore.QRect(0, 0, 100,30))
+        self.edit_minutes = QtWidgets.QLineEdit(self.groupBox)
+        self.edit_minutes.setGeometry(QtCore.QRect(0, 30, 100,30))
+        self.edit_minutes.setObjectName(self.node.content_label_objname+'_minutes')
+        self.edit_minutes.setPlaceholderText('minutes')
+        self.edit_hours = QtWidgets.QLineEdit(self.groupBox)
+        self.edit_hours.setGeometry(QtCore.QRect(0, 60, 100,30))
+        self.edit_hours.setObjectName(self.node.content_label_objname+'_hours')
+        self.edit_hours.setPlaceholderText('hours')
+        self.edit_hours.textChanged.connect(lambda: self.callback(self.edit_second.text(),self.edit_minutes.text(),self.edit_hours.text()))
+        self.edit_minutes.textChanged.connect(lambda: self.callback(self.edit_second.text(), self.edit_minutes.text(), self.edit_hours.text()))
+        self.edit_second.textChanged.connect(lambda: self.callback(self.edit_second.text(), self.edit_minutes.text(), self.edit_hours.text()))
         # self.edit.changeEvent()
 
         #callback(self.edit.text())
@@ -166,15 +195,22 @@ class WorkflowNode_TimeConstraint(WorkflowNode):
     content_label_objname = "workflow_node_time_constraint"
 
     def initInnerClasses(self):
-        self.content = WorkflowInputContent(self, self.save_data_when_changed)
-        self.grNode = WorkflowGraphicNode(self)
-        self.data = {"time": 0}
+        self.content = WorkflowTimeInputContent(self, self.save_data_when_changed)
+        self.grNode = WorkflowGraphicNode_long(self)
+        self.data = {"type" : "time","Hours": 0,"Minutes": 0,"Seconds": 0}
 
 
-    def save_data_when_changed(self, text):
+    def save_data_when_changed(self, Hours,Minutes,Seconds):
         try:
-            n = int(text)
-            if(n >= 0):
-                self.data = {"type" : "string", "value": n}
-        except Exception:
-            pass
+            Hours = int(Hours)
+        except:
+            Hours=0
+        try:
+            Minutes = int(Minutes)
+        except:
+            Minutes = 0
+        try:
+            Seconds = int(Seconds)
+        except:
+            Seconds = 0
+        self.data = {"type" : "time","Hours": Hours,"Minutes": Minutes,"Seconds": Seconds}
