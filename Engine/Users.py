@@ -32,7 +32,6 @@ def add_user(role, sex, age, user_id, socket):
         user_lists.labs.append(user)
     elif role == "participant":
         user_lists.participants[user.id] = user
-    log("user " + str(user.id) + " is added")
 
     return user
 
@@ -73,12 +72,10 @@ def take_test(user_id, test, in_charge, s):
         get_role(role).socket.send(json.dumps({'type': 'test', 'name': test['name'],
                                                'instructions': test['instructions'],
                                                'patient': user_id}).encode('ascii'))
-    s.send(json.dumps({'type': 'notification', 'text': "show up to "+test['name']}).encode('ascii'))
-    form = {'type': 'test data entry','test': test, 'patient': user_id}
-    r=get_role(in_charge)
+    s.send(json.dumps({'type': 'notification', 'text': "show up to " + test['name']}).encode('ascii'))
+    form = {'type': 'test data entry', 'test': test, 'patient': user_id}
+    r = get_role(in_charge)
     r.socket.send(json.dumps(form).encode('ascii'))
     results = r.socket.recv(5000)
     log("taking a test")
     return json.loads(results)
-
-

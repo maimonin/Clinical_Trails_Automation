@@ -1,16 +1,16 @@
 {
-    "id": 2711399828688,
+    "id": 2450059830992,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2711428085936,
-            "title": "Questionnaire",
-            "pos_x": -141.0,
-            "pos_y": -154.0,
+            "id": 2450059833248,
+            "title": "Simple String",
+            "pos_x": 95.0,
+            "pos_y": -39.0,
             "inputs": [
                 {
-                    "id": 2711428142416,
+                    "id": 2450059866320,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,67 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2711428142464,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "questionnaire1",
-                    "actor in charge": "Nurse",
-                    "time": "20"
-                },
-                "questions": [
-                    {
-                        "text": "Choose your pain level in a scale of 1-5",
-                        "options": [
-                            "1",
-                            "2",
-                            "3",
-                            "4",
-                            "5"
-                        ],
-                        "type": "multi"
-                    },
-                    {
-                        "text": "Choose one or more conditions you're suffering from",
-                        "options": [
-                            "Anemia",
-                            "High Blood Pressure",
-                            "Cancer"
-                        ],
-                        "type": "one choice"
-                    },
-                    {
-                        "text": "Enter side effects you have been suffering from in the last week",
-                        "type": "open"
-                    }
-                ],
-                "qusetionnaire_number": 1
-            },
-            "op_code": 1
-        },
-        {
-            "id": 2711400168224,
-            "title": "Data Entry",
-            "pos_x": 356.0,
-            "pos_y": -45.0,
-            "inputs": [
-                {
-                    "id": 2711400169088,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 2711400169424,
+                    "id": 2450059866368,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -91,30 +31,12 @@
                     "actors": [
                         "Nurse"
                     ],
-                    "title": "BloodTest1",
-                    "actor in charge": "Lab Technician",
-                    "time": "20"
+                    "title": "1"
                 },
-                "tests": [
-                    {
-                        "name": "CBC",
-                        "instructions": "Use a lavender top tube.",
-                        "staff": [
-                            "Nurse"
-                        ],
-                        "duration": "10"
-                    }
-                ]
+                "text": "hi"
             },
-            "op_code": 2
+            "op_code": 4
         }
     ],
-    "edges": [
-        {
-            "id": 2711400169328,
-            "edge_type": 2,
-            "start": 2711428142464,
-            "end": 2711400169088
-        }
-    ]
+    "edges": []
 }

@@ -12,8 +12,8 @@ users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30},
-         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
-         {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
+         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30}]
+         # {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -73,6 +73,7 @@ def actor_simulation(user, s):
     try:
         while True:
             data = s.recv(5000)
+            print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()

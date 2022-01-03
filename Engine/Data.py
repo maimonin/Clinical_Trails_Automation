@@ -1,5 +1,6 @@
 from Logger import log
 
+
 def init():
     global answers
     global tests
@@ -9,17 +10,20 @@ def init():
 
 def add_questionnaire(results, participant):
     log("adding questionnaire of " + str(participant.id))
-    print(results)
+    message = 'participant ' + str(participant.id) + ' answers: '
+    for result in results['answers']:
+        message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
+    log(message)
     if participant in answers:
-        answers[participant][results['qusetionnaire_number']]=results['answers']
+        answers[participant][results['questionnaire_number']] = results['answers']
     else:
-        ans = {}
-        ans[results['qusetionnaire_number']]=results['answers']
+        ans = {results['questionnaire_number']: results['answers']}
         answers[participant] = ans
 
 
 def add_test(name, results, participant):
-    log("adding test of " + str(participant))
+    log('participant ' + str(participant.id) + ' results of test ' + results['test'] + ": " + str(results['result']))
+    print(results)
     if participant in tests:
         tests[participant].append((name, results))
     else:
@@ -41,6 +45,6 @@ def get_data(participant):
     return answers[participant]
 
 
-def check_data(participant, questionnaireNumber, questionNumber, acceptedAnswers):
-    ans=answers[participant][questionnaireNumber][questionNumber - 1]['answer']
-    return ans== acceptedAnswers
+def check_data(participant, questionnaire_number, question_number, accepted_answers):
+    ans = answers[participant][questionnaire_number][question_number - 1]['answer']
+    return ans == accepted_answers

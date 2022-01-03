@@ -169,8 +169,8 @@ class Ui_QuestionnaireBuild(object):
             quesionnaire_num +=1
             number=quesionnaire_num
         else:
-            number=self.data["qusetionnaire_number"]
-        self.callback({"node_details": self.details, "questions": self.questions,"qusetionnaire_number": number})
+            number=self.data["questionnaire_number"]
+        self.callback({"node_details": self.details, "questions": self.questions, "questionnaire_number": number})
 
         # TODO : check details exist! if not, present a label
 
