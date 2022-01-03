@@ -200,7 +200,7 @@ class WorkflowNode_TimeConstraint(WorkflowNode):
         self.data = {"type" : "time","Hours": 0,"Minutes": 0,"Seconds": 0}
 
 
-    def save_data_when_changed(self, Hours,Minutes,Seconds):
+    def save_data_when_changed(self, Seconds,Minutes,Hours):
         try:
             Hours = int(Hours)
         except:
