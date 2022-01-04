@@ -162,6 +162,7 @@ class StringNode(Node):
 
     def exec(self) -> None:
         self.notify()
+        print("notified: "+self.text)
         threads = []
         for next_node in self.next_nodes:
             threads.append(threading.Thread(target=next_node.exec, args=()))
@@ -176,17 +177,17 @@ class StringNode(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            print(participant.role)
+            print(participant.id)
             if self.min_time is not None:
                 time.sleep(self.min_time)
             if self.actors.__contains__(participant.role):
                 participant.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
-        for role in self.actors:
-            r = get_role(role)
-            if r is not None:
-                r.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
+            for role in self.actors:
+                r = get_role(role)
+                if r is not None:
+                    r.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
         # end_test(self, participants2)
 
     def has_actors(self):
