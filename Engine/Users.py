@@ -2,7 +2,6 @@ import json
 import time
 import Scheduler
 from Logger import log
-from user_lists import get_role
 
 
 def get_data(s):
@@ -49,7 +48,7 @@ def take_test(user_id, test, remaining_time, in_charge, s):
     log("participant with id " + str(user_id) + " taking a test")
     time.sleep(int(test.duration))
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
-    r = get_role(in_charge)
+    r = Scheduler.get_role(in_charge)
     r.socket.send((json.dumps(form)+'$').encode('ascii'))
     results = get_data(s)
     return json.loads(results)

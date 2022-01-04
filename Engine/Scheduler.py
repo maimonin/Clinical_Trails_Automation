@@ -7,3 +7,6 @@ def get_role(role, remaining_time):
         if user is not None:
             return user
     return None
+
+def get_role(role):
+    return user_lists.get_role(role)

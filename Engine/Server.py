@@ -23,7 +23,7 @@ def get_data(s):
     data = ""
     curr = s.recv(1)
     while curr != "$":
-        data += curr
+        data += str(curr)
         curr = s.recv(1)
     return data
 
