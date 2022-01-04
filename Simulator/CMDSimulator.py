@@ -31,9 +31,9 @@ def handle_radio_question(q):
         i += 1
     val = input("type answer number:")
     val = int(val)
-    ans=[]
-    ans.append(val+1)
-    return {"question": q, "answer":ans}
+    ans = []
+    ans.append(val + 1)
+    return {"question": q, "answer": ans}
 
 
 def handle_multi_question(q):
@@ -44,13 +44,13 @@ def handle_multi_question(q):
         print(str(i) + ". " + opt)
         i += 1
     val = input("type answer number:")
-    val=int(val)
-    ans.append(val+1)
+    val = int(val)
+    ans.append(val + 1)
     while val != -1:
         val = input("type answer number or -1 to finish:")
         val = int(val)
         if val != -1:
-            ans.append(val+1)
+            ans.append(val + 1)
     return {"question": q, "answer": ans}
 
 
@@ -68,18 +68,20 @@ def handle_questionnaire(questions, participant):
     lock.release()
     return answers
 
+
 def get_data(s):
-    data=""
+    data = ""
     curr = s.recv(1)
-    while curr!="@":
-        data+=curr
+    while curr != "$":
+        data += curr
         curr = s.recv(1)
     return data
+
 
 def actor_simulation(user, s):
     try:
         while True:
-            data=get_data(s)
+            data = get_data(s)
             print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
@@ -88,7 +90,7 @@ def actor_simulation(user, s):
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], user)
-                s.send(json.dumps({"answers": ans}).encode('ascii'))
+                s.send((json.dumps({"answers": ans})+'$').encode('ascii'))
             elif data_json['type'] == 'test':
                 lock.acquire()
                 print(
@@ -101,7 +103,7 @@ def actor_simulation(user, s):
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")
                 lock.release()
-                s.send(json.dumps({"test": data_json['test']['name'], 'result': val}).encode('ascii'))
+                s.send((json.dumps({"test": data_json['test']['name'], 'result': val})+'$').encode('ascii'))
             elif data_json['type'] == 'terminate':
                 s.close()
                 break
@@ -116,7 +118,7 @@ def register_user(user, s):
     user_dict.update(user)
     message = json.dumps(user_dict)
     user_id += 1
-    s.send(message.encode('ascii'))
+    s.send((message+'$').encode('ascii'))
 
 
 def Main():

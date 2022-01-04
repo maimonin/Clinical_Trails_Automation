@@ -18,11 +18,12 @@ OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
 OP_NODE_TIME = 5
 
+
 def get_data(s):
-    data=""
+    data = ""
     curr = s.recv(1)
-    while curr!="@":
-        data+=curr
+    while curr != "$":
+        data += curr
         curr = s.recv(1)
     return data
 
@@ -94,8 +95,10 @@ def parse_String_Node(node_dict):
 
 def parse_Time_Node(node_dict):
     content = node_dict['content']
-    min_time = int(content["Min"]['Seconds']) + 60*int(content["Min"]['Minutes']) + 3600*int(content["Min"]['Hours'])
-    max_time = int(content["Max"]['Seconds']) + 60*int(content["Max"]['Minutes']) + 3600*int(content["Max"]['Hours'])
+    min_time = int(content["Min"]['Seconds']) + 60 * int(content["Min"]['Minutes']) + 3600 * int(
+        content["Min"]['Hours'])
+    max_time = int(content["Max"]['Seconds']) + 60 * int(content["Max"]['Minutes']) + 3600 * int(
+        content["Max"]['Hours'])
     node = TimeNode(node_dict['id'], min_time, max_time)
     return node
 
@@ -167,7 +170,7 @@ def threaded(c):
 
 
 def send_feedback(user_socket, text):
-    user_socket.send(text.encode('ascii'))
+    user_socket.send((text+'$').encode('ascii'))
 
 
 def Main():

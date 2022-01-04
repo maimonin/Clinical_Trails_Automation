@@ -38,7 +38,7 @@ class Node(ABC):
 def end_test(node, participants):
     if len(node.next_nodes) == 0:
         for participant in participants:
-            participant.socket.send(json.dumps({'type': 'terminate'}).encode('ascii'))
+            participant.socket.send((json.dumps({'type': 'terminate'})+'$').encode('ascii'))
 
 
 def set_time(node, min_time, max_time):

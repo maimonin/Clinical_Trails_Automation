@@ -92,7 +92,7 @@ def participant_simulation(user):
                 t.start()
                 t.join()
                 print("gonna send answers")
-                s.send(json.dumps({"answers": ans}).encode('ascii'))
+                s.send((json.dumps({"answers": ans})+'$').encode('ascii'))
             elif data_json['type'] == 'test':
                 ans = []
 
@@ -103,7 +103,7 @@ def participant_simulation(user):
                 question_gui = QtWidgets.QDialog()
                 first.setupUi(question_gui)
                 question_gui.show()
-                s.send(json.dumps({"tests": ans}).encode('ascii'))
+                s.send((json.dumps({"tests": ans})+'$').encode('ascii'))
         # elif data_json['type'] == 'test':
     except Exception as e:
         dumpException(e)
@@ -127,7 +127,7 @@ def register_user(user, s):
     user_dict.update(user)
     message = json.dumps(user_dict)
     user_id += 1
-    s.send(message.encode('ascii'))
+    s.send((message+'$').encode('ascii'))
 
 
 def Main():

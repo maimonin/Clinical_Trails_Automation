@@ -33,9 +33,11 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
+
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
+
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendlyFilename())
 
@@ -69,11 +71,13 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.accept()
         else:
             event.ignore()
+
     def fileLoad(self, filename):
         if super().fileLoad(filename):
             return True
 
         return False
+
     # TODO serialize, and send the json to server
 
     # def get_node_by_socket(self,socket):
@@ -112,11 +116,11 @@ class WorkflowSubWindow(NodeEditorWidget):
             data = json.load(f)
             print(data)
             data['sender'] = "editor"
-            data['workflow_id']=0
+            data['workflow_id'] = 0
             host = '127.0.0.1'
             port = 8000
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((host, port))
-            s.send(json.dumps(data).encode('ascii'))
+            s.send((json.dumps(data) + '$').encode('ascii'))
         except Exception as e:
             dumpException(e)
