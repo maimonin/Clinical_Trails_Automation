@@ -20,12 +20,7 @@ DEBUG = False
 
 class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
-
         super().initUI()
-        button = QPushButton('Start', self)
-        button.setToolTip('This is an example button')
-        button.move(100, 70)
-        button.clicked.connect(self.on_click)
 
     def __init__(self):
         super().__init__()
@@ -34,9 +29,11 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
+
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
+
     def setTitle(self):
         self.setWindowTitle(self.getUserFriendlyFilename())
 
@@ -70,10 +67,11 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.accept()
         else:
             event.ignore()
+
     def fileLoad(self, filename):
         return super().fileLoad(filename)
 
-    def data_load(self, json_data,name): # used to load data from complex node data
+    def data_load(self, json_data, name):  # used to load data from complex node data
         try:
             self.filename = name
             self.scene.deserialize(json_data)
@@ -121,7 +119,7 @@ class WorkflowSubWindow(NodeEditorWidget):
             data = json.load(f)
             print(data)
             data['sender'] = "editor"
-            data['workflow_id']=0
+            data['workflow_id'] = 0
             host = '127.0.0.1'
             port = 8000
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
