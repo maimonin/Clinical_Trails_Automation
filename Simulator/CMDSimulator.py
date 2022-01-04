@@ -72,9 +72,11 @@ def handle_questionnaire(questions, participant):
 def get_data(s):
     data = ""
     curr = s.recv(1)
+    curr=curr.decode()
     while curr != "$":
         data += curr
         curr = s.recv(1)
+        curr = curr.decode()
     return data
 
 

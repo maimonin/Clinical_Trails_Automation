@@ -22,9 +22,11 @@ OP_NODE_TIME = 5
 def get_data(s):
     data = ""
     curr = s.recv(1)
+    curr=curr.decode()
     while curr != "$":
-        data += str(curr)
+        data += curr
         curr = s.recv(1)
+        curr = curr.decode()
     return data
 
 
