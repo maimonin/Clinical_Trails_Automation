@@ -13,6 +13,10 @@ from workflow_conf_nodes import *
 DEBUG=False
 
 class WorkflowEditorWindow(NodeEditorWindow):
+    def __init__(self):
+        super().__init__()
+
+
     def initUI(self):
         self.name_company= 'NAME HERE'
         self.name_product= 'Clinical Trial Workflow Editor'
@@ -41,8 +45,6 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.readSettings()
 
         self.setWindowTitle("Workflow Editor")
-
-
     def updateWindowMenu(self):
         self.windowMenu.clear()
 

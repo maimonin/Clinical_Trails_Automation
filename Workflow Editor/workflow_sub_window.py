@@ -4,6 +4,7 @@ import socket
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
+from nodeeditor.node_scene import InvalidFile
 from qtpy import QtWidgets, QtCore
 
 from workflow_conf import *
@@ -70,10 +71,18 @@ class WorkflowSubWindow(NodeEditorWidget):
         else:
             event.ignore()
     def fileLoad(self, filename):
-        if super().fileLoad(filename):
-            return True
+        return super().fileLoad(filename)
 
-        return False
+    def data_load(self, json_data,name): # used to load data from complex node data
+        try:
+            self.filename = name
+            self.scene.deserialize(json_data)
+            self.has_been_modified = False
+        except json.JSONDecodeError:
+            raise InvalidFile("%s is not a valid JSON data" % name)
+        except Exception as e:
+            dumpException(e)
+
     # TODO serialize, and send the json to server
 
     # def get_node_by_socket(self,socket):

@@ -1,3 +1,5 @@
+from time import sleep
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 from qtpy import QtCore
@@ -214,3 +216,43 @@ class WorkflowNode_TimeConstraint(WorkflowNode):
         except:
             Seconds = 0
         self.data = {"type" : "time","Hours": Hours,"Minutes": Minutes,"Seconds": Seconds}
+
+
+@register_node(OP_NODE_COMPLEX)
+class WorkflowNode_ComplexNode(WorkflowNode):
+    icon = "images/workflow.png"
+    op_code = OP_NODE_COMPLEX
+    op_title = "Sub Workflow"
+    content_label_objname = "workflow_node_complex"
+    window=None
+    def initInnerClasses(self):
+        self.content = WorkflowContent_with_button(self, )
+        self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicNode(self)
+
+    def save_data_when_changed(self, text):
+        self.data = text
+
+    def drop_action(self):
+        from workflow_complex_window import Workflow_Complex_Window
+        self.window=Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
+        self.window.show()
+
+    def callback_from_window(self, content):
+        try:
+            self.window.close()
+            if content is None:
+                self.remove()
+            else:
+                self.data = {"type" : "complex" , "flow":content}
+            self.window = None
+        except Exception as e:
+            dumpException(e)
+
+    def edit_nodes_details(self):
+        try:
+            from workflow_complex_window import Workflow_Complex_Window
+            self.window=Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json),data=self.data["flow"],name="Subflow")
+            # self.window.load_data()
+            self.window.show()
+        except Exception as e:dumpException(e)
