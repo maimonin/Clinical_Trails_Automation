@@ -11,11 +11,16 @@ DEBUG = False
 
 
 class Workflow_Complex_Window(WorkflowEditorWindow):
-    def __init__(self, complex_callback=None,data=None,name="Sub flow"):
-        self.name=name
+    def __init__(self, complex_callback=None, data=None, name="Sub flow"):
+        self.name = name
         self.complex_callback = complex_callback
-        self.data=data
+        self.data = data
         super().__init__()
+        self.exit = False
+        self.saved = False
+        if self.data is not None:
+            self.load_data()
+
     def initUI(self):
 
         super().initUI()
@@ -23,8 +28,8 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         # self.setWindowTitle("SubFlow")
         # subwnd = self.createMdiChild()
         # subwnd.show()
-        if self.data is not None:
-            self.load_data()
+        # if self.data is not None:
+        #     self.load_data()
 
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow()
@@ -35,19 +40,26 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
 
     def createActions(self):
         """Create basic `File` and `Edit` actions"""
+        self.actNew = QAction('&New\load existing', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
         self.actSave = QAction('&Save', self, shortcut='Ctrl+S', statusTip="Save Complex Node",
                                triggered=self.onFileSave)
-        self.actDiscard = QAction('E&xit', self, shortcut='Ctrl+W', statusTip="Discard", triggered=self.OnClose)
-        self.actNew = QAction('&New', self, shortcut='Ctrl+N', statusTip="Create new graph", triggered=self.onFileNew)
+        self.actDiscard = QAction('&Exit', self, shortcut='Ctrl+W', statusTip="Discard", triggered=self.OnClose)
+
 
     def onFileNew(self):
         if self.getCurrentNodeEditorWidget() is None:
             try:
-                subwnd = self.createMdiChild()
-                subwnd.show()
+                if self.data is not None:
+                    nodeeditor = WorkflowSubWindow()
+                    nodeeditor.data_load(self.data, name=self.name)
+                    subwnd = self.createMdiChild(nodeeditor)
+                    subwnd.show()
+                else:
+                    subwnd = self.createMdiChild()
+                    subwnd.show()
+
             except Exception as e:
                 dumpException(e)
-
 
     def createMenus(self):
         self.create_complex_menu()
@@ -141,30 +153,31 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
             if current_nodeeditor is None:
                 print("problem: no active window is available!")
                 return False
-            self.saved=True
+            self.saved = True
             self.complex_callback(current_nodeeditor.scene.serialize())
 
             return True
 
     def OnClose(self):
+        self.exit = True
         self.complex_callback(None)
 
     def closeEvent(self, event):  # used when pressing the X button
-        if not self.saved:
+        if not self.saved and not self.exit:
             self.complex_callback(None)
+
 
     def load_data(self):
         window = self.getCurrentNodeEditorWidget()
-        if window is None: #means that no subwindow is open
-            nodeeditor = WorkflowSubWindow()
-            nodeeditor.setTitle()
-            nodeeditor.data_load(self.data,name=self.name)
-            subwnd = self.createMdiChild(nodeeditor)
-
-            subwnd.show()
-
-        else:
+        if window is not None:  # means that subwindow is open
             window.data_load
+
+        # else:
+            # nodeeditor = WorkflowSubWindow()
+            # nodeeditor.data_load(self.data, name=self.name)
+            # subwnd = self.createMdiChild(nodeeditor)
+            # subwnd.show()
+
         # try:
         #     for fname in fnames:
         #         if fname:

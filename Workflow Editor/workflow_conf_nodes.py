@@ -235,7 +235,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
 
     def drop_action(self):
         from workflow_complex_window import Workflow_Complex_Window
-        self.window=Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
+        self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
         self.window.show()
 
     def callback_from_window(self, content):
