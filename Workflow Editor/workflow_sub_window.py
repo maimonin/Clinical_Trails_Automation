@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from qtpy import QtWidgets, QtCore
-
+from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -44,6 +44,33 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.acceptProposedAction()
         else:
             event.setAccepted(False)
+    def contextMenuEvent(self, event):
+        try:
+            item = self.scene.getItemAt(event.pos())
+
+            if type(item) == QGraphicsProxyWidget:
+                item = item.widget()
+
+            if hasattr(item, 'edge'):
+                self.handleEdgeContextMenu(event)
+
+            return super().contextMenuEvent(event)
+        except Exception as e: dumpException(e)
+    def handleEdgeContextMenu(self, event):
+        context_menu = QMenu(self)
+        bezierAct = context_menu.addAction("Bezier Edge")
+        directAct = context_menu.addAction("Direct Edge")
+        squareAct = context_menu.addAction("Square Edge")
+        action = context_menu.exec_(self.mapToGlobal(event.pos()))
+
+        selected = None
+        item = self.scene.getItemAt(event.pos())
+        if hasattr(item, 'edge'):
+            selected = item.edge
+
+        if selected and action == bezierAct: selected.edge_type = EDGE_TYPE_BEZIER
+        if selected and action == directAct: selected.edge_type = EDGE_TYPE_DIRECT
+        if selected and action == squareAct: selected.edge_type = EDGE_TYPE_SQUARE
 
     def onDrop(self, event):
         self.scene.serialize()
