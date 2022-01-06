@@ -9,8 +9,8 @@ from nodeeditor.utils import dumpException
 class WorkflowGraphicNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
-        self.width = 160
-        self.height = 70
+        self.width = 95
+        self.height = 65
         self.edge_size = 5
         self.edge_padding=8
 

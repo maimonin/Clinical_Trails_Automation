@@ -9,13 +9,16 @@ from nodeeditor.utils import pp
 from workflow_conf import WORKFLOW_NODES
 from workflow_conf_nodes import *
 
+DEBUG = False
 
-DEBUG=False
 
 class WorkflowEditorWindow(NodeEditorWindow):
+    def __init__(self):
+        super().__init__()
+
     def initUI(self):
-        self.name_company= 'NAME HERE'
-        self.name_product= 'Clinical Trial Workflow Editor'
+        self.name_company = 'NAME HERE'
+        self.name_product = 'Clinical Trial Workflow Editor'
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -42,10 +45,8 @@ class WorkflowEditorWindow(NodeEditorWindow):
 
         self.setWindowTitle("Workflow Editor")
 
-
     def updateWindowMenu(self):
         self.windowMenu.clear()
-
 
         toolbar_nodes = self.windowMenu.addAction("Nodes Toolbar")
         toolbar_nodes.setCheckable(True)
@@ -80,21 +81,18 @@ class WorkflowEditorWindow(NodeEditorWindow):
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
 
-
     def onWindowNodesToolbar(self):
         if self.nodesDock.isVisible():
             self.nodesDock.hide()
         else:
             self.nodesDock.show()
 
-
     def onFileNew(self):
         try:
-            subwnd=self.createMdiChild()
+            subwnd = self.createMdiChild()
             subwnd.show()
         except Exception as e:
             dumpException(e)
-
 
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow()
@@ -102,7 +100,6 @@ class WorkflowEditorWindow(NodeEditorWindow):
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         # nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
-
 
     def closeEvent(self, event):
         self.mdiArea.closeAllSubWindows()
@@ -118,6 +115,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
+
     def updateMenus(self):
         pass
 
@@ -127,8 +125,10 @@ class WorkflowEditorWindow(NodeEditorWindow):
 
     def createToolBars(self):
         pass
+
     def onFileOpen(self):
-        fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file', self.getFileDialogDirectory(), self.getFileDialogFilter())
+        fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file', self.getFileDialogDirectory(),
+                                                      self.getFileDialogFilter())
 
         try:
             for fname in fnames:
@@ -146,27 +146,29 @@ class WorkflowEditorWindow(NodeEditorWindow):
                             subwnd.show()
                         else:
                             nodeeditor.close()
-        except Exception as e: dumpException(e)
+        except Exception as e:
+            dumpException(e)
+
     def findMdiChild(self, filename):
         for window in self.mdiArea.subWindowList():
             if window.widget().filename == filename:
                 return window
         return None
+
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
-    def createNodesDock(self):
-        self.nodesListWidget=QDMDragListbox()
 
-        self.items=QDockWidget("Nodes")
+    def createNodesDock(self):
+        self.nodesListWidget = QDMDragListbox()
+
+        self.items = QDockWidget("Nodes")
         self.items.setWidget(self.nodesListWidget)
         self.items.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea,self.items)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
-
-
