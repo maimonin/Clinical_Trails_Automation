@@ -64,12 +64,12 @@
                 "Min": {
                     "Hours": 0,
                     "Minutes": 0,
-                    "Seconds": 5
+                    "Seconds": 20
                 },
                 "Max": {
                     "Hours": 0,
                     "Minutes": 0,
-                    "Seconds": 10
+                    "Seconds": 20
                 }
             },
             "op_code": 5
