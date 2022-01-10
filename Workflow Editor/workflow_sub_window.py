@@ -4,8 +4,9 @@ import socket
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
+from nodeeditor.node_scene import InvalidFile
 from qtpy import QtWidgets, QtCore
-
+from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -19,12 +20,7 @@ DEBUG = False
 
 class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
-
         super().initUI()
-        button = QPushButton('Start', self)
-        button.setToolTip('This is an example button')
-        button.move(100, 70)
-        button.clicked.connect(self.on_click)
 
     def __init__(self):
         super().__init__()
@@ -46,6 +42,33 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.acceptProposedAction()
         else:
             event.setAccepted(False)
+    def contextMenuEvent(self, event):
+        try:
+            item = self.scene.getItemAt(event.pos())
+
+            if type(item) == QGraphicsProxyWidget:
+                item = item.widget()
+
+            if hasattr(item, 'edge'):
+                self.handleEdgeContextMenu(event)
+
+            return super().contextMenuEvent(event)
+        except Exception as e: dumpException(e)
+    def handleEdgeContextMenu(self, event):
+        context_menu = QMenu(self)
+        bezierAct = context_menu.addAction("Bezier Edge")
+        directAct = context_menu.addAction("Direct Edge")
+        squareAct = context_menu.addAction("Square Edge")
+        action = context_menu.exec_(self.mapToGlobal(event.pos()))
+
+        selected = None
+        item = self.scene.getItemAt(event.pos())
+        if hasattr(item, 'edge'):
+            selected = item.edge
+
+        if selected and action == bezierAct: selected.edge_type = EDGE_TYPE_BEZIER
+        if selected and action == directAct: selected.edge_type = EDGE_TYPE_DIRECT
+        if selected and action == squareAct: selected.edge_type = EDGE_TYPE_SQUARE
 
     def onDrop(self, event):
         self.scene.serialize()
@@ -73,10 +96,17 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.ignore()
 
     def fileLoad(self, filename):
-        if super().fileLoad(filename):
-            return True
+        return super().fileLoad(filename)
 
-        return False
+    def data_load(self, json_data, name):  # used to load data from complex node data
+        try:
+            self.filename = name
+            self.scene.deserialize(json_data)
+            self.has_been_modified = False
+        except json.JSONDecodeError:
+            raise InvalidFile("%s is not a valid JSON data" % name)
+        except Exception as e:
+            dumpException(e)
 
     # TODO serialize, and send the json to server
 
