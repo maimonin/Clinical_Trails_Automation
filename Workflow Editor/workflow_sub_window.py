@@ -151,6 +151,6 @@ class WorkflowSubWindow(NodeEditorWidget):
             port = 8000
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((host, port))
-            s.send(json.dumps(data).encode('ascii'))
+            s.send((json.dumps(data) + '$').encode('ascii'))
         except Exception as e:
             dumpException(e)

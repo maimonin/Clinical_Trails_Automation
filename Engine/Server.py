@@ -19,6 +19,17 @@ OP_NODE_STRING = 4
 OP_NODE_TIME = 5
 
 
+def get_data(s):
+    data = ""
+    curr = s.recv(1)
+    curr=curr.decode()
+    while curr != "$":
+        data += curr
+        curr = s.recv(1)
+        curr = curr.decode()
+    return data
+
+
 def parse_Questionnaire(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
@@ -86,8 +97,10 @@ def parse_String_Node(node_dict):
 
 def parse_Time_Node(node_dict):
     content = node_dict['content']
-    min_time = int(content["Min"]['Seconds']) + 60*int(content["Min"]['Minutes']) + 3600*int(content["Min"]['Hours'])
-    max_time = int(content["Max"]['Seconds']) + 60*int(content["Max"]['Minutes']) + 3600*int(content["Max"]['Hours'])
+    min_time = int(content["Min"]['Seconds']) + 60 * int(content["Min"]['Minutes']) + 3600 * int(
+        content["Min"]['Hours'])
+    max_time = int(content["Max"]['Seconds']) + 60 * int(content["Max"]['Minutes']) + 3600 * int(
+        content["Max"]['Hours'])
     node = TimeNode(node_dict['id'], min_time, max_time)
     return node
 
@@ -145,7 +158,7 @@ def new_workflow(data_dict):
 def threaded(c):
     global workflows
     while True:
-        data = c.recv(100000)
+        data = get_data(c)
         if not data:
             print('Bye')
             break
@@ -159,7 +172,7 @@ def threaded(c):
 
 
 def send_feedback(user_socket, text):
-    user_socket.send(text.encode('ascii'))
+    user_socket.send((text+'$').encode('ascii'))
 
 
 def Main():
