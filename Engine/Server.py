@@ -156,6 +156,7 @@ def new_workflow(data_dict):
 
 
 def threaded(c):
+    print('conn')
     global workflows
     while True:
         data = get_data(c)
