@@ -2,6 +2,7 @@ import json
 import time
 import Scheduler
 from Logger import log
+from NotificationHandler import send_notification_by_id
 
 
 def get_data(s):
@@ -16,12 +17,11 @@ def get_data(s):
 
 
 class User:
-    def __init__(self, role, sex, age, user_id, socket):
+    def __init__(self, role, sex, age, user_id):
         self.role = role
         self.sex = sex
         self.age = age
         self.id = user_id
-        self.socket = socket
 
     def update(self, callback) -> None:
         callback()
@@ -30,11 +30,7 @@ class User:
         return {"gender": self.sex, "age": self.age}
 
 
-def answer_questionnaire(questions, s):
-    s.send((json.dumps({'type': 'questionnaire', 'questions': questions}) + '$').encode('ascii'))
-    ans = get_data(s)
-    log("answering questionnaire")
-    return json.loads(ans)
+
 
 
 # name, instructions, staff

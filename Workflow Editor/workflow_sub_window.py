@@ -1,6 +1,7 @@
 import json
 import socket
 
+import websockets
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
@@ -149,12 +150,14 @@ class WorkflowSubWindow(NodeEditorWidget):
             f = open('data.json')
             data = json.load(f)
             print(data)
-            data['sender'] = "editor"
+            data['type'] = "add workflow"
             data['workflow_id'] = 0
-            host = '127.0.0.1'
-            port = 8000
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((host, port))
-            s.send((json.dumps(data) + '$').encode('ascii'))
+            global user_id
+            url = "ws://localhost:7890"
+            # Connect to the server
+            message = json.dumps(data)
+            webs=websockets.connect(url)
+            print(webs)
+            webs.send(message)
         except Exception as e:
             dumpException(e)

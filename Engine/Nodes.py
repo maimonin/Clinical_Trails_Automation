@@ -5,8 +5,9 @@ from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
 from Data import add_questionnaire, add_test
-from Engine.Users import User, answer_questionnaire, take_test
+from Engine.Users import User, take_test
 from user_lists import get_role
+from NotificationHandler import send_questionnaire, send_notification_by_id
 
 
 class Node(ABC):
@@ -75,7 +76,7 @@ class Questionnaire(Node):
         for t in threads:
             t.join()
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
@@ -84,10 +85,8 @@ class Questionnaire(Node):
             if self.min_time is not None:
                 time.sleep(self.min_time)
             # send questionnaire to participant
-            answers = answer_questionnaire(self.form, participant.socket)
-            answers.update({'questionnaire_number': self.number})
+            await send_questionnaire(self.form, participant.id)
             time.sleep(int(self.duration))
-            add_questionnaire(answers, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)
@@ -181,13 +180,13 @@ class StringNode(Node):
             if self.min_time is not None:
                 time.sleep(self.min_time)
             if self.actors.__contains__(participant.role):
-                participant.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
+                send_notification_by_id({'type': 'notification', 'text': self.text},participant.id)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
             for role in self.actors:
                 r = get_role(role)
                 if r is not None:
-                    r.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
+                    send_notification_by_id({'type': 'notification', 'text': self.text},r.id)
         # end_test(self, participants2)
 
     def has_actors(self):

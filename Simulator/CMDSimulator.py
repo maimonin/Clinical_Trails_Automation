@@ -1,6 +1,9 @@
+import asyncio
 import json
 import socket
 import threading
+
+import websockets
 from nodeeditor.utils import dumpException
 
 host = '127.0.0.1'
@@ -12,8 +15,8 @@ users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30},
-         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
-         {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
+         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30}]
+        # {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -80,11 +83,11 @@ def get_data(s):
     return data
 
 
-def actor_simulation(user, s):
+async def actor_simulation(user, s):
     try:
         while True:
-            data = get_data(s)
-            print(data)
+            data = await s.recv()
+            print( data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()
@@ -114,29 +117,34 @@ def actor_simulation(user, s):
         dumpException(e)
 
 
-def register_user(user, s):
+async def register_user(user):
     global user_id
-    user_dict = {'sender': 'simulator', 'type': 'add user', 'id': user_id}
-    user_dict.update(user)
-    message = json.dumps(user_dict)
-    user_id += 1
-    s.send((message+'$').encode('ascii'))
+    url = "ws://127.0.0.1:7890"
+    # Connect to the server
+    async with websockets.connect(url) as ws:
+        user_dict = {'type': 'register', 'id': user_id}
+        user_dict.update(user)
+        message = json.dumps(user_dict)
+        user_id += 1
+        await ws.send(message)
+        user['s'] = ws
 
+async def send_workflow():
+    async with websockets.connect("ws://localhost:7890") as websocket:
+        f = open('F:\\university\\2021-2022\\Clinical_Trails_Automation\\Workflow Editor\data.json')
+        data = json.load(f)
+        data['type'] = "add workflow"
+        data['workflow_id'] = 0
+        message = json.dumps(data)
+        await websocket.send(message)
 
-def Main():
+async def Main():
+    await send_workflow()
     threads = []
     for user in users:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
-        register_user(user, s)
-        user['s'] = s
-    for user in users:
-        threads.append(threading.Thread(target=actor_simulation, args=(user, user['s'])))
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
+        await register_user(user)
+    await asyncio.gather(*[actor_simulation(user,user['s'])  for user in users])
 
 
-if __name__ == '__main__':
-    Main()
+
+asyncio.run(Main())

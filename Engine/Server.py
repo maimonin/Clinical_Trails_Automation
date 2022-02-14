@@ -110,8 +110,8 @@ def add_times(time_node, other_node):
     set_time(other_node, time_node.min_time, time_node.max_time)
 
 
-def register_user(user_dict, c):
-    user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
+def register_user(user_dict):
+    user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
         if len(workflows) == 0:
             print("No workflow yet")
@@ -173,6 +173,7 @@ def threaded(c):
 
 def send_feedback(user_socket, text):
     user_socket.send((text+'$').encode('ascii'))
+
 
 
 def Main():

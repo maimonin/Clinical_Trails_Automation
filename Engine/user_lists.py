@@ -40,8 +40,8 @@ def get_role(role):
     return None
 
 
-def add_user(role, sex, age, user_id, socket):
-    user = User(role, sex, age, user_id, socket)
+def add_user(role, sex, age, user_id):
+    user = User(role, sex, age, user_id)
     if role == "nurse":
         nurses.append(user)
     elif role == "doctor":
@@ -53,3 +53,6 @@ def add_user(role, sex, age, user_id, socket):
     elif role == "participant":
         participants[user.id] = user
     return user
+
+def get_participant(user_id):
+    return participants[user_id]

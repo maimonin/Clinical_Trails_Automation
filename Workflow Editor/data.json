@@ -1,16 +1,16 @@
 {
-    "id": 1962472748608,
+    "id": 2166453798656,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1962511389984,
-            "title": "Simple String",
-            "pos_x": 148.0,
-            "pos_y": -170.0,
+            "id": 2166500296160,
+            "title": "Questionnaire",
+            "pos_x": 199.0,
+            "pos_y": -25.0,
             "inputs": [
                 {
-                    "id": 1962511421888,
+                    "id": 2166500336256,
                     "index": 0,
                     "multi_edges": true,
                     "position": 3,
@@ -19,7 +19,7 @@
             ],
             "outputs": [
                 {
-                    "id": 1962511421936,
+                    "id": 2166500336304,
                     "index": 0,
                     "multi_edges": true,
                     "position": 4,
@@ -28,99 +28,39 @@
             ],
             "content": {
                 "node_details": {
-                    "actors": [
-                        "Nurse"
-                    ],
-                    "title": "one"
+                    "actors": [],
+                    "title": "lililiili",
+                    "actor in charge": "Nurse",
+                    "time": "20"
                 },
-                "text": "hello"
+                "questions": [
+                    {
+                        "text": "lala",
+                        "options": [
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "type": "multi"
+                    },
+                    {
+                        "text": "lili",
+                        "options": [
+                            "4",
+                            "5",
+                            "6"
+                        ],
+                        "type": "one choice"
+                    },
+                    {
+                        "text": "lulu",
+                        "type": "open"
+                    }
+                ],
+                "questionnaire_number": 1
             },
-            "op_code": 4
-        },
-        {
-            "id": 1962511389936,
-            "title": "Time Constraint",
-            "pos_x": 153.0,
-            "pos_y": -57.0,
-            "inputs": [
-                {
-                    "id": 1962511463664,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1962511463712,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "Min": {
-                    "Hours": 0,
-                    "Minutes": 0,
-                    "Seconds": 20
-                },
-                "Max": {
-                    "Hours": 0,
-                    "Minutes": 0,
-                    "Seconds": 20
-                }
-            },
-            "op_code": 5
-        },
-        {
-            "id": 1962511465104,
-            "title": "Simple String",
-            "pos_x": 231.0,
-            "pos_y": 165.0,
-            "inputs": [
-                {
-                    "id": 1962511465392,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1962511465440,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
-                }
-            ],
-            "content": {
-                "node_details": {
-                    "actors": [
-                        "Doctor"
-                    ],
-                    "title": "two"
-                },
-                "text": "world"
-            },
-            "op_code": 4
+            "op_code": 1
         }
     ],
-    "edges": [
-        {
-            "id": 1962511465488,
-            "edge_type": 2,
-            "start": 1962511421936,
-            "end": 1962511463664
-        },
-        {
-            "id": 1962511526256,
-            "edge_type": 2,
-            "start": 1962511463712,
-            "end": 1962511465392
-        }
-    ]
+    "edges": []
 }
