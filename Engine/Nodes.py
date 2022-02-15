@@ -273,7 +273,7 @@ class TimeNode(Node):
 
 class ComplexNode(Node):
     def __init__(self, node_id,flow):
-        super(Questionnaire, self).__init__()
+        super(ComplexNode, self).__init__()
         self.id = node_id
         self.next_nodes = []
         self.lock = threading.Lock()
@@ -304,6 +304,7 @@ class ComplexNode(Node):
         self.lock.release()
         threads = []
         for participant in participants2:
+            self.flow.attach(participant)
             threads.append(threading.Thread(target=self.flow.exec, args=()))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
