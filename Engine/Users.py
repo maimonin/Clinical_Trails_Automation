@@ -1,6 +1,5 @@
 import json
 import time
-import Scheduler
 from Logger import log
 
 
@@ -37,20 +36,4 @@ def answer_questionnaire(questions, s):
     return json.loads(ans)
 
 
-# name, instructions, staff
-def take_test(user_id, test, remaining_time, in_charge, s):
-    for role in test.staff:
-        actor = Scheduler.get_role(role, remaining_time)
-        if actor is None:
-            return None
-        actor.socket.send((json.dumps({'type': 'test', 'name': test.name,
-                                       'instructions': test.instructions,
-                                       'patient': user_id}) + '$').encode('ascii'))
-    s.send((json.dumps({'type': 'notification', 'text': "show up to " + test.name})+'$').encode('ascii'))
-    log("participant with id " + str(user_id) + " taking a test")
-    time.sleep(int(test.duration))
-    form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
-    r = Scheduler.get_role(in_charge)
-    r.socket.send((json.dumps(form)+'$').encode('ascii'))
-    results = get_data(s)
-    return json.loads(results)
+

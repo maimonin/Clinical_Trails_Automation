@@ -21,6 +21,10 @@ DEBUG = False
 class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
         super().initUI()
+        button = QPushButton('Start', self)
+        button.setToolTip('This is an example button')
+        button.move(100, 70)
+        button.clicked.connect(self.on_click)
 
     def __init__(self):
         super().__init__()

@@ -1,3 +1,4 @@
+import datetime
 import json
 import socket
 from _thread import *
@@ -5,7 +6,8 @@ import threading
 
 import Data
 from Data import get_test_result
-from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time
+from Edges import NormalEdge, RelativeTimeEdge
+from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
 from Logger import log
 import user_lists
 from Test import Test
@@ -17,6 +19,8 @@ OP_NODE_DATA_ENTRY = 2
 OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
 OP_NODE_TIME = 5
+
+OP_NODE_COMPLEX = 6
 
 
 def get_data(s):
@@ -122,6 +126,13 @@ def register_user(user_dict, c):
             workflows[user_dict["workflow"]].exec()
 
 
+def parse_Complex_Node(node_dict):
+    content = node_dict['content']
+    flow=new_workflow(content['flow'])
+    node = ComplexNode(node_dict['id'],  flow)
+    return node
+
+
 def new_workflow(data_dict):
     nodes = {}
     outputs = {}
@@ -135,27 +146,45 @@ def new_workflow(data_dict):
             nodes[node['id']] = parse_Decision(node)
         elif node['op_code'] == OP_NODE_STRING:
             nodes[node['id']] = parse_String_Node(node)
-        elif node['op_code'] == OP_NODE_TIME:
-            nodes[node['id']] = parse_Time_Node(node)
+        #elif node['op_code'] == OP_NODE_TIME:
+        #    nodes[node['id']] = parse_Time_Node(node)
+        elif node['op_code'] == OP_NODE_COMPLEX:
+            nodes[node['id']] = parse_Complex_Node(node)
         for out in node['outputs']:
             outputs[out['id']] = node['id']
         for inp in node['inputs']:
             inputs[inp['id']] = node['id']
     first_node = data_dict['nodes'][0]['id']
-    workflows[data_dict["workflow_id"]] = nodes[first_node]
     for edge in data_dict['edges']:
         first_id = outputs[edge['start']]
         second_id = inputs[edge['end']]
         first = nodes[first_id]
         second = nodes[second_id]
-        if isinstance(first, TimeNode):
-            print(0)
-            add_times(first, second)
-        first.next_nodes.append(second)
+        if edge['type']==0:
+            e=NormalEdge(edge['id'])
+            first.next_nodes.append(e)
+            e.next_nodes.append(second)
+        elif edge['type']==1:
+            min_json=edge['content']['Min']
+            min_time=int(min_json['Seconds'])+(60*int(min_json['Minutes']))+(360*int(min_json['Hours']))
+            max_json = edge['content']['max']
+            max_time = int(max_json['Seconds']) + (60 * int(max_json['Minutes'])) + (360 * int(max_json['Hours']))
+            e=RelativeTimeEdge(edge['id'],min_time,max_time)
+            first.next_nodes.append(e)
+            e.next_nodes.append(second)
+        elif edge['type']==2:
+            min_time= datetime.strptime(edge['content']['Min'], '%d/%m/%y %H:%M:%S')
+            max_time = datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
+            e=RelativeTimeEdge(edge['id'],min_time,max_time)
+            first.next_nodes.append(e)
+            e.next_nodes.append(second)
+
+    return nodes[first_node]
     log("created workflow")
 
 
 def threaded(c):
+    print('conn')
     global workflows
     while True:
         data = get_data(c)
@@ -167,7 +196,7 @@ def threaded(c):
             register_user(data_dict, c)
             break
         else:
-            new_workflow(data_dict)
+            workflows[data_dict["workflow_id"]] = new_workflow(data_dict)
             break
 
 

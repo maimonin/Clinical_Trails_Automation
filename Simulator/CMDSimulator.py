@@ -1,7 +1,12 @@
 import json
 import socket
+import sys
 import threading
+
+from PyQt5.QtWidgets import QApplication
 from nodeeditor.utils import dumpException
+from qtpy import QtWidgets
+
 
 host = '127.0.0.1'
 port = 8000
@@ -11,9 +16,9 @@ users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "nurse2", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab", "sex": "male", "age": 30},
-         {"name": "doctor", "role": "doctor", "sex": "female", "age": 30},
-         {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
-         {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
+         {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
+         #{"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
+         #{"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -123,6 +128,9 @@ def register_user(user, s):
     s.send((message+'$').encode('ascii'))
 
 
+
+
+
 def Main():
     threads = []
     for user in users:
@@ -134,8 +142,6 @@ def Main():
         threads.append(threading.Thread(target=actor_simulation, args=(user, user['s'])))
     for t in threads:
         t.start()
-    for t in threads:
-        t.join()
 
 
 if __name__ == '__main__':
