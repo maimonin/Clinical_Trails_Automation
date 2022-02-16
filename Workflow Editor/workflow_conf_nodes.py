@@ -54,7 +54,7 @@ class WorkflowTimeInputContent(QDMNodeContentWidget):
 
 @register_node(OP_NODE_QUESTIONNAIRE)
 class WorkflowNode_Questionnaire(WorkflowNode):
-    icon = "images/Questionnaire-icon.png"
+    icon = "icons/Questionnaire-icon.png"
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
@@ -88,7 +88,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         QuestionnaireBuild.exec_()
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
-    icon = "images/test_icon.png"
+    icon = "icons/test_icon.png"
     op_code = OP_NODE_Test
     op_title = "Test"
     content_label_objname = "workflow_node_data_entry"
@@ -120,7 +120,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
         DataEntryBuild.exec_()
 @register_node(OP_NODE_DECISION)
 class WorkflowNode_Decision(WorkflowNode):
-    icon = "images/decision.png"
+    icon = "icons/decision.png"
     op_code = OP_NODE_DECISION
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
@@ -153,7 +153,7 @@ class WorkflowNode_Decision(WorkflowNode):
 
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
-    icon = "images/str.png"
+    icon = "icons/str.png"
     op_code = OP_NODE_STRING
     op_title = "Simple String"
     content_label_objname = "workflow_node_string"
@@ -191,7 +191,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
 
 @register_node(OP_NODE_TIME_CONSTRAINT)
 class WorkflowNode_TimeConstraint(WorkflowNode):
-    icon = "images/time.png"
+    icon = "icons/time.png"
     op_code = OP_NODE_TIME_CONSTRAINT
     op_title = "Time Constraint"
     content_label_objname = "workflow_node_time_constraint"
@@ -220,7 +220,7 @@ class WorkflowNode_TimeConstraint(WorkflowNode):
 
 @register_node(OP_NODE_COMPLEX)
 class WorkflowNode_ComplexNode(WorkflowNode):
-    icon = "images/workflow.png"
+    icon = "icons/workflow.png"
     op_code = OP_NODE_COMPLEX
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"

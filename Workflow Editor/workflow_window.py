@@ -165,7 +165,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.items.setWidget(self.nodesListWidget)
         self.items.setFloating(False)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

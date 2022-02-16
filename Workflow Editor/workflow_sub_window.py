@@ -15,10 +15,14 @@ from PyQt5.QtCore import pyqtSlot
 import time
 import threading
 
+from workflow_scene import WorkflowScene
+
 DEBUG = False
 
 
 class WorkflowSubWindow(NodeEditorWidget):
+    Scene_class = WorkflowScene
+
     def initUI(self):
         super().initUI()
 

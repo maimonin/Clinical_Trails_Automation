@@ -1,3 +1,5 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QColor, QPen, QBrush
 from PyQt5.QtWidgets import *
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
@@ -9,11 +11,29 @@ from nodeeditor.utils import dumpException
 class WorkflowGraphicNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
-        self.width = 95
-        self.height = 65
+        self.width = 200
+        self.height = 40
         self.edge_size = 5
         self.edge_padding=8
 
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._title_color = QColor("#2d3436")
+        self._title_font = QFont("Ubuntu", 14)
+
+        self._color = QColor("#7F000000")
+        self._color_selected = QColor("#2d3436")
+        self._color_hovered = QColor("#b2bec3")
+
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(2.0)
+        self._pen_selected = QPen(self._color_selected)
+        self._pen_selected.setWidthF(3.5)
+        self._pen_hovered = QPen(self._color_hovered)
+        self._pen_hovered.setWidthF(4.0)
+
+        self._brush_title = QBrush(QColor("#ffeaa7"))
+        self._brush_background = QBrush(QColor("#ffeaa7"))
 
 class WorkflowGraphicNode_wide(QDMGraphicsNode):
     def initSizes(self):
