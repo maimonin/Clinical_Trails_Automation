@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_window import NodeEditorWindow
 from nodeeditor.utils import dumpException
+
+from workflow_dynamic_dock import QDynamicDock
 from workflow_sub_window import WorkflowSubWindow
 from workflow_drag_listbox import QDMDragListbox
 from nodeeditor.utils import pp
@@ -40,6 +42,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.updateMenus()
 
         self.createNodesDock()
+        self.createAttributesDock()
 
         self.readSettings()
 
@@ -166,6 +169,15 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.items.setFloating(False)
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
+
+    def createAttributesDock(self):
+        self.nodesListWidget = QDynamicDock()
+
+        self.attributes = QDynamicDock()
+        self.attributes.setFloating(False)
+        self.attributes.setMinimumWidth(160)
+        self.attributes.setMaximumWidth(350)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.attributes)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
