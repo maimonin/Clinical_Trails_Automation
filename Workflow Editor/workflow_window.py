@@ -171,7 +171,6 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
 
     def createAttributesDock(self):
-        self.nodesListWidget = QDynamicDock()
 
         self.attributes = QDynamicDock()
         self.attributes.setFloating(False)
