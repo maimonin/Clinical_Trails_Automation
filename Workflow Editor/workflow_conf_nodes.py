@@ -189,33 +189,33 @@ class WorkflowNode_SimpleString(WorkflowNode):
         String_Node.exec_()
 
 
-@register_node(OP_NODE_TIME_CONSTRAINT)
-class WorkflowNode_TimeConstraint(WorkflowNode):
-    icon = "icons/time.png"
-    op_code = OP_NODE_TIME_CONSTRAINT
-    op_title = "Time Constraint"
-    content_label_objname = "workflow_node_time_constraint"
-
-    def initInnerClasses(self):
-        self.content = WorkflowTimeInputContent(self, self.save_data_when_changed)
-        self.grNode = WorkflowGraphicNode_long(self)
-        self.data = {"type" : "time","Hours": 0,"Minutes": 0,"Seconds": 0}
-
-
-    def save_data_when_changed(self, Seconds,Minutes,Hours):
-        try:
-            Hours = int(Hours)
-        except:
-            Hours=0
-        try:
-            Minutes = int(Minutes)
-        except:
-            Minutes = 0
-        try:
-            Seconds = int(Seconds)
-        except:
-            Seconds = 0
-        self.data = {"type" : "time","Hours": Hours,"Minutes": Minutes,"Seconds": Seconds}
+# @register_node(OP_NODE_TIME_CONSTRAINT)
+# class WorkflowNode_TimeConstraint(WorkflowNode):
+#     icon = "icons/time.png"
+#     op_code = OP_NODE_TIME_CONSTRAINT
+#     op_title = "Time Constraint"
+#     content_label_objname = "workflow_node_time_constraint"
+#
+#     def initInnerClasses(self):
+#         self.content = WorkflowTimeInputContent(self, self.save_data_when_changed)
+#         self.grNode = WorkflowGraphicNode_long(self)
+#         self.data = {"type" : "time","Hours": 0,"Minutes": 0,"Seconds": 0}
+#
+#
+#     def save_data_when_changed(self, Seconds,Minutes,Hours):
+#         try:
+#             Hours = int(Hours)
+#         except:
+#             Hours=0
+#         try:
+#             Minutes = int(Minutes)
+#         except:
+#             Minutes = 0
+#         try:
+#             Seconds = int(Seconds)
+#         except:
+#             Seconds = 0
+#         self.data = {"type" : "time","Hours": Hours,"Minutes": Minutes,"Seconds": Seconds}
 
 
 @register_node(OP_NODE_COMPLEX)
