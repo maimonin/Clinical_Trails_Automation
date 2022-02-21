@@ -108,7 +108,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Add_Test = QtWidgets.QDialog()
-    ui = Ui_node_details_simple()
+    ui = Ui_node_details_simple(None)
     ui.setupUi(Add_Test)
     Add_Test.show()
     sys.exit(app.exec_())
