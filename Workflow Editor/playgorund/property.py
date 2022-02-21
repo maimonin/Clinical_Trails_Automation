@@ -10,9 +10,15 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QSpinBox
+import json
 
 
 class Ui_DockWidget(object):
+    def __init__(self, data=None):
+        print("DDD")
+        super(Ui_DockWidget, self).__init__()
+        self.data = json.loads(data)
+
     def setupUi(self, DockWidget):
         DockWidget.setObjectName("Properties")
         DockWidget.resize(527, 423)
@@ -25,15 +31,14 @@ class Ui_DockWidget(object):
         self.treeWidget.setItemsExpandable(True)
         self.treeWidget.setObjectName("treeWidget")
         # self.treeWidget.set
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        widget = QSpinBox()
-        widget.setValue(5)
-        self.treeWidget.setItemWidget(item_0, 1, widget)
+
         self.treeWidget.header().setVisible(True)
         self.treeWidget.header().setHighlightSections(True)
         DockWidget.setWidget(self.dockWidgetContents)
 
         self.retranslateUi(DockWidget)
+        if self.data is not None:
+            self.build_tree()
         QtCore.QMetaObject.connectSlotsByName(DockWidget)
 
     def retranslateUi(self, DockWidget):
@@ -43,16 +48,61 @@ class Ui_DockWidget(object):
         self.treeWidget.headerItem().setText(1, _translate("DockWidget", "Value"))
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
-        self.treeWidget.topLevelItem(0).setText(0, _translate("DockWidget", "!!!"))
-        self.treeWidget.topLevelItem(0).setText(1, _translate("DockWidget", "44"))
+        # self.treeWidget.topLevelItem(0).setText(0, _translate("DockWidget", "!!!"))
+        # self.treeWidget.topLevelItem(0).setText(1, _translate("DockWidget", "44"))
         self.treeWidget.setSortingEnabled(__sortingEnabled)
+
+    def build_tree(self):
+        self.callback = self.data["callback"]
+        for section in self.data["sections"]:
+            self.create_section(section)
+        # TODO : add button with save
+
+    def create_section(self, section):
+        main_section_widget = QtWidgets.QTreeWidgetItem(self.treeWidget)
+        print(section["name"])
+        main_section_widget.setText(0, section["name"])
+        for field in section["fields"]:
+            # TODO switch case for every type. send main_section_widget object to this function so it will be QtWidgets.QTreeWidgetItem(main_section_widget)
+            # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+            # widget = QSpinBox()
+            # widget.setValue(5)
+            # self.treeWidget.setItemWidget(father: item_0,row: 1,widget: widget)
+            pass
 
 
 if __name__ == "__main__":
+    data = '''{
+        "sections": [{
+            "name": "node details",
+            "fields": {
+                "title": {"type": "Text", "value": ""},
+                "time": {"type": "time", "value": "00:00"},
+                "actor_in_charge": {"type": "combobox",
+                                    "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                                    "value": "Nurse"},
+                "actors": {"type": "checkboxes_list",
+                           "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                           "value": []
+                           }
+            }},
+            {
+                "name": "Simple String",
+                "fields": {
+                    "value": {"type": "text", "value": ""}
+                }
+            }
+
+        ],
+        "callback":" lambda x: x"
+
+    }'''
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     DockWidget = QtWidgets.QDockWidget()
-    ui = Ui_DockWidget()
+    ui = Ui_DockWidget(data=data)
+
     ui.setupUi(DockWidget)
     DockWidget.show()
     sys.exit(app.exec_())
