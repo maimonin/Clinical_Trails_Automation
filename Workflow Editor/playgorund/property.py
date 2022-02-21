@@ -9,17 +9,23 @@
 import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QSpinBox, QLineEdit, QTimeEdit
+from PyQt5.QtWidgets import QSpinBox, QLineEdit, QTimeEdit, QComboBox
 import json
 
 
 class Ui_DockWidget(object):
     def __init__(self, data=None):
-        print("DDD")
         super(Ui_DockWidget, self).__init__()
         self.data = data
-        print(type(self.data))
         self.callback = self.data["callback"]
+
+        self.functions = {
+            "Text": self.create_text_input_widget,
+            "time": self.create_time_input_widget,
+            "combobox": self.create_combobox_input_widget,
+            "list": self.create_list_widget,
+            "spinbox": self.create_spinbox_widget
+        }
 
     def setupUi(self, DockWidget):
         DockWidget.setObjectName("Properties")
@@ -48,6 +54,7 @@ class Ui_DockWidget(object):
         DockWidget.setWindowTitle(_translate("DockWidget", "DockWidget"))
         self.treeWidget.headerItem().setText(0, _translate("DockWidget", "Property"))
         self.treeWidget.headerItem().setText(1, _translate("DockWidget", "Value"))
+        self.treeWidget.setColumnWidth(0, 170)
         __sortingEnabled = self.treeWidget.isSortingEnabled()
         self.treeWidget.setSortingEnabled(False)
         # self.treeWidget.topLevelItem(0).setText(0, _translate("DockWidget", "!!!"))
@@ -61,20 +68,16 @@ class Ui_DockWidget(object):
         # TODO : add button with save
 
     def create_section(self, section):
-        functions = {
-            "Text": self.create_text_input_widget,
-            "time" :self.create_time_input_widget,
-        }
         main_section_widget = QtWidgets.QTreeWidgetItem(self.treeWidget)
         print(f"sedction name: {section['name']}")
         main_section_widget.setText(0, section["name"])
         for field in section["fields"]:
-            filed_line = QtWidgets.QTreeWidgetItem(main_section_widget)
-            filed_line.setText(0,field["name"])
+            filled_line = QtWidgets.QTreeWidgetItem(main_section_widget)
+            filled_line.setText(0, field["name"])
             print(field)
             print(field["type"])
-            if  field["type"] in functions.keys():
-                functions[field["type"]](filed_line,field)
+            if field["type"] in self.functions.keys():
+                self.functions[field["type"]](filled_line, field)
 
             # TODO switch case for every type. send main_section_widget object to this function so it will be QtWidgets.QTreeWidgetItem(main_section_widget)
             # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
@@ -84,33 +87,69 @@ class Ui_DockWidget(object):
             pass
 
     def create_text_input_widget(self, father, field):
-        print(f"create_text_input_widget:: {field}")
+        # print(f"create_text_input_widget:: {field}")
         widget = QLineEdit()
         widget.setText(field["value"])
-        self.treeWidget.setItemWidget(father,1,widget)
+        self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_time_input_widget(self, father, field):
-        print(f"create_time_input_widget:: {field}")
+        # print(f"create_time_input_widget:: {field}")
         widget = QTimeEdit()
         widget.setTime(field["value"])
-        self.treeWidget.setItemWidget(father,1,widget)
+        self.treeWidget.setItemWidget(father, 1, widget)
+
+    def create_combobox_input_widget(self, father, field):
+        # print(f"create_combobox_input_widget:: {field}")
+        widget = QComboBox()
+        options = field["options"]
+        for opt in options:
+            widget.addItem(opt)
+
+        # cbstyle = "QComboBox QAbstractItemView {"
+        # cbstyle += " border: 1px solid grey;"
+        # cbstyle += " background: white;"
+        # cbstyle += " selection-background-color: blue;"
+        # cbstyle += " }"
+        # cbstyle += " QComboBox {"
+        # cbstyle += " background: white;"
+        # cbstyle += "}"
+        # widget.setStyleSheet(cbstyle)
+
+        self.treeWidget.setItemWidget(father, 1, widget)
+
+    def create_spinbox_widget(self, father, field):
+        widget = QSpinBox()
+        # widget.setText(field["value"])
+        widget.setValue(field["value"])
+        self.treeWidget.setItemWidget(father, 1, widget)
+
+    def create_list_widget(self, father, field):
+        items = field["items"]
+        for item in items:
+            item_line = QtWidgets.QTreeWidgetItem(father)
+            item_line.setText(0, item["name"])
+            if item["type"] in self.functions.keys():
+                self.functions[item["type"]](item_line, item)
+
+            # self.treeWidget.setItemWidget(item_line, 1, widget)
+
 
 if __name__ == "__main__":
     data = {
         "sections": [{
-            "name": "node details",
+            "name": "Node Details",
             "fields": [
                 {"name": "title", "type": "Text", "value": ""},
-                {"name": "time", "type": "time", "value": datetime.time(hour=1,minute=50)},
+                {"name": "time", "type": "time", "value": datetime.time(hour=1, minute=50)},
                 {"name": "actor_in_charge", "type": "combobox",
                  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
-                {"name": "actors", "type": "checkboxes_list",
-                 "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": []}
+                {"name": "actors", "type": "list",
+                 "items": [{"name": "Nurse", "value": 0, "type": "spinbox"}, {"name": "Doctor", "value":0, "type":"spinbox"}, {"name":"Participant","value":0, "type":"spinbox"}, {"name":"Investigator","value":0, "type":"spinbox"},{"name":"Lab Technician","value":0, "type":"spinbox"}]}
             ]},
             {
-                "name": "Simple String",
+                "name": "Text",
                 "fields": [
-                    {"name" : "text","type":"Text","value":""}
+                    {"name": "text", "type": "Text", "value": ""}
                 ]
             }
 
