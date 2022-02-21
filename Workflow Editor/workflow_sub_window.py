@@ -26,14 +26,14 @@ class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
         super().initUI()
 
-    def __init__(self):
+    def __init__(self,dockCallback=None):
         super().__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
-
+        self.dockCallback=dockCallback
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
@@ -90,6 +90,8 @@ class WorkflowSubWindow(NodeEditorWidget):
             try:
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
+                node.set_attributes_dock_callback(self.dockCallback)
+
                 node.drop_action()
             except Exception as e:
                 dumpException(e)

@@ -73,6 +73,7 @@ class WorkflowNode(Node):
 
         super().__init__(scene,self.__class__.op_title,inputs,outputs)
         self.data = None
+        self.attributes_dock_callback=None
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
@@ -83,7 +84,8 @@ class WorkflowNode(Node):
         pass
     def callback_from_window(self, content, window):
         pass
-
+    def set_attributes_dock_callback(self,callback):
+        self.attributes_dock_callback = callback
     def serialize(self):
         try:
             res = super().serialize()

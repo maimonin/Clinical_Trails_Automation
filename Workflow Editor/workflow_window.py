@@ -98,7 +98,8 @@ class WorkflowEditorWindow(NodeEditorWindow):
             dumpException(e)
 
     def createMdiChild(self, child_widget=None):
-        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow()
+        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow(self.attributes.change_data)
+        # gives callback for injecting data to attributes dock
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         # nodeeditor.addCloseEventListener(self.onSubWndClose)
@@ -173,9 +174,11 @@ class WorkflowEditorWindow(NodeEditorWindow):
     def createAttributesDock(self):
 
         self.attributes = QDynamicDock()
-        self.attributes.setFloating(False)
-        self.attributes.setMinimumWidth(160)
-        self.attributes.setMaximumWidth(350)
+        self.attributes.setFloating(True)
+        self.attributes.setMinimumWidth(400)
+        # self.attributes.setMinimumWidth(400)
+        self.attributes.setMaximumWidth(400)
+        self.attributes.setMaximumHeight(500)
         self.addDockWidget(Qt.RightDockWidgetArea, self.attributes)
 
     def activeMdiChild(self):

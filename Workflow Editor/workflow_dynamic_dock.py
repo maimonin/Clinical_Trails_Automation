@@ -1,55 +1,113 @@
-from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit
 
 
 class QDynamicDock(QDockWidget):
     def __init__(self, parent=None):
-        super().__init__(parent)
-        self.initUI()
+        super().__init__(None)
+        self.data = None
+        self.callback = None
 
+        self.functions = {
+            "Text": self.create_text_input_widget,
+            "time": self.create_time_input_widget,
+            "combobox": self.create_combobox_input_widget,
+            "list": self.create_list_widget,
+            "spinbox": self.create_spinbox_widget
+        }
+        self.setupUi()
 
-    def initUI(self):
+    def setupUi(self):
         self.setWindowTitle("Attributes")
-        # self.setWidget(QPushButton("Save",self))
 
+        self.setObjectName("Properties")
+        # self.resize(5000, 423)
+        self.dockWidgetContents = QtWidgets.QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
+        self.treeWidget = QtWidgets.QTreeWidget(self.dockWidgetContents)
+        self.treeWidget.setGeometry(QtCore.QRect(0, 0, 400, 500))
+        self.treeWidget.setMidLineWidth(2)
+        self.treeWidget.setVerticalScrollBarPolicy(QtCore.Qt.   ScrollBarAlwaysOn)
+        self.treeWidget.setItemsExpandable(True)
+        self.treeWidget.setObjectName("treeWidget")
+        # self.treeWidget.set
 
-    def setAsEdge(self):
-        layout = QFormLayout()
+        self.treeWidget.header().setVisible(True)
+        self.treeWidget.header().setHighlightSections(True)
+        self.setWidget(self.dockWidgetContents)
 
-        timeLabel = QLabel()
-        timeLabel.setText("Time Constraint")
+        self.retranslateUi()
+        if self.data is not None:
+            self.build_tree()
+        # QtCore.QMetaObject.connectSlotsByName(DockWidget)
 
-        timeInput = QLineEdit()
-        timeInput.setPlaceholderText("0")
+    def retranslateUi(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.treeWidget.headerItem().setText(0, _translate("DockWidget", "Property"))
+        self.treeWidget.headerItem().setText(1, _translate("DockWidget", "Value"))
+        self.treeWidget.setColumnWidth(0, 170)
+        __sortingEnabled = self.treeWidget.isSortingEnabled()
+        self.treeWidget.setSortingEnabled(False)
+        self.treeWidget.setSortingEnabled(__sortingEnabled)
 
-        layout.addRow(timeLabel, timeInput)
-        self.setLayout(layout)
+    def change_data(self, data):
+        # TODO: check if exists previous,and change accordingly
+        self.data = data
+        self.callback = data["callback"]
+        self.treeWidget.clear()
+        self.build_tree()
 
-    def setNodeDetails(self):
-        layout = QFormLayout()
-        # Node details
-        titleLabel = QLabel("Title")
-        titleInput = QLineEdit()
-        titleInput.setPlaceholderText("Questionnaire")
-        layout.addRow(titleLabel, titleInput)
+    def build_tree(self):
+        for section in self.data["sections"]:
+            self.create_section(section)
+        # TODO : add button with save
+        self.treeWidget.expandAll()
+    def create_section(self, section):
+        main_section_widget = QtWidgets.QTreeWidgetItem(self.treeWidget)
+        print(f"sedction name: {section['name']}")
+        main_section_widget.setText(0, section["name"])
+        for field in section["fields"]:
+            filled_line = QtWidgets.QTreeWidgetItem(main_section_widget)
+            filled_line.setText(0, field["name"])
+            print(field)
+            print(field["type"])
+            if field["type"] in self.functions.keys():
+                self.functions[field["type"]](filled_line, field)
 
-        timeLabel = QLabel("Time")
-        timeInput = QLineEdit()
-        timeInput.setPlaceholderText("0")
-        layout.addRow(timeLabel, timeInput)
+            # TODO switch case for every type. send main_section_widget object to this function so it will be QtWidgets.QTreeWidgetItem(main_section_widget)
+            # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+            # widget = QSpinBox()
+            # widget.setValue(5)
+            # self.treeWidget.setItemWidget(father: item_0,row: 1,widget: widget)
+            pass
 
-        inChargeLabel = QLabel("Actor In Charge")
-        inChargeInput = QComboBox()
-        inChargeInput.addItem("Nurse")
-        inChargeInput.addItem("Doctor")
-        inChargeInput.addItem("Investigator")
-        inChargeInput.addItem("Participant")
-        inChargeInput.addItem("Lab Technician")
-        layout.addRow(inChargeLabel, inChargeLabel)
+    def create_text_input_widget(self, father, field):
+        widget = QLineEdit()
+        widget.setText(field["value"])
+        self.treeWidget.setItemWidget(father, 1, widget)
 
-        # TODO: Add Actor
+    def create_time_input_widget(self, father, field):
+        widget = QTimeEdit()
+        widget.setTime(field["value"])
+        self.treeWidget.setItemWidget(father, 1, widget)
 
-        return layout
+    def create_combobox_input_widget(self, father, field):
+        widget = QComboBox()
+        options = field["options"]
+        for opt in options:
+            widget.addItem(opt)
 
-    def setAsQuestionnaire(self):
-        layout = self.setNodeDetails()
-        self.setLayout(layout)
+        self.treeWidget.setItemWidget(father, 1, widget)
+
+    def create_spinbox_widget(self, father, field):
+        widget = QSpinBox()
+        widget.setValue(field["value"])
+        self.treeWidget.setItemWidget(father, 1, widget)
+
+    def create_list_widget(self, father, field):
+        items = field["items"]
+        for item in items:
+            item_line = QtWidgets.QTreeWidgetItem(father)
+            item_line.setText(0, item["name"])
+            if item["type"] in self.functions.keys():
+                self.functions[item["type"]](item_line, item)

@@ -9,13 +9,13 @@
 import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QSpinBox, QLineEdit, QTimeEdit, QComboBox
+from PyQt5.QtWidgets import QSpinBox, QLineEdit, QTimeEdit, QComboBox, QDockWidget
 import json
 
 
-class Ui_DockWidget(object):
+class Ui_DockWidget(QDockWidget):
     def __init__(self, data=None):
-        super(Ui_DockWidget, self).__init__()
+        super().__init__()
         self.data = data
         self.callback = self.data["callback"]
 
@@ -27,9 +27,9 @@ class Ui_DockWidget(object):
             "spinbox": self.create_spinbox_widget
         }
 
-    def setupUi(self, DockWidget):
-        DockWidget.setObjectName("Properties")
-        DockWidget.resize(527, 423)
+    def setupUi(self):
+        self.setObjectName("Properties")
+        self.resize(527, 423)
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.treeWidget = QtWidgets.QTreeWidget(self.dockWidgetContents)
@@ -42,16 +42,15 @@ class Ui_DockWidget(object):
 
         self.treeWidget.header().setVisible(True)
         self.treeWidget.header().setHighlightSections(True)
-        DockWidget.setWidget(self.dockWidgetContents)
-
-        self.retranslateUi(DockWidget)
+        self.setWidget(self.dockWidgetContents)
+        self.retranslateUi()
         if self.data is not None:
             self.build_tree()
-        QtCore.QMetaObject.connectSlotsByName(DockWidget)
+        # QtCore.QMetaObject.connectSlotsByName(DockWidget)
 
-    def retranslateUi(self, DockWidget):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        DockWidget.setWindowTitle(_translate("DockWidget", "DockWidget"))
+        self.setWindowTitle(_translate("DockWidget", "DockWidget"))
         self.treeWidget.headerItem().setText(0, _translate("DockWidget", "Property"))
         self.treeWidget.headerItem().setText(1, _translate("DockWidget", "Value"))
         self.treeWidget.setColumnWidth(0, 170)
@@ -160,9 +159,10 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    DockWidget = QtWidgets.QDockWidget()
+    # DockWidget = QtWidgets.QDockWidget()
     ui = Ui_DockWidget(data=data)
 
-    ui.setupUi(DockWidget)
-    DockWidget.show()
+    ui.setupUi()
+    ui.show()
+    # DockWidget.show()
     sys.exit(app.exec_())
