@@ -1,9 +1,9 @@
 import os, sys, inspect
-from qt_material import list_themes, apply_stylesheet
 from PyQt5 import QtWidgets
 from qtpy.QtWidgets import QApplication
 
 from workflow_window import WorkflowEditorWindow
+from qt_material import list_themes, apply_stylesheet
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
