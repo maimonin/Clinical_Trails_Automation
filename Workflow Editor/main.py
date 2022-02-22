@@ -12,7 +12,8 @@ from nodeeditor.node_editor_window import NodeEditorWindow
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    apply_stylesheet(app, theme='light_cyan.xml')
+    apply_stylesheet(app, theme='./assets/themes/test.xml',extra={"QTMATERIAL_PRIMARYCOLOR": "#ffffff"})
+
     # welcome_window= WelcomeWindow()
     # widget = QtWidgets.QStackedWidget()
     # widget.addWidget(welcome_window)
