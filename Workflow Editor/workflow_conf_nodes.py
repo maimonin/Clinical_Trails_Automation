@@ -154,9 +154,9 @@ class WorkflowNode_Decision(WorkflowNode):
 
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
-    icon = "icons/str.png"
+    icon = "icons/notificationC.png"
     op_code = OP_NODE_STRING
-    op_title = "Simple String"
+    op_title = "Notification"
     content_label_objname = "workflow_node_string"
 
     def initInnerClasses(self):
@@ -188,9 +188,9 @@ class WorkflowNode_SimpleString(WorkflowNode):
                                {"name": "Lab Technician", "value": 0, "type": "spinbox"}]}
                 ]},
                 {
-                    "name": "Text",
+                    "name": "Notification",
                     "fields": [
-                        {"name": "text", "type": "Text", "value": ""}
+                        {"name": "Text", "type": "Text", "value": ""}
                     ]
                 }
 
