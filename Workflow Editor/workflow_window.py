@@ -168,6 +168,13 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.items = QDockWidget("Nodes")
         self.items.setWidget(self.nodesListWidget)
         self.items.setFloating(False)
+        # change the title background color of the dock
+        # self.items.setStyleSheet("""
+        #         QDockWidget::title
+        #        {
+        #        background : #f1c40f;
+        #        }
+        # """)
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
 
