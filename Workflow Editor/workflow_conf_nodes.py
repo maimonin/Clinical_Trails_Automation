@@ -55,7 +55,7 @@ class WorkflowTimeInputContent(QDMNodeContentWidget):
 
 @register_node(OP_NODE_QUESTIONNAIRE)
 class WorkflowNode_Questionnaire(WorkflowNode):
-    icon = "icons/Questionnaire-icon.png"
+    icon = "assets/icons/Questionnaire-blue.png"
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
@@ -87,9 +87,10 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.data)
         ui.setupUi(QuestionnaireBuild)
         QuestionnaireBuild.exec_()
+
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
-    icon = "icons/test_icon.png"
+    icon = "assets/icons/test_blue.png"
     op_code = OP_NODE_Test
     op_title = "Test"
     content_label_objname = "workflow_node_data_entry"
@@ -119,9 +120,10 @@ class WorkflowNode_DataEntry(WorkflowNode):
         ui = Ui_Test_Builder(lambda content: self.callback_from_window(content,DataEntryBuild),data=self.data)
         ui.setupUi(DataEntryBuild)
         DataEntryBuild.exec_()
+
 @register_node(OP_NODE_DECISION)
 class WorkflowNode_Decision(WorkflowNode):
-    icon = "icons/decision.png"
+    icon = "assets/icons/decision_blue.png"
     op_code = OP_NODE_DECISION
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
@@ -154,7 +156,7 @@ class WorkflowNode_Decision(WorkflowNode):
 
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
-    icon = "icons/notificationC.png"
+    icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
     op_title = "Notification"
     content_label_objname = "workflow_node_string"
@@ -249,7 +251,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
 
 @register_node(OP_NODE_COMPLEX)
 class WorkflowNode_ComplexNode(WorkflowNode):
-    icon = "icons/workflow.png"
+    icon = "assets/icons/complex_blue2.png"
     op_code = OP_NODE_COMPLEX
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
