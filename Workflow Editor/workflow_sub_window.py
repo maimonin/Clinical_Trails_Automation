@@ -39,7 +39,7 @@ class WorkflowSubWindow(NodeEditorWidget):
         return get_class_from_opcode(data['op_code'])
 
     def setTitle(self):
-        self.setWindowTitle(self.getUserFriendlyFilename())
+        self.setWindowTitle(self.getUserFriendlyFilename())  # "New Graph" title
 
     def onDragEnter(self, event):
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
