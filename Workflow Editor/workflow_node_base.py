@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QPen, QBrush
+from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath
 from PyQt5.QtWidgets import *
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
@@ -14,7 +14,7 @@ class WorkflowGraphicNode(QDMGraphicsNode):
         self.width = 200
         self.height = 40
         self.edge_size = 5
-        self.edge_padding=8
+        self.edge_padding= 8
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
@@ -26,7 +26,7 @@ class WorkflowGraphicNode(QDMGraphicsNode):
         self._color_hovered = QColor("#b2bec3")
 
         self._pen_default = QPen(self._color)
-        self._pen_default.setWidthF(2.0)
+        self._pen_default.setWidthF(0)
         self._pen_selected = QPen(self._color_selected)
         self._pen_selected.setWidthF(3.5)
         self._pen_hovered = QPen(self._color_hovered)
@@ -34,6 +34,43 @@ class WorkflowGraphicNode(QDMGraphicsNode):
 
         self._brush_title = QBrush(QColor("#ffeaa7"))
         self._brush_background = QBrush(QColor("#ffeaa7"))
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        # title
+        path_title = QPainterPath()
+        path_title.setFillRule(Qt.WindingFill)
+        path_title.addRoundedRect(0, 0, self.width, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self._brush_title)
+        painter.drawPath(path_title.simplified())
+
+
+        # content
+        path_content = QPainterPath()
+        path_content.setFillRule(Qt.WindingFill)
+        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRect(0, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness, self.edge_roundness)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self._brush_background)
+        painter.drawPath(path_content.simplified())
+
+
+        # outline
+        path_outline = QPainterPath()
+        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        painter.setBrush(Qt.NoBrush)
+        if self.hovered:
+            painter.setPen(self._pen_hovered)
+            painter.drawPath(path_outline.simplified())
+            painter.setPen(self._pen_default)
+            painter.drawPath(path_outline.simplified())
+        else:
+            painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+            painter.drawPath(path_outline.simplified())
 
 class WorkflowGraphicNode_wide(QDMGraphicsNode):
     def initSizes(self):
@@ -50,12 +87,15 @@ class WorkflowGraphicNode_long(QDMGraphicsNode):
         self.height = 150
         self.edge_size = 5
         self.edge_padding=8
+
 class WorkflowContent_with_button(QDMNodeContentWidget):
     def initUI(self):
-        button=QPushButton("Edit",self)
-        self.btn=button
+        pass
+        # button=QPushButton("Edit",self)
+        # self.btn=button
     def connect_callback(self,callback):
-        self.btn.clicked.connect(callback)
+        # self.btn.clicked.connect(callback)
+        pass
 
 class WorkflowContent(QDMNodeContentWidget):
     def initUI(self):
