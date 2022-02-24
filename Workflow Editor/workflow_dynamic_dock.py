@@ -84,6 +84,7 @@ class QDynamicDock(QDockWidget):
     def create_text_input_widget(self, father, field):
         widget = QLineEdit()
         widget.setText(field["value"])
+        widget.setPlaceholderText("Enter Text Here")
         self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_time_input_widget(self, father, field):

@@ -93,6 +93,7 @@ class Ui_Node_Details(object):
         for actor in self.details["actors"]:
             self.add_line(actor)
         self.actor_in_charge_combo.setCurrentText(self.details["actor in charge"])
+
     def retranslateUi(self, Node_Details):
         _translate = QtCore.QCoreApplication.translate
         Node_Details.setWindowTitle(_translate("Node_Details", "Dialog"))

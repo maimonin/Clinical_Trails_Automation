@@ -32,8 +32,8 @@ class WorkflowGraphicNode(QDMGraphicsNode):
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_hovered.setWidthF(4.0)
 
-        self._brush_title = QBrush(QColor("#ffeaa7"))
-        self._brush_background = QBrush(QColor("#ffeaa7"))
+        self._brush_title = QBrush(QColor("#2d98da"))  # node title background color
+        self._brush_background = QBrush(QColor("#2d98da"))  # node header background color
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting the rounded rectanglar `Node`"""
