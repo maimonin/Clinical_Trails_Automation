@@ -14,7 +14,7 @@ class WorkflowGraphicNode(QDMGraphicsNode):
         self.width = 200
         self.height = 40
         self.edge_size = 5
-        self.edge_padding= 8
+        self.edge_padding = 8
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
@@ -42,22 +42,23 @@ class WorkflowGraphicNode(QDMGraphicsNode):
         path_title.setFillRule(Qt.WindingFill)
         path_title.addRoundedRect(0, 0, self.width, self.title_height, self.edge_roundness, self.edge_roundness)
         path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
-        path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness,
+                           self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_title)
         painter.drawPath(path_title.simplified())
 
-
         # content
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
-        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height,
+                                    self.edge_roundness, self.edge_roundness)
         path_content.addRect(0, self.title_height, self.edge_roundness, self.edge_roundness)
-        path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness,
+                             self.edge_roundness)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_background)
         painter.drawPath(path_content.simplified())
-
 
         # outline
         path_outline = QPainterPath()
@@ -72,13 +73,15 @@ class WorkflowGraphicNode(QDMGraphicsNode):
             painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
             painter.drawPath(path_outline.simplified())
 
+
 class WorkflowGraphicNode_wide(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
         self.width = 300
         self.height = 100
         self.edge_size = 5
-        self.edge_padding=8
+        self.edge_padding = 8
+
 
 class WorkflowGraphicNode_long(QDMGraphicsNode):
     def initSizes(self):
@@ -86,62 +89,74 @@ class WorkflowGraphicNode_long(QDMGraphicsNode):
         self.width = 160
         self.height = 150
         self.edge_size = 5
-        self.edge_padding=8
+        self.edge_padding = 8
+
 
 class WorkflowContent_with_button(QDMNodeContentWidget):
     def initUI(self):
         pass
         # button=QPushButton("Edit",self)
         # self.btn=button
-    def connect_callback(self,callback):
+
+    def connect_callback(self, callback):
         # self.btn.clicked.connect(callback)
         pass
+
 
 class WorkflowContent(QDMNodeContentWidget):
     def initUI(self):
         lbl = QLabel("", self)
-        button=QPushButton("raviv",self)
+        button = QPushButton("raviv", self)
 
 
 class WorkflowNode(Node):
-    icon=""
+    icon = ""
     op_code = 0
     op_title = "Undefined"
     content_label = ""
     content_label_objname = "calc_node_bg"
-    def __init__(self, scene,inputs=[1],outputs=[1]) :
 
-        super().__init__(scene,self.__class__.op_title,inputs,outputs)
+    def __init__(self, scene, inputs=[1], outputs=[1]):
+
+        super().__init__(scene, self.__class__.op_title, inputs, outputs)
         self.data = None
-        self.attributes_dock_callback=None
+        self.attributes_dock_callback = None
+
     def initInnerClasses(self):
         self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
+
     def initSettings(self):
         super().initSettings()
-        self.input_multi_edged= True
+        self.input_multi_edged = True
+
     def drop_action(self):
         pass
-    def callback_from_window(self, content, window):
+
+    def callback_from_window(self, content):
         pass
-    def set_attributes_dock_callback(self,callback):
+
+    def set_attributes_dock_callback(self, callback):
         self.attributes_dock_callback = callback
+
     def serialize(self):
         try:
             res = super().serialize()
             # ser_content = self.content.serialize() if isinstance(self.content, Serializable) else {}
 
-            res['content']=self.data if self.data is not None else "" # changed it from content to data due to issues,Raviv.
+            res[
+                'content'] = self.data if self.data is not None else ""  # changed it from content to data due to issues,Raviv.
             res['op_code'] = self.__class__.op_code
-        except Exception as e: dumpException(e)
+        except Exception as e:
+            dumpException(e)
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
         self.data = data['content']
-        self.op_code=data['op_code']
+        self.op_code = data['op_code']
         # print("Deserialized node base '%s'" % self.__class__.__name__, "res:", res)
         return res
 
     def edit_nodes_details(self):
-        pass # To be implemented in each node
+        pass  # To be implemented in each node

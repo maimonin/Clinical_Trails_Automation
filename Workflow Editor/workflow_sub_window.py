@@ -26,14 +26,15 @@ class WorkflowSubWindow(NodeEditorWidget):
     def initUI(self):
         super().initUI()
 
-    def __init__(self,dockCallback=None):
+    def __init__(self, dockCallback=None):
         super().__init__()
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
-        self.dockCallback=dockCallback
+        self.dockCallback = dockCallback
+
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
@@ -46,6 +47,7 @@ class WorkflowSubWindow(NodeEditorWidget):
             event.acceptProposedAction()
         else:
             event.setAccepted(False)
+
     def contextMenuEvent(self, event):
         try:
             item = self.scene.getItemAt(event.pos())
@@ -57,7 +59,9 @@ class WorkflowSubWindow(NodeEditorWidget):
                 self.handleEdgeContextMenu(event)
 
             return super().contextMenuEvent(event)
-        except Exception as e: dumpException(e)
+        except Exception as e:
+            dumpException(e)
+
     def handleEdgeContextMenu(self, event):
         context_menu = QMenu(self)
         bezierAct = context_menu.addAction("Bezier Edge")
