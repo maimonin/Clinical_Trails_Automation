@@ -62,15 +62,15 @@ class WorkflowTimeInputContent(QDMNodeContentWidget):
 
 @register_node(OP_NODE_QUESTIONNAIRE)
 class WorkflowNode_Questionnaire(WorkflowNode):
-    icon = "assets/icons/Questionnaire-blue.png"
+    op_icon = "assets/icons/Questionnaire-blue.png"
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
 
     def initInnerClasses(self):
-        self.content = WorkflowContent_with_button(self, )
-        self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNode_wide(self)
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
         from Windows.questionnaire_builder import Ui_QuestionnaireBuild
@@ -102,15 +102,15 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
-    icon = "assets/icons/test_blue.png"
+    op_icon = "assets/icons/test_blue.png"
     op_code = OP_NODE_Test
     op_title = "Test"
     content_label_objname = "workflow_node_data_entry"
 
     def initInnerClasses(self):
-        self.content = WorkflowContent_with_button(self, )
-        self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNode(self)
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
         from Windows.tests_builder import Ui_Test_Builder
@@ -139,15 +139,15 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
 @register_node(OP_NODE_DECISION)
 class WorkflowNode_Decision(WorkflowNode):
-    icon = "assets/icons/decision_blue.png"
+    op_icon = "assets/icons/decision_blue.png"
     op_code = OP_NODE_DECISION
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
 
     def initInnerClasses(self):
-        self.content = WorkflowContent_with_button(self, )
-        self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNodeQuicksand(self)
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
         Decision_Node = QtWidgets.QDialog()
@@ -174,7 +174,7 @@ class WorkflowNode_Decision(WorkflowNode):
 
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
-    icon = "assets/icons/notificationC.png"
+    op_icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
     op_title = "Notification"
     content_label_objname = "workflow_node_string"
@@ -182,7 +182,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNodeQuicksand(self)
+        self.grNode = WorkflowGraphicWithIcon(self)
 
     def save_data_when_changed(self, text):
         self.data = text
@@ -272,16 +272,16 @@ class WorkflowNode_SimpleString(WorkflowNode):
 
 @register_node(OP_NODE_COMPLEX)
 class WorkflowNode_ComplexNode(WorkflowNode):
-    icon = "assets/icons/complex_blue2.png"
+    op_icon = "assets/icons/complex_blue2.png"
     op_code = OP_NODE_COMPLEX
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
 
     def initInnerClasses(self):
-        self.content = WorkflowContent_with_button(self, )
-        self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNode(self)
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicWithIcon(self)
 
     def save_data_when_changed(self, text):
         self.data = text

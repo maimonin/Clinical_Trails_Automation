@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath
+from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath, QPixmap
 from PyQt5.QtWidgets import *
 from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
@@ -80,34 +80,83 @@ class WorkflowGraphicNode(QDMGraphicsNode):
             painter.drawPath(path_outline.simplified())
 
 
-class WorkflowGraphicNodeQuicksand(QDMGraphicsNode):
+class WorkflowGraphicWithIcon(QDMGraphicsNode):
+
+    @property
+    def type(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return self._type
+
+    @type.setter
+    def type(self, value):
+        self._type = value
+        self.type_item.setPlainText(self._type)
+
+    @property
+    def icon(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return self._icon
+
+    @icon.setter
+    def icon(self, value):
+        self._icon = value
+        pixmap = QPixmap(self._icon)
+        self.icon_item.setPixmap(pixmap.scaled(self.icon_size, self.icon_size))
+
+
+
+    def initUI(self):
+        super().initUI()
+        self.initType()
+        self.initIcon()
     def initSizes(self):
+
+
         super().initSizes()
-        self.width = 320
-        self.height = 80
+        self.edge_roundness = 20.0
+
+        self.width = 400
+        self.height = 120
         self.edge_size = 5
         self.edge_padding = 8
-        self.icon_horizontal_padding = 20
-        self.icon_vertical_padding = 20
 
-        self.type_height = self.icon_vertical_padding +  (1/8) * (self.height -  2*self.icon_vertical_padding)
-        self.name_height =  self.icon_vertical_padding +  (5/8) * (self.height -  2*self.icon_vertical_padding)
+        self.icon_size = self.height / 3
+        self.icon_circle_radius = self.icon_size
 
-        self.type_horizontal_padding = 5
-        self.name_horizontal
+        self.icon_padding_from_perimiter = self.icon_circle_radius/2
+        self.icon_circle_horizontal_padding = self.icon_size / 3
+        self.icon_circle_vertical_padding = self.height / 8
+
+        self.type_height = self.icon_circle_vertical_padding + (1 / 8) * (self.height - 2 * self.icon_circle_vertical_padding)
+        self.type_x = self.icon_circle_horizontal_padding * 2 + self.icon_circle_radius * 2
+
+        self.title_height = self.icon_circle_vertical_padding + (3 / 8) * (self.height - 2 * self.icon_circle_vertical_padding)
+        self.title_X = self.icon_circle_horizontal_padding * 2 + self.icon_circle_radius * 2
+
+        self.type_horizontal_padding = 10
+        # self.name_horizontal
     def initAssets(self):
-
-        # self._type_color=QColor("#0984e3")
-        # self._type_font= QFont
 
 
 
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._title_color = QColor("#2d3436")
-        self._title_font = QFont("Quicksand", 14)
-
         self._type_color = QColor("#2d3436")
-        self._type_font = QFont("Quicksand", 14)
+        self._type_font = QFont("Quicksand", 8)
+
+
+        self._title_color = QColor("#2d3436")
+        self._title_font = QFont("Quicksand", 9)
+        self._title_font.setBold(True)
 
         self._color = QColor("#7F000000")
         self._color_selected = QColor("#2d3436")
@@ -121,17 +170,39 @@ class WorkflowGraphicNodeQuicksand(QDMGraphicsNode):
 
         self._brush_background = QBrush(QColor("#ecf0f1"))  # node hea
         # der background color
+
+        self._color_background = QColor("#C2CBCE")
+        self._icon_background_brush = QBrush(self._color_background)
+
     def initType(self):
+        """Set up the type Graphics representation: font, color, position, etc."""
+        self.type_item = QGraphicsTextItem(self)
+        self.type_item.node = self.node
+        self.type_item.setDefaultTextColor(self._type_color)
+        self.type_item.setFont(self._type_font)
+        self.type_item.setPos(self.type_x, self.type_height)
+        self.type_item.setTextWidth(
+            self.width - self.type_x - self.type_horizontal_padding
+        )
+    def initTitle(self):
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         self.title_item.node = self.node
-        self.title_item.setDefaultTextColor(self._type_color)
-        self.title_item.setFont(self._type_font)
-        self.title_item.setPos(self.title_horizontal_padding, 0)
+        self.title_item.setDefaultTextColor(self._title_color)
+        self.title_item.setFont(self._title_font)
+        self.title_item.setPos(self.title_X, self.title_height)
         self.title_item.setTextWidth(
-            self.width
-            - 2 * self.type_horizontal_padding
+            self.width - self.title_X - self.title_horizontal_padding
         )
+
+    def initIcon(self):
+        self.icon_item = QGraphicsPixmapItem(self)
+        self.icon_item.node = self.node
+        # pixmap = QPixmap(self.icon)
+        # self.icon_item.setPixmap(QPixmap=pixmap)#.scaled(self.icon_size,self.icon_size))
+        self.icon_item.setPos(self.icon_circle_horizontal_padding + self.icon_circle_radius / 2,#+ self.icon_padding_from_perimiter - self.icon_size/2,
+                              self.icon_circle_vertical_padding +  self.icon_circle_radius / 2) #+ self.icon_padding_from_perimiter - self.icon_size/2)
+
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting the rounded rectanglar `Node`"""
 
@@ -145,62 +216,66 @@ class WorkflowGraphicNodeQuicksand(QDMGraphicsNode):
         painter.setBrush(self._brush_background)
         painter.drawPath(path_node.simplified())
 
+        #icon's circle
+        painter.setBrush(self._icon_background_brush)
+        painter.drawEllipse(self.icon_circle_horizontal_padding, self.icon_circle_vertical_padding, 2 * self.icon_circle_radius, 2 * self.icon_circle_radius)
 
 
 
-class WorkflowGraphicWithIcon(QDMGraphicsNode):
-    pass
-
-class WorkflowGraphicNode_wide(QDMGraphicsNode):
-    def initSizes(self):
-        super().initSizes()
-        self.width = 300
-        self.height = 100
-        self.edge_size = 5
-        self.edge_padding = 8
 
 
-class WorkflowGraphicNode_long(QDMGraphicsNode):
-    def initSizes(self):
-        super().initSizes()
-        self.width = 160
-        self.height = 150
-        self.edge_size = 5
-        self.edge_padding = 8
 
 
-class WorkflowContent_with_button(QDMNodeContentWidget):
-    def initUI(self):
-        pass
-        # button=QPushButton("Edit",self)
-        # self.btn=button
-
-    def connect_callback(self, callback):
-        # self.btn.clicked.connect(callback)
-        pass
-
-
-class WorkflowContent(QDMNodeContentWidget):
-    def initUI(self):
-        lbl = QLabel("", self)
-        button = QPushButton("raviv", self)
 
 
 class WorkflowNode(Node):
-    icon = ""
+    op_icon = ""
     op_code = 0
     op_title = "Undefined"
     content_label = ""
     content_label_objname = "calc_node_bg"
 
+
+    @property
+    def type(self):
+        """
+        Title shown in the scene
+
+        :getter: return current Node title
+        :setter: sets Node title and passes it to Graphics Node class
+        :type: ``str``
+        """
+        return self._type
+
+    @type.setter
+    def type(self, value):
+        self._type = value
+        self.grNode.type = self._type
+    @property
+    def icon(self):
+        """
+        Title shown in the scene
+
+        :getter: return current Node title
+        :setter: sets Node title and passes it to Graphics Node class
+        :type: ``str``
+        """
+        return self._icon
+
+    @icon.setter
+    def icon(self, value):
+        self._icon = value
+        self.grNode.icon = self._icon
     def __init__(self, scene, inputs=[1], outputs=[1]):
 
-        super().__init__(scene, self.__class__.op_title, inputs, outputs)
+        super().__init__(scene,f"New {self.__class__.op_title} Node" , inputs, outputs)
+        self.type=self.__class__.op_title
+        self.icon=self.op_icon
         self.data = None
         self.attributes_dock_callback = None
 
     def initInnerClasses(self):
-        self.content = WorkflowContent(self)
+        # self.content = WorkflowContent(self)
         self.grNode = WorkflowGraphicNode(self)
 
     def initSettings(self):
