@@ -11,12 +11,18 @@ from nodeeditor.utils import dumpException
 class WorkflowGraphicNode(QDMGraphicsNode):
     def initSizes(self):
         super().initSizes()
-        self.width = 200
-        self.height = 40
+        self.width = 210
+        self.height = 70
         self.edge_size = 5
         self.edge_padding = 8
 
     def initAssets(self):
+
+        # self._type_color=QColor("#0984e3")
+        # self._type_font= QFont
+
+
+
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
         self._title_color = QColor("#2d3436")
         self._title_font = QFont("Ubuntu", 14)
@@ -73,6 +79,77 @@ class WorkflowGraphicNode(QDMGraphicsNode):
             painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
             painter.drawPath(path_outline.simplified())
 
+
+class WorkflowGraphicNodeQuicksand(QDMGraphicsNode):
+    def initSizes(self):
+        super().initSizes()
+        self.width = 320
+        self.height = 80
+        self.edge_size = 5
+        self.edge_padding = 8
+        self.icon_horizontal_padding = 20
+        self.icon_vertical_padding = 20
+
+        self.type_height = self.icon_vertical_padding +  (1/8) * (self.height -  2*self.icon_vertical_padding)
+        self.name_height =  self.icon_vertical_padding +  (5/8) * (self.height -  2*self.icon_vertical_padding)
+
+        self.type_horizontal_padding = 5
+        self.name_horizontal
+    def initAssets(self):
+
+        # self._type_color=QColor("#0984e3")
+        # self._type_font= QFont
+
+
+
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._title_color = QColor("#2d3436")
+        self._title_font = QFont("Quicksand", 14)
+
+        self._type_color = QColor("#2d3436")
+        self._type_font = QFont("Quicksand", 14)
+
+        self._color = QColor("#7F000000")
+        self._color_selected = QColor("#2d3436")
+        self._color_hovered = QColor("#b2bec3")
+
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(0)
+        self._pen_selected = QPen(self._color_selected)
+        self._pen_selected.setWidthF(3.5)
+
+
+        self._brush_background = QBrush(QColor("#ecf0f1"))  # node hea
+        # der background color
+    def initType(self):
+        """Set up the title Graphics representation: font, color, position, etc."""
+        self.title_item = QGraphicsTextItem(self)
+        self.title_item.node = self.node
+        self.title_item.setDefaultTextColor(self._type_color)
+        self.title_item.setFont(self._type_font)
+        self.title_item.setPos(self.title_horizontal_padding, 0)
+        self.title_item.setTextWidth(
+            self.width
+            - 2 * self.type_horizontal_padding
+        )
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+
+
+
+        #node
+        path_node = QPainterPath()
+        path_node.setFillRule(Qt.WindingFill)
+        path_node.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self._brush_background)
+        painter.drawPath(path_node.simplified())
+
+
+
+
+class WorkflowGraphicWithIcon(QDMGraphicsNode):
+    pass
 
 class WorkflowGraphicNode_wide(QDMGraphicsNode):
     def initSizes(self):

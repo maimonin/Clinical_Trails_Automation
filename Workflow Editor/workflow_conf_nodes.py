@@ -147,7 +147,7 @@ class WorkflowNode_Decision(WorkflowNode):
     def initInnerClasses(self):
         self.content = WorkflowContent_with_button(self, )
         self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNode(self)
+        self.grNode = WorkflowGraphicNodeQuicksand(self)
 
     def drop_action(self):
         Decision_Node = QtWidgets.QDialog()
@@ -180,9 +180,9 @@ class WorkflowNode_SimpleString(WorkflowNode):
     content_label_objname = "workflow_node_string"
 
     def initInnerClasses(self):
-        self.content = WorkflowContent_with_button(self, )
-        self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicNode(self)
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicNodeQuicksand(self)
 
     def save_data_when_changed(self, text):
         self.data = text
