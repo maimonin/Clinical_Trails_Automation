@@ -90,7 +90,9 @@ class QDynamicDock(QDockWidget):
         widget = QLineEdit()
         widget.setText(field["value"])
         widget.setPlaceholderText("Enter Text Here")
-        widget.editingFinished.connect(lambda: self.handleItemChanged(widget))
+        field["value"] = "fds"
+        widget.textChanged.connect(lambda text : self.change_value(field,text))
+        # widget.editingFinished.connect(lambda: self.handleItemChanged(widget))
         self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_time_input_widget(self, father, field):
@@ -126,3 +128,7 @@ class QDynamicDock(QDockWidget):
         print("***************************Item Has Changed")
         self.data["sections"][1]["fields"][0]["value"] = item.text()
         print(self.data)
+    def change_value(self,field,value):
+        # print("workflow_dynamic_dock::change_value::data changed!")
+        field["value"] = value
+        self.callback(self.data)

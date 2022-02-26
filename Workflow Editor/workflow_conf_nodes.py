@@ -196,7 +196,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
             "sections": [{
                 "name": "Node Details",
                 "fields": [
-                    {"name": "Title", "type": "Text", "value": ""},
+                    {"name": "Title", "type": "Text", "value": self.title},
                     {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
                     {"name": "Actor in charge", "type": "combobox",
                      "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
@@ -215,13 +215,14 @@ class WorkflowNode_SimpleString(WorkflowNode):
                 }
 
             ],
-            "callback": self.callback_from_window("")
+            "callback": self.callback_from_window
         }
 
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(to_send)
 
     def callback_from_window(self, content):
+        self.title=content["sections"][0]["fields"][0]["value"]
         try:
             if content is None:
                 self.remove()  # remove node

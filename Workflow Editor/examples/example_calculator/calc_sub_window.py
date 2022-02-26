@@ -55,7 +55,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         keys.sort()
         for key in keys:
             node = CALC_NODES[key]
-            self.node_actions[node.op_code] = QAction(QIcon(node.icon), node.op_title)
+            self.node_actions[node.op_code] = QAction(QIcon(node.op_icon), node.op_title)
             self.node_actions[node.op_code].setData(node.op_code)
 
     def initNodesContextMenu(self):
