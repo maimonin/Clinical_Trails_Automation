@@ -8,6 +8,7 @@ from nodeeditor.node_scene import InvalidFile
 from qtpy import QtWidgets, QtCore
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
+from workflow_graphics_view import WFGraphicsView
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
@@ -22,6 +23,7 @@ DEBUG = False
 
 class WorkflowSubWindow(NodeEditorWidget):
     Scene_class = WorkflowScene
+    GraphicsView_class = WFGraphicsView
 
     def initUI(self):
         super().initUI()

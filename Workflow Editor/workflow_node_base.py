@@ -130,7 +130,7 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self.edge_size = 5
         self.edge_padding = 8
 
-        self.icon_size = self.height / 3
+        self.icon_size = 21
         self.icon_circle_radius = self.icon_size
 
         self.icon_padding_from_perimiter = self.icon_circle_radius/2
@@ -165,7 +165,7 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self._pen_default = QPen(self._color)
         self._pen_default.setWidthF(0)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidthF(3.5)
+        self._pen_selected.setWidthF(1)
 
 
         self._brush_background = QBrush(QColor("#ecf0f1"))  # node hea
@@ -212,11 +212,12 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         path_node = QPainterPath()
         path_node.setFillRule(Qt.WindingFill)
         path_node.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
-        painter.setPen(Qt.NoPen)
+        painter.setPen(Qt.NoPen if not self.isSelected() else self._pen_selected)
         painter.setBrush(self._brush_background)
         painter.drawPath(path_node.simplified())
 
         #icon's circle
+        painter.setPen(Qt.NoPen)
         painter.setBrush(self._icon_background_brush)
         painter.drawEllipse(self.icon_circle_horizontal_padding, self.icon_circle_vertical_padding, 2 * self.icon_circle_radius, 2 * self.icon_circle_radius)
 
@@ -312,3 +313,6 @@ class WorkflowNode(Node):
 
     def edit_nodes_details(self):
         pass  # To be implemented in each node
+
+    def doSelect(self, new_state: bool=True):
+        pass

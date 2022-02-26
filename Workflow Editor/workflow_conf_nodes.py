@@ -220,6 +220,37 @@ class WorkflowNode_SimpleString(WorkflowNode):
 
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(to_send)
+    def doSelect(self, new_state: bool=True):
+        to_send = {
+            "sections": [{
+                "name": "Node Details",
+                "fields": [
+                    {"name": "Title", "type": "Text", "value": self.title},
+                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
+                    {"name": "Actor in charge", "type": "combobox",
+                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
+                    {"name": "Actors", "type": "list",
+                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
+                               {"name": "Doctor", "value": 0, "type": "spinbox"},
+                               {"name": "Participant", "value": 0, "type": "spinbox"},
+                               {"name": "Investigator", "value": 0, "type": "spinbox"},
+                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]}
+                ]},
+                {
+                    "name": "Notification",
+                    "fields": [
+                        {"name": "Text", "type": "Text", "value": ""}
+                    ]
+                }
+
+            ],
+            "callback": self.callback_from_window
+        }
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(to_send)
+        else:
+            self.attributes_dock_callback(None)
 
     def callback_from_window(self, content):
         self.title=content["sections"][0]["fields"][0]["value"]
