@@ -56,9 +56,11 @@ class QDynamicDock(QDockWidget):
     def change_data(self, data):
         # TODO: check if exists previous,and change accordingly
         self.data = data
-        self.callback = data["callback"]
         self.treeWidget.clear()
-        self.build_tree()
+        if data is not None:
+            self.callback = data["callback"]
+            self.treeWidget.clear()
+            self.build_tree()
 
         return self.callback
 

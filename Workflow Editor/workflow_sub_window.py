@@ -36,6 +36,7 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
         self.dockCallback = dockCallback
+        self.scene.addAttributesDockCallback(self.dockCallback)
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node

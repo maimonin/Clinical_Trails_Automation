@@ -130,7 +130,7 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self.edge_size = 5
         self.edge_padding = 8
 
-        self.icon_size = 21
+        self.icon_size = self.height / 3
         self.icon_circle_radius = self.icon_size
 
         self.icon_padding_from_perimiter = self.icon_circle_radius/2
