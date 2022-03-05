@@ -113,7 +113,8 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         pixmap = QPixmap(self._icon)
         self.icon_item.setPixmap(pixmap.scaled(self.icon_size, self.icon_size))
 
-
+    def call_dock(self):
+        self.node.emit_select_dock()
 
     def initUI(self):
         super().initUI()
@@ -315,4 +316,15 @@ class WorkflowNode(Node):
         pass  # To be implemented in each node
 
     def doSelect(self, new_state: bool=True):
+        pass
+
+    def remove(self):
+        super().remove()
+        self.attributes_dock_callback(None)
+
+    def emit_select_dock(self):
+        pass
+        self.attributes_dock_callback(self.get_data())
+
+    def get_data(self):
         pass

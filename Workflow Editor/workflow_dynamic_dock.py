@@ -65,7 +65,6 @@ class QDynamicDock(QDockWidget):
     def build_tree(self):
         for section in self.data["sections"]:
             self.create_section(section)
-        # TODO : add button with save
         self.treeWidget.expandAll()
 
     def create_section(self, section):
@@ -80,7 +79,6 @@ class QDynamicDock(QDockWidget):
             if field["type"] in self.functions.keys():
                 self.functions[field["type"]](filled_line, field)
 
-            # TODO switch case for every type. send main_section_widget object to this function so it will be QtWidgets.QTreeWidgetItem(main_section_widget)
             # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
             # widget = QSpinBox()
             # widget.setValue(5)

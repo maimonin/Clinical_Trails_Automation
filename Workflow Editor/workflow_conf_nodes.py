@@ -271,7 +271,33 @@ class WorkflowNode_SimpleString(WorkflowNode):
         ui = Ui_string_node(lambda content: self.callback_from_window(content, String_Node), data=self.data)
         ui.setupUi(String_Node)
         String_Node.exec_()
+    def get_data(self):
+        to_send = {
+            "sections": [{
+                "name": "Node Details",
+                "fields": [
+                    {"name": "Title", "type": "Text", "value": self.title},
+                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
+                    {"name": "Actor in charge", "type": "combobox",
+                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
+                    {"name": "Actors", "type": "list",
+                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
+                               {"name": "Doctor", "value": 0, "type": "spinbox"},
+                               {"name": "Participant", "value": 0, "type": "spinbox"},
+                               {"name": "Investigator", "value": 0, "type": "spinbox"},
+                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]}
+                ]},
+                {
+                    "name": "Notification",
+                    "fields": [
+                        {"name": "Text", "type": "Text", "value": ""}
+                    ]
+                }
 
+            ],
+            "callback": self.callback_from_window
+        }
+        return to_send
 
 # @register_node(OP_NODE_TIME_CONSTRAINT)
 # class WorkflowNode_TimeConstraint(WorkflowNode):

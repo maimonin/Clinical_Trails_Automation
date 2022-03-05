@@ -64,8 +64,6 @@ class Ui_DockWidget(QDockWidget):
         # self.callback is in the init function
         for section in self.data["sections"]:
             self.create_section(section)
-        # TODO : add button with save
-
     def create_section(self, section):
         main_section_widget = QtWidgets.QTreeWidgetItem(self.treeWidget)
         print(f"sedction name: {section['name']}")
@@ -78,7 +76,6 @@ class Ui_DockWidget(QDockWidget):
             if field["type"] in self.functions.keys():
                 self.functions[field["type"]](filled_line, field)
 
-            # TODO switch case for every type. send main_section_widget object to this function so it will be QtWidgets.QTreeWidgetItem(main_section_widget)
             # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
             # widget = QSpinBox()
             # widget.setValue(5)
