@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit
+from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, QCheckBox
 
 
 class QDynamicDock(QDockWidget):
@@ -14,7 +14,8 @@ class QDynamicDock(QDockWidget):
             "time": self.create_time_input_widget,
             "combobox": self.create_combobox_input_widget,
             "list": self.create_list_widget,
-            "spinbox": self.create_spinbox_widget
+            "spinbox": self.create_spinbox_widget,
+            "checklist" : self.create_checklist_widget
         }
         self.setupUi()
 
@@ -97,6 +98,17 @@ class QDynamicDock(QDockWidget):
         widget = QTimeEdit()
         widget.setTime(field["value"])
         self.treeWidget.setItemWidget(father, 1, widget)
+    def create_checklist_widget(self, father, field):
+        options = field["options"]
+        for option in options:
+            option_line = QtWidgets.QTreeWidgetItem(father)
+            option_line.setText(0, option)
+            option_widget = QCheckBox()
+            option_widget.setChecked(option in field["value"])
+            option_widget.stateChanged.connect(lambda newState,text=option:self.change_checklist(field,text,newState)) # text= option so it will capture option value
+            self.treeWidget.setItemWidget(option_line,1,option_widget)
+
+
 
     def create_combobox_input_widget(self, father, field):
         widget = QComboBox()
@@ -126,6 +138,15 @@ class QDynamicDock(QDockWidget):
         print("***************************Item Has Changed")
         self.data["sections"][1]["fields"][0]["value"] = item.text()
         print(self.data)
+
+    def change_checklist(self,field,option_text,newState):
+        if newState == 0:
+            field["value"].remove(option_text)
+        else:
+            field["value"].append(option_text)
+        print(f"QDynamicDock::change_checklist::data is :{self.data}")
+        self.callback(self.data)
+
     def change_value(self,field,value):
         # print("workflow_dynamic_dock::change_value::data changed!")
         field["value"] = value

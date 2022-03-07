@@ -328,3 +328,23 @@ class WorkflowNode(Node):
 
     def get_data(self):
         pass
+    def get_node_details(self):
+        pass
+    #template:
+    '''   return  {
+                "name": "Node Details",
+                "fields": [
+                    {"name": "Title", "type": "Text", "value": self.title},
+                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
+                    {"name": "Actor in charge", "type": "combobox",
+                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
+                    {"name": "Actors", "type": "list",
+                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
+                               {"name": "Doctor", "value": 0, "type": "spinbox"},
+                               {"name": "Participant", "value": 0, "type": "spinbox"},
+                               {"name": "Investigator", "value": 0, "type": "spinbox"},
+                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]},
+                    {"name": "Actors", "type": "checklist",
+                     "options": ["Nurse","Doctor","Participant","Investigator","Lab Technician"],
+                     value:[]}
+                ]}  '''
