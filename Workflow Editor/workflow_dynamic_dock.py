@@ -16,7 +16,8 @@ class QDynamicDock(QDockWidget):
             "combobox": self.create_combobox_input_widget,
             "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
-            "checklist": self.create_checklist_widget
+            "checklist": self.create_checklist_widget,
+            "button": self.create_button_widget
         }
         self.setupUi()
 
@@ -77,8 +78,6 @@ class QDynamicDock(QDockWidget):
         for field in self.data[section]:
             filled_line = QtWidgets.QTreeWidgetItem(main_section_widget)
             filled_line.setText(0, field["name"])
-            print(field)
-            print(field["type"])
             if field["type"] in self.functions.keys():
                 self.functions[field["type"]](filled_line, field)
             else:
@@ -132,6 +131,13 @@ class QDynamicDock(QDockWidget):
             item_line.setText(0, item["name"])
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
+
+    def create_button_widget(self, father, field):
+        widget = QPushButton(field["label"])
+        widget.setToolTip("add a new test")
+        widget.clicked.connect(field["on_click"])
+        self.treeWidget.setItemWidget(father, 1, widget)
+
 
     def change_checklist(self, field, option_text, newState):
         if newState == 0:

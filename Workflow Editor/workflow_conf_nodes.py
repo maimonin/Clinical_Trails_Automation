@@ -66,7 +66,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
-    QNum = "999"         # TODO : implement number generator
+    QNum = "999"  # TODO : implement number generator
 
     def __init__(self, scene):
         super().__init__(scene)
@@ -75,12 +75,17 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             "content": {
                 "node_details": {
                     "time": datetime.time(hour=0, minute=0),
-                    "title": "new questionnaire node"
+                    "title": "New Questionnaire Node"
                 },
                 "questions": [],
                 "qusetionnaire_number": self.QNum
             }
         }
+
+    # template for questions:
+    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
+    # "One Choice": { "text":"","options":[],"type":"one choice"}
+    # "Open": {"text":"","type":"open"}
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -91,7 +96,21 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(self.get_tree_build())
 
+    #     from Windows.questionnaire_builder import Ui_QuestionnaireBuild
+    #     QuestionnaireBuild = QtWidgets.QDialog()
+    #     ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content,QuestionnaireBuild))
+    #     ui.setupUi(QuestionnaireBuild)
+    #     QuestionnaireBuild.exec_()
+    #     self.onDoubleClicked(self.edit_nodes_details)
+    # def edit_nodes_details(self):
+    #     from Windows.questionnaire_builder import Ui_QuestionnaireBuild
+    #     QuestionnaireBuild = QtWidgets.QDialog()
+    #     ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.data)
+    #     ui.setupUi(QuestionnaireBuild)
+    #     QuestionnaireBuild.exec_()
+
     # for dock build
+
     def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
         if new_state:
@@ -108,7 +127,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
-                #TODO : implement the save of the questions and their number
+                # TODO : implement the save of the questions and their number
                 # self.data["content"]["questions"] =
                 # self.data["content"]["question_number"] =
 
@@ -121,7 +140,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
             ],
-            "Questionnaire":[
+            "Questionnaire": [
                 {"name": "Questions", "type": "edit window", "value": self.data["content"]["questions"]},
                 {"name": "Qusetionnaire Number", "type": "text", "value": self.data["content"]["qusetionnaire_number"]},
             ],
@@ -131,11 +150,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
         return to_send
 
-    # template for questions:
-    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
-    # "One Choice": { "text":"","options":[],"type":"one choice"}
-    # "Open": {"text":"","type":"open"}
-
 
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
@@ -144,34 +158,83 @@ class WorkflowNode_DataEntry(WorkflowNode):
     op_title = "Test"
     content_label_objname = "workflow_node_data_entry"
 
+    def __init__(self, scene):
+        super().__init__(scene)
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "time": datetime.time(hour=0, minute=0),
+                    "title": "New Test Node",
+                    "actor in charge": "Nurse"
+                },
+                "tests": []
+            }
+        }
+
+    # template for test:
+    # "Test":{"name":"", "instructions":"","staff":[],"duration": 0,"facility":""}
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
+        else:
+            self.attributes_dock_callback(None)
+
     def drop_action(self):
-        from Windows.tests_builder import Ui_Test_Builder
-        DataEntryBuild = QtWidgets.QDialog()
-        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild))
-        ui.setupUi(DataEntryBuild)
-        DataEntryBuild.exec_()
+        if self.attributes_dock_callback is not None:
+            self.attributes_dock_callback(self.get_tree_build())
+
+        # from Windows.tests_builder import Ui_Test_Builder
+        # DataEntryBuild = QtWidgets.QDialog()
+        # ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild))
+        # ui.setupUi(DataEntryBuild)
+        # DataEntryBuild.exec_()
+
+    # def edit_nodes_details(self):
+    #     from Windows.tests_builder import Ui_Test_Builder
+    #     DataEntryBuild = QtWidgets.QDialog()
+    #     ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild), data=self.data)
+    #     ui.setupUi(DataEntryBuild)
+    #     DataEntryBuild.exec_()
 
     def callback_from_window(self, content, window):
         try:
-            window.close()
             if content is None:
                 self.remove()  # remove node
             else:
-                self.data = content
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                # TODO : implement the save of the tests
+                # self.data["content"]["tests"] =
         except Exception as e:
             dumpException(e)
 
-    def edit_nodes_details(self):
-        from Windows.tests_builder import Ui_Test_Builder
-        DataEntryBuild = QtWidgets.QDialog()
-        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild), data=self.data)
-        ui.setupUi(DataEntryBuild)
-        DataEntryBuild.exec_()
+    def get_tree_build(self):
+        # TODO: create new window for tests creation
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Actor In Charge", "type": "combobox",
+                 "value": self.data["content"]["node_details"]["actor in charge"],
+                 "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
+            ],
+            "Tests": [
+                {"name": "New Test", "type": "edit window", "value": self.data["content"]["tests"]}
+
+            ],
+            "callback": self.callback_from_window
+        }
+        return to_send
 
 
 @register_node(OP_NODE_DECISION)
@@ -181,32 +244,74 @@ class WorkflowNode_Decision(WorkflowNode):
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
 
+    def __init__(self, scene):
+        super().__init__(scene)
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "time": datetime.time(hour=0, minute=0),
+                    "title": "New Decision Node"
+                },
+                "condition": [],
+            }
+        }
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
-    def drop_action(self):
-        Decision_Node = QtWidgets.QDialog()
-        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node))
-        ui.setupUi(Decision_Node)
-        Decision_Node.exec_()
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
+        else:
+            self.attributes_dock_callback(None)
 
-    def edit_nodes_details(self):
-        Decision_Node = QtWidgets.QDialog()
-        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node), data=self.data)
-        ui.setupUi(Decision_Node)
-        Decision_Node.exec_()
+    def drop_action(self):
+        if self.attributes_dock_callback is not None:
+            self.attributes_dock_callback(self.get_tree_build())
+    #     Decision_Node = QtWidgets.QDialog()
+    #     ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node))
+    #     ui.setupUi(Decision_Node)
+    #     Decision_Node.exec_()
+    #
+    # def edit_nodes_details(self):
+    #     Decision_Node = QtWidgets.QDialog()
+    #     ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node), data=self.data)
+    #     ui.setupUi(Decision_Node)
+    #     Decision_Node.exec_()
 
     def callback_from_window(self, content, window):
         try:
-            window.close()
             if content is None:
                 self.remove()  # remove node
             else:
-                self.data = content
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                # TODO implement conditions
+                # self.data["content"]["condition"] =
+
         except Exception as e:
             dumpException(e)
+
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
+            ],
+            "Condition": [
+                # {"name": "Questions", "type": "edit window", "value": self.data["content"]["questions"]},
+            ],
+            "callback": self.callback_from_window
+        }
+        # TODO: create new window for questions creation
+
+        return to_send
 
 
 @register_node(OP_NODE_STRING)
@@ -223,7 +328,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "new notification node"
+                    "title": "New Notification Node"
                 },
                 "text": ""
             }
