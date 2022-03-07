@@ -11,7 +11,7 @@ class QDynamicDock(QDockWidget):
         self.content = None
 
         self.functions = {
-            "Text": self.create_text_input_widget,
+            "text": self.create_text_input_widget,
             "time": self.create_time_input_widget,
             "combobox": self.create_combobox_input_widget,
             "list": self.create_list_widget,
@@ -81,7 +81,8 @@ class QDynamicDock(QDockWidget):
             print(field["type"])
             if field["type"] in self.functions.keys():
                 self.functions[field["type"]](filled_line, field)
-
+            else:
+                print(f"DynamicDock::create_section: ERR field type: {field['type']} is unknown")
             # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
             # widget = QSpinBox()
             # widget.setValue(5)

@@ -66,6 +66,21 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
+    QNum = "999"         # TODO : implement number generator
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "time": datetime.time(hour=0, minute=0),
+                    "title": "new questionnaire node"
+                },
+                "questions": [],
+                "qusetionnaire_number": self.QNum
+            }
+        }
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -73,31 +88,53 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
-        from Windows.questionnaire_builder import Ui_QuestionnaireBuild
-        QuestionnaireBuild = QtWidgets.QDialog()
-        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild))
-        ui.setupUi(QuestionnaireBuild)
-        QuestionnaireBuild.exec_()
-        self.onDoubleClicked(self.edit_nodes_details)
+        if self.attributes_dock_callback is not None:
+            self.attributes_dock_callback(self.get_tree_build())
 
-        # self.
-
-    def callback_from_window(self, content, window):
-        print(content)
-        window.close()
-        if content is None:
-            self.remove()
-
+    # for dock build
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
         else:
-            self.data = content
+            self.attributes_dock_callback(None)
 
-    def edit_nodes_details(self):
-        from Windows.questionnaire_builder import Ui_QuestionnaireBuild
-        QuestionnaireBuild = QtWidgets.QDialog()
-        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),
-                                   data=self.data)
-        ui.setupUi(QuestionnaireBuild)
-        QuestionnaireBuild.exec_()
+    def callback_from_window(self, content):
+        try:
+            if content is None:
+                self.remove()  # remove node
+            else:
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                #TODO : implement the save of the questions and their number
+                # self.data["content"]["questions"] =
+                # self.data["content"]["question_number"] =
+
+        except Exception as e:
+            dumpException(e)
+
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
+            ],
+            "Questionnaire":[
+                {"name": "Questions", "type": "edit window", "value": self.data["content"]["questions"]},
+                {"name": "Qusetionnaire Number", "type": "text", "value": self.data["content"]["qusetionnaire_number"]},
+            ],
+            "callback": self.callback_from_window
+        }
+        # TODO: create new window for questions creation
+
+        return to_send
+
+    # template for questions:
+    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
+    # "One Choice": { "text":"","options":[],"type":"one choice"}
+    # "Open": {"text":"","type":"open"}
 
 
 @register_node(OP_NODE_Test)
@@ -186,7 +223,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "new simple string"
+                    "title": "new notification node"
                 },
                 "text": ""
             }
@@ -214,8 +251,11 @@ class WorkflowNode_SimpleString(WorkflowNode):
             if content is None:
                 self.remove()  # remove node
             else:
+
                 for field in content["Node Details"]:
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
 
                 self.data["content"]["text"] = content["Notification"][0]["value"]
 
@@ -225,44 +265,15 @@ class WorkflowNode_SimpleString(WorkflowNode):
     def get_tree_build(self):
         to_send = {
             "Node Details": [
-                {"name": "Title", "type": "Text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Actors", "type": "checklist",
                  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
                  "value": self.data["content"]["node_details"]["actors"]}
             ],
-            "Notification": [{"name": "Text", "type": "Text", "value": self.data["content"]["text"]}],
+            "Notification": [{"name": "Text", "type": "text", "value": self.data["content"]["text"]}],
             "callback": self.callback_from_window
         }
         return to_send
-
-
-# @register_node(OP_NODE_TIME_CONSTRAINT)
-# class WorkflowNode_TimeConstraint(WorkflowNode):
-#     icon = "icons/time.png"
-#     op_code = OP_NODE_TIME_CONSTRAINT
-#     op_title = "Time Constraint"
-#     content_label_objname = "workflow_node_time_constraint"
-#
-#     def initInnerClasses(self):
-#         self.content = WorkflowTimeInputContent(self, self.save_data_when_changed)
-#         self.grNode = WorkflowGraphicNode_long(self)
-#         self.data = {"type" : "time","Hours": 0,"Minutes": 0,"Seconds": 0}
-#
-#
-#     def save_data_when_changed(self, Seconds,Minutes,Hours):
-#         try:
-#             Hours = int(Hours)
-#         except:
-#             Hours=0
-#         try:
-#             Minutes = int(Minutes)
-#         except:
-#             Minutes = 0
-#         try:
-#             Seconds = int(Seconds)
-#         except:
-#             Seconds = 0
-#         self.data = {"type" : "time","Hours": Hours,"Minutes": Minutes,"Seconds": Seconds}
 
 
 @register_node(OP_NODE_COMPLEX)
