@@ -47,6 +47,13 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.readSettings()
 
         self.setWindowTitle("Workflow Editor")
+        self.center()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def updateWindowMenu(self):
         self.windowMenu.clear()

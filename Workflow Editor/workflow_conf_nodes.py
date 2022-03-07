@@ -216,7 +216,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
             else:
                 for field in content["Node Details"]:
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
-                    
+
                 self.data["content"]["text"] = content["Notification"][0]["value"]
 
         except Exception as e:
