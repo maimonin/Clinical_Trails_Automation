@@ -229,7 +229,17 @@ class WorkflowNode_DataEntry(WorkflowNode):
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
             ],
             "Tests": [
-                {"name": "New Test", "type": "edit window", "value": self.data["content"]["tests"]}
+                {"name": "New Test", "type": "sub tree", "value": self.data["content"]["tests"],
+                 "tree": [
+                     {"name": "Name", "type": "text", "value": ""},
+                     {"name": "Instructions", "type": "text", "value": ""},
+                     {"name": "Staff", "type": "checklist",
+                      "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                      "value": []},
+                     {"name": "Duration", "type": "text", "value": ""},
+                     {"name": "facility", "type": "text", "value": ""},
+                 ],
+                 "saved": []}       #TODO: implement created ones.
 
             ],
             "callback": self.callback_from_window
@@ -272,6 +282,7 @@ class WorkflowNode_Decision(WorkflowNode):
     def drop_action(self):
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(self.get_tree_build())
+
     #     Decision_Node = QtWidgets.QDialog()
     #     ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node))
     #     ui.setupUi(Decision_Node)

@@ -17,7 +17,7 @@ class QDynamicDock(QDockWidget):
             "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
-            "button": self.create_button_widget
+            "sub tree": self.create_subtree_widget
         }
         self.setupUi()
 
@@ -132,12 +132,26 @@ class QDynamicDock(QDockWidget):
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
 
-    def create_button_widget(self, father, field):
-        widget = QPushButton(field["label"])
-        widget.setToolTip("add a new test")
-        widget.clicked.connect(field["on_click"])
-        self.treeWidget.setItemWidget(father, 1, widget)
+    # def create_button_widget(self, father, field):
+    #     widget = QPushButton(field["label"])
+    #     widget.setToolTip("add a new test")
+    #     widget.clicked.connect(field["on_click"])
+    #     self.treeWidget.setItemWidget(father, 1, widget)
 
+    def create_subtree_widget(self, father, field):
+        widget = QPushButton("ADD")
+        widget.clicked.connect(lambda:self.on_click(field["tree"], father))
+        self.treeWidget.setItemWidget(father, 1, widget)
+        # TODO: save changes for callback. save in @field["saved"]
+
+    def on_click(self, options, father):
+        item = QtWidgets.QTreeWidgetItem(father)
+        item.setText(0, "Test")
+        for option in options:
+            widget = QtWidgets.QTreeWidgetItem(item)
+            widget.setText(0, option["name"])
+            if option["type"] in self.functions.keys():
+                self.functions[option["type"]](widget, option)
 
     def change_checklist(self, field, option_text, newState):
         if newState == 0:
