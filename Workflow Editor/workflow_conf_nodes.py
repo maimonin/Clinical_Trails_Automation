@@ -179,94 +179,63 @@ class WorkflowNode_SimpleString(WorkflowNode):
     op_title = "Notification"
     content_label_objname = "workflow_node_string"
 
+    def __init__(self, scene):
+        super().__init__(scene)
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "new simple string"
+                },
+                "text": ""
+            }
+        }
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
-    def save_data_when_changed(self, text):
-        self.data = text
-
     def drop_action(self):
-
-
         if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_data())
-    def doSelect(self, new_state: bool=True):
-        to_send = {
-            "sections": [{
-                "name": "Node Details",
-                "fields": [
-                    {"name": "Title", "type": "Text", "value": self.title},
-                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
-                    {"name": "Actor in charge", "type": "combobox",
-                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
-                    {"name": "Actors", "type": "list",
-                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
-                               {"name": "Doctor", "value": 0, "type": "spinbox"},
-                               {"name": "Participant", "value": 0, "type": "spinbox"},
-                               {"name": "Investigator", "value": 0, "type": "spinbox"},
-                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]}
-                ]},
-                {
-                    "name": "Notification",
-                    "fields": [
-                        {"name": "Text", "type": "Text", "value": ""}
-                    ]
-                }
+            self.attributes_dock_callback(self.get_tree_build())
 
-            ],
-            "callback": self.callback_from_window
-        }
+    # for dock build
+    def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(to_send)
+            self.attributes_dock_callback(self.get_tree_build())
         else:
             self.attributes_dock_callback(None)
 
     def callback_from_window(self, content):
-        self.title=content["sections"][0]["fields"][0]["value"]
         try:
             if content is None:
                 self.remove()  # remove node
             else:
-                self.data = content
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    
+                self.data["content"]["text"] = content["Notification"][0]["value"]
+
         except Exception as e:
             dumpException(e)
 
-    def callback_to_window(self):
-
-        pass
-
-    def edit_nodes_details(self):
-        String_Node = QtWidgets.QDialog()
-        ui = Ui_string_node(lambda content: self.callback_from_window(content, String_Node), data=self.data)
-        ui.setupUi(String_Node)
-        String_Node.exec_()
-    def get_data(self):
+    def get_tree_build(self):
         to_send = {
-            "sections": [self.get_node_details(),
-                               {
-                    "name": "Notification",
-                    "fields": [
-                        {"name": "Text", "type": "Text", "value": ""}
-                    ]
-                }
-
+            "Node Details": [
+                {"name": "Title", "type": "Text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Actors", "type": "checklist",
+                 "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                 "value": self.data["content"]["node_details"]["actors"]}
             ],
+            "Notification": [{"name": "Text", "type": "Text", "value": self.data["content"]["text"]}],
             "callback": self.callback_from_window
         }
         return to_send
-    def get_node_details(self):
-        return  {
-                "name": "Node Details",
-                "fields": [
-                    {"name": "Title", "type": "Text", "value": self.title},
-                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
-                    {"name": "Actors", "type": "checklist",
-                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-                     "value": []}
-                ]}
+
+
 # @register_node(OP_NODE_TIME_CONSTRAINT)
 # class WorkflowNode_TimeConstraint(WorkflowNode):
 #     icon = "icons/time.png"

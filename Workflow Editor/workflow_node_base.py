@@ -324,10 +324,11 @@ class WorkflowNode(Node):
 
     def emit_select_dock(self):
         pass
-        self.attributes_dock_callback(self.get_data())
+        self.attributes_dock_callback(self.get_tree_build())
 
-    def get_data(self):
+    def get_tree_build(self):
         pass
+
     def get_node_details(self):
         pass
     #template:

@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, QCheckBox
+from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
+    QCheckBox
 
 
 class QDynamicDock(QDockWidget):
@@ -15,7 +16,7 @@ class QDynamicDock(QDockWidget):
             "combobox": self.create_combobox_input_widget,
             "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
-            "checklist" : self.create_checklist_widget
+            "checklist": self.create_checklist_widget
         }
         self.setupUi()
 
@@ -64,15 +65,16 @@ class QDynamicDock(QDockWidget):
         return self.callback
 
     def build_tree(self):
-        for section in self.data["sections"]:
-            self.create_section(section)
+        for section in self.data.keys():
+            if section != "callback":
+                self.create_section(section)
         self.treeWidget.expandAll()
 
     def create_section(self, section):
         main_section_widget = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        print(f"section name: {section['name']}")
-        main_section_widget.setText(0, section["name"])
-        for field in section["fields"]:
+        print(f"section name: {section}")
+        main_section_widget.setText(0, section)
+        for field in self.data[section]:
             filled_line = QtWidgets.QTreeWidgetItem(main_section_widget)
             filled_line.setText(0, field["name"])
             print(field)
@@ -87,17 +89,17 @@ class QDynamicDock(QDockWidget):
 
     def create_text_input_widget(self, father, field):
         widget = QLineEdit()
-        widget.setText(field["value"])
         widget.setPlaceholderText("Enter Text Here")
-        field["value"] = "fds"
-        widget.textChanged.connect(lambda text : self.change_value(field,text))
-        # widget.editingFinished.connect(lambda: self.handleItemChanged(widget))
+        widget.setText(field["value"])
+        widget.textChanged.connect(lambda text: self.change_value(field, text))
+        # widget.editingFinished.connect(lambda: self.change_value(field, widget.text()))
         self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_time_input_widget(self, father, field):
         widget = QTimeEdit()
         widget.setTime(field["value"])
         self.treeWidget.setItemWidget(father, 1, widget)
+
     def create_checklist_widget(self, father, field):
         options = field["options"]
         for option in options:
@@ -105,10 +107,9 @@ class QDynamicDock(QDockWidget):
             option_line.setText(0, option)
             option_widget = QCheckBox()
             option_widget.setChecked(option in field["value"])
-            option_widget.stateChanged.connect(lambda newState,text=option:self.change_checklist(field,text,newState)) # text= option so it will capture option value
-            self.treeWidget.setItemWidget(option_line,1,option_widget)
-
-
+            option_widget.stateChanged.connect(lambda newState, text=option: self.change_checklist(field, text,
+                                                                                                   newState))  # text= option so it will capture option value
+            self.treeWidget.setItemWidget(option_line, 1, option_widget)
 
     def create_combobox_input_widget(self, father, field):
         widget = QComboBox()
@@ -131,15 +132,7 @@ class QDynamicDock(QDockWidget):
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
 
-    def handleItemChanged(self, item):
-        # TODO: full implement items change(all type of items).
-        # current only the notification text is saved (to self.data)
-
-        print("***************************Item Has Changed")
-        self.data["sections"][1]["fields"][0]["value"] = item.text()
-        print(self.data)
-
-    def change_checklist(self,field,option_text,newState):
+    def change_checklist(self, field, option_text, newState):
         if newState == 0:
             field["value"].remove(option_text)
         else:
@@ -147,7 +140,7 @@ class QDynamicDock(QDockWidget):
         print(f"QDynamicDock::change_checklist::data is :{self.data}")
         self.callback(self.data)
 
-    def change_value(self,field,value):
+    def change_value(self, field, value):
         # print("workflow_dynamic_dock::change_value::data changed!")
         field["value"] = value
         self.callback(self.data)
