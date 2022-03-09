@@ -63,6 +63,7 @@ class QDynamicDock(QDockWidget):
     def change_data(self, data):
         self.data = data
         self.treeWidget.clear()
+        self.generator.reset()
         if data is not None:
             self.callback = data["callback"]
             self.build_tree()
@@ -139,8 +140,12 @@ class QDynamicDock(QDockWidget):
         for value in field["value"]:
             item = QtWidgets.QTreeWidgetItem(father)
             for option in value:
-                if option["name"] == "Name":
+                # do we want to change (only on next update), the widget title to the test name (child widget)
+                if option["name"] == "Name" and option["value"] != "":
                     item.setText(0, option["value"])
+                elif option["name"] == "Name" and option["value"] == "":
+                    next = self.generator.gen_next()        # FIXME : always start from one , if we change the first tests, will get after that test1
+                    item.setText(0, field["root name"] + f" #{next}")
                 widget = QtWidgets.QTreeWidgetItem(item)
                 widget.setText(0, option["name"])
                 if option["type"] in self.functions.keys():
@@ -152,12 +157,13 @@ class QDynamicDock(QDockWidget):
         next = self.generator.gen_next()
         item = QtWidgets.QTreeWidgetItem(father)
         # FIXME: think of another implementation of name generation , other than using @next object
-        item.setText(0, field["root name"] + f" {next}")
+        item.setText(0, field["root name"] + f" #{next}")
         for option in field["value"][next-1]:
             widget = QtWidgets.QTreeWidgetItem(item)
             widget.setText(0, option["name"])
             if option["type"] in self.functions.keys():
                 self.functions[option["type"]](widget, option)
+        self.callback(self.data)
 
 
     def change_checklist(self, field, option_text, newState):
@@ -182,3 +188,6 @@ class numGenerator():
     def gen_next(self):
         self.number += 1
         return self.number
+
+    def reset(self):
+        self.number = 0
