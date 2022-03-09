@@ -1,3 +1,4 @@
+import copy
 import datetime
 from time import sleep
 
@@ -213,13 +214,18 @@ class WorkflowNode_DataEntry(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
-                # TODO : implement the save of the tests
-                # self.data["content"]["tests"] =
+                for test in content["Content"][0]["value"]:
+                    # FIXME adding a new item(append) on each field change, instead of locally change
+                    self.data["content"]["tests"].append(
+                        {"Test": {"name": copy.deepcopy(test[0]["value"]), "instructions": copy.deepcopy(test[1]["value"]),
+                                  "staff": copy.deepcopy(test[2]["value"]), "duration": int(copy.deepcopy(test[3]["value"])),
+                                  "facility": copy.deepcopy(test[4]["value"])}})
+
         except Exception as e:
             dumpException(e)
 
     def get_tree_build(self):
-        # TODO: create new window for tests creation
+
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
@@ -229,20 +235,34 @@ class WorkflowNode_DataEntry(WorkflowNode):
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
             ],
             "Content": [
-                {"name": "Tests", "type": "sub tree", "value": self.data["content"]["tests"], "root name": "Test",
+                {"name": "Tests", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["tests"]), "root name": "Test",
                  "template": [
                      {"name": "Name", "type": "text", "value": ""},
                      {"name": "Instructions", "type": "text", "value": ""},
                      {"name": "Staff", "type": "checklist",
                       "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
                       "value": []},
-                     {"name": "Duration", "type": "text", "value": ""},
+                     {"name": "Duration", "type": "text", "value": "0"},
                      {"name": "Facility", "type": "text", "value": ""},
-                 ]}       #TODO: implement created ones.
+                 ]}
             ],
             "callback": self.callback_from_window
         }
         return to_send
+
+    def export_to_UI(self, export):
+        result = []
+        for test in export:
+            result.append([
+                     {"name": "Name", "type": "text", "value": test["Test"]["name"]},
+                     {"name": "Instructions", "type": "text", "value": test["Test"]["instructions"]},
+                     {"name": "Staff", "type": "checklist",
+                      "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                      "value": test["Test"]["staff"]},
+                     {"name": "Duration", "type": "text", "value": str(test["Test"]["duration"])},
+                     {"name": "Facility", "type": "text", "value": test["Test"]["facility"]},
+                 ])
+        return result
 
 
 @register_node(OP_NODE_DECISION)
@@ -318,7 +338,7 @@ class WorkflowNode_Decision(WorkflowNode):
             ],
             "callback": self.callback_from_window
         }
-        # TODO: create new window for questions creation
+        # TODO: create new window for conditions creation
 
         return to_send
 

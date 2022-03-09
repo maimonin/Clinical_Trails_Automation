@@ -90,8 +90,8 @@ class QDynamicDock(QDockWidget):
         widget = QLineEdit()
         widget.setPlaceholderText("Enter Text Here")
         widget.setText(field["value"])
-        widget.textChanged.connect(lambda text: self.change_value(field, text))
-        # widget.editingFinished.connect(lambda: self.change_value(field, widget.text()))
+        # widget.textChanged.connect(lambda text: self.change_value(field, text))
+        widget.editingFinished.connect(lambda: self.change_value(field, widget.text()))
         self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_time_input_widget(self, father, field):
@@ -131,21 +131,16 @@ class QDynamicDock(QDockWidget):
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
 
-    # def create_button_widget(self, father, field):
-    #     widget = QPushButton(field["label"])
-    #     widget.setToolTip("add a new test")
-    #     widget.clicked.connect(field["on_click"])
-    #     self.treeWidget.setItemWidget(father, 1, widget)
-
     def create_subtree_widget(self, father, field):
         widget = QPushButton("ADD")
         widget.clicked.connect(lambda: self.on_click(father, field))
         self.treeWidget.setItemWidget(father, 1, widget)
-        # TODO: save changes for callback. save in @field["tree"]
+
         for value in field["value"]:
             item = QtWidgets.QTreeWidgetItem(father)
-            item.setText(0, value["name"])
             for option in value:
+                if option["name"] == "Name":
+                    item.setText(0, option["value"])
                 widget = QtWidgets.QTreeWidgetItem(item)
                 widget.setText(0, option["name"])
                 if option["type"] in self.functions.keys():
@@ -154,9 +149,11 @@ class QDynamicDock(QDockWidget):
     def on_click(self, father, field):
         field["value"].append(copy.deepcopy(field["template"]))
         # self.change_data(field, copy.deepcopy(field["template"]))
+        next = self.generator.gen_next()
         item = QtWidgets.QTreeWidgetItem(father)
-        item.setText(0, field["root name"] + f" {self.generator.gen_next()}")
-        for option in field["template"]:
+        # FIXME: think of another implementation of name generation , other than using @next object
+        item.setText(0, field["root name"] + f" {next}")
+        for option in field["value"][next-1]:
             widget = QtWidgets.QTreeWidgetItem(item)
             widget.setText(0, option["name"])
             if option["type"] in self.functions.keys():
