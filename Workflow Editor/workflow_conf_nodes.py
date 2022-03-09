@@ -214,8 +214,9 @@ class WorkflowNode_DataEntry(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
+
+                self.data["content"]["tests"] = []
                 for test in content["Content"][0]["value"]:
-                    # FIXME adding a new item(append) on each field change, instead of locally change
                     self.data["content"]["tests"].append(
                         {"Test": {"name": copy.deepcopy(test[0]["value"]), "instructions": copy.deepcopy(test[1]["value"]),
                                   "staff": copy.deepcopy(test[2]["value"]), "duration": int(copy.deepcopy(test[3]["value"])),
