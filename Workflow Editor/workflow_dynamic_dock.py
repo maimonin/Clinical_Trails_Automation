@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
     QCheckBox
@@ -20,6 +22,8 @@ class QDynamicDock(QDockWidget):
             "sub tree": self.create_subtree_widget
         }
         self.setupUi()
+        self.generator = numGenerator()
+
 
     def setupUi(self):
         self.setWindowTitle("Attributes")
@@ -73,7 +77,6 @@ class QDynamicDock(QDockWidget):
 
     def create_section(self, section):
         main_section_widget = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        print(f"section name: {section}")
         main_section_widget.setText(0, section)
         for field in self.data[section]:
             filled_line = QtWidgets.QTreeWidgetItem(main_section_widget)
@@ -82,10 +85,6 @@ class QDynamicDock(QDockWidget):
                 self.functions[field["type"]](filled_line, field)
             else:
                 print(f"DynamicDock::create_section: ERR field type: {field['type']} is unknown")
-            # item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-            # widget = QSpinBox()
-            # widget.setValue(5)
-            # self.treeWidget.setItemWidget(father: item_0,row: 1,widget: widget)
 
     def create_text_input_widget(self, father, field):
         widget = QLineEdit()
@@ -108,7 +107,7 @@ class QDynamicDock(QDockWidget):
             option_widget = QCheckBox()
             option_widget.setChecked(option in field["value"])
             option_widget.stateChanged.connect(lambda newState, text=option: self.change_checklist(field, text,
-                                                                                                   newState))  # text= option so it will capture option value
+                                                                                                   newState))  # text = option so it will capture option value
             self.treeWidget.setItemWidget(option_line, 1, option_widget)
 
     def create_combobox_input_widget(self, father, field):
@@ -140,18 +139,29 @@ class QDynamicDock(QDockWidget):
 
     def create_subtree_widget(self, father, field):
         widget = QPushButton("ADD")
-        widget.clicked.connect(lambda:self.on_click(field["tree"], father))
+        widget.clicked.connect(lambda: self.on_click(father, field))
         self.treeWidget.setItemWidget(father, 1, widget)
-        # TODO: save changes for callback. save in @field["saved"]
+        # TODO: save changes for callback. save in @field["tree"]
+        for value in field["value"]:
+            item = QtWidgets.QTreeWidgetItem(father)
+            item.setText(0, value["name"])
+            for option in value:
+                widget = QtWidgets.QTreeWidgetItem(item)
+                widget.setText(0, option["name"])
+                if option["type"] in self.functions.keys():
+                    self.functions[option["type"]](widget, option)
 
-    def on_click(self, options, father):
+    def on_click(self, father, field):
+        field["value"].append(copy.deepcopy(field["template"]))
+        # self.change_data(field, copy.deepcopy(field["template"]))
         item = QtWidgets.QTreeWidgetItem(father)
-        item.setText(0, "Test")
-        for option in options:
+        item.setText(0, field["root name"] + f" {self.generator.gen_next()}")
+        for option in field["template"]:
             widget = QtWidgets.QTreeWidgetItem(item)
             widget.setText(0, option["name"])
             if option["type"] in self.functions.keys():
                 self.functions[option["type"]](widget, option)
+
 
     def change_checklist(self, field, option_text, newState):
         if newState == 0:
@@ -165,3 +175,13 @@ class QDynamicDock(QDockWidget):
         # print("workflow_dynamic_dock::change_value::data changed!")
         field["value"] = value
         self.callback(self.data)
+
+
+class numGenerator():
+
+    def __init__(self):
+        self.number = 0
+
+    def gen_next(self):
+        self.number += 1
+        return self.number

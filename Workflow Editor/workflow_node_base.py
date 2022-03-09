@@ -21,8 +21,6 @@ class WorkflowGraphicNode(QDMGraphicsNode):
         # self._type_color=QColor("#0984e3")
         # self._type_font= QFont
 
-
-
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
         self._title_color = QColor("#2d3436")
         self._title_font = QFont("Ubuntu", 14)
@@ -120,9 +118,8 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         super().initUI()
         self.initType()
         self.initIcon()
+
     def initSizes(self):
-
-
         super().initSizes()
         self.edge_roundness = 20.0
 
@@ -134,26 +131,25 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self.icon_size = self.height / 3
         self.icon_circle_radius = self.icon_size
 
-        self.icon_padding_from_perimiter = self.icon_circle_radius/2
+        self.icon_padding_from_perimiter = self.icon_circle_radius / 2
         self.icon_circle_horizontal_padding = self.icon_size / 3
         self.icon_circle_vertical_padding = self.height / 8
 
-        self.type_height = self.icon_circle_vertical_padding + (1 / 8) * (self.height - 2 * self.icon_circle_vertical_padding)
+        self.type_height = self.icon_circle_vertical_padding + (1 / 8) * (
+                    self.height - 2 * self.icon_circle_vertical_padding)
         self.type_x = self.icon_circle_horizontal_padding * 2 + self.icon_circle_radius * 2
 
-        self.title_height = self.icon_circle_vertical_padding + (3 / 8) * (self.height - 2 * self.icon_circle_vertical_padding)
+        self.title_height = self.icon_circle_vertical_padding + (3 / 8) * (
+                    self.height - 2 * self.icon_circle_vertical_padding)
         self.title_X = self.icon_circle_horizontal_padding * 2 + self.icon_circle_radius * 2
 
         self.type_horizontal_padding = 10
         # self.name_horizontal
+
     def initAssets(self):
-
-
-
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
         self._type_color = QColor("#2d3436")
         self._type_font = QFont("Quicksand", 8)
-
 
         self._title_color = QColor("#2d3436")
         self._title_font = QFont("Quicksand", 9)
@@ -167,7 +163,6 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self._pen_default.setWidthF(0)
         self._pen_selected = QPen(self._color_selected)
         self._pen_selected.setWidthF(1)
-
 
         self._brush_background = QBrush(QColor("#ecf0f1"))  # node hea
         # der background color
@@ -185,6 +180,7 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self.type_item.setTextWidth(
             self.width - self.type_x - self.type_horizontal_padding
         )
+
     def initTitle(self):
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
@@ -201,15 +197,14 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         self.icon_item.node = self.node
         # pixmap = QPixmap(self.icon)
         # self.icon_item.setPixmap(QPixmap=pixmap)#.scaled(self.icon_size,self.icon_size))
-        self.icon_item.setPos(self.icon_circle_horizontal_padding + self.icon_circle_radius / 2,#+ self.icon_padding_from_perimiter - self.icon_size/2,
-                              self.icon_circle_vertical_padding +  self.icon_circle_radius / 2) #+ self.icon_padding_from_perimiter - self.icon_size/2)
+        self.icon_item.setPos(self.icon_circle_horizontal_padding + self.icon_circle_radius / 2,
+                              # + self.icon_padding_from_perimiter - self.icon_size/2,
+                              self.icon_circle_vertical_padding + self.icon_circle_radius / 2)  # + self.icon_padding_from_perimiter - self.icon_size/2)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting the rounded rectanglar `Node`"""
 
-
-
-        #node
+        # node
         path_node = QPainterPath()
         path_node.setFillRule(Qt.WindingFill)
         path_node.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
@@ -217,17 +212,11 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         painter.setBrush(self._brush_background)
         painter.drawPath(path_node.simplified())
 
-        #icon's circle
+        # icon's circle
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._icon_background_brush)
-        painter.drawEllipse(self.icon_circle_horizontal_padding, self.icon_circle_vertical_padding, 2 * self.icon_circle_radius, 2 * self.icon_circle_radius)
-
-
-
-
-
-
-
+        painter.drawEllipse(self.icon_circle_horizontal_padding, self.icon_circle_vertical_padding,
+                            2 * self.icon_circle_radius, 2 * self.icon_circle_radius)
 
 
 class WorkflowNode(Node):
@@ -236,7 +225,6 @@ class WorkflowNode(Node):
     op_title = "Undefined"
     content_label = ""
     content_label_objname = "calc_node_bg"
-
 
     @property
     def type(self):
@@ -253,6 +241,7 @@ class WorkflowNode(Node):
     def type(self, value):
         self._type = value
         self.grNode.type = self._type
+
     @property
     def icon(self):
         """
@@ -268,11 +257,12 @@ class WorkflowNode(Node):
     def icon(self, value):
         self._icon = value
         self.grNode.icon = self._icon
+
     def __init__(self, scene, inputs=[1], outputs=[1]):
 
-        super().__init__(scene,f"New {self.__class__.op_title} Node" , inputs, outputs)
-        self.type=self.__class__.op_title
-        self.icon=self.op_icon
+        super().__init__(scene, f"New {self.__class__.op_title} Node", inputs, outputs)
+        self.type = self.__class__.op_title
+        self.icon = self.op_icon
         self.data = None
         self.attributes_dock_callback = None
 
@@ -315,7 +305,7 @@ class WorkflowNode(Node):
     def edit_nodes_details(self):
         pass  # To be implemented in each node
 
-    def doSelect(self, new_state: bool=True):
+    def doSelect(self, new_state: bool = True):
         pass
 
     def remove(self):
@@ -331,7 +321,8 @@ class WorkflowNode(Node):
 
     def get_node_details(self):
         pass
-    #template:
+
+    # template:
     '''   return  {
                 "name": "Node Details",
                 "fields": [

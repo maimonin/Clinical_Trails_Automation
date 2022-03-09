@@ -204,7 +204,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
     #     ui.setupUi(DataEntryBuild)
     #     DataEntryBuild.exec_()
 
-    def callback_from_window(self, content, window):
+    def callback_from_window(self, content):
         try:
             if content is None:
                 self.remove()  # remove node
@@ -228,19 +228,17 @@ class WorkflowNode_DataEntry(WorkflowNode):
                  "value": self.data["content"]["node_details"]["actor in charge"],
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
             ],
-            "Tests": [
-                {"name": "New Test", "type": "sub tree", "value": self.data["content"]["tests"],
-                 "tree": [
+            "Content": [
+                {"name": "Tests", "type": "sub tree", "value": self.data["content"]["tests"], "root name": "Test",
+                 "template": [
                      {"name": "Name", "type": "text", "value": ""},
                      {"name": "Instructions", "type": "text", "value": ""},
                      {"name": "Staff", "type": "checklist",
                       "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
                       "value": []},
                      {"name": "Duration", "type": "text", "value": ""},
-                     {"name": "facility", "type": "text", "value": ""},
-                 ],
-                 "saved": []}       #TODO: implement created ones.
-
+                     {"name": "Facility", "type": "text", "value": ""},
+                 ]}       #TODO: implement created ones.
             ],
             "callback": self.callback_from_window
         }
@@ -294,7 +292,7 @@ class WorkflowNode_Decision(WorkflowNode):
     #     ui.setupUi(Decision_Node)
     #     Decision_Node.exec_()
 
-    def callback_from_window(self, content, window):
+    def callback_from_window(self, content):
         try:
             if content is None:
                 self.remove()  # remove node
