@@ -42,11 +42,11 @@ export default function MainWindow() {
       </AppBar>
       <main>
 
-        <Container sx={{ py: 8 }} maxWidth="md">
+        <Container sx={{ py: 8 }} maxWidth="xl">
           <Grid container spacing={4}>
             {cards.map((card) => (
               <Grid item key={card} xs={12} sm={6} md={4}>
-                <SubWindow> </SubWindow>
+                <SubWindow id={card}> </SubWindow>
               </Grid>
             ))}
           </Grid>

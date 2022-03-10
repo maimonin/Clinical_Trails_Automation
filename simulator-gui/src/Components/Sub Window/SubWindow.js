@@ -5,31 +5,60 @@ import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import PersonIcon from '@mui/icons-material/Person';
-import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import Stack from '@mui/material/Stack';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Question from '../Question/Question';
 
 
 
-export default function SubWindow() {
+export default function SubWindow(props) { // should have connection object
     const [state,setState] = useState(1);
     
     const [currentComponent,setCurrentComponent] = useState(null)
+    
     const [itemsQueue,setItemsQueue] = useState([]);
-
+    
+    const isNotification = (item) => false
     const addToQueue = (itemToAdd) => {
-        setItemsQueue(prevState =>[ itemToAdd,...prevState])
+      if (isNotification(itemToAdd)){
+          handleIncomingNotification(itemToAdd)
+      }
+      else if (currentComponent != null){
+          setItemsQueue(prevState =>[ itemToAdd,...prevState])
+        }
+        else
+        {
+          // currentComponent = g
+        }
     }
 
-    const handleClick = () =>
+    const handleIncomingNotification = (text) =>
     {
-        console.log("State is:" + state)
-        setState(state+1);
-    }
+      toast(text, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        containerId: props.id  
 
+        });
+        console.log()
+    }
+    const styles = {
+      position: 'relative',
+    
+    };
 
   return (
+    <div>
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
         avatar={
@@ -38,7 +67,7 @@ export default function SubWindow() {
           </PersonIcon>
         }
         action={
-          <IconButton aria-label="settings" onClick  = {handleClick}>
+          <IconButton aria-label="settings" onClick  = {handleIncomingNotification}>
             <MoreVertIcon  />
           </IconButton>
         }
@@ -46,21 +75,39 @@ export default function SubWindow() {
         subheader="Participant"
       />
 
+{/* Same as */}
       <CardContent>
+        
         <Typography variant="body2" color="text.secondary">
-        <Box
+       
+        {/* <Box
       sx={{
         width: 300,
         height: 300,
         backgroundColor: '#bdbdbd',
        
       }}
-    />  
-            <Question text={state}/>
+    />   */}
+            <Question />
         </Typography>
-      </CardContent>
 
+      </CardContent>
+      <ToastContainer style={styles}
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+containerId={props.id}
+enableMultiContainer
+limit ={1}
+/>
 
     </Card>
+    </div>
   );
 }
