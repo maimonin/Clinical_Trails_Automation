@@ -6,9 +6,8 @@ from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
 from Data import add_questionnaire, add_test
-from Engine.Users import User, take_test
-from NotificationHandler import send_questionnaire, send_notification_by_id
-from user_lists import get_role
+from Engine.Users import User, answer_questionnaire
+from user_lists import get_role, take_test
 
 
 class Node(ABC):
@@ -76,8 +75,6 @@ class Questionnaire(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            if self.min_time is not None:
-                time.sleep(self.min_time)
             # send questionnaire to participant
             answers = await send_questionnaire(self.form, participant.id)
             answers.update({'questionnaire_number': self.number})
@@ -126,8 +123,6 @@ class Decision(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            if self.min_time is not None:
-                time.sleep(self.min_time)
             satisfies = True
             for condition in self.conditions:
                 if not condition(participant):
@@ -173,8 +168,6 @@ class StringNode(Node):
         self.lock.release()
         for participant in participants2:
             print(participant.id)
-            if self.min_time is not None:
-                time.sleep(self.min_time)
             if self.actors.__contains__(participant.role):
                 await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
             for next_node in self.next_nodes:
@@ -222,18 +215,12 @@ class TestNode(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            if self.min_time is not None:
-                time.sleep(self.min_time)
-            remaining = self.max_time - self.min_time
             for test in self.tests:
-                results = take_test(participant.id, test, remaining, self.in_charge, participant.socket)
+                results = take_test(participant.id, test, self.in_charge, participant.socket)
                 if results is None:
                     print("come back tomorrow")
                     break
                 add_test(test.name, results, participant)
-                remaining -= test.duration
-                if remaining <= 0:
-                    print("tests timing doesn't make sense")
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)
@@ -278,5 +265,51 @@ class TimeNode(Node):
                 next_node.attach(participant)
         end_test(self, participants2)
 
+    def has_actors(self):
+        return len(self.participants) != 0
+
+
+class ComplexNode(Node):
+    def __init__(self, node_id,flow):
+        super(ComplexNode, self).__init__()
+        self.id = node_id
+        self.next_nodes = []
+        self.lock = threading.Lock()
+        self.participants: List[User] = []
+        self.flow=flow
+
+
+    def attach(self, participant: User) -> None:
+        self.participants.append(participant)
+
+    def detach(self, participant: User) -> None:
+        self.participants.remove(participant)
+
+    def exec(self) -> None:
+        self.notify()
+        threads = []
+        for next_node in self.next_nodes:
+            threads.append(threading.Thread(target=next_node.exec, args=()))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+    def notify(self) -> None:
+        self.lock.acquire()
+        participants2 = self.participants.copy()
+        self.participants = []
+        self.lock.release()
+        threads = []
+        for participant in participants2:
+            self.flow.attach(participant)
+            threads.append(threading.Thread(target=self.flow.exec, args=()))
+            for next_node in self.next_nodes:
+                next_node.attach(participant)
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        end_test(self, participants2)
     def has_actors(self):
         return len(self.participants) != 0
