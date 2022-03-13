@@ -144,11 +144,12 @@ class WorkflowNode_Decision(WorkflowNode):
     op_code = OP_NODE_DECISION
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
-
+    def __init__(self, scene, inputs=[2], outputs=[4,1]):
+        super().__init__(scene, inputs, outputs)
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicWithIcon(self)
+        self.grNode = WorkflowGraphicSmallDiamond(self)
 
     def drop_action(self):
         pass
@@ -168,7 +169,79 @@ class WorkflowNode_Decision(WorkflowNode):
                 self.data = content
         except Exception as e:
             dumpException(e)
+    def initSettings(self):
+        """Initialize properties and socket information"""
 
+        self.socket_spacing = 22
+        TOP = 7
+        self.input_socket_position = 7 # Top - new position we creates
+        self.output_socket_position_good = RIGHT_CENTER
+        self.output_socket_position_bad = LEFT_CENTER
+
+        self.input_multi_edged = False
+        self.output_multi_edged = True
+        self.socket_offsets = {
+            LEFT_CENTER: 0,
+            RIGHT_CENTER: 0,
+            TOP : 0
+        }
+
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+        """
+        Create sockets for inputs and outputs
+
+        :param inputs: list of Socket Types (int)
+        :type inputs: ``list``
+        :param outputs: list of Socket Types (int)
+        :type outputs: ``list``
+        :param reset: if ``True`` destroys and removes old `Sockets`
+        :type reset: ``bool``
+        """
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'inputs') and hasattr(self, 'outputs'):
+                # remove grSockets from scene
+                for socket in (self.inputs + self.outputs):
+                    self.scene.grScene.removeItem(socket.grSocket)
+                self.inputs = []
+                self.outputs = []
+
+        # create new sockets
+        counter = 0
+        for item in inputs:
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.input_socket_position,
+                socket_type=item, multi_edges=self.input_multi_edged,
+                count_on_this_node_side=len(inputs), is_input=True
+            )
+            counter += 1
+            self.inputs.append(socket)
+
+        counter = 0
+        #bad socket
+        bad_socket = self.__class__.Socket_class(
+            node=self, index=counter, position=self.output_socket_position_bad,
+            socket_type=outputs[0], multi_edges=self.output_multi_edged,
+            count_on_this_node_side=len(outputs), is_input=False
+        )
+        self.outputs.append(bad_socket)
+
+        good_socket = self.__class__.Socket_class(
+            node=self, index=counter, position=self.output_socket_position_good,
+            socket_type=outputs[1], multi_edges=self.output_multi_edged,
+            count_on_this_node_side=len(outputs), is_input=False
+        )
+        self.outputs.append(good_socket)
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        return the only position for this node: on the right of this node
+        """
+        x = 0 if (position is LEFT_CENTER) else self.grNode.width if position is RIGHT_CENTER else self.grNode.width/2
+        y= 0 if position in (LEFT_CENTER,RIGHT_CENTER) else -self.grNode.height/2
+
+        return [x, y]
 
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
@@ -260,9 +333,7 @@ class WorkflowNode_Start(WorkflowNode):
         """Initialize properties and socket information"""
         self.socket_spacing = 22
 
-        self.input_socket_position = LEFT_CENTER
         self.output_socket_position = RIGHT_CENTER
-        self.input_multi_edged = False
         self.output_multi_edged = True
         self.socket_offsets = {
             LEFT_BOTTOM: -1,
@@ -340,9 +411,7 @@ class WorkflowNode_Finish(WorkflowNode):
         self.socket_spacing = 22
 
         self.input_socket_position = LEFT_CENTER
-        self.output_socket_position = RIGHT_CENTER
-        self.input_multi_edged = False
-        self.output_multi_edged = True
+        self.input_multi_edged = True
         self.socket_offsets = {
             LEFT_BOTTOM: -1,
             LEFT_CENTER: -1,
@@ -377,8 +446,8 @@ class WorkflowNode_Finish(WorkflowNode):
         counter = 0
         for item in inputs:
             socket = self.__class__.Socket_class(
-                node=self, index=counter, position=self.output_socket_position,
-                socket_type=item, multi_edges=self.output_multi_edged,
+                node=self, index=counter, position=self.input_socket_position,
+                socket_type=item, multi_edges=self.input_multi_edged,
                 count_on_this_node_side=len(inputs), is_input=True
             )
             counter += 1

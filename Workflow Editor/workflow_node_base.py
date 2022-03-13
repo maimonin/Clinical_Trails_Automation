@@ -181,6 +181,75 @@ class WorkflowGraphicCircleThick(QDMGraphicsNode):
             -self.radius, -self.radius, self.radius * 2, self.radius * 2
         ).normalized()
 
+class WorkflowGraphicSmallDiamond(QDMGraphicsNode):
+    @property
+    def title(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return ""
+
+    @title.setter
+    def title(self, value):
+        pass
+    def initTitle(self):
+        pass
+    def initUI(self):
+        """Set up this ``QGraphicsItem``"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+        self.initContent()
+    def initSizes(self):
+
+
+        super().initSizes()
+        self.width=50
+        self.height=55
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._color = QColor("#2d3436")
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(2)
+
+        self._color = QColor("#2d3436")
+        self._pen_selected = QPen(self._color)
+        self._pen_selected.setWidthF(3)
+
+        self._brush_background_color = QColor("#2ecc71")
+        self._brush_background = QBrush(self._brush_background_color)
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        #node
+        path_node = QPainterPath()
+
+        path_node.setFillRule(Qt.WindingFill)
+        path_node.moveTo(0,0)
+        path_node.lineTo(self.width/2,-self.height/2)
+        path_node.lineTo(self.width, 0)
+        path_node.lineTo(self.width / 2, self.height / 2)
+        painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+        painter.setBrush(self._brush_background)
+        painter.drawPath(path_node.simplified())
+
+    # def boundingRect(self) -> QRectF:
+    #     """Defining Qt' bounding rectangle"""
+    #     return QRectF(
+    #      0,-self.height/2, self.width, self.height
+    #     ).normalized()
+
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(
+            0,
+            -self.height/2,
+            self.width,
+            self.height
+        ).normalized()
 class WorkflowGraphicWithIcon(QDMGraphicsNode):
 
     @property
