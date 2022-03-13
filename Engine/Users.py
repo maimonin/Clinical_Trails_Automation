@@ -30,11 +30,7 @@ class User:
         return {"gender": self.sex, "age": self.age}
 
 
-def answer_questionnaire(questions, s):
-    s.send((json.dumps({'type': 'questionnaire', 'questions': questions}) + '$').encode('ascii'))
-    ans = get_data(s)
-    log("answering questionnaire")
-    return json.loads(ans)
+
 
 
 # name, instructions, staff

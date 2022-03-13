@@ -1,3 +1,4 @@
+import asyncio
 import json
 import threading
 import time
@@ -5,29 +6,26 @@ from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
 from Data import add_questionnaire, add_test
-from Engine.Users import User, answer_questionnaire, take_test
+from Engine.Users import User, take_test
+from NotificationHandler import send_questionnaire, send_notification_by_id
 from user_lists import get_role
 
 
 class Node(ABC):
-    def __init__(self):
-        self.min_time = None
-        self.max_time = None
-
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
 
     @abstractmethod
-    def detach(self, observer: User) -> None:
+    async def detach(self, observer: User) -> None:
         pass
 
     @abstractmethod
-    def notify(self) -> None:
+    async def notify(self) -> None:
         pass
 
     @abstractmethod
-    def exec(self) -> None:
+    async def exec(self) -> None:
         pass
 
     @abstractmethod
@@ -52,7 +50,6 @@ class Questionnaire(Node):
         super(Questionnaire, self).__init__()
         self.id = node_id
         self.title = title
-        self.duration = duration
         self.form = form
         self.next_nodes = []
         self.lock = threading.Lock()
@@ -65,17 +62,15 @@ class Questionnaire(Node):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    def exec(self) -> None:
-        self.notify()
+    async def exec(self) -> None:
+        await self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(threading.Thread(target=next_node.exec, args=()))
+            threads.append(asyncio.create_task(next_node.exec()))
         for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+            await t
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
@@ -84,9 +79,8 @@ class Questionnaire(Node):
             if self.min_time is not None:
                 time.sleep(self.min_time)
             # send questionnaire to participant
-            answers = answer_questionnaire(self.form, participant.socket)
+            answers = await send_questionnaire(self.form, participant.id)
             answers.update({'questionnaire_number': self.number})
-            time.sleep(int(self.duration))
             add_questionnaire(answers, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
@@ -112,17 +106,21 @@ class Decision(Node):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    def exec(self) -> None:
-        self.notify()
+    async def exec(self) -> None:
+        await self.notify()
+        threads=[]
         if self.next_nodes[0].has_actors():
-            self.next_nodes[0].exec()
+            threads.append(asyncio.create_task(self.next_nodes[0].exec()))
         if self.next_nodes[1].has_actors():
-            self.next_nodes[1].exec()
+            threads.append(asyncio.create_task(self.next_nodes[1].exec()))
+        for t in threads:
+            await t
+
 
     def has_actors(self):
         return len(self.participants) != 0
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
@@ -161,15 +159,12 @@ class StringNode(Node):
         self.participants.remove(participant)
 
     def exec(self) -> None:
-        self.notify()
-        print("notified: "+self.text)
+        await self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(threading.Thread(target=next_node.exec, args=()))
+            threads.append(asyncio.create_task(next_node.exec()))
         for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+            await t
 
     def notify(self) -> None:
         self.lock.acquire()
@@ -181,7 +176,7 @@ class StringNode(Node):
             if self.min_time is not None:
                 time.sleep(self.min_time)
             if self.actors.__contains__(participant.role):
-                participant.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
+                await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
             for next_node in self.next_nodes:
                 next_node.attach(participant)
             for role in self.actors:
