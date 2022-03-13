@@ -3,6 +3,7 @@ import time
 from random import randint
 
 from Logger import log
+from NotificationHandler import send_notification_by_id, get_notification_by_id
 from Users import User
 
 
@@ -43,8 +44,8 @@ def get_role(role):
     return None
 
 
-def add_user(role, sex, age, user_id, socket):
-    user = User(role, sex, age, user_id, socket)
+def add_user(role, sex, age, user_id):
+    user = User(role, sex, age, user_id)
     if role == "nurse":
         nurses.append(user)
     elif role == "doctor":
@@ -57,20 +58,21 @@ def add_user(role, sex, age, user_id, socket):
         participants[user.id] = user
     return user
 
+
 # name, instructions, staff
-def take_test(user_id, test, in_charge, s):
+async def take_test(user_id, test, in_charge):
     for role in test.staff:
         actor = get_role(role)
         if actor is None:
             return None
-        actor.socket.send((json.dumps({'type': 'test', 'name': test.name,
+        await send_notification_by_id(actor.id,{'type': 'test', 'name': test.name,
                                        'instructions': test.instructions,
-                                       'patient': user_id}) + '$').encode('ascii'))
-    s.send((json.dumps({'type': 'notification', 'text': "show up to " + test.name})+'$').encode('ascii'))
+                                       'patient': user_id})
+    await send_notification_by_id(user_id,{'type': 'notification', 'text': "show up to " + test.name})
     log("participant with id " + str(user_id) + " taking a test")
     time.sleep(int(test.duration))
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
     r = get_role(in_charge)
-    r.socket.send((json.dumps(form)+'$').encode('ascii'))
-    results = get_data(s)
+    await send_notification_by_id(user_id, form)
+    results = await get_notification_by_id(r.id)
     return json.loads(results)
