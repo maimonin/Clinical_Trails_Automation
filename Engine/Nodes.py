@@ -6,7 +6,8 @@ from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
 from Data import add_questionnaire, add_test
-from Engine.Users import User, answer_questionnaire
+from Engine.Users import User
+from NotificationHandler import send_notification_by_id, send_questionnaire
 from user_lists import get_role, take_test
 
 
@@ -35,7 +36,7 @@ class Node(ABC):
 def end_test(node, participants):
     if len(node.next_nodes) == 0:
         for participant in participants:
-            participant.socket.send((json.dumps({'type': 'terminate'})+'$').encode('ascii'))
+            participant.socket.send((json.dumps({'type': 'terminate'}) + '$').encode('ascii'))
 
 
 def set_time(node, min_time, max_time):
@@ -105,14 +106,13 @@ class Decision(Node):
 
     async def exec(self) -> None:
         await self.notify()
-        threads=[]
+        threads = []
         if self.next_nodes[0].has_actors():
             threads.append(asyncio.create_task(self.next_nodes[0].exec()))
         if self.next_nodes[1].has_actors():
             threads.append(asyncio.create_task(self.next_nodes[1].exec()))
         for t in threads:
             await t
-
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -153,7 +153,7 @@ class StringNode(Node):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    def exec(self) -> None:
+    async def exec(self) -> None:
         await self.notify()
         threads = []
         for next_node in self.next_nodes:
@@ -161,11 +161,12 @@ class StringNode(Node):
         for t in threads:
             await t
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
+        print(self.text)
         for participant in participants2:
             print(participant.id)
             if self.actors.__contains__(participant.role):
@@ -175,7 +176,7 @@ class StringNode(Node):
             for role in self.actors:
                 r = get_role(role)
                 if r is not None:
-                    r.socket.send((json.dumps({'type': 'notification', 'text': self.text})+'$').encode('ascii'))
+                    await send_notification_by_id(r.id, {'type': 'notification', 'text': self.text})
         # end_test(self, participants2)
 
     def has_actors(self):
@@ -199,24 +200,22 @@ class TestNode(Node):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    def exec(self) -> None:
-        self.notify()
+    async def exec(self) -> None:
+        await self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(threading.Thread(target=next_node.exec, args=()))
+            threads.append(asyncio.create_task(next_node.exec()))
         for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+            await t
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
         for participant in participants2:
             for test in self.tests:
-                results = take_test(participant.id, test, self.in_charge, participant.socket)
+                results = await take_test(participant.id, test, self.in_charge, participant.socket)
                 if results is None:
                     print("come back tomorrow")
                     break
@@ -247,7 +246,7 @@ class TimeNode(Node):
 
     def exec(self) -> None:
         self.notify()
-        threads=[]
+        threads = []
         for next_node in self.next_nodes:
             threads.append(threading.Thread(target=next_node.exec, args=()))
         for t in threads:
@@ -270,14 +269,13 @@ class TimeNode(Node):
 
 
 class ComplexNode(Node):
-    def __init__(self, node_id,flow):
+    def __init__(self, node_id, flow):
         super(ComplexNode, self).__init__()
         self.id = node_id
         self.next_nodes = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
-        self.flow=flow
-
+        self.flow = flow
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
@@ -285,17 +283,15 @@ class ComplexNode(Node):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    def exec(self) -> None:
-        self.notify()
+    async def exec(self) -> None:
+        await self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(threading.Thread(target=next_node.exec, args=()))
+            threads.append(asyncio.create_task(next_node.exec()))
         for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+            await t
 
-    def notify(self) -> None:
+    async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
@@ -303,13 +299,12 @@ class ComplexNode(Node):
         threads = []
         for participant in participants2:
             self.flow.attach(participant)
-            threads.append(threading.Thread(target=self.flow.exec, args=()))
+            threads.append(asyncio.create_task(self.flow.exec()))
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
+            await t
         end_test(self, participants2)
+
     def has_actors(self):
         return len(self.participants) != 0

@@ -15,12 +15,11 @@ def get_data(s):
 
 
 class User:
-    def __init__(self, role, sex, age, user_id, socket):
+    def __init__(self, role, sex, age, user_id):
         self.role = role
         self.sex = sex
         self.age = age
         self.id = user_id
-        self.socket = socket
 
     def update(self, callback) -> None:
         callback()

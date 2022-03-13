@@ -12,8 +12,6 @@ from Logger import log
 import user_lists
 from Test import Test
 
-workflows = {}
-print_lock = threading.Lock()
 OP_NODE_QUESTIONNAIRE = 1
 OP_NODE_DATA_ENTRY = 2
 OP_NODE_DECISION = 3
@@ -114,16 +112,16 @@ def add_times(time_node, other_node):
     set_time(other_node, time_node.min_time, time_node.max_time)
 
 
-def register_user(user_dict, c):
-    user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'], c)
+async def register_user(user_dict):
+    print('regiater')
+    user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
         if len(workflows) == 0:
             print("No workflow yet")
-            c.close()
         else:
             # start participant's workflow
             workflows[user_dict["workflow"]].attach(user)
-            workflows[user_dict["workflow"]].exec()
+            await workflows[user_dict["workflow"]].exec()
 
 
 def parse_Complex_Node(node_dict):
@@ -179,8 +177,8 @@ def new_workflow(data_dict):
             first.next_nodes.append(e)
             e.next_nodes.append(second)
 
-    return nodes[first_node]
     log("created workflow")
+    return nodes[first_node]
 
 
 def threaded(c):
@@ -203,7 +201,11 @@ def threaded(c):
 def send_feedback(user_socket, text):
     user_socket.send((text+'$').encode('ascii'))
 
-
+def parser_init():
+    global workflows
+    global print_lock
+    workflows = {}
+    print_lock = threading.Lock()
 def Main():
     open('Logger.txt', 'w').close()
     user_lists.init()
