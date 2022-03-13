@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath, QPixmap
 from PyQt5.QtWidgets import *
 from nodeeditor.node_node import Node
@@ -79,6 +79,107 @@ class WorkflowGraphicNode(QDMGraphicsNode):
             painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
             painter.drawPath(path_outline.simplified())
 
+class WorkflowGraphicCircleThin(QDMGraphicsNode):
+    @property
+    def title(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return ""
+
+    @title.setter
+    def title(self, value):
+        pass
+    def initTitle(self):
+        pass
+    def initUI(self):
+        """Set up this ``QGraphicsItem``"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+        self.initContent()
+    def initSizes(self):
+
+
+        super().initSizes()
+        self.radius = 30
+        self.width=80
+        self.height=80
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._color = QColor("#2d3436")
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(2)
+
+        self._brush_background_color = QColor("#2ecc71")
+        self._brush_background_color.setAlpha(1)
+        self._brush_background = QBrush(self._brush_background_color)
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        #node
+        painter.setPen(self._pen_default)
+        painter.setBrush(self._brush_background)
+        painter.drawEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(
+            -self.radius, -self.radius, self.radius * 2, self.radius * 2
+        ).normalized()
+
+class WorkflowGraphicCircleThick(QDMGraphicsNode):
+    @property
+    def title(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return ""
+
+    @title.setter
+    def title(self, value):
+        pass
+    def initTitle(self):
+        pass
+    def initUI(self):
+        """Set up this ``QGraphicsItem``"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+        self.initContent()
+    def initSizes(self):
+
+
+        super().initSizes()
+        self.radius = 30
+        self.width=80
+        self.height=80
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._color = QColor("#2d3436")
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(7)
+
+        self._brush_background_color = QColor("#2ecc71")
+        self._brush_background_color.setAlpha(1)
+        self._brush_background = QBrush(self._brush_background_color)
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        #node
+        painter.setPen(self._pen_default)
+        painter.setBrush(self._brush_background)
+        painter.drawEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(
+            -self.radius, -self.radius, self.radius * 2, self.radius * 2
+        ).normalized()
 
 class WorkflowGraphicWithIcon(QDMGraphicsNode):
 

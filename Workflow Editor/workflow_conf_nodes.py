@@ -3,6 +3,7 @@ from time import sleep
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
+from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_TOP, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER
 from qtpy import QtCore
 
 from Windows.decisionNode.win_deciosionNode import Ui_Decision_Node
@@ -150,10 +151,7 @@ class WorkflowNode_Decision(WorkflowNode):
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
-        Decision_Node = QtWidgets.QDialog()
-        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node))
-        ui.setupUi(Decision_Node)
-        Decision_Node.exec_()
+        pass
 
     def edit_nodes_details(self):
         Decision_Node = QtWidgets.QDialog()
@@ -188,10 +186,6 @@ class WorkflowNode_SimpleString(WorkflowNode):
         self.data = text
 
     def drop_action(self):
-        # String_Node = QtWidgets.QDialog()
-        # ui = Ui_string_node(lambda content: self.callback_from_window(content, String_Node))
-        # ui.setupUi(String_Node)
-        # String_Node.exec_()
         to_send = {
             "sections": [{
                 "name": "Node Details",
@@ -240,6 +234,163 @@ class WorkflowNode_SimpleString(WorkflowNode):
         ui.setupUi(String_Node)
         String_Node.exec_()
 
+@register_node(OP_NODE_START)
+class WorkflowNode_Start(WorkflowNode):
+    op_icon = ""
+    op_code = OP_NODE_START
+    op_title = "Start"
+    content_label_objname = "workflow_node_start"
+    def __init__(self, scene, inputs=[], outputs=[2]):
+        super().__init__(scene, inputs, outputs)
+
+    def initInnerClasses(self):
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicCircleThin(self)
+
+    def drop_action(self):
+        pass
+
+    def edit_nodes_details(self):
+        pass
+
+    def callback_from_window(self, content, window):
+        pass
+    def initSettings(self):
+        """Initialize properties and socket information"""
+        self.socket_spacing = 22
+
+        self.input_socket_position = LEFT_CENTER
+        self.output_socket_position = RIGHT_CENTER
+        self.input_multi_edged = False
+        self.output_multi_edged = True
+        self.socket_offsets = {
+            LEFT_BOTTOM: -1,
+            LEFT_CENTER: -1,
+            LEFT_TOP: -1,
+            RIGHT_BOTTOM: 1,
+            RIGHT_CENTER: 1,
+            RIGHT_TOP: 1,
+        }
+
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+        """
+        Create sockets for inputs and outputs
+
+        :param inputs: list of Socket Types (int)
+        :type inputs: ``list``
+        :param outputs: list of Socket Types (int)
+        :type outputs: ``list``
+        :param reset: if ``True`` destroys and removes old `Sockets`
+        :type reset: ``bool``
+        """
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'outputs'):
+                # remove grSockets from scene
+                for socket in (self.outputs):
+                    self.scene.grScene.removeItem(socket.grSocket)
+                self.outputs = []
+
+        # create new sockets
+
+        counter = 0
+        for item in outputs:
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.output_socket_position,
+                socket_type=item, multi_edges=self.output_multi_edged,
+                count_on_this_node_side=len(outputs), is_input=False
+            )
+            counter += 1
+            self.outputs.append(socket)
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        return the only position for this node: on the right of this node
+        """
+        x = self.grNode.radius
+        y= 0
+
+        return [x, y]
+
+@register_node(OP_NODE_FINISH)
+class WorkflowNode_Finish(WorkflowNode):
+    op_icon = ""
+    op_code = OP_NODE_FINISH
+    op_title = "finish"
+    content_label_objname = "workflow_node_finish"
+    def __init__(self, scene, inputs=[2], outputs=[]):
+        super().__init__(scene, inputs, outputs)
+
+    def initInnerClasses(self):
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicCircleThick(self)
+
+    def drop_action(self):
+        pass
+
+    def edit_nodes_details(self):
+        pass
+
+    def callback_from_window(self, content, window):
+        pass
+    def initSettings(self):
+        """Initialize properties and socket information"""
+        self.socket_spacing = 22
+
+        self.input_socket_position = LEFT_CENTER
+        self.output_socket_position = RIGHT_CENTER
+        self.input_multi_edged = False
+        self.output_multi_edged = True
+        self.socket_offsets = {
+            LEFT_BOTTOM: -1,
+            LEFT_CENTER: -1,
+            LEFT_TOP: -1,
+            RIGHT_BOTTOM: 1,
+            RIGHT_CENTER: 1,
+            RIGHT_TOP: 1,
+        }
+
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+        """
+        Create sockets for inputs and outputs
+
+        :param inputs: list of Socket Types (int)
+        :type inputs: ``list``
+        :param outputs: list of Socket Types (int)
+        :type outputs: ``list``
+        :param reset: if ``True`` destroys and removes old `Sockets`
+        :type reset: ``bool``
+        """
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'inputs'):
+                # remove grSockets from scene
+                for socket in (self.inputs):
+                    self.scene.grScene.removeItem(socket.grSocket)
+                self.inputs = []
+
+        # create new sockets
+
+        counter = 0
+        for item in inputs:
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.output_socket_position,
+                socket_type=item, multi_edges=self.output_multi_edged,
+                count_on_this_node_side=len(inputs), is_input=True
+            )
+            counter += 1
+            self.inputs.append(socket)
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        return the only position for this node: on the right of this node
+        """
+        x = -self.grNode.radius
+        y= 0
+
+        return [x, y]
 
 # @register_node(OP_NODE_TIME_CONSTRAINT)
 # class WorkflowNode_TimeConstraint(WorkflowNode):
