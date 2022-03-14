@@ -6,6 +6,7 @@ from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
+from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -451,6 +452,50 @@ class WorkflowNode(Node):
     def initSettings(self):
         super().initSettings()
         self.input_multi_edged = True
+        self.input_socket_position = LEFT_CENTER
+        self.output_socket_position = RIGHT_CENTER
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        Get the relative `x, y` position of a :class:`~nodeeditor.node_socket.Socket`. This is used for placing
+        the `Graphics Sockets` on `Graphics Node`.
+
+        :param index: Order number of the Socket. (0, 1, 2, ...)
+        :type index: ``int``
+        :param position: `Socket Position Constant` describing where the Socket is located. See :ref:`socket-position-constants`
+        :type position: ``int``
+        :param num_out_of: Total number of Sockets on this `Socket Position`
+        :type num_out_of: ``int``
+        :return: Position of described Socket on the `Node`
+        :rtype: ``x, y``
+        """
+        x = self.socket_offsets[position] if (position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM)) else self.grNode.width + self.socket_offsets[position]
+
+        if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
+            # start from bottom
+            y = self.grNode.height - self.grNode.edge_roundness - index * self.socket_spacing
+        elif position in (LEFT_CENTER, RIGHT_CENTER):
+            num_sockets = num_out_of
+            node_height = self.grNode.height
+            top_offset = (self.grNode.title_height - (self.grNode.edge_roundness*2))/2
+            available_height = node_height - top_offset
+
+            total_height_of_all_sockets = num_sockets * self.socket_spacing
+            new_top = available_height - total_height_of_all_sockets
+
+            # y = top_offset + index * self.socket_spacing + new_top / 2
+            y = top_offset + available_height/2.0 + (index-0.5)*self.socket_spacing
+            if num_sockets > 1:
+                y -= self.socket_spacing * (num_sockets-1)/2
+
+        elif position in (LEFT_TOP, RIGHT_TOP):
+            # start from top
+            y = self.grNode.title_height + self.grNode.title_vertical_padding + self.grNode.edge_roundness + index * self.socket_spacing
+        else:
+            # this should never happen
+            y = 0
+
+        return [x, y]
 
     def drop_action(self):
         pass

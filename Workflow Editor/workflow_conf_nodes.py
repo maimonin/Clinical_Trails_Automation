@@ -144,7 +144,7 @@ class WorkflowNode_Decision(WorkflowNode):
     op_code = OP_NODE_DECISION
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
-    def __init__(self, scene, inputs=[2], outputs=[4,1]):
+    def __init__(self, scene, inputs=[1], outputs=[4,2]):
         super().__init__(scene, inputs, outputs)
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
