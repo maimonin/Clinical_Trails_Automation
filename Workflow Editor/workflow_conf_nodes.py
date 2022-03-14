@@ -141,8 +141,30 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
             ],
-            "Questionnaire": [
-                {"name": "Questions", "type": "edit window", "value": self.data["content"]["questions"]},
+            "Content": [
+                {"name": "Questions", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["questions"]),
+                 "children": [
+                     {"name": "Multiple Choice", "type": "dynamic sub tree", "value": [], "root name": "Question",
+                      "template": [
+                          {"name": "Question", "type": "text", "value": ""},
+                          {"name": "Options", "type": "dynamic sub tree", "value":"", "root name": "Answer",
+                           "template": [
+                               {"name": "Answer", "type": "text", "value": ""}
+                           ]},
+                      ]},
+                     {"name": "One Choice", "type": "dynamic sub tree", "value": [], "root name": "Question",
+                      "template": [
+                          {"name": "Question", "type": "text", "value": ""},
+                          {"name": "Options", "type": "dynamic sub tree", "value": [], "root name": "Answer",
+                           "template": [
+                               {"name": "Answer", "type": "text", "value": ""}
+                           ]},
+                      ]},
+                     {"name": "Open", "type": "dynamic sub tree", "value": [], "root name": "Question",
+                      "template": [
+                          {"name": "Question", "type": "text", "value": ""},
+                      ]}
+                 ]},
                 {"name": "Qusetionnaire Number", "type": "text", "value": self.data["content"]["qusetionnaire_number"]},
             ],
             "callback": self.callback_from_window
@@ -150,6 +172,20 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         # TODO: create new window for questions creation
 
         return to_send
+
+    def export_to_UI(self, export):
+        result = []
+        for test in export:
+            result.append([
+                # {"name": "Name", "type": "text", "value": test["Test"]["name"]},
+                # {"name": "Instructions", "type": "text", "value": test["Test"]["instructions"]},
+                # {"name": "Staff", "type": "checklist",
+                #  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                #  "value": test["Test"]["staff"]},
+                # {"name": "Duration", "type": "text", "value": str(test["Test"]["duration"])},
+                # {"name": "Facility", "type": "text", "value": test["Test"]["facility"]},
+            ])
+        return result
 
 
 @register_node(OP_NODE_Test)
@@ -218,8 +254,10 @@ class WorkflowNode_DataEntry(WorkflowNode):
                 self.data["content"]["tests"] = []
                 for test in content["Content"][0]["value"]:
                     self.data["content"]["tests"].append(
-                        {"Test": {"name": copy.deepcopy(test[0]["value"]), "instructions": copy.deepcopy(test[1]["value"]),
-                                  "staff": copy.deepcopy(test[2]["value"]), "duration": int(copy.deepcopy(test[3]["value"])),
+                        {"Test": {"name": copy.deepcopy(test[0]["value"]),
+                                  "instructions": copy.deepcopy(test[1]["value"]),
+                                  "staff": copy.deepcopy(test[2]["value"]),
+                                  "duration": int(copy.deepcopy(test[3]["value"])),
                                   "facility": copy.deepcopy(test[4]["value"])}})
 
         except Exception as e:
@@ -236,7 +274,8 @@ class WorkflowNode_DataEntry(WorkflowNode):
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
             ],
             "Content": [
-                {"name": "Tests", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["tests"]), "root name": "Test",
+                {"name": "Tests", "type": "dynamic sub tree", "value": self.export_to_UI(self.data["content"]["tests"]),
+                 "root name": "Test",
                  "template": [
                      {"name": "Name", "type": "text", "value": ""},
                      {"name": "Instructions", "type": "text", "value": ""},
@@ -255,14 +294,14 @@ class WorkflowNode_DataEntry(WorkflowNode):
         result = []
         for test in export:
             result.append([
-                     {"name": "Name", "type": "text", "value": test["Test"]["name"]},
-                     {"name": "Instructions", "type": "text", "value": test["Test"]["instructions"]},
-                     {"name": "Staff", "type": "checklist",
-                      "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-                      "value": test["Test"]["staff"]},
-                     {"name": "Duration", "type": "text", "value": str(test["Test"]["duration"])},
-                     {"name": "Facility", "type": "text", "value": test["Test"]["facility"]},
-                 ])
+                {"name": "Name", "type": "text", "value": test["Test"]["name"]},
+                {"name": "Instructions", "type": "text", "value": test["Test"]["instructions"]},
+                {"name": "Staff", "type": "checklist",
+                 "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                 "value": test["Test"]["staff"]},
+                {"name": "Duration", "type": "text", "value": str(test["Test"]["duration"])},
+                {"name": "Facility", "type": "text", "value": test["Test"]["facility"]},
+            ])
         return result
 
 

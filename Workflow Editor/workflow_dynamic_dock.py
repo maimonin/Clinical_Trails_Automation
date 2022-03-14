@@ -19,7 +19,8 @@ class QDynamicDock(QDockWidget):
             "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
-            "sub tree": self.create_subtree_widget
+            "dynamic sub tree": self.create_dynamicSubTree_widget,
+            "sub tree": self.create_subtree_widget,
         }
         self.setupUi()
         self.generator = numGenerator()
@@ -31,6 +32,7 @@ class QDynamicDock(QDockWidget):
         # self.resize(5000, 423)
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
+
         self.treeWidget = QtWidgets.QTreeWidget(self.dockWidgetContents)
         self.treeWidget.setGeometry(QtCore.QRect(0, 0, 400, 500))
         self.treeWidget.setMidLineWidth(2)
@@ -44,6 +46,7 @@ class QDynamicDock(QDockWidget):
         # self.treeWidget.itemChanged.connect(self.handleItemChanged)
 
         self.setWidget(self.dockWidgetContents)
+
 
         self.retranslateUi()
         if self.data is not None:
@@ -131,13 +134,22 @@ class QDynamicDock(QDockWidget):
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
 
+    def create_subtree_widget(self, father, field):
+        # widget = QtWidgets.QTreeWidgetItem(father)
+        # widget.setText(0, field["name"])
+        for children in field["children"]:
+            child_widget = QtWidgets.QTreeWidgetItem(father)
+            child_widget.setText(0, children["name"])
+            self.create_dynamicSubTree_widget(child_widget, children)
+
     # @field of type "sub tree" must have:
     # "root name" - the default name of a new item
     # "template" - how to build the items
-    def create_subtree_widget(self, father, field):
+    def create_dynamicSubTree_widget(self, father, field):
         widget = QPushButton("Add")
         widget.clicked.connect(lambda: self.on_click(father, field))
         self.treeWidget.setItemWidget(father, 1, widget)
+        widget.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
 
         for value in field["value"]:
             item = QtWidgets.QTreeWidgetItem(father)
@@ -157,15 +169,16 @@ class QDynamicDock(QDockWidget):
             remove_button = QPushButton("Remove")
             remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
             self.treeWidget.setItemWidget(remove, 1, remove_button)
+            remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
 
     def on_click(self, father, field):
         field["value"].append(copy.deepcopy(field["template"]))
         # self.change_data(field, copy.deepcopy(field["template"]))
         next_id = self.generator.gen_next()
         item = QtWidgets.QTreeWidgetItem(father)
-        # FIXME: think of another implementation of name generation , other than using @next object
+        # FIXME: think of another implementation of name generation - other than using @next object
         item.setText(0, field["root name"] + f" #{next_id}")
-        for option in field["value"][next_id - 1]:
+        for option in field["value"][-1]:
             widget = QtWidgets.QTreeWidgetItem(item)
             widget.setText(0, option["name"])
             if option["type"] in self.functions.keys():
@@ -175,6 +188,8 @@ class QDynamicDock(QDockWidget):
         remove_button = QPushButton("Remove")
         remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
         self.treeWidget.setItemWidget(remove, 1, remove_button)
+        remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+
 
         self.callback(self.data)
 
@@ -197,7 +212,6 @@ class QDynamicDock(QDockWidget):
         # print("workflow_dynamic_dock::change_value::data changed!")
         field["value"] = value
         self.callback(self.data)
-
 
 class numGenerator():
 
