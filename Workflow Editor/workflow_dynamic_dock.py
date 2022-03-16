@@ -21,8 +21,10 @@ class QDynamicDock(QDockWidget):
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
             "sub tree": self.create_subtree_widget,
+            "dynamic sub tree": self.create_dynamicSubTree_widget,
         }
         self.setupUi()
+        self.generator = numGenerator()
 
     def setupUi(self):
         self.setWindowTitle("Attributes")
@@ -67,6 +69,7 @@ class QDynamicDock(QDockWidget):
     def change_data(self, data):
         self.data = data
         self.treeWidget.clear()
+        self.generator.reset()
         if data is not None:
             self.callback = data["callback"]
             self.build_tree()
@@ -102,6 +105,9 @@ class QDynamicDock(QDockWidget):
         widget = QTimeEdit()
         widget.setTime(field["value"])
         self.treeWidget.setItemWidget(father, 1, widget)
+
+        widget.timeChanged.connect(lambda time: self.change_value(field, time))
+
 
     def create_checklist_widget(self, father, field):
         options = field["options"]
@@ -266,3 +272,73 @@ class QDynamicDock(QDockWidget):
         # print("workflow_dynamic_dock::change_value::data changed!")
         field["value"] = value
         self.callback(self.data)
+
+ # @field of type "sub tree" must have:
+    # "root name" - the default name of a new item
+    # "template" - how to build the items
+    def create_dynamicSubTree_widget(self, father, field):
+        widget = QPushButton("Add")
+        widget.clicked.connect(lambda: self.on_click(father, field))
+        self.treeWidget.setItemWidget(father, 1, widget)
+        widget.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+
+        for value in field["value"]:
+            item = QtWidgets.QTreeWidgetItem(father)
+            next_id = self.generator.gen_next()  # FIXME : always start from one , if we change the first tests, will get after that test1
+            for option in value:
+                # do we want to change the widget title to the test name - child widget (happens only on next update)
+                if option["name"] == "Name" and option["value"] != "":
+                    item.setText(0, option["value"])
+                elif option["name"] == "Name" and option["value"] == "":
+                    item.setText(0, field["root name"] + f" #{next_id}")
+                widget = QtWidgets.QTreeWidgetItem(item)
+                widget.setText(0, option["name"])
+                if option["type"] in self.functions.keys():
+                    self.functions[option["type"]](widget, option)
+
+            remove = QtWidgets.QTreeWidgetItem(item)
+            remove_button = QPushButton("Remove")
+            remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
+            self.treeWidget.setItemWidget(remove, 1, remove_button)
+            remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+
+    def on_click(self, father, field):
+        field["value"].append(copy.deepcopy(field["template"]))
+        # self.change_data(field, copy.deepcopy(field["template"]))
+        next_id = self.generator.gen_next()
+        item = QtWidgets.QTreeWidgetItem(father)
+        # FIXME: think of another implementation of name generation - other than using @next object
+        item.setText(0, field["root name"] + f" #{next_id}")
+        for option in field["value"][-1]:
+            widget = QtWidgets.QTreeWidgetItem(item)
+            widget.setText(0, option["name"])
+            if option["type"] in self.functions.keys():
+                self.functions[option["type"]](widget, option)
+
+        remove = QtWidgets.QTreeWidgetItem(item)
+        remove_button = QPushButton("Remove")
+        remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
+        self.treeWidget.setItemWidget(remove, 1, remove_button)
+        remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+
+
+        self.callback(self.data)
+
+    # removing the child item from the parent item
+    # and from @self.data, using index in the list
+    def on_remove_click(self, parent, child, child_id):
+        parent.removeChild(child)
+        self.data["Content"][0]["value"].pop(child_id)
+        self.callback(self.data)
+
+class numGenerator():
+
+    def __init__(self):
+        self.number = 0
+
+    def gen_next(self):
+        self.number += 1
+        return self.number
+
+    def reset(self):
+        self.number = 0
