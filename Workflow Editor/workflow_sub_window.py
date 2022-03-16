@@ -151,6 +151,7 @@ class WorkflowSubWindow(NodeEditorWidget):
     #         dumpException(e)
     #     # doing something........
     # @pyqtSlot()
+
     def on_click(self):
         print("clicked")
         try:

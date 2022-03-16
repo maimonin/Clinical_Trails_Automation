@@ -79,14 +79,9 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                     "title": "New Questionnaire Node"
                 },
                 "questions": [],
-                "qusetionnaire_number": self.QNum
+                "questionnaire_number": self.QNum
             }
         }
-
-    # template for questions:
-    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
-    # "One Choice": { "text":"","options":[],"type":"one choice"}
-    # "Open": {"text":"","type":"open"}
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -96,21 +91,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     def drop_action(self):
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(self.get_tree_build())
-
-    #     from Windows.questionnaire_builder import Ui_QuestionnaireBuild
-    #     QuestionnaireBuild = QtWidgets.QDialog()
-    #     ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content,QuestionnaireBuild))
-    #     ui.setupUi(QuestionnaireBuild)
-    #     QuestionnaireBuild.exec_()
-    #     self.onDoubleClicked(self.edit_nodes_details)
-    # def edit_nodes_details(self):
-    #     from Windows.questionnaire_builder import Ui_QuestionnaireBuild
-    #     QuestionnaireBuild = QtWidgets.QDialog()
-    #     ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),data=self.data)
-    #     ui.setupUi(QuestionnaireBuild)
-    #     QuestionnaireBuild.exec_()
-
-    # for dock build
 
     def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
@@ -128,9 +108,24 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
-                # TODO : implement the save of the questions and their number
-                # self.data["content"]["questions"] =
-                # self.data["content"]["question_number"] =
+
+                # save and convert questions
+                self.data["content"]["questions"] = []
+                for question in content["Content"][1]["value"]:
+                    if question["name"] == "Multiple Choice":
+                        type = "multi"
+                        self.data["content"]["questions"].append(
+                            {question["name"]: {"type": type, "options": question["sub"], "text": question["text"]}})
+                    elif question["name"] == "One Choice":
+                        type = "one choice"
+                        self.data["content"]["questions"].append(
+                            {question["name"]: {"type": type, "options": question["sub"], "text": question["text"]}})
+                    elif question["name"] == "Open":
+                        type = "open"
+                        self.data["content"]["questions"].append(
+                            {question["name"]: {"type": type, "text": question["text"]}})
+                # save questionnaier number
+                self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
 
         except Exception as e:
             dumpException(e)
@@ -142,49 +137,44 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
             ],
             "Content": [
+                {"name": "Questionnaire #", "type": "text", "value": self.data["content"]["questionnaire_number"]},
                 {"name": "Questions", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["questions"]),
-                 "children": [
-                     {"name": "Multiple Choice", "type": "dynamic sub tree", "value": [], "root name": "Question",
-                      "template": [
-                          {"name": "Question", "type": "text", "value": ""},
-                          {"name": "Options", "type": "dynamic sub tree", "value":"", "root name": "Answer",
-                           "template": [
-                               {"name": "Answer", "type": "text", "value": ""}
-                           ]},
-                      ]},
-                     {"name": "One Choice", "type": "dynamic sub tree", "value": [], "root name": "Question",
-                      "template": [
-                          {"name": "Question", "type": "text", "value": ""},
-                          {"name": "Options", "type": "dynamic sub tree", "value": [], "root name": "Answer",
-                           "template": [
-                               {"name": "Answer", "type": "text", "value": ""}
-                           ]},
-                      ]},
-                     {"name": "Open", "type": "dynamic sub tree", "value": [], "root name": "Question",
-                      "template": [
-                          {"name": "Question", "type": "text", "value": ""},
-                      ]}
-                 ]},
-                {"name": "Qusetionnaire Number", "type": "text", "value": self.data["content"]["qusetionnaire_number"]},
+                 "placeholder": "Enter Question", "options": [
+                    {"name": "Select Type", "inputs": False},
+                    {"name": "Multiple Choice", "inputs": True, "placeholder": "Enter Answer"},
+                    {"name": "One Choice", "inputs": True, "placeholder": "Enter Answer"},
+                    {"name": "Open", "inputs": False}
+                ]
+                 }
             ],
             "callback": self.callback_from_window
         }
-        # TODO: create new window for questions creation
-
         return to_send
+
+    # template for questions:
+    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
+    # "One Choice": { "text":"","options":[],"type":"one choice"}
+    # "Open": {"text":"","type":"open"}
 
     def export_to_UI(self, export):
         result = []
-        for test in export:
-            result.append([
-                # {"name": "Name", "type": "text", "value": test["Test"]["name"]},
-                # {"name": "Instructions", "type": "text", "value": test["Test"]["instructions"]},
-                # {"name": "Staff", "type": "checklist",
-                #  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-                #  "value": test["Test"]["staff"]},
-                # {"name": "Duration", "type": "text", "value": str(test["Test"]["duration"])},
-                # {"name": "Facility", "type": "text", "value": test["Test"]["facility"]},
-            ])
+        for item in export:
+            name = list(item.keys())[0]
+
+            if name == "Multiple Choice":
+                type_idx = 1
+            elif name == "One Choice":
+                type_idx = 2
+            elif name == "Open":
+                type_idx = 3
+
+            if type_idx != 3:
+                result.append(
+                    {"name": name, "type": type_idx, "text": item[name]["text"], "sub": item[name]["options"]})
+            else:
+                result.append(
+                    {"name": name, "type": type_idx, "text": item[name]["text"]})
+
         return result
 
 
@@ -274,8 +264,8 @@ class WorkflowNode_DataEntry(WorkflowNode):
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
             ],
             "Content": [
-                {"name": "Tests", "type": "dynamic sub tree", "value": self.export_to_UI(self.data["content"]["tests"]),
-                 "root name": "Test",
+                {"name": "Tests", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["tests"]),
+                 "placeholder": "Enter title",
                  "template": [
                      {"name": "Name", "type": "text", "value": ""},
                      {"name": "Instructions", "type": "text", "value": ""},

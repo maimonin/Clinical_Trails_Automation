@@ -185,6 +185,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
 
+    # right dock
     def createAttributesDock(self):
 
         self.attributes = QDynamicDock()
@@ -192,8 +193,18 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.attributes.setMinimumWidth(400)
         # self.attributes.setMinimumWidth(400)
         self.attributes.setMaximumWidth(400)
-        self.attributes.setMaximumHeight(500)
+        self.attributes.setMaximumHeight(1000)
         self.addDockWidget(Qt.RightDockWidgetArea, self.attributes)
+        #
+        # self.attributes2 = QDynamicDock()
+        # self.attributes2.setFloating(True)
+        # self.attributes2.setMinimumWidth(400)
+        # # self.attributes.setMinimumWidth(400)
+        # self.attributes2.setMaximumWidth(400)
+        # self.attributes2.setMaximumHeight(500)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.attributes2)
+
+        # self.attributes.set_child(self.attributes2.change_data)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

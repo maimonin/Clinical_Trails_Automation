@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLine
 
 
 class QDynamicDock(QDockWidget):
-    def __init__(self, parent=None):
+
+    def __init__(self):
         super().__init__(None)
         self.data = None
         self.callback = None
@@ -19,11 +20,9 @@ class QDynamicDock(QDockWidget):
             "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
-            "dynamic sub tree": self.create_dynamicSubTree_widget,
             "sub tree": self.create_subtree_widget,
         }
         self.setupUi()
-        self.generator = numGenerator()
 
     def setupUi(self):
         self.setWindowTitle("Attributes")
@@ -34,7 +33,7 @@ class QDynamicDock(QDockWidget):
         self.dockWidgetContents.setObjectName("dockWidgetContents")
 
         self.treeWidget = QtWidgets.QTreeWidget(self.dockWidgetContents)
-        self.treeWidget.setGeometry(QtCore.QRect(0, 0, 400, 500))
+        self.treeWidget.setGeometry(QtCore.QRect(0, 0, 400, 980))
         self.treeWidget.setMidLineWidth(2)
         self.treeWidget.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.treeWidget.setItemsExpandable(True)
@@ -46,7 +45,6 @@ class QDynamicDock(QDockWidget):
         # self.treeWidget.itemChanged.connect(self.handleItemChanged)
 
         self.setWidget(self.dockWidgetContents)
-
 
         self.retranslateUi()
         if self.data is not None:
@@ -62,10 +60,13 @@ class QDynamicDock(QDockWidget):
         self.treeWidget.setSortingEnabled(False)
         self.treeWidget.setSortingEnabled(__sortingEnabled)
 
+    # set child dock callback.
+    def set_child(self, child_update):
+        self.child_update = child_update
+
     def change_data(self, data):
         self.data = data
         self.treeWidget.clear()
-        self.generator.reset()
         if data is not None:
             self.callback = data["callback"]
             self.build_tree()
@@ -134,71 +135,124 @@ class QDynamicDock(QDockWidget):
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
 
-    def create_subtree_widget(self, father, field):
-        # widget = QtWidgets.QTreeWidgetItem(father)
-        # widget.setText(0, field["name"])
-        for children in field["children"]:
-            child_widget = QtWidgets.QTreeWidgetItem(father)
-            child_widget.setText(0, children["name"])
-            self.create_dynamicSubTree_widget(child_widget, children)
+    def load_subtree(self, father, field):
+        for root in field["value"]:
+            # left side with line edit
+            widget = QLineEdit()
+            widget.setPlaceholderText(field["placeholder"])
+            widget.editingFinished.connect(
+                lambda: self.create_subtree_widget(QtWidgets.QTreeWidgetItem(father.parent()), field, (widget, root)))
+            widget.setText(root["text"])
+            self.treeWidget.setItemWidget(father, 0, widget)
 
-    # @field of type "sub tree" must have:
-    # "root name" - the default name of a new item
-    # "template" - how to build the items
-    def create_dynamicSubTree_widget(self, father, field):
-        widget = QPushButton("Add")
-        widget.clicked.connect(lambda: self.on_click(father, field))
-        self.treeWidget.setItemWidget(father, 1, widget)
-        widget.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+            # right side with combobox
+            widget2 = QComboBox()
+            for opt in field["options"]:
+                widget2.addItem(opt["name"])
+            widget2.activated.connect(
+                lambda index: self.handle_combobox_change(father, field, index, root))
+            widget2.setCurrentIndex(root["type"])
+            self.treeWidget.setItemWidget(father, 1, widget2)
 
-        for value in field["value"]:
-            item = QtWidgets.QTreeWidgetItem(father)
-            next_id = self.generator.gen_next()  # FIXME : always start from one , if we change the first tests, will get after that test1
-            for option in value:
-                # do we want to change the widget title to the test name - child widget (happens only on next update)
-                if option["name"] == "Name" and option["value"] != "":
-                    item.setText(0, option["value"])
-                elif option["name"] == "Name" and option["value"] == "":
-                    item.setText(0, field["root name"] + f" #{next_id}")
-                widget = QtWidgets.QTreeWidgetItem(item)
-                widget.setText(0, option["name"])
-                if option["type"] in self.functions.keys():
-                    self.functions[option["type"]](widget, option)
+            # children
+            if "sub" in root.keys():
+                for sub in root["sub"]:
+                    widget = QtWidgets.QTreeWidgetItem(father)
+                    widget2 = QLineEdit()
+                    widget2.setText(sub)
+                    widget2_index = len(root["sub"])
+                    widget2.editingFinished.connect(lambda: self.lineedit_update(father, field, "", widget2, root, widget2_index))
+                    self.treeWidget.setItemWidget(widget, 0, widget2)
 
-            remove = QtWidgets.QTreeWidgetItem(item)
-            remove_button = QPushButton("Remove")
-            remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
-            self.treeWidget.setItemWidget(remove, 1, remove_button)
-            remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+                widget_item = QtWidgets.QTreeWidgetItem(father)
+                widget3 = QLineEdit()
+                widget3.setPlaceholderText(field["placeholder"])
+                widget_index = len(root["sub"])
+                widget3.editingFinished.connect(
+                    lambda: self.lineedit_update(father, field, field["placeholder"], widget3, root, widget_index))
+                self.treeWidget.setItemWidget(widget_item, 0, widget3)
 
-    def on_click(self, father, field):
-        field["value"].append(copy.deepcopy(field["template"]))
-        # self.change_data(field, copy.deepcopy(field["template"]))
-        next_id = self.generator.gen_next()
-        item = QtWidgets.QTreeWidgetItem(father)
-        # FIXME: think of another implementation of name generation - other than using @next object
-        item.setText(0, field["root name"] + f" #{next_id}")
-        for option in field["value"][-1]:
-            widget = QtWidgets.QTreeWidgetItem(item)
-            widget.setText(0, option["name"])
-            if option["type"] in self.functions.keys():
-                self.functions[option["type"]](widget, option)
+    # @field dict should have keys: value,options
+    def create_subtree_widget(self, father, field, caller=None):
+        # check if its the first call or a callback
+        if caller is None:
+            self.load_subtree(father, field)
+            father = QtWidgets.QTreeWidgetItem(father.parent())
+        else:
+            # update the data with the caller text
+            caller[1]["text"] = str(caller[0].text())
 
-        remove = QtWidgets.QTreeWidgetItem(item)
-        remove_button = QPushButton("Remove")
-        remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
-        self.treeWidget.setItemWidget(remove, 1, remove_button)
-        remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+        #   create the next empty item
+        template = {"name": "", "type": 0, "text": ""}
+        field["value"].append(template)
 
+        widget = QLineEdit()
+        widget.setPlaceholderText(field["placeholder"])
+        widget.editingFinished.connect(
+            lambda: self.create_subtree_widget(QtWidgets.QTreeWidgetItem(father.parent()), field, (widget, template)))
+        self.treeWidget.setItemWidget(father, 0, widget)
 
+        # case of multi choose
+        if len(field["options"]) > 0:
+            widget2 = QComboBox()
+            for opt in field["options"]:
+                widget2.addItem(opt["name"])
+            widget2.activated.connect(
+                lambda index: self.handle_combobox_change(father, field, index, template))
+            self.treeWidget.setItemWidget(father, 1, widget2)
+
+        # update node
         self.callback(self.data)
 
-    # removing the child item from the parent item
-    # and from @self.data, using index in the list
-    def on_remove_click(self, parent, child, child_id):
-        parent.removeChild(child)
-        self.data["Content"][0]["value"].pop(child_id)
+    # @option _index_ that is selected in the combobox
+    # @root - data variable for the option includes:[name,type,text,sub]
+    def handle_combobox_change(self, father, field, option, root):
+        root["name"] = field["options"][option]["name"]
+        root["type"] = option
+
+        if field["options"][option]["inputs"]:
+            # in case a double click on the same combo
+            if father.childCount() == 1:
+                return
+            root["sub"] = []
+            widget = QtWidgets.QTreeWidgetItem(father)
+            widget2 = QLineEdit()
+            widget2.setPlaceholderText(field["options"][option]["placeholder"])
+            widget2_index = len(root["sub"])
+            widget2.editingFinished.connect(
+                lambda: self.lineedit_update(father, field, field["options"][option]["placeholder"], widget2, root, widget2_index))
+            self.treeWidget.setItemWidget(widget, 0, widget2)
+        else:
+            for i in reversed(range(father.childCount())):
+                father.removeChild(father.child(i))
+
+        # update node
         self.callback(self.data)
+
+    def lineedit_update(self, father, field, placeholder, caller, root, line_index):
+        if caller.text() == "":
+            caller.setPlaceholderText("Enter Here")
+
+        if caller.text() != "" and caller.text() not in root["sub"]:
+            if line_index < len(root["sub"]):
+                root["sub"][line_index] = caller.text()
+            else:
+                root["sub"].append(caller.text())
+
+            # max 6 childrens
+            if father.childCount() == 6:
+                return
+
+            widget_item = QtWidgets.QTreeWidgetItem(father)
+            widget = QLineEdit()
+            widget.setPlaceholderText(placeholder)
+            widget_index = len(root["sub"])
+            widget.editingFinished.connect(
+                lambda: self.lineedit_update(father, field, placeholder, widget, root, widget_index))
+            self.treeWidget.setItemWidget(widget_item, 0, widget)
+
+            # update node
+            self.callback(self.data)
 
     def change_checklist(self, field, option_text, newState):
         if newState == 0:
@@ -212,15 +266,3 @@ class QDynamicDock(QDockWidget):
         # print("workflow_dynamic_dock::change_value::data changed!")
         field["value"] = value
         self.callback(self.data)
-
-class numGenerator():
-
-    def __init__(self):
-        self.number = 0
-
-    def gen_next(self):
-        self.number += 1
-        return self.number
-
-    def reset(self):
-        self.number = 0
