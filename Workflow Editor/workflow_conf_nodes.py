@@ -138,6 +138,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             ],
             "Content": [
                 {"name": "Questionnaire #", "type": "text", "value": self.data["content"]["questionnaire_number"]},
+                {"name": "Questions", "type": "q sub tree", "value":self.data["content"]["questions"]}
                 # {"name": "Questions", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["questions"]),
                 #  "placeholder": "Enter Question", "options": [
                 #     {"name": "Select Type", "inputs": False},

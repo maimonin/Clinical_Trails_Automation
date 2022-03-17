@@ -21,6 +21,7 @@ class QDynamicDock(QDockWidget):
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
             "test sub tree": self.create_test_subtree_widget,
+            "q sub tree": self.create_questionnaire_subtree_widget,
         }
         self.setupUi()
         self.generator = numGenerator()
@@ -331,9 +332,12 @@ class QDynamicDock(QDockWidget):
     #     self.callback(self.data)
 
     def create_test_subtree_widget(self, father, field):
-        test_tree = TestTree(self.treeWidget, father, field["value"], self.update_tests)
+        TestTree(self.treeWidget, father, field["value"], self.update_dynamic)
 
-    def update_tests(self, tests):
+    def create_questionnaire_subtree_widget(self, father, field):
+        QuestionnaireTree(self.treeWidget, father, field["value"], self.update_dynamic)
+
+    def update_dynamic(self, tests):
         self.callback(self.data)
 
 
@@ -355,14 +359,6 @@ class TestTree:
     def __init__(self, dock, tree_widget_item, data, update_dock):
         self.tests = data
         self.next_test_id = 0
-        self.test_template = [
-            {"name": "Name", "type": "text", "value": ""},
-            {"name": "Instructions", "type": "text", "value": ""},
-            {"name": "Staff", "type": "checklist",
-             "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-             "value": []},
-            {"name": "Duration", "type": "text", "value": "0"},
-            {"name": "Facility", "type": "text", "value": ""}, ]
         self.dock = dock
         self.call_dock = update_dock
 
@@ -485,3 +481,96 @@ class TestTree:
 
         self.call_dock(self.tests)
 
+
+class QuestionnaireTree:
+
+    def __init__(self, dock, tree_widget_item, data, update_dock):
+        self.questions = data
+        self.next_test_id = 0
+        self.dock = dock
+        self.call_dock = update_dock
+
+        add_button = QPushButton("Add")
+        add_button.clicked.connect(lambda: self.add_question(tree_widget_item))
+        add_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+
+        tree_widget_item.setText(0, "Questions")
+        self.dock.setItemWidget(tree_widget_item, 1, add_button)
+
+        # FIXME
+        if len(self.questions) > 0:
+            # self.load_data()      - in case of deleting "id" key
+            self.next_test_id = self.questions[-1]["id"]
+            self.rebuild_tree(tree_widget_item)
+
+    def add_question(self, root):
+        question_data = {
+            "id": self.get_next_id(),
+            "type": "",
+            "text": "",
+            # "options": [],
+        }
+        self.questions.append(question_data)
+
+        new_widget = QtWidgets.QTreeWidgetItem(root)
+        new_widget.setText(0, "New Question #" + str(question_data["id"]))
+
+        remove_button = QPushButton("Remove")
+        # FIXME
+        # remove_button.clicked.connect(lambda bool, id=question_data["id"]: self.rebuild_tree(root, id))
+        remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+        self.dock.setItemWidget(new_widget, 1, remove_button)
+
+        question_item = QtWidgets.QTreeWidgetItem(new_widget)
+
+        question_widget = QLineEdit()
+        question_widget.setPlaceholderText("Enter Question")
+        question_widget.setMinimumWidth(100)
+        question_widget.editingFinished.connect(
+            lambda: self.line_changed(question_data, "text", question_widget.text()))
+        self.dock.setItemWidget(question_item, 0, question_widget)
+
+        combo_widget = QComboBox()
+        options = ["Open", "Multiple Choice", "One Choice"]
+        for opt in options:
+            combo_widget.addItem(opt)
+        # FIXME
+        combo_widget.activated.connect(
+            lambda index: self.combo_changed(options, index, question_data, new_widget))
+        self.dock.setItemWidget(question_item, 1, combo_widget)
+
+    def line_changed(self, data, key, new_text):
+        data[key] = new_text
+
+        # self.call_dock(self.tests)
+
+    def combo_changed(self, options, index_changed, data, parent):
+        if options[index_changed] == "Open":
+            print(parent.childCount())
+            parent.child(0).takeChildren()
+            # for i in reversed(range(parent.childCount())):
+            #     parent.removeChild(parent.child(i))
+            data["type"] = "open"
+            # self.call_dock(self.tests)
+        else:
+            if options[index_changed] == "Multiple Choice":
+                data["type"] = "multi"
+            elif options[index_changed] == "One Choice":
+                data["type"] = "once choice"
+
+            answers_item = QtWidgets.QTreeWidgetItem(parent)
+            answers_item.setText(0, "Answers")
+
+            for i in range(6):
+                answer_item = QtWidgets.QTreeWidgetItem(answers_item)
+                answer_widget = QLineEdit()
+                answer_widget.setPlaceholderText("Answer #" + str(i))
+                # answer_item.setMinimumWidth(80)
+                # FIXME
+                # answer_widget.editingFinished.connect()
+
+                self.dock.setItemWidget(answer_item, 0, answer_widget)
+
+    def get_next_id(self):
+        self.next_test_id += 1
+        return self.next_test_id
