@@ -220,7 +220,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
 
 
-    def callback_from_window(self, content, window):
+    def callback_from_window(self, content):
         try:
             if content is None:
                 self.remove()  # remove node
