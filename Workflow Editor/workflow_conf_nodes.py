@@ -108,23 +108,8 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
-
-                # save and convert questions
-                # self.data["content"]["questions"] = []
-                # for question in content["Content"][1]["value"]:
-                #     if question["name"] == "Multiple Choice":
-                #         type = "multi"
-                #         self.data["content"]["questions"].append(
-                #             {question["name"]: {"type": type, "options": question["sub"], "text": question["text"]}})
-                #     elif question["name"] == "One Choice":
-                #         type = "one choice"
-                #         self.data["content"]["questions"].append(
-                #             {question["name"]: {"type": type, "options": question["sub"], "text": question["text"]}})
-                #     elif question["name"] == "Open":
-                #         type = "open"
-                #         self.data["content"]["questions"].append(
-                #             {question["name"]: {"type": type, "text": question["text"]}})
-                # save questionnaier number
+                self.data["content"]["questions"] = []
+                self.data["content"]["questions"] = content["Content"][1]["value"]
                 self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
 
         except Exception as e:
@@ -139,14 +124,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             "Content": [
                 {"name": "Questionnaire #", "type": "text", "value": self.data["content"]["questionnaire_number"]},
                 {"name": "Questions", "type": "q sub tree", "value":self.data["content"]["questions"]}
-                # {"name": "Questions", "type": "sub tree", "value": self.export_to_UI(self.data["content"]["questions"]),
-                #  "placeholder": "Enter Question", "options": [
-                #     {"name": "Select Type", "inputs": False},
-                #     {"name": "Multiple Choice", "inputs": True, "placeholder": "Enter Answer"},
-                #     {"name": "One Choice", "inputs": True, "placeholder": "Enter Answer"},
-                #     {"name": "Open", "inputs": False}
-                # ]
-                #  }
             ],
             "callback": self.callback_from_window
         }

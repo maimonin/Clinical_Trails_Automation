@@ -486,7 +486,7 @@ class QuestionnaireTree:
 
     def __init__(self, dock, tree_widget_item, data, update_dock):
         self.questions = data
-        self.next_test_id = 0
+        self.next_question_id = 0
         self.dock = dock
         self.call_dock = update_dock
 
@@ -497,16 +497,58 @@ class QuestionnaireTree:
         tree_widget_item.setText(0, "Questions")
         self.dock.setItemWidget(tree_widget_item, 1, add_button)
 
-        # FIXME
         if len(self.questions) > 0:
             # self.load_data()      - in case of deleting "id" key
-            self.next_test_id = self.questions[-1]["id"]
+            self.next_question_id = self.questions[-1]["id"]
             self.rebuild_tree(tree_widget_item)
+
+    def rebuild_tree(self, root, remove_id=-1):
+        root.takeChildren()
+
+        if remove_id > -1:
+            for i in range(len(self.questions)):
+                if self.questions[i]['id'] == remove_id:
+                    del self.questions[i]
+                    break
+
+        for question_data in self.questions:
+            new_widget = QtWidgets.QTreeWidgetItem(root)
+            new_widget.setText(0, "New Question #" + str(question_data["id"]))
+
+            remove_button = QPushButton("Remove")
+            remove_button.clicked.connect(lambda bool, id=question_data["id"]: self.rebuild_tree(root, id))
+            remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+            self.dock.setItemWidget(new_widget, 1, remove_button)
+
+            question_item = QtWidgets.QTreeWidgetItem(new_widget)
+
+            question_widget = QLineEdit()
+            question_widget.setPlaceholderText("Enter Question")
+            question_widget.setMinimumWidth(100)
+            question_widget.setText(question_data["text"])
+            question_widget.editingFinished.connect(
+                lambda widget=question_widget: self.line_changed(question_data, "text", widget))
+            self.dock.setItemWidget(question_item, 0, question_widget)
+
+            combo_widget = QComboBox()
+            options = ["Open", "Multiple Choice", "One Choice"]
+            for opt in options:
+                combo_widget.addItem(opt)
+            if question_data["type"] == "multi":
+                combo_widget.setCurrentIndex(1)
+                self.combo_changed(options, 1, question_data, new_widget)
+            elif question_data["type"] == "one choice":
+                combo_widget.setCurrentIndex(2)
+                self.combo_changed(options, 2, question_data, new_widget)
+
+            combo_widget.activated.connect(
+                lambda index: self.combo_changed(options, index, question_data, new_widget))
+            self.dock.setItemWidget(question_item, 1, combo_widget)
 
     def add_question(self, root):
         question_data = {
             "id": self.get_next_id(),
-            "type": "",
+            "type": "open",     #default
             "text": "",
             # "options": [],
         }
@@ -516,47 +558,50 @@ class QuestionnaireTree:
         new_widget.setText(0, "New Question #" + str(question_data["id"]))
 
         remove_button = QPushButton("Remove")
-        # FIXME
-        # remove_button.clicked.connect(lambda bool, id=question_data["id"]: self.rebuild_tree(root, id))
+        remove_button.clicked.connect(lambda bool, id=question_data["id"]: self.rebuild_tree(root, id))
         remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
         self.dock.setItemWidget(new_widget, 1, remove_button)
 
         question_item = QtWidgets.QTreeWidgetItem(new_widget)
-
         question_widget = QLineEdit()
         question_widget.setPlaceholderText("Enter Question")
         question_widget.setMinimumWidth(100)
         question_widget.editingFinished.connect(
-            lambda: self.line_changed(question_data, "text", question_widget.text()))
+            lambda widget=question_widget: self.line_changed(question_data, "text", widget))
         self.dock.setItemWidget(question_item, 0, question_widget)
 
         combo_widget = QComboBox()
         options = ["Open", "Multiple Choice", "One Choice"]
         for opt in options:
             combo_widget.addItem(opt)
-        # FIXME
         combo_widget.activated.connect(
             lambda index: self.combo_changed(options, index, question_data, new_widget))
+
         self.dock.setItemWidget(question_item, 1, combo_widget)
 
-    def line_changed(self, data, key, new_text):
-        data[key] = new_text
+    def line_changed(self, data, key, questionnaire_widget):
+        data[key] = questionnaire_widget.text()
 
-        # self.call_dock(self.tests)
+        self.call_dock(self.questions)
 
     def combo_changed(self, options, index_changed, data, parent):
         if options[index_changed] == "Open":
-            print(parent.childCount())
-            parent.child(0).takeChildren()
-            # for i in reversed(range(parent.childCount())):
-            #     parent.removeChild(parent.child(i))
+            if parent.childCount() == 2:
+                parent.removeChild(parent.child(1))
             data["type"] = "open"
-            # self.call_dock(self.tests)
+            self.call_dock(self.questions)
+
         else:
             if options[index_changed] == "Multiple Choice":
                 data["type"] = "multi"
             elif options[index_changed] == "One Choice":
                 data["type"] = "once choice"
+
+            if parent.childCount() == 2:
+                parent.removeChild(parent.child(1))
+
+            if "options" not in data.keys():
+                data["options"] = [None] * 6
 
             answers_item = QtWidgets.QTreeWidgetItem(parent)
             answers_item.setText(0, "Answers")
@@ -564,13 +609,19 @@ class QuestionnaireTree:
             for i in range(6):
                 answer_item = QtWidgets.QTreeWidgetItem(answers_item)
                 answer_widget = QLineEdit()
-                answer_widget.setPlaceholderText("Answer #" + str(i))
+                answer_widget.setPlaceholderText("Answer #" + str(i + 1))
+                if data["options"][i] is not None:
+                    answer_widget.setText(data["options"][i])
                 # answer_item.setMinimumWidth(80)
-                # FIXME
-                # answer_widget.editingFinished.connect()
-
+                answer_widget.editingFinished.connect(
+                    lambda index=i, widget=answer_widget: self.answer_changed(widget, index, data))
                 self.dock.setItemWidget(answer_item, 0, answer_widget)
 
+    def answer_changed(self, text_widget, answer_index, data):
+        data["options"][answer_index] = text_widget.text()
+
+        self.call_dock(self.questions)
+
     def get_next_id(self):
-        self.next_test_id += 1
-        return self.next_test_id
+        self.next_question_id += 1
+        return self.next_question_id
