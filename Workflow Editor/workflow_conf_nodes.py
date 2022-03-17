@@ -242,13 +242,10 @@ class WorkflowNode_DataEntry(WorkflowNode):
                         self.title = field["value"]
 
                 self.data["content"]["tests"] = []
-                # for test in content["Content"][0]["value"]:
-                #     self.data["content"]["tests"].append(
-                #         {"Test": {"name": copy.deepcopy(test[0]["value"]),
-                #                   "instructions": copy.deepcopy(test[1]["value"]),
-                #                   "staff": copy.deepcopy(test[2]["value"]),
-                #                   "duration": int(copy.deepcopy(test[3]["value"])),
-                #                   "facility": copy.deepcopy(test[4]["value"])}})
+                for test in content["Content"][0]["value"]:
+                    # FIXME : need to delete id key from dict (coupled with the dock data)
+                    self.data["content"]["tests"].append(test)
+                print(self.data["content"]["tests"])
 
         except Exception as e:
             dumpException(e)
@@ -264,37 +261,10 @@ class WorkflowNode_DataEntry(WorkflowNode):
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
             ],
             "Content": [
-            #     {"name": "Tests", "type": "dynamic sub tree", "value": self.export_to_UI(self.data["content"]["tests"]),
-            #      "root name": "Test",
-            #      "template": [
-            #          {"name": "Name", "type": "text", "value": ""},
-            #          {"name": "Instructions", "type": "text", "value": ""},
-            #          {"name": "Staff", "type": "checklist",
-            #           "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-            #           "value": []},
-            #          {"name": "Duration", "type": "text", "value": "0"},
-            #          {"name": "Facility", "type": "text", "value": ""},
-            #      ]}
-            ],
+                {"name": "Tests", "type": "test sub tree", "value": self.data["content"]["tests"]}],
             "callback": self.callback_from_window
         }
         return to_send
-
-    def export_to_UI(self, export):
-        result = []
-        for test in export:
-            result.append([
-                {"name": "Name", "type": "text", "value": test["Test"]["name"]},
-                {"name": "Instructions", "type": "text", "value": test["Test"]["instructions"]},
-                {"name": "Staff", "type": "checklist",
-                 "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-                 "value": test["Test"]["staff"]},
-                {"name": "Duration", "type": "text", "value": str(test["Test"]["duration"])},
-                {"name": "Facility", "type": "text", "value": test["Test"]["facility"]},
-            ])
-        return result
-
-
 
 
 @register_node(OP_NODE_DECISION)
