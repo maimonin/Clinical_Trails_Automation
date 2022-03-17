@@ -1,9 +1,9 @@
-import copy
 import datetime
 from time import sleep
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
+from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_TOP, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER
 from qtpy import QtCore
 
 from Windows.decisionNode.win_deciosionNode import Ui_Decision_Node
@@ -218,20 +218,9 @@ class WorkflowNode_DataEntry(WorkflowNode):
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(self.get_tree_build())
 
-        # from Windows.tests_builder import Ui_Test_Builder
-        # DataEntryBuild = QtWidgets.QDialog()
-        # ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild))
-        # ui.setupUi(DataEntryBuild)
-        # DataEntryBuild.exec_()
 
-    # def edit_nodes_details(self):
-    #     from Windows.tests_builder import Ui_Test_Builder
-    #     DataEntryBuild = QtWidgets.QDialog()
-    #     ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild), data=self.data)
-    #     ui.setupUi(DataEntryBuild)
-    #     DataEntryBuild.exec_()
 
-    def callback_from_window(self, content):
+    def callback_from_window(self, content, window):
         try:
             if content is None:
                 self.remove()  # remove node
@@ -274,8 +263,8 @@ class WorkflowNode_Decision(WorkflowNode):
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
 
-    def __init__(self, scene):
-        super().__init__(scene)
+    def __init__(self, scene, inputs=[1], outputs=[4,2]):
+        super().__init__(scene, inputs, outputs)
         # @data to send to engine.
         self.data = {
             "content": {
@@ -287,10 +276,11 @@ class WorkflowNode_Decision(WorkflowNode):
             }
         }
 
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
-        self.grNode = WorkflowGraphicWithIcon(self)
+        self.grNode = WorkflowGraphicSmallDiamond(self)
 
     def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
@@ -303,16 +293,6 @@ class WorkflowNode_Decision(WorkflowNode):
         if self.attributes_dock_callback is not None:
             self.attributes_dock_callback(self.get_tree_build())
 
-    #     Decision_Node = QtWidgets.QDialog()
-    #     ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node))
-    #     ui.setupUi(Decision_Node)
-    #     Decision_Node.exec_()
-    #
-    # def edit_nodes_details(self):
-    #     Decision_Node = QtWidgets.QDialog()
-    #     ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node), data=self.data)
-    #     ui.setupUi(Decision_Node)
-    #     Decision_Node.exec_()
 
     def callback_from_window(self, content):
         try:
@@ -328,7 +308,93 @@ class WorkflowNode_Decision(WorkflowNode):
 
         except Exception as e:
             dumpException(e)
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
+            ],
+            "Condition": [
+                # {"name": "Questions", "type": "edit window", "value": self.data["content"]["questions"]},
+            ],
+            "callback": self.callback_from_window
+        }
+        # TODO: create new window for conditions creation
 
+        return to_send
+    def initSettings(self):
+        """Initialize properties and socket information"""
+
+        self.socket_spacing = 22
+        TOP = 7
+        self.input_socket_position = 7 # Top - new position we creates
+        self.output_socket_position_good = RIGHT_CENTER
+        self.output_socket_position_bad = LEFT_CENTER
+
+        self.input_multi_edged = False
+        self.output_multi_edged = True
+        self.socket_offsets = {
+            LEFT_CENTER: 0,
+            RIGHT_CENTER: 0,
+            TOP : 0
+        }
+
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+        """
+        Create sockets for inputs and outputs
+
+        :param inputs: list of Socket Types (int)
+        :type inputs: ``list``
+        :param outputs: list of Socket Types (int)
+        :type outputs: ``list``
+        :param reset: if ``True`` destroys and removes old `Sockets`
+        :type reset: ``bool``
+        """
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'inputs') and hasattr(self, 'outputs'):
+                # remove grSockets from scene
+                for socket in (self.inputs + self.outputs):
+                    self.scene.grScene.removeItem(socket.grSocket)
+                self.inputs = []
+                self.outputs = []
+
+        # create new sockets
+        counter = 0
+        for item in inputs:
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.input_socket_position,
+                socket_type=item, multi_edges=self.input_multi_edged,
+                count_on_this_node_side=len(inputs), is_input=True
+            )
+            counter += 1
+            self.inputs.append(socket)
+
+        counter = 0
+        #bad socket
+        bad_socket = self.__class__.Socket_class(
+            node=self, index=counter, position=self.output_socket_position_bad,
+            socket_type=outputs[0], multi_edges=self.output_multi_edged,
+            count_on_this_node_side=len(outputs), is_input=False
+        )
+        self.outputs.append(bad_socket)
+
+        good_socket = self.__class__.Socket_class(
+            node=self, index=counter, position=self.output_socket_position_good,
+            socket_type=outputs[1], multi_edges=self.output_multi_edged,
+            count_on_this_node_side=len(outputs), is_input=False
+        )
+        self.outputs.append(good_socket)
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        return the only position for this node: on the right of this node
+        """
+        x = 0 if (position is LEFT_CENTER) else self.grNode.width if position is RIGHT_CENTER else self.grNode.width/2
+        y= 0 if position in (LEFT_CENTER,RIGHT_CENTER) else -self.grNode.height/2
+
+        return [x, y]
     def get_tree_build(self):
         to_send = {
             "Node Details": [
@@ -369,6 +435,9 @@ class WorkflowNode_SimpleString(WorkflowNode):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
+
+    def save_data_when_changed(self, text):
+        self.data = text
 
     def drop_action(self):
         if self.attributes_dock_callback is not None:
@@ -411,7 +480,156 @@ class WorkflowNode_SimpleString(WorkflowNode):
         }
         return to_send
 
+@register_node(OP_NODE_START)
+class WorkflowNode_Start(WorkflowNode):
+    op_icon = ""
+    op_code = OP_NODE_START
+    op_title = "Start"
+    content_label_objname = "workflow_node_start"
+    def __init__(self, scene, inputs=[], outputs=[2]):
+        super().__init__(scene, inputs, outputs)
 
+    def initInnerClasses(self):
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicCircleThin(self)
+
+    def drop_action(self):
+        pass
+
+    def callback_from_window(self, content, window):
+        pass
+    def initSettings(self):
+        """Initialize properties and socket information"""
+        self.socket_spacing = 22
+
+        self.output_socket_position = RIGHT_CENTER
+        self.output_multi_edged = True
+        self.socket_offsets = {
+            LEFT_BOTTOM: -1,
+            LEFT_CENTER: -1,
+            LEFT_TOP: -1,
+            RIGHT_BOTTOM: 1,
+            RIGHT_CENTER: 1,
+            RIGHT_TOP: 1,
+        }
+
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+        """
+        Create sockets for inputs and outputs
+
+        :param inputs: list of Socket Types (int)
+        :type inputs: ``list``
+        :param outputs: list of Socket Types (int)
+        :type outputs: ``list``
+        :param reset: if ``True`` destroys and removes old `Sockets`
+        :type reset: ``bool``
+        """
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'outputs'):
+                # remove grSockets from scene
+                for socket in (self.outputs):
+                    self.scene.grScene.removeItem(socket.grSocket)
+                self.outputs = []
+
+        # create new sockets
+
+        counter = 0
+        for item in outputs:
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.output_socket_position,
+                socket_type=item, multi_edges=self.output_multi_edged,
+                count_on_this_node_side=len(outputs), is_input=False
+            )
+            counter += 1
+            self.outputs.append(socket)
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        return the only position for this node: on the right of this node
+        """
+        x = self.grNode.radius
+        y= 0
+
+        return [x, y]
+
+@register_node(OP_NODE_FINISH)
+class WorkflowNode_Finish(WorkflowNode):
+    op_icon = ""
+    op_code = OP_NODE_FINISH
+    op_title = "finish"
+    content_label_objname = "workflow_node_finish"
+    def __init__(self, scene, inputs=[2], outputs=[]):
+        super().__init__(scene, inputs, outputs)
+
+    def initInnerClasses(self):
+        # self.content = WorkflowContent_with_button(self, )
+        # self.content.connect_callback(self.edit_nodes_details)
+        self.grNode = WorkflowGraphicCircleThick(self)
+
+    def drop_action(self):
+        pass
+
+    def edit_nodes_details(self):
+        pass
+
+    def callback_from_window(self, content, window):
+        pass
+    def initSettings(self):
+        """Initialize properties and socket information"""
+        self.socket_spacing = 22
+
+        self.input_socket_position = LEFT_CENTER
+        self.input_multi_edged = True
+        self.socket_offsets = {
+            LEFT_BOTTOM: -1,
+            LEFT_CENTER: -1,
+            LEFT_TOP: -1,
+            RIGHT_BOTTOM: 1,
+            RIGHT_CENTER: 1,
+            RIGHT_TOP: 1,
+        }
+
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+        """
+        Create sockets for inputs and outputs
+
+        :param inputs: list of Socket Types (int)
+        :type inputs: ``list``
+        :param outputs: list of Socket Types (int)
+        :type outputs: ``list``
+        :param reset: if ``True`` destroys and removes old `Sockets`
+        :type reset: ``bool``
+        """
+
+        if reset:
+            # clear old sockets
+            if hasattr(self, 'inputs'):
+                # remove grSockets from scene
+                for socket in (self.inputs):
+                    self.scene.grScene.removeItem(socket.grSocket)
+                self.inputs = []
+
+        # create new sockets
+
+        counter = 0
+        for item in inputs:
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.input_socket_position,
+                socket_type=item, multi_edges=self.input_multi_edged,
+                count_on_this_node_side=len(inputs), is_input=True
+            )
+            counter += 1
+            self.inputs.append(socket)
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        return the only position for this node: on the right of this node
+        """
+        x = -self.grNode.radius
+        y= 0
+
+        return [x, y]
 @register_node(OP_NODE_COMPLEX)
 class WorkflowNode_ComplexNode(WorkflowNode):
     op_icon = "assets/icons/complex_blue2.png"
