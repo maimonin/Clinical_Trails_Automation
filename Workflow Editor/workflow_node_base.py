@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath, QPixmap
 from PyQt5.QtWidgets import *
 from nodeeditor.node_node import Node
@@ -6,6 +6,7 @@ from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
+from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -77,7 +78,177 @@ class WorkflowGraphicNode(QDMGraphicsNode):
             painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
             painter.drawPath(path_outline.simplified())
 
+class WorkflowGraphicCircleThin(QDMGraphicsNode):
+    @property
+    def title(self):
+        """title of this `Node`
 
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return ""
+
+    @title.setter
+    def title(self, value):
+        pass
+    def initTitle(self):
+        pass
+    def initUI(self):
+        """Set up this ``QGraphicsItem``"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+        self.initContent()
+    def initSizes(self):
+
+
+        super().initSizes()
+        self.radius = 30
+        self.width=80
+        self.height=80
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._color = QColor("#2d3436")
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(2)
+
+        self._brush_background_color = QColor("#2ecc71")
+        self._brush_background_color.setAlpha(1)
+        self._brush_background = QBrush(self._brush_background_color)
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        #node
+        painter.setPen(self._pen_default)
+        painter.setBrush(self._brush_background)
+        painter.drawEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(
+            -self.radius, -self.radius, self.radius * 2, self.radius * 2
+        ).normalized()
+
+class WorkflowGraphicCircleThick(QDMGraphicsNode):
+    @property
+    def title(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return ""
+
+    @title.setter
+    def title(self, value):
+        pass
+    def initTitle(self):
+        pass
+    def initUI(self):
+        """Set up this ``QGraphicsItem``"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+        self.initContent()
+    def initSizes(self):
+
+
+        super().initSizes()
+        self.radius = 30
+        self.width=80
+        self.height=80
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._color = QColor("#2d3436")
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(7)
+
+        self._brush_background_color = QColor("#2ecc71")
+        self._brush_background_color.setAlpha(1)
+        self._brush_background = QBrush(self._brush_background_color)
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        #node
+        painter.setPen(self._pen_default)
+        painter.setBrush(self._brush_background)
+        painter.drawEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(
+            -self.radius, -self.radius, self.radius * 2, self.radius * 2
+        ).normalized()
+
+class WorkflowGraphicSmallDiamond(QDMGraphicsNode):
+    @property
+    def title(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return ""
+
+    @title.setter
+    def title(self, value):
+        pass
+    def initTitle(self):
+        pass
+    def initUI(self):
+        """Set up this ``QGraphicsItem``"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+        self.setAcceptHoverEvents(True)
+
+        self.initContent()
+    def initSizes(self):
+
+
+        super().initSizes()
+        self.width=50
+        self.height=55
+    def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
+        self._color = QColor("#2d3436")
+        self._pen_default = QPen(self._color)
+        self._pen_default.setWidthF(2)
+
+        self._color = QColor("#2d3436")
+        self._pen_selected = QPen(self._color)
+        self._pen_selected.setWidthF(3)
+
+        self._brush_background_color = QColor("#2ecc71")
+        self._brush_background = QBrush(self._brush_background_color)
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
+        #node
+        path_node = QPainterPath()
+
+        path_node.setFillRule(Qt.WindingFill)
+        path_node.moveTo(0,0)
+        path_node.lineTo(self.width/2,-self.height/2)
+        path_node.lineTo(self.width, 0)
+        path_node.lineTo(self.width / 2, self.height / 2)
+        painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+        painter.setBrush(self._brush_background)
+        painter.drawPath(path_node.simplified())
+
+    # def boundingRect(self) -> QRectF:
+    #     """Defining Qt' bounding rectangle"""
+    #     return QRectF(
+    #      0,-self.height/2, self.width, self.height
+    #     ).normalized()
+
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(
+            0,
+            -self.height/2,
+            self.width,
+            self.height
+        ).normalized()
 class WorkflowGraphicWithIcon(QDMGraphicsNode):
 
     @property
@@ -273,6 +444,50 @@ class WorkflowNode(Node):
     def initSettings(self):
         super().initSettings()
         self.input_multi_edged = True
+        self.input_socket_position = LEFT_CENTER
+        self.output_socket_position = RIGHT_CENTER
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+        """
+        Get the relative `x, y` position of a :class:`~nodeeditor.node_socket.Socket`. This is used for placing
+        the `Graphics Sockets` on `Graphics Node`.
+
+        :param index: Order number of the Socket. (0, 1, 2, ...)
+        :type index: ``int``
+        :param position: `Socket Position Constant` describing where the Socket is located. See :ref:`socket-position-constants`
+        :type position: ``int``
+        :param num_out_of: Total number of Sockets on this `Socket Position`
+        :type num_out_of: ``int``
+        :return: Position of described Socket on the `Node`
+        :rtype: ``x, y``
+        """
+        x = self.socket_offsets[position] if (position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM)) else self.grNode.width + self.socket_offsets[position]
+
+        if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
+            # start from bottom
+            y = self.grNode.height - self.grNode.edge_roundness - index * self.socket_spacing
+        elif position in (LEFT_CENTER, RIGHT_CENTER):
+            num_sockets = num_out_of
+            node_height = self.grNode.height
+            top_offset = (self.grNode.title_height - (self.grNode.edge_roundness*2))/2
+            available_height = node_height - top_offset
+
+            total_height_of_all_sockets = num_sockets * self.socket_spacing
+            new_top = available_height - total_height_of_all_sockets
+
+            # y = top_offset + index * self.socket_spacing + new_top / 2
+            y = top_offset + available_height/2.0 + (index-0.5)*self.socket_spacing
+            if num_sockets > 1:
+                y -= self.socket_spacing * (num_sockets-1)/2
+
+        elif position in (LEFT_TOP, RIGHT_TOP):
+            # start from top
+            y = self.grNode.title_height + self.grNode.title_vertical_padding + self.grNode.edge_roundness + index * self.socket_spacing
+        else:
+            # this should never happen
+            y = 0
+
+        return [x, y]
 
     def drop_action(self):
         pass

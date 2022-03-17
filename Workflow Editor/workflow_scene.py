@@ -21,8 +21,8 @@ class WorkflowScene(Scene):
         super().onItemSelected(silent)
 
         print(f"WorkflowScene::onItemSelected::{self.getSelectedItems()}")
-        if len(self.getSelectedItems()) > 0:
-            self.getSelectedItems()[0].call_dock()
+        # if len(self.getSelectedItems()) > 0:
+        #     self.getSelectedItems()[0].call_dock()
 
     def onItemsDeselected(self, silent: bool = False):
         """
