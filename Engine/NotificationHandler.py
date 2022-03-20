@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from Logger import log
@@ -8,17 +9,20 @@ def init():
     connections = {}
 
 
-async def send_notification_by_id(id, message):
+def send_notification_by_id(id, message):
+    loop=None
+    try:
+        loop=asyncio.get_event_loop()
+    except:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
     if connections[id] is not None:
         print('sending')
-        await connections[id].send(json.dumps(message))
+        asyncio.get_event_loop().run_until_complete(connections[id].send(json.dumps(message)))
         print('sent')
 
-async def get_notification_by_id(message):
-    if connections[id] is not None:
-        return json.loads(await connections[id].recv())
 
-async def send_questionnaire(questions, id):
-    await send_notification_by_id(id, {'type': 'questionnaire', 'questions': questions})
+
+def send_questionnaire(questions, id, number):
+    send_notification_by_id(id, {'type': 'questionnaire', 'number':number,'questions': questions})
     log("sending questionnaire")
-    return get_notification_by_id(id)

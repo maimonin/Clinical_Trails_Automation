@@ -1,5 +1,5 @@
-# Importing the relevant libraries
 import json
+import threading
 from _thread import start_new_thread
 from asyncio import sleep
 
@@ -20,22 +20,20 @@ async def get_notifications(websocket, path):
     print("A client just connected")
     # Handle incoming messages
     try:
-        message= await websocket.recv()
-        data_dict = json.loads(message)
-        print(data_dict)
-        if(data_dict['type']=='register'):
-            NotificationHandler.connections[data_dict['id']]=websocket
-            await asyncio.create_task(register_user(data_dict))
-        elif (data_dict['type'] =='add workflow'):
-            Server.workflows[data_dict["workflow_id"]]=new_workflow(data_dict)
-        elif (data_dict['type'] =='add answers'):
-            Data.add_questionnaire(data_dict, data_dict['id'])
+        async for message in websocket:
+            data_dict = json.loads(message)
+            print(data_dict)
+            if(data_dict['type']=='register'):
+                NotificationHandler.connections[data_dict['id']]=websocket
+                threading.Thread(target=register_user, args=(data_dict,)).start()
+            elif (data_dict['type'] =='add workflow'):
+                Server.workflows[data_dict["workflow_id"]]=new_workflow(data_dict)
+            elif (data_dict['type'] =='add answers'):
+                Data.add_questionnaire(data_dict, data_dict['id'])
     # Handle disconnecting clients
     except websockets.exceptions.ConnectionClosed as e:
         print(e)
         print("A client just disconnected")
-    while True:
-        await sleep(10000000)
 
 def Main():
     open('Logger.txt', 'w').close()
@@ -50,4 +48,8 @@ def Main():
 
 if __name__ == '__main__':
     Main()
+
+
+
+
 

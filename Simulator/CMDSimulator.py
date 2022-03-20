@@ -3,6 +3,7 @@ import json
 import socket
 import sys
 import threading
+from time import sleep
 
 import websockets
 from PyQt5.QtWidgets import QApplication
@@ -75,14 +76,17 @@ def handle_questionnaire(questions, participant):
     return answers
 
 
-async def get_data(s):
-    return await s.recv()
 
 
-async def actor_simulation(user, s):
+def actor_simulation(user, s):
     try:
+
         while True:
-            data = await get_data(s)
+            task = asyncio.create_task(s.recv())
+            print(task)
+            while not task.done():
+                sleep(5)
+            data= task.result()
             print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
@@ -91,7 +95,7 @@ async def actor_simulation(user, s):
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], user)
-                await s.send(json.dumps({"answers": ans}))
+                asyncio.get_event_loop().run_until_complete(s.send(json.dumps({"answers": ans})))
             elif data_json['type'] == 'test':
                 lock.acquire()
                 print(
@@ -104,7 +108,7 @@ async def actor_simulation(user, s):
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")
                 lock.release()
-                await s.send(json.dumps({"test": data_json['test']['name'], 'result': val}))
+                asyncio.get_event_loop().run_until_complete(s.send(json.dumps({"test": data_json['test']['name'], 'result': val})))
             elif data_json['type'] == 'terminate':
                 s.close()
                 break
@@ -123,56 +127,56 @@ async def register_user(user, s):
 
 
 
-
-async def Main():
-    threads = []
-    url = "ws://127.0.0.1:7890"
-    path = input("workflow path:")
-    try:
-        f = open(path)
-        data = json.load(f)
-        print(data)
-        data['type'] = "add workflow"
-        data['workflow_id'] = 0
-        s = await websockets.connect(url)
-        await s.send(json.dumps(data))
-    except Exception as e:
-        dumpException(e)
-    for user in users:
-        s = await websockets.connect(url)
-        await register_user(user, s)
-        user['s'] = s
-    for user in users:
-        asyncio.create_task(actor_simulation(user, user['s']))
-    while True:
-        lock.acquire()
-        inp= input('want to register user? (y/n)')
-        lock.release()
-        if inp=='y':
-            lock.acquire()
-            id=int(input('id'))
-            gender = input('gender')
-            age=int(input('age'))
-            lock.release()
-            user = {"name": "participant " + str(id), "role": "participant", "workflow": 0,
-                    "sex": gender, "age": age,
-                    "id": id}
-            url = "ws://127.0.0.1:7890"
-            is_cn=True
-            while is_cn:
-                try:
-                    s = await websockets.connect(url)
-                    await register_user(user, s)
-                    user['s'] = s
-                    asyncio.create_task(actor_simulation(user, user['s']))
-                    is_cn=False
-                except:
-                    continue
-            lock.acquire()
-            print('registered')
-            lock.release()
-        await asyncio.sleep(10)
-
-
-
-asyncio.run(Main())
+#
+# async def Main():
+#     threads = []
+#     url = "ws://127.0.0.1:7890"
+#     path = input("workflow path:")
+#     try:
+#         f = open(path)
+#         data = json.load(f)
+#         print(data)
+#         data['type'] = "add workflow"
+#         data['workflow_id'] = 0
+#         s = await websockets.connect(url)
+#         await s.send(json.dumps(data))
+#     except Exception as e:
+#         dumpException(e)
+#     for user in users:
+#         s = await websockets.connect(url)
+#         await register_user(user, s)
+#         user['s'] = s
+#     for user in users:
+#         asyncio.create_task(actor_simulation(user, user['s']))
+#     while True:
+#         lock.acquire()
+#         inp= input('want to register user? (y/n)')
+#         lock.release()
+#         if inp=='y':
+#             lock.acquire()
+#             id=int(input('id'))
+#             gender = input('gender')
+#             age=int(input('age'))
+#             lock.release()
+#             user = {"name": "participant " + str(id), "role": "participant", "workflow": 0,
+#                     "sex": gender, "age": age,
+#                     "id": id}
+#             url = "ws://127.0.0.1:7890"
+#             is_cn=True
+#             while is_cn:
+#                 try:
+#                     s = await websockets.connect(url)
+#                     await register_user(user, s)
+#                     user['s'] = s
+#                     asyncio.create_task(actor_simulation(user, user['s']))
+#                     is_cn=False
+#                 except:
+#                     continue
+#             lock.acquire()
+#             print('registered')
+#             lock.release()
+#         await asyncio.sleep(10)
+#
+#
+#
+# asyncio.run(Main())

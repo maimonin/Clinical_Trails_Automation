@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import threading
 import time
@@ -20,11 +19,11 @@ class Edge(ABC):
         pass
 
     @abstractmethod
-    async def notify(self) -> None:
+    def notify(self) -> None:
         pass
 
     @abstractmethod
-    async def exec(self) -> None:
+    def exec(self) -> None:
         pass
 
     @abstractmethod
@@ -47,15 +46,17 @@ class RelativeTimeEdge(Edge):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    async def exec(self) -> None:
-        await self.notify()
+    def exec(self) -> None:
+        self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+            threads.append(threading.Thread(target=next_node.exec, args=()))
         for t in threads:
-            await t
+            t.start()
+        for t in threads:
+            t.join()
 
-    async def notify(self) -> None:
+    def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
@@ -85,15 +86,17 @@ class FixedTimeEdge(Edge):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    async def exec(self) -> None:
-        await self.notify()
+    def exec(self) -> None:
+        self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+            threads.append(threading.Thread(target=next_node.exec, args=()))
         for t in threads:
-            await t
+            t.start()
+        for t in threads:
+            t.join()
 
-    async def notify(self) -> None:
+    def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
@@ -125,15 +128,17 @@ class NormalEdge(Edge):
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
-    async def exec(self) -> None:
-        await self.notify()
+    def exec(self) -> None:
+        self.notify()
         threads = []
         for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+            threads.append(threading.Thread(target=next_node.exec, args=()))
         for t in threads:
-            await t
+            t.start()
+        for t in threads:
+            t.join()
 
-    async def notify(self) -> None:
+    def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []

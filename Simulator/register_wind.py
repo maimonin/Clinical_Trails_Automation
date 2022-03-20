@@ -50,38 +50,9 @@ class Ui_RegisterScreen(object):
         self.retranslateUi(RegisterScreen)
         QtCore.QMetaObject.connectSlotsByName(RegisterScreen)
 
-    async def start_json(self):
-        threads = []
-        url = "ws://127.0.0.1:7890"
-        loop = asyncio.get_event_loop()
-        for user in users:
-            s = await websockets.connect(url)
-            await register_user(user, s)
-            user['s'] = s
-        for user in users:
-            asyncio.create_task(actor_simulation(user, user['s']))
-        path = input("workflow path:")
-        try:
-            f = open(path)
-            data = json.load(f)
-            print(data)
-            data['sender'] = "editor"
-            data['workflow_id'] = 0
-            s = await websockets.connect(url)
-            await s.send(json.dumps(data))
-        except Exception as e:
-            dumpException(e)
 
-    @sync
-    async def add_line(self):
-        url = "ws://127.0.0.1:7890"
-        s = await websockets.connect(url)
-        user = {"name": "participant " + self.textEditId.toPlainText(), "role": "participant", "workflow": 0,
-                "sex": self.comboBox.currentText(), "age": int(self.textEditage.toPlainText()),
-                "id": int(self.textEditId.toPlainText())}
-        await register_user(user, s)
-        user['s'] = s
-        asyncio.create_task(actor_simulation(user, user['s']))
+    def add_line(self):
+        threading.Thread(target=start_participant, args=(int(self.textEditId.toPlainText()),int(self.textEditage.toPlainText()),self.comboBox.currentText())).start()
 
     def retranslateUi(self, RegisterScreen):
         _translate = QtCore.QCoreApplication.translate
@@ -94,10 +65,45 @@ class Ui_RegisterScreen(object):
         self.pushButton.setText(_translate("RegisterScreen", "register"))
         self.startButton.setText(_translate("RegisterScreen", "start"))
 
+def start_participant(id, age, gender):
+    url = "ws://127.0.0.1:7890"
+    loop = asyncio.new_event_loop()
+    s=loop.run_until_complete(websockets.connect(url))
+    user = {"name": "participant " + str(id), "role": "participant", "workflow": 0,
+            "sex":gender , "age": age,
+            "id": id }
+    loop.run_until_complete(register_user(user, s))
+    user['s'] = s
+    actor_simulation(user, user['s'])
+
+async def start_json():
+    threads = []
+    url = "ws://127.0.0.1:7890"
+    for user in users:
+        s = await websockets.connect(url)
+        await register_user(user, s)
+        user['s'] = s
+    for user in users:
+        threading.Thread(target=start_task, args=(user,)).start()
+    path = input("workflow path:")
+    try:
+        f = open(path)
+        data = json.load(f)
+        print(data)
+        data['sender'] = "editor"
+        data['workflow_id'] = 0
+        s = await websockets.connect(url)
+        await s.send(json.dumps(data))
+    except Exception as e:
+        dumpException(e)
+
+def start_task(user):
+    actor_simulation(user, user['s'])
 
 async def main():
     import sys
     url = "ws://127.0.0.1:7890"
+    await start_json()
     app = QtWidgets.QApplication(sys.argv)
     RegisterScreen = QtWidgets.QDialog()
     ui = Ui_RegisterScreen()
