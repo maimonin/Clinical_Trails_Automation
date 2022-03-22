@@ -51,42 +51,16 @@ def parse_Test(node_dict):
     return node
 
 
-def parse_trait_condition(satisfy, trait):
-    if satisfy['type'] == 'range':
-        values = satisfy['value']
-        return lambda patient: True if values['min'] <= patient.get_traits()[trait] <= values['max'] else False
-    else:
-        return lambda patient: True if patient.get_traits()[trait] == satisfy['value'] else False
 
 
-def parse_questionnaire_condition(questionnaire_number, question_number, accepted_answers):
-    return lambda patient: Data.check_data(patient, questionnaire_number, question_number, accepted_answers)
 
-
-def parse_test_condition(satisfy, test_name):
-    if satisfy['type'] == 'range':
-        values = satisfy['value']
-        return lambda patient: True if values['min'] <= int(get_test_result(patient, test_name)) <= values[
-            'max'] else False
-    else:
-        return lambda patient: True if get_test_result(patient, test_name) == satisfy['value'] else False
 
 
 def parse_Decision(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
     conditions = content['condition']
-    combined_condition = []
-    for condition in conditions:
-        if condition['type'].rstrip() == 'trait condition':
-            combined_condition.append(parse_trait_condition(condition['satisfy'], condition['test']))
-        elif condition['type'].rstrip() == 'questionnaire condition':
-            combined_condition.append(
-                parse_questionnaire_condition(condition['questionnaireNumber'], condition['questionNumber'],
-                                              condition['acceptedAnswers']))
-        elif condition['type'].rstrip() == 'test condition':
-            combined_condition.append(parse_test_condition(condition['satisfy'], condition['test']))
-    node = Decision(node_dict['id'], node_details['title'], combined_condition)
+    node = Decision(node_dict['id'], node_details['title'], conditions)
     return node
 
 

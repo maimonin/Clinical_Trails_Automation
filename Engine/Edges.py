@@ -3,6 +3,7 @@ import datetime
 import threading
 import time
 from abc import ABC, abstractmethod
+from asyncio import sleep
 from typing import List
 
 from Users import User
@@ -61,7 +62,7 @@ class RelativeTimeEdge(Edge):
         self.participants = []
         self.lock.release()
         if self.min_time is not None:
-            time.sleep(self.min_time)
+            await sleep(self.min_time)
         for participant in participants2:
             for next_node in self.next_nodes:
                 next_node.attach(participant)
@@ -103,7 +104,7 @@ class FixedTimeEdge(Edge):
             print("error node is late")
             return
         if self.min_time is not None:
-            time.sleep(self.min_time.total_seconds() - x.total_seconds())
+            await sleep(self.min_time.total_seconds() - x.total_seconds())
         for participant in participants2:
             for next_node in self.next_nodes:
                 next_node.attach(participant)

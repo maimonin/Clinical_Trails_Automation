@@ -3,7 +3,7 @@ import time
 from random import randint
 
 from Logger import log
-from NotificationHandler import send_notification_by_id, get_notification_by_id
+from NotificationHandler import send_notification_by_id
 from Users import User
 
 
@@ -74,5 +74,3 @@ async def take_test(user_id, test, in_charge):
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
     r = get_role(in_charge)
     await send_notification_by_id(user_id, form)
-    results = await get_notification_by_id(r.id)
-    return json.loads(results)

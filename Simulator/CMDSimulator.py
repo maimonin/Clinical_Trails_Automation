@@ -14,7 +14,6 @@ from qtpy import QtWidgets
 
 user_id = 0
 users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
-         {"name": "nurse2", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
@@ -82,7 +81,10 @@ async def get_data(s):
 async def actor_simulation(user, s):
     try:
         while True:
-            data = await get_data(s)
+            try:
+                data = await get_data(s)
+            except:
+                break
             print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':

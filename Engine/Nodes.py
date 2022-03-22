@@ -5,7 +5,9 @@ import time
 from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
-from Data import add_questionnaire, add_test
+
+import Data
+from Data import add_questionnaire, add_test, add_test_form, parse_test_condition
 from Engine.Users import User
 from NotificationHandler import send_notification_by_id, send_questionnaire
 from user_lists import get_role, take_test
@@ -123,14 +125,23 @@ class Decision(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            satisfies = True
-            for condition in self.conditions:
-                if not condition(participant):
-                    satisfies = False
-            if satisfies:
+            if await self.get_reaults(participant):
                 self.next_nodes[0].attach(participant)
             else:
                 self.next_nodes[1].attach(participant)
+
+    async def get_reaults(self, participant):
+        for condition in self.conditions:
+            if condition['type'].rstrip() == 'trait condition':
+                if not (Data.parse_trait_condition(participant, condition['satisfy'], condition['test'])):
+                    return False
+            elif condition['type'].rstrip() == 'questionnaire condition':
+                if not (await Data.parse_questionnaire_condition(participant, condition['questionnaireNumber'], condition['questionNumber'], condition['acceptedAnswers'])):
+                    return False
+            elif condition['type'].rstrip() == 'test condition':
+                if not (await parse_test_condition(participant, condition['satisfy'], condition['test'])):
+                    return False
+        return True
 
 
 class StringNode(Node):
@@ -215,11 +226,8 @@ class TestNode(Node):
         self.lock.release()
         for participant in participants2:
             for test in self.tests:
-                results = await take_test(participant.id, test, self.in_charge, participant.socket)
-                if results is None:
-                    print("come back tomorrow")
-                    break
-                add_test(test.name, results, participant)
+                await take_test(participant.id, test, self.in_charge, participant.socket)
+                add_test_form(test.name, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)
@@ -308,3 +316,5 @@ class ComplexNode(Node):
 
     def has_actors(self):
         return len(self.participants) != 0
+
+
