@@ -38,7 +38,7 @@ class Node(ABC):
 def end_test(node, participants):
     if len(node.next_nodes) == 0:
         for participant in participants:
-            participant.socket.send((json.dumps({'type': 'terminate'}) + '$').encode('ascii'))
+            send_notification_by_id(participant.id,{'type': 'terminate'})
 
 
 def set_time(node, min_time, max_time):
@@ -79,9 +79,7 @@ class Questionnaire(Node):
         self.lock.release()
         for participant in participants2:
             # send questionnaire to participant
-            answers = await send_questionnaire(self.form, participant.id)
-            answers.update({'questionnaire_number': self.number})
-            add_questionnaire(answers, participant)
+            await send_questionnaire(self.form, participant.id)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
         end_test(self, participants2)
