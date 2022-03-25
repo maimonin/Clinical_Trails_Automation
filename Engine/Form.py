@@ -4,7 +4,7 @@ class Form:
         self.questions = questions
 
     def __init__(self, json):
-        self.questionnaire_id = json["questionnaire_number"]
+        self.questionnaire_number = json["questionnaire_number"]
         questions = []
         i = 1
         for question in json["questions"]:

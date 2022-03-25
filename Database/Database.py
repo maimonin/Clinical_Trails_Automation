@@ -229,7 +229,7 @@ def addForm(form):
         query = """INSERT INTO Questions (form_id, number, question, type)
         VALUES 
            (?, ?, ?, ?);"""
-        question_data = (form.questionnaire_number, question["number"], question["text"])
+        question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
         cur.execute(query, question_data)
         if question["type"] != open:
             i = 0

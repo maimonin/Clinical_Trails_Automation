@@ -38,9 +38,9 @@ def parse_Questionnaire(node_dict):
     print("parsing questionnaire start")
     content = node_dict['content']
     node_details = content['node_details']
-    node = Questionnaire(node_dict['id'], node_details['title'], node_details['time'], content['questions'],
+    node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
-    form = Form(content['questions'])
+    form = Form(content)
     Database.addForm(form)
     print("parsing questionnaire end")
     return node
