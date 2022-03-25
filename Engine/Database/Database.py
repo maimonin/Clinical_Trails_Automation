@@ -38,7 +38,6 @@ def insert_to_table(conn, query, data):
 
 
 def init_tables():
-    print("data init start")
     create_Actors_To_Notify_table = """CREATE TABLE IF NOT EXISTS "Actors_To_Notify" (
             "notification_id"	INTEGER NOT NULL,
             "actor_name"	TEXT,
@@ -199,7 +198,6 @@ def init_tables():
     else:
         print("Error! cannot create the database connection.")
     conn.close()
-    print("data init end")
 
 
 def getForm(form_id):
@@ -300,3 +298,12 @@ def addStaff(name, role):
                    (?, ?);"""
     staff_data = (name, role)
     insert_to_table(conn, query, staff_data)
+
+
+def addAnswer(form_id, question_num, user_id, time_taken, answer):
+    conn = create_connection()
+    query = """INSERT INTO Answers (form_id, question_num, user_id, time_taken, answer)
+                    VALUES 
+                       (?, ?, ?, ?, ?);"""
+    answer_data = (form_id, question_num, user_id, time_taken, answer)
+    insert_to_table(conn, query, answer_data)

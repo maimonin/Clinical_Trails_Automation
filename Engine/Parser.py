@@ -34,7 +34,6 @@ def get_data(s):
 
 
 def parse_Questionnaire(node_dict):
-    print("parsing questionnaire start")
     content = node_dict['content']
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
@@ -42,7 +41,6 @@ def parse_Questionnaire(node_dict):
     form = Form(content)
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
-    print("parsing questionnaire end")
     return node
 
 
