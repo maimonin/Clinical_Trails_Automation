@@ -27,6 +27,16 @@ def execute_sql(conn, query):
         print(e)
 
 
+def insert_to_table(conn, query, data):
+    cur = conn.cursor()
+    try:
+        cur.execute(query, data)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error:
+        return
+
+
 def init_tables():
     print("data init start")
     create_Actors_To_Notify_table = """CREATE TABLE IF NOT EXISTS "Actors_To_Notify" (
@@ -41,8 +51,8 @@ def init_tables():
             "number"	INTEGER NOT NULL,
             "option_num"	INTEGER NOT NULL,
             "option"	TEXT NOT NULL,
-            FOREIGN KEY("form_id") REFERENCES "Questions"("form_id")
-            PRIMARY KEY("form_id","number","option_num"),
+            FOREIGN KEY("form_id") REFERENCES "Questions"("form_id"),
+            PRIMARY KEY("form_id","number","option_num")
             );"""
 
     create_Answers_table = """CREATE TABLE IF NOT EXISTS "Answers" (
@@ -170,6 +180,7 @@ def init_tables():
     conn = create_connection()
     if conn is not None:
         execute_sql(conn, create_Actors_To_Notify_table)
+        execute_sql(conn, create_Answer_Options_table)
         execute_sql(conn, create_Answers_table)
         execute_sql(conn, create_Complex_Nodes_table)
         execute_sql(conn, create_Decisions_table)
@@ -255,31 +266,37 @@ def addForm(form):
 
 def addQuestionnaire(id, form_id, node):
     conn = create_connection()
-    cur = conn.cursor()
     query = """INSERT INTO Questionnaires (id, form_id)
                 VALUES 
                    (?, ?);"""
     node_data = (id, form_id)
-    try:
-        cur.execute(query, node_data)
-        conn.commit()
-        conn.close()
-    except sqlite3.Error:
-        return
+    insert_to_table(conn, query, node_data)
     questionnaires[id] = node
 
 
 def addWorkflow(id, name):
     conn = create_connection()
-    cur = conn.cursor()
     query = """INSERT INTO Workflows (id, name)
                 VALUES 
                    (?, ?);"""
-    node_data = (id, name)
-    try:
-        cur.execute(query, node_data)
-        conn.commit()
-        conn.close()
-    except sqlite3.Error:
-        return
+    data = (id, name)
+    insert_to_table(conn, query, data)
     workflows[id] = [id, name]
+
+
+def addParticipant(id, name, gender, age, workflow):
+    conn = create_connection()
+    query = """INSERT INTO Participants (id, name, gender, age, workflow)
+                VALUES 
+                   (?, ?, ?, ?, ?);"""
+    participant_data = (id, name, gender, age, workflow)
+    insert_to_table(conn, query, participant_data)
+
+
+def addStaff(name, role):
+    conn = create_connection()
+    query = """INSERT INTO Staff (name, role)
+                VALUES 
+                   (?, ?);"""
+    staff_data = (name, role)
+    insert_to_table(conn, query, staff_data)
