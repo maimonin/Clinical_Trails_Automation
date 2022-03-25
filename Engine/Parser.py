@@ -5,7 +5,6 @@ from _thread import *
 import threading
 
 import Data
-from Data import get_test_result
 from Database import Database
 from Edges import NormalEdge, RelativeTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode

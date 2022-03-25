@@ -7,7 +7,7 @@ forms = {}
 def create_connection():
     conn = None
     try:
-        conn = sqlite3.connect('data.db')
+        conn = sqlite3.connect('Database/data.db')
         return conn
     except sqlite3.Error as e:
         print(e)
@@ -38,8 +38,8 @@ def init_tables():
             "number"	INTEGER NOT NULL,
             "option_num"	INTEGER NOT NULL,
             "option"	TEXT NOT NULL,
-            FOREIGN KEY("form_id") REFERENCES "Questions"("form_id"),
-            PRIMARY KEY("form_id","number","option_num")
+            FOREIGN KEY("form_id") REFERENCES "Questions"("form_id")
+            PRIMARY KEY("form_id","number","option_num"),
             );"""
 
     create_Answers_table = """CREATE TABLE IF NOT EXISTS "Answers" (
@@ -55,14 +55,14 @@ def init_tables():
             );"""
 
     create_Complex_Nodes_table = """CREATE TABLE IF NOT EXISTS "Complex_Nodes" (
-            "id"	INTEGER NOT NULL,
+            "id"	INTEGER NOT NULL UNIQUE,
             "flow"	INTEGER NOT NULL,
             PRIMARY KEY("id"),
             FOREIGN KEY("flow") REFERENCES "Workflows"("id")
             );"""
 
     create_Decisions_table = """CREATE TABLE IF NOT EXISTS "Decisions" (
-            "id"	INTEGER NOT NULL,
+            "id"	INTEGER NOT NULL UNIQUE,
             "min_age"	INTEGER NOT NULL,
             "max_age"	INTEGER,
             "gender"	TEXT,
@@ -71,7 +71,7 @@ def init_tables():
             );"""
 
     create_Edges_table = """CREATE TABLE IF NOT EXISTS "Edges" (
-            "id"	INTEGER NOT NULL,
+            "id"	INTEGER NOT NULL UNIQUE,
             "min_time"	INTEGER,
             "max_time"	INTEGER,
             "from_id"	INTEGER,
@@ -98,7 +98,7 @@ def init_tables():
             );"""
 
     create_Questionnaires_table = """CREATE TABLE IF NOT EXISTS "Questionnaires" (
-            "id"	INTEGER NOT NULL,
+            "id"	INTEGER NOT NULL UNIQUE,
             "form_id"	INTEGER NOT NULL,
             PRIMARY KEY("id"),
             FOREIGN KEY("id") REFERENCES "Nodes"("id"),
@@ -121,14 +121,14 @@ def init_tables():
             );"""
 
     create_String_Nodes_table = """CREATE TABLE IF NOT EXISTS "String_Nodes" (
-            "id"	INTEGER NOT NULL,
+            "id"	INTEGER NOT NULL UNIQUE,
             "notification"	TEXT,
             "actors_list"	INTEGER,
             PRIMARY KEY("id")
             );"""
 
     create_Test_Nodes_table = """CREATE TABLE IF NOT EXISTS "Test_Nodes" (
-            "id"	INTEGER NOT NULL,
+            "id"	INTEGER NOT NULL UNIQUE,
             "test"	INTEGER NOT NULL,
             "in_charge"	INTEGER NOT NULL,
             FOREIGN KEY("id") REFERENCES "Nodes"("id"),
@@ -167,7 +167,6 @@ def init_tables():
     conn = create_connection()
     if conn is not None:
         execute_sql(conn, create_Actors_To_Notify_table)
-        execute_sql(conn, create_Answer_Options_table)
         execute_sql(conn, create_Answers_table)
         execute_sql(conn, create_Complex_Nodes_table)
         execute_sql(conn, create_Decisions_table)
@@ -231,13 +230,10 @@ def addForm(form):
         VALUES 
            (?, ?, ?, ?);"""
         question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
-        print("hi\n")
         cur.execute(query, question_data)
-        print(question_data)
-        if question["type"] != "open":
+        if question["type"] != 'open':
             i = 0
             for option in question["options"]:
-                print(option)
                 query = """INSERT INTO Answer_Options (form_id, number, option_num, option)
                         VALUES 
                            (?, ?, ?, ?);"""
@@ -245,7 +241,6 @@ def addForm(form):
                 i = i + 1
                 cur.execute(query, option_data)
         conn.commit()
-    conn.commit()
     conn.close()
     forms[form.questionnaire_number] = form
     print("adding form end")
