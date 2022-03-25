@@ -52,10 +52,6 @@ def parse_Test(node_dict):
 
 
 
-
-
-
-
 def parse_Decision(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
