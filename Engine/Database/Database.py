@@ -230,7 +230,10 @@ def addForm(form):
         VALUES 
            (?, ?, ?, ?);"""
         question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
-        cur.execute(query, question_data)
+        try:
+            cur.execute(query, question_data)
+        except sqlite3.Error:
+            continue
         if question["type"] != 'open':
             i = 0
             for option in question["options"]:
@@ -239,7 +242,10 @@ def addForm(form):
                            (?, ?, ?, ?);"""
                 option_data = (form.questionnaire_number, question["number"], i, option)
                 i = i + 1
-                cur.execute(query, option_data)
+                try:
+                    cur.execute(query, option_data)
+                except sqlite3.Error:
+                    continue
         conn.commit()
     conn.close()
     forms[form.questionnaire_number] = form
