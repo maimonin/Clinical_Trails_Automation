@@ -34,14 +34,13 @@ def get_data(s):
 
 
 def parse_Questionnaire(node_dict):
-    print("parsing questionnaire start")
     content = node_dict['content']
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
     form = Form(content)
     Database.addForm(form)
-    print("parsing questionnaire end")
+    Database.addQuestionnaire(node.id, form.questionnaire_number, node)
     return node
 
 
@@ -90,12 +89,16 @@ async def register_user(user_dict):
     print('regiater')
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
+        Database.addParticipant(user_dict['id'],
+                                user_dict['name'], user_dict['sex'], user_dict['age'], user_dict['workflow'])
         if len(workflows) == 0:
             print("No workflow yet")
         else:
             # start participant's workflow
             workflows[user_dict["workflow"]].attach(user)
             await workflows[user_dict["workflow"]].exec()
+    else:
+        Database.addStaff(user_dict['name'], user_dict['role'])
 
 
 def parse_Complex_Node(node_dict):
@@ -151,6 +154,7 @@ def new_workflow(data_dict):
             first.next_nodes.append(e)
             e.next_nodes.append(second)
 
+    Database.addWorkflow(data_dict["id"], "name")
     log("created workflow")
     return nodes[first_node]
 

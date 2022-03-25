@@ -1,6 +1,8 @@
 import asyncio
 import queue
+from datetime import datetime
 
+from Database import Database
 from Logger import log
 
 
@@ -18,7 +20,8 @@ def add_questionnaire(results, participant):
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
     log(message)
     event = answers[participant][results['questionnaire_number']]
-    answers[participant][results['questionnaire_number']] = results
+    print(results)
+    Database.addAnswer(questionnaire_number, question_num, user_id, datetime.now(), answer)
     event.set()
 
 
