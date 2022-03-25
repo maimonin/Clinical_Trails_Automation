@@ -35,10 +35,10 @@ class Node(ABC):
         pass
 
 
-def end_test(node, participants):
+async def end_test(node, participants):
     if len(node.next_nodes) == 0:
         for participant in participants:
-            send_notification_by_id(participant.id,{'type': 'terminate'})
+            await send_notification_by_id(participant.id,{'type': 'terminate'})
 
 
 def set_time(node, min_time, max_time):
@@ -80,9 +80,10 @@ class Questionnaire(Node):
         for participant in participants2:
             # send questionnaire to participant
             await send_questionnaire(self.form,self.number, participant.id)
+            Data.add_Form(self.number, participant.id)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
-        end_test(self, participants2)
+        await end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -228,7 +229,7 @@ class TestNode(Node):
                 add_test_form(test.name, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
-        end_test(self, participants2)
+        await end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -268,7 +269,6 @@ class TimeNode(Node):
         for participant in participants2:
             for next_node in self.next_nodes:
                 next_node.attach(participant)
-        end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -310,7 +310,7 @@ class ComplexNode(Node):
                 next_node.attach(participant)
         for t in threads:
             await t
-        end_test(self, participants2)
+        await end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0

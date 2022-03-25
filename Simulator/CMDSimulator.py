@@ -109,7 +109,7 @@ async def actor_simulation(user, s):
                 lock.release()
                 await s.send(json.dumps({'type':'add results','id':user['id'],"test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
-                s.close()
+                await s.close()
                 break
 
     except Exception as e:
