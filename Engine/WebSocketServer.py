@@ -1,7 +1,5 @@
 # Importing the relevant libraries
 import json
-from _thread import start_new_thread
-from asyncio import sleep
 
 import websockets
 import asyncio

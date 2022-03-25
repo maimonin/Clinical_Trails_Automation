@@ -7,7 +7,7 @@ forms = {}
 def create_connection():
     conn = None
     try:
-        conn = sqlite3.connect('data.db')
+        conn = sqlite3.connect('Database/data.db')
         return conn
     except sqlite3.Error as e:
         print(e)
@@ -231,7 +231,7 @@ def addForm(form):
            (?, ?, ?, ?);"""
         question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
         cur.execute(query, question_data)
-        if question["type"] != open:
+        if question["type"] != 'open':
             i = 0
             for option in question["options"]:
                 query = """INSERT INTO Answer_Options (form_id, number, option_num, option)
