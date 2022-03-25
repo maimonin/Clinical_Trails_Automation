@@ -41,6 +41,7 @@ def parse_Questionnaire(node_dict):
                          content['questionnaire_number'])
     form = Form(content)
     Database.addForm(form)
+    Database.addQuestionnaire(node.id, form.questionnaire_number, node)
     print("parsing questionnaire end")
     return node
 
@@ -151,6 +152,7 @@ def new_workflow(data_dict):
             first.next_nodes.append(e)
             e.next_nodes.append(second)
 
+    Database.addWorkflow(data_dict["id"], "name")
     log("created workflow")
     return nodes[first_node]
 

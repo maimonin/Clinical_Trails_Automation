@@ -2,7 +2,10 @@ import sqlite3
 
 from Form import Form
 
+workflows = {}
+questionnaires = {}
 forms = {}
+
 
 def create_connection():
     conn = None
@@ -222,7 +225,6 @@ def getForm(form_id):
 
 
 def addForm(form):
-    print("adding form start")
     conn = create_connection()
     cur = conn.cursor()
     for question in form.questions:
@@ -249,4 +251,35 @@ def addForm(form):
         conn.commit()
     conn.close()
     forms[form.questionnaire_number] = form
-    print("adding form end")
+
+
+def addQuestionnaire(id, form_id, node):
+    conn = create_connection()
+    cur = conn.cursor()
+    query = """INSERT INTO Questionnaires (id, form_id)
+                VALUES 
+                   (?, ?);"""
+    node_data = (id, form_id)
+    try:
+        cur.execute(query, node_data)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error:
+        return
+    questionnaires[id] = node
+
+
+def addWorkflow(id, name):
+    conn = create_connection()
+    cur = conn.cursor()
+    query = """INSERT INTO Workflows (id, name)
+                VALUES 
+                   (?, ?);"""
+    node_data = (id, name)
+    try:
+        cur.execute(query, node_data)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error:
+        return
+    workflows[id] = [id, name]
