@@ -6,8 +6,10 @@ import threading
 
 import Data
 from Data import get_test_result
+from Database import Database
 from Edges import NormalEdge, RelativeTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
+from Form import Form
 from Logger import log
 import user_lists
 from Test import Test
@@ -24,7 +26,7 @@ OP_NODE_COMPLEX = 6
 def get_data(s):
     data = ""
     curr = s.recv(1)
-    curr=curr.decode()
+    curr = curr.decode()
     while curr != "$":
         data += curr
         curr = s.recv(1)
@@ -33,10 +35,14 @@ def get_data(s):
 
 
 def parse_Questionnaire(node_dict):
+    print("parsing questionnaire start")
     content = node_dict['content']
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], node_details['time'], content['questions'],
                          content['questionnaire_number'])
+    form = Form(content['questions'])
+    Database.addForm(form)
+    print("parsing questionnaire end")
     return node
 
 
@@ -49,11 +55,6 @@ def parse_Test(node_dict):
         tests.append(test)
     node = TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
     return node
-
-
-
-
-
 
 
 def parse_Decision(node_dict):
@@ -100,8 +101,8 @@ async def register_user(user_dict):
 
 def parse_Complex_Node(node_dict):
     content = node_dict['content']
-    flow=new_workflow(content['flow'])
-    node = ComplexNode(node_dict['id'],  flow)
+    flow = new_workflow(content['flow'])
+    node = ComplexNode(node_dict['id'], flow)
     return node
 
 
@@ -118,7 +119,7 @@ def new_workflow(data_dict):
             nodes[node['id']] = parse_Decision(node)
         elif node['op_code'] == OP_NODE_STRING:
             nodes[node['id']] = parse_String_Node(node)
-        #elif node['op_code'] == OP_NODE_TIME:
+        # elif node['op_code'] == OP_NODE_TIME:
         #    nodes[node['id']] = parse_Time_Node(node)
         elif node['op_code'] == OP_NODE_COMPLEX:
             nodes[node['id']] = parse_Complex_Node(node)
@@ -132,22 +133,22 @@ def new_workflow(data_dict):
         second_id = inputs[edge['end']]
         first = nodes[first_id]
         second = nodes[second_id]
-        if edge['type']==0:
-            e=NormalEdge(edge['id'])
+        if edge['type'] == 0:
+            e = NormalEdge(edge['id'])
             first.next_nodes.append(e)
             e.next_nodes.append(second)
-        elif edge['type']==1:
-            min_json=edge['content']['Min']
-            min_time=int(min_json['Seconds'])+(60*int(min_json['Minutes']))+(360*int(min_json['Hours']))
+        elif edge['type'] == 1:
+            min_json = edge['content']['Min']
+            min_time = int(min_json['Seconds']) + (60 * int(min_json['Minutes'])) + (360 * int(min_json['Hours']))
             max_json = edge['content']['max']
             max_time = int(max_json['Seconds']) + (60 * int(max_json['Minutes'])) + (360 * int(max_json['Hours']))
-            e=RelativeTimeEdge(edge['id'],min_time,max_time)
+            e = RelativeTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
             e.next_nodes.append(second)
-        elif edge['type']==2:
-            min_time= datetime.strptime(edge['content']['Min'], '%d/%m/%y %H:%M:%S')
+        elif edge['type'] == 2:
+            min_time = datetime.strptime(edge['content']['Min'], '%d/%m/%y %H:%M:%S')
             max_time = datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
-            e=RelativeTimeEdge(edge['id'],min_time,max_time)
+            e = RelativeTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
             e.next_nodes.append(second)
 
@@ -173,17 +174,21 @@ def threaded(c):
 
 
 def send_feedback(user_socket, text):
-    user_socket.send((text+'$').encode('ascii'))
+    user_socket.send((text + '$').encode('ascii'))
+
 
 def parser_init():
     global workflows
     global print_lock
     workflows = {}
     print_lock = threading.Lock()
+
+
 def Main():
     open('Logger.txt', 'w').close()
     user_lists.init()
     Data.init()
+    Database.init_tables()
     host = ""
     port = 8000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

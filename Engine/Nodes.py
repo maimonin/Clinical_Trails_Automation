@@ -48,7 +48,7 @@ def set_time(node, min_time, max_time):
 
 
 class Questionnaire(Node):
-    def __init__(self, node_id, title, duration, form, number):
+    def __init__(self, node_id, title, form, number):
         super(Questionnaire, self).__init__()
         self.id = node_id
         self.title = title
