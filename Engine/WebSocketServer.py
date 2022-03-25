@@ -10,6 +10,7 @@ import Data
 import NotificationHandler
 import Server
 import user_lists
+from Database import Database
 from Server import register_user, new_workflow, parser_init
 
 PORT = 7890
@@ -41,6 +42,7 @@ def Main():
     user_lists.init()
     Data.init()
     parser_init()
+    Database.init_tables()
     NotificationHandler.init()
     # Start the server
     start_server = websockets.serve(get_notifications, "localhost", PORT)
