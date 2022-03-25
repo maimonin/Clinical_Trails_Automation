@@ -14,8 +14,8 @@ def init():
 
 
 def add_questionnaire(results, participant):
-    log("adding questionnaire of participant with id " + str(participant.id))
-    message = 'participant ' + str(participant.id) + ' answers: '
+    log("adding questionnaire of participant with id " + str(participant))
+    message = 'participant ' + str(participant) + ' answers: '
     for result in results['answers']:
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
     log(message)
