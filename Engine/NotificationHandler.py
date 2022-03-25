@@ -15,7 +15,7 @@ async def send_notification_by_id(id, message):
         print('sent')
 
 
-async def send_questionnaire(questions, id):
-    await send_notification_by_id(id, {'type': 'questionnaire', 'questions': questions})
+async def send_questionnaire(questions,number, id):
+    await send_notification_by_id(id, {'type': 'questionnaire','questionnaire_number':number, 'questions': questions})
     log("sending questionnaire")
 
