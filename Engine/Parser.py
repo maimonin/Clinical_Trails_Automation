@@ -96,6 +96,10 @@ def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
     node = StringNode(node_dict['id'], node_dict['title'], content['text'], node_details['actors'])
+    Database.addNode(node)
+    Database.addStringNode(node.id, content['text'])
+    for actor in node_details['actors']:
+        Database.addActorToNotify(node.id, actor)
     return node
 
 
@@ -132,6 +136,8 @@ def parse_Complex_Node(node_dict):
     content = node_dict['content']
     flow = new_workflow(content['flow'])
     node = ComplexNode(node_dict['id'], flow)
+    Database.addNode(node)
+    Database.addComplexNode(node.id, flow.id)
     return node
 
 

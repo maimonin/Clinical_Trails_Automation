@@ -162,7 +162,6 @@ def init_tables():
     create_String_Nodes_table = """CREATE TABLE IF NOT EXISTS "String_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
             "notification"	TEXT,
-            "actors_list"	INTEGER,
             PRIMARY KEY("id")
             );"""
 
@@ -230,13 +229,28 @@ def init_tables():
     conn.close()
 
 
+def addActorToNotify(notification_id, actor_name):
+    query = """INSERT INTO Actors_To_Notify (notification_id, actor_name)
+                        VALUES 
+                           (?, ?);"""
+    answer_data = (notification_id, actor_name)
+    insert_to_table(query, answer_data)
+
+
 def addAnswer(form_id, question_num, user_id, time_taken, answer):
-    conn = create_connection()
     query = """INSERT INTO Answers (form_id, question_num, user_id, time_taken, answer)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     answer_data = (form_id, question_num, user_id, time_taken, answer)
-    insert_to_table(conn, query, answer_data)
+    insert_to_table(query, answer_data)
+
+
+def addComplexNode(node_id, flow_id):
+    query = """INSERT INTO Complex_Nodes (id, flow)
+                        VALUES 
+                           (?, ?);"""
+    node_data = (node_id, flow_id)
+    insert_to_table(query, node_data)
 
 
 def addForm(form):
@@ -307,6 +321,14 @@ def addStaff(name, role):
                    (?, ?);"""
     staff_data = (name, role)
     insert_to_table(query, staff_data)
+
+
+def addStringNode(notification_id, notification):
+    query = """INSERT INTO String_Nodes (notification_id, notification)
+                    VALUES 
+                       (?, ?);"""
+    node_data = (notification_id, notification)
+    insert_to_table(query, node_data)
 
 
 def addTest(node_id, title, instructions, staff, duration):
