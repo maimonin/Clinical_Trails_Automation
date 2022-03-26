@@ -233,13 +233,15 @@ def getForm(form_id):
     return form
 
 
-def getAns(form_id, question_number, participant_id):
+def getAnswer(form_id, question_number, participant_id):
     conn = create_connection()
     cur = conn.cursor()
-    cur.execute("SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? ORDER BY time_taken DESC", (form_id, question_number, participant_id))
+    cur.execute("SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? ORDER BY time_taken DESC",
+                (form_id, question_number, participant_id))
     rows = cur.fetchall()
     conn.close()
     return rows[0]
+
 
 def addForm(form):
     conn = create_connection()
@@ -270,32 +272,32 @@ def addForm(form):
     forms[form.questionnaire_number] = form
 
 
-def addQuestionnaire(id, form_id, node):
+def addQuestionnaire(node_id, form_id, node):
     conn = create_connection()
-    query = """INSERT INTO Questionnaires (id, form_id)
+    query = """INSERT INTO Questionnaires (node_id, form_id)
                 VALUES 
                    (?, ?);"""
-    node_data = (id, form_id)
+    node_data = (node_id, form_id)
     insert_to_table(conn, query, node_data)
-    questionnaires[id] = node
+    questionnaires[node_id] = node
 
 
-def addWorkflow(id, name):
+def addWorkflow(workflow_id, name):
     conn = create_connection()
     query = """INSERT INTO Workflows (id, name)
                 VALUES 
                    (?, ?);"""
-    data = (id, name)
+    data = (workflow_id, name)
     insert_to_table(conn, query, data)
-    workflows[id] = [id, name]
+    workflows[workflow_id] = [workflow_id, name]
 
 
-def addParticipant(id, name, gender, age, workflow):
+def addParticipant(user_id, name, gender, age, workflow):
     conn = create_connection()
-    query = """INSERT INTO Participants (id, name, gender, age, workflow)
+    query = """INSERT INTO Participants (user_id, name, gender, age, workflow)
                 VALUES 
                    (?, ?, ?, ?, ?);"""
-    participant_data = (id, name, gender, age, workflow)
+    participant_data = (user_id, name, gender, age, workflow)
     insert_to_table(conn, query, participant_data)
 
 
@@ -315,3 +317,10 @@ def addAnswer(form_id, question_num, user_id, time_taken, answer):
                        (?, ?, ?, ?, ?);"""
     answer_data = (form_id, question_num, user_id, time_taken, answer)
     insert_to_table(conn, query, answer_data)
+
+
+def updateNode(participant_id, node_id):
+    conn = create_connection()
+    query = """UPDATE Participants SET node = ? WHERE id = ?"""
+    ids = (node_id, participant_id)
+    insert_to_table(conn, query, ids)

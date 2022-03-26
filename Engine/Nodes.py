@@ -5,9 +5,9 @@ import time
 from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
-
 import Data
 from Data import add_questionnaire, add_test, add_test_form, parse_test_condition
+from Database import Database
 from Engine.Users import User
 from NotificationHandler import send_notification_by_id, send_questionnaire
 from user_lists import get_role, take_test
@@ -60,6 +60,7 @@ class Questionnaire(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        Database.updateNode(participant.id, self.id)
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
@@ -101,6 +102,7 @@ class Decision(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        Database.updateNode(participant.id, self.id)
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
@@ -124,12 +126,12 @@ class Decision(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            if await self.get_reaults(participant.id):
+            if await self.get_results(participant.id):
                 self.next_nodes[0].attach(participant)
             else:
                 self.next_nodes[1].attach(participant)
 
-    async def get_reaults(self, participant):
+    async def get_results(self, participant):
         for condition in self.conditions:
             if condition['type'].rstrip() == 'trait condition':
                 if not (Data.parse_trait_condition(participant, condition['satisfy'], condition['test'])):
@@ -159,6 +161,7 @@ class StringNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        Database.updateNode(participant.id, self.id)
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
@@ -206,6 +209,7 @@ class TestNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        Database.updateNode(participant.id, self.id)
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
@@ -247,6 +251,7 @@ class TimeNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        Database.updateNode(participant.id, self.id)
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
@@ -285,6 +290,7 @@ class ComplexNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        Database.updateNode(participant.id, self.id)
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
