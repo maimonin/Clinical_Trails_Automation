@@ -93,7 +93,8 @@ async def actor_simulation(user, s):
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], user)
-                await s.send(json.dumps({"answers": ans}))
+                print({'type':'add answers', 'questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans})
+                await s.send(json.dumps({'type':'add answers','questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans}))
             elif data_json['type'] == 'test':
                 lock.acquire()
                 print(
@@ -106,9 +107,9 @@ async def actor_simulation(user, s):
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")
                 lock.release()
-                await s.send(json.dumps({"test": data_json['test']['name'], 'result': val}))
+                await s.send(json.dumps({'type':'add results','id':user['id'],"test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
-                s.close()
+                await s.close()
                 break
 
     except Exception as e:

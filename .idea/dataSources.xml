@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="data" uuid="5ee5217f-2033-43fa-8611-2a9095b41882">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:F:\university\2021-2022\Clinical_Trails_Automation\Database\data.db</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="data [2]" uuid="86dfc52b-2427-4663-8625-9b49a4aa21f2">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:F:\university\2021-2022\Clinical_Trails_Automation\Engine\data.db</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="data [3]" uuid="73d85c55-d549-4c23-9bcf-61c8c8504094">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:F:\university\2021-2022\Clinical_Trails_Automation\Engine\Database\data.db</jdbc-url>
+    </data-source>
+  </component>
+</project>

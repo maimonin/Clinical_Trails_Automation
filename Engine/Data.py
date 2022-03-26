@@ -1,6 +1,9 @@
 import asyncio
 import queue
+from datetime import datetime
 
+from Database import Database
+from Database.Database import getForm
 from Logger import log
 
 
@@ -12,13 +15,15 @@ def init():
 
 
 def add_questionnaire(results, participant):
-    log("adding questionnaire of participant with id " + str(participant.id))
-    message = 'participant ' + str(participant.id) + ' answers: '
+    log("adding questionnaire of participant with id " + str(participant))
+    message = 'participant ' + str(participant) + ' answers: '
+    i = 1
     for result in results['answers']:
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
+        Database.addAnswer(results['questionnaire_number'], i, participant, datetime.now(), str(result['answer']))
+        i = i + 1
     log(message)
     event = answers[participant][results['questionnaire_number']]
-    answers[participant][results['questionnaire_number']] = results
     event.set()
 
 
@@ -83,7 +88,7 @@ async def parse_test_condition(patient, satisfy, test_name):
 
 
 async def check_data(participant, questionnaire_number, question_number, accepted_answers):
-    if isinstance(answers[participant][questionnaire_number], asyncio.Event()):
+    if questionnaire_number in answers[participant]:
         await answers[participant][questionnaire_number].wait()
-    ans = answers[participant][questionnaire_number][question_number - 1]['answer']
+    ans = getAns(questionnaire_number, question_number, participant)
     return ans == accepted_answers
