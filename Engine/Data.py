@@ -3,6 +3,7 @@ import queue
 from datetime import datetime
 
 from Database import Database
+from Database.Database import getForm
 from Logger import log
 
 
@@ -87,7 +88,7 @@ async def parse_test_condition(patient, satisfy, test_name):
 
 
 async def check_data(participant, questionnaire_number, question_number, accepted_answers):
-    if isinstance(answers[participant][questionnaire_number], asyncio.Event()):
+    if questionnaire_number in answers[participant]:
         await answers[participant][questionnaire_number].wait()
-    ans = answers[participant][questionnaire_number][question_number - 1]['answer']
+    ans = getAns(questionnaire_number, question_number, participant)
     return ans == accepted_answers

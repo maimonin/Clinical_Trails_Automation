@@ -124,7 +124,7 @@ class Decision(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            if await self.get_reaults(participant):
+            if await self.get_reaults(participant.id):
                 self.next_nodes[0].attach(participant)
             else:
                 self.next_nodes[1].attach(participant)

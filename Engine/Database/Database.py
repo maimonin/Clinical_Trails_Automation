@@ -233,6 +233,14 @@ def getForm(form_id):
     return form
 
 
+def getAns(form_id, question_number, participant_id):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? ORDER BY time_taken DESC", (form_id, question_number, participant_id))
+    rows = cur.fetchall()
+    conn.close()
+    return rows[0]
+
 def addForm(form):
     conn = create_connection()
     cur = conn.cursor()
