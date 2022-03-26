@@ -27,7 +27,8 @@ def execute_sql(conn, query):
         print(e)
 
 
-def insert_to_table(conn, query, data):
+def insert_to_table(query, data):
+    conn = create_connection()
     cur = conn.cursor()
     try:
         cur.execute(query, data)
@@ -73,13 +74,39 @@ def init_tables():
             FOREIGN KEY("flow") REFERENCES "Workflows"("id")
             );"""
 
-    create_Decisions_table = """CREATE TABLE IF NOT EXISTS "Decisions" (
-            "id"	INTEGER NOT NULL UNIQUE,
-            "min_age"	INTEGER NOT NULL,
-            "max_age"	INTEGER,
-            "gender"	TEXT,
-            "other"	TEXT,
-            PRIMARY KEY("id")
+    create_Conditions_Questionnaire_table = """CREATE TABLE IF NOT EXISTS "Conditions_Questionnaire" (
+            "decision_id"	INTEGER NOT NULL,
+            "title"	INTEGER NOT NULL,
+            "form_id"	INTEGER NOT NULL,
+            "question_num"	INTEGER NOT NULL,
+            "answers"	TEXT NOT NULL,
+            FOREIGN KEY("form_id") REFERENCES "Questionnaires"("form_id"),
+            FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
+            FOREIGN KEY("question_num") REFERENCES "Questions"("number")
+            PRIMARY KEY("title","decision_id")
+            );"""
+
+    create_Conditions_Test_table = """CREATE TABLE IF NOT EXISTS "Conditions_Test" (
+            "decision_id"	INTEGER NOT NULL,
+            "title"	TEXT NOT NULL,
+            "test"	TEXT NOT NULL,
+            "type"	TEXT NOT NULL,
+            "value"	TEXT,
+            FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
+            FOREIGN KEY("test") REFERENCES "Tests"("title")
+            PRIMARY KEY("decision_id","title")
+            );"""
+
+    create_Conditions_Trait_table = """CREATE TABLE IF NOT EXISTS "Conditions_Trait" (
+            "decision_id"	INTEGER NOT NULL,
+            "title"	TEXT NOT NULL,
+            "test"	TEXT NOT NULL,
+            "type"	TEXT NOT NULL,
+            "min"	INTEGER,
+            "max"	INTEGER,
+            PRIMARY KEY("decision_id","title"),
+            FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
+            FOREIGN KEY("test") REFERENCES "Tests"("title")
             );"""
 
     create_Edges_table = """CREATE TABLE IF NOT EXISTS "Edges" (
@@ -141,10 +168,12 @@ def init_tables():
 
     create_Test_Nodes_table = """CREATE TABLE IF NOT EXISTS "Test_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
-            "test"	INTEGER NOT NULL,
-            "in_charge"	INTEGER NOT NULL,
+            "actors"	TEXT,
+            "title"	TEXT NOT NULL,
+            "in_charge"	TEXT NOT NULL,
+            "time"	INTEGER,
             FOREIGN KEY("id") REFERENCES "Nodes"("id"),
-            PRIMARY KEY("id","test")
+            PRIMARY KEY("id")
             );"""
 
     create_Test_Results_table = """CREATE TABLE IF NOT EXISTS "Test_Results" (
@@ -160,14 +189,13 @@ def init_tables():
             );"""
 
     create_Tests_table = """CREATE TABLE IF NOT EXISTS "Tests" (
-            "id"	INTEGER NOT NULL,
-            "step"	INTEGER NOT NULL,
-            "instruction"	TEXT NOT NULL,
-            "text"	TEXT NOT NULL,
+            "node_id"	INTEGER NOT NULL,
+            "title"	TEXT NOT NULL,
+            "instructions"	TEXT NOT NULL,
             "staff"	TEXT,
-            "title"	TEXT,
-            "duration"	TEXT,
-            PRIMARY KEY("id","step")
+            "duration"	INTEGER,
+            FOREIGN KEY("node_id") REFERENCES "Nodes"("id"),
+	        PRIMARY KEY("title","node_id")
             );"""
 
     create_Workflows_table = """CREATE TABLE IF NOT EXISTS "Workflows" (
@@ -182,7 +210,9 @@ def init_tables():
         execute_sql(conn, create_Answer_Options_table)
         execute_sql(conn, create_Answers_table)
         execute_sql(conn, create_Complex_Nodes_table)
-        execute_sql(conn, create_Decisions_table)
+        execute_sql(conn, create_Conditions_Questionnaire_table)
+        execute_sql(conn, create_Conditions_Test_table)
+        execute_sql(conn, create_Conditions_Trait_table)
         execute_sql(conn, create_Edges_table)
         execute_sql(conn, create_Nodes_table)
         execute_sql(conn, create_Participants_table)
@@ -198,6 +228,136 @@ def init_tables():
     else:
         print("Error! cannot create the database connection.")
     conn.close()
+
+
+def addAnswer(form_id, question_num, user_id, time_taken, answer):
+    conn = create_connection()
+    query = """INSERT INTO Answers (form_id, question_num, user_id, time_taken, answer)
+                    VALUES 
+                       (?, ?, ?, ?, ?);"""
+    answer_data = (form_id, question_num, user_id, time_taken, answer)
+    insert_to_table(conn, query, answer_data)
+
+
+def addForm(form):
+    conn = create_connection()
+    cur = conn.cursor()
+    for question in form.questions:
+        query = """INSERT INTO Questions (form_id, number, question, type)
+        VALUES 
+           (?, ?, ?, ?);"""
+        question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
+        try:
+            cur.execute(query, question_data)
+        except sqlite3.Error:
+            continue
+        if question["type"] != 'open':
+            i = 0
+            for option in question["options"]:
+                query = """INSERT INTO Answer_Options (form_id, number, option_num, option)
+                        VALUES 
+                           (?, ?, ?, ?);"""
+                option_data = (form.questionnaire_number, question["number"], i, option)
+                i = i + 1
+                try:
+                    cur.execute(query, option_data)
+                except sqlite3.Error:
+                    continue
+        conn.commit()
+    conn.close()
+    forms[form.questionnaire_number] = form
+
+
+def addNode(node, op_code):
+    query = """INSERT INTO Nodes (title, type, id)
+                    VALUES 
+                       (?, ?, ?);"""
+    node_data = (node.title, op_code, node.id)
+    insert_to_table(query, node_data)
+
+
+def addParticipant(user_id, name, gender, age, workflow):
+    query = """INSERT INTO Participants (user_id, name, gender, age, workflow)
+                VALUES 
+                   (?, ?, ?, ?, ?);"""
+    participant_data = (user_id, name, gender, age, workflow)
+    insert_to_table(query, participant_data)
+
+
+def addQuestionnaire(node_id, form_id, node):
+    query = """INSERT INTO Questionnaires (node_id, form_id)
+                VALUES 
+                   (?, ?);"""
+    node_data = (node_id, form_id)
+    insert_to_table(query, node_data)
+    questionnaires[node_id] = node
+
+
+def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
+    query = """INSERT INTO Conditions_Questionnaire (decision_id, title, form_id, question_num, answers)
+                    VALUES 
+                       (?, ?, ?, ?, ?);"""
+    cond_data = (decision_id, title, form_id, question_num, answers)
+    insert_to_table(query, cond_data)
+
+
+def addStaff(name, role):
+    query = """INSERT INTO Staff (name, role)
+                VALUES 
+                   (?, ?);"""
+    staff_data = (name, role)
+    insert_to_table(query, staff_data)
+
+
+def addTest(node_id, title, instructions, staff, duration):
+    query = """INSERT INTO Tests (node_id, title, instructions, staff, duration)
+                    VALUES 
+                       (?, ?, ?, ?, ?);"""
+    test_data = (node_id, title, instructions, staff, duration)
+    insert_to_table(query, test_data)
+
+
+def addTestNode(node_id, actors, title, in_charge, time):
+    query = """INSERT INTO Test_Nodes (id, actors, title, in_charge, time)
+                    VALUES 
+                       (?, ?, ?, ?, ?);"""
+    node_data = (node_id, actors, title, in_charge, time)
+    insert_to_table(query, node_data)
+
+
+def addTestCond(decision_id, title, test, sat_type, value):
+    query = """INSERT INTO Conditions_Test (decision_id, title, test, type, value)
+                    VALUES 
+                       (?, ?, ?, ?, ?);"""
+    cond_data = (decision_id, title, test, sat_type, value)
+    insert_to_table(query, cond_data)
+
+
+def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
+    query = """INSERT INTO Conditions_Trait (decision_id, title, test, type, min, max)
+                    VALUES 
+                       (?, ?, ?, ?, ?, ?);"""
+    cond_data = (decision_id, title, test, sat_type, min_val, max_val)
+    insert_to_table(query, cond_data)
+
+
+def addWorkflow(workflow_id, name):
+    query = """INSERT INTO Workflows (id, name)
+                VALUES 
+                   (?, ?);"""
+    data = (workflow_id, name)
+    insert_to_table(query, data)
+    workflows[workflow_id] = [workflow_id, name]
+
+
+def getAnswer(form_id, question_number, participant_id):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? ORDER BY time_taken DESC",
+                (form_id, question_number, participant_id))
+    rows = cur.fetchall()
+    conn.close()
+    return rows[0]
 
 
 def getForm(form_id):
@@ -233,94 +393,7 @@ def getForm(form_id):
     return form
 
 
-def getAnswer(form_id, question_number, participant_id):
-    conn = create_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? ORDER BY time_taken DESC",
-                (form_id, question_number, participant_id))
-    rows = cur.fetchall()
-    conn.close()
-    return rows[0]
-
-
-def addForm(form):
-    conn = create_connection()
-    cur = conn.cursor()
-    for question in form.questions:
-        query = """INSERT INTO Questions (form_id, number, question, type)
-        VALUES 
-           (?, ?, ?, ?);"""
-        question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
-        try:
-            cur.execute(query, question_data)
-        except sqlite3.Error:
-            continue
-        if question["type"] != 'open':
-            i = 0
-            for option in question["options"]:
-                query = """INSERT INTO Answer_Options (form_id, number, option_num, option)
-                        VALUES 
-                           (?, ?, ?, ?);"""
-                option_data = (form.questionnaire_number, question["number"], i, option)
-                i = i + 1
-                try:
-                    cur.execute(query, option_data)
-                except sqlite3.Error:
-                    continue
-        conn.commit()
-    conn.close()
-    forms[form.questionnaire_number] = form
-
-
-def addQuestionnaire(node_id, form_id, node):
-    conn = create_connection()
-    query = """INSERT INTO Questionnaires (node_id, form_id)
-                VALUES 
-                   (?, ?);"""
-    node_data = (node_id, form_id)
-    insert_to_table(conn, query, node_data)
-    questionnaires[node_id] = node
-
-
-def addWorkflow(workflow_id, name):
-    conn = create_connection()
-    query = """INSERT INTO Workflows (id, name)
-                VALUES 
-                   (?, ?);"""
-    data = (workflow_id, name)
-    insert_to_table(conn, query, data)
-    workflows[workflow_id] = [workflow_id, name]
-
-
-def addParticipant(user_id, name, gender, age, workflow):
-    conn = create_connection()
-    query = """INSERT INTO Participants (user_id, name, gender, age, workflow)
-                VALUES 
-                   (?, ?, ?, ?, ?);"""
-    participant_data = (user_id, name, gender, age, workflow)
-    insert_to_table(conn, query, participant_data)
-
-
-def addStaff(name, role):
-    conn = create_connection()
-    query = """INSERT INTO Staff (name, role)
-                VALUES 
-                   (?, ?);"""
-    staff_data = (name, role)
-    insert_to_table(conn, query, staff_data)
-
-
-def addAnswer(form_id, question_num, user_id, time_taken, answer):
-    conn = create_connection()
-    query = """INSERT INTO Answers (form_id, question_num, user_id, time_taken, answer)
-                    VALUES 
-                       (?, ?, ?, ?, ?);"""
-    answer_data = (form_id, question_num, user_id, time_taken, answer)
-    insert_to_table(conn, query, answer_data)
-
-
 def updateNode(participant_id, node_id):
-    conn = create_connection()
     query = """UPDATE Participants SET node = ? WHERE id = ?"""
     ids = (node_id, participant_id)
-    insert_to_table(conn, query, ids)
+    insert_to_table(query, ids)

@@ -39,6 +39,7 @@ def parse_Questionnaire(node_dict):
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
     form = Form(content)
+    Database.addNode(node, node_dict['op_code'])
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
     return node
@@ -51,7 +52,14 @@ def parse_Test(node_dict):
     for test_data in content['tests']:
         test = Test(test_data['name'], test_data['duration'], test_data['instructions'], test_data['staff'])
         tests.append(test)
+        Database.addTest(
+            node_dict['id'], test_data['name'], test_data['instructions'], test_data['staff'], test_data['duration']
+        )
     node = TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
+    Database.addNode(node, node_dict['op_code'])
+    Database.addTestNode(
+        node.id, node_details['actors'], node_details['title'], node_details['actor in charge'], node_details['time']
+    )
     return node
 
 
@@ -60,6 +68,27 @@ def parse_Decision(node_dict):
     node_details = content['node_details']
     conditions = content['condition']
     node = Decision(node_dict['id'], node_details['title'], conditions)
+    Database.addNode(node, node_dict['op_code'])
+    for condition in conditions:
+        if condition['type'] == "questionnaire condition":
+            Database.addQuestionnaireCond(
+                node.id, condition['title'], condition['questionnaireNumber'],
+                condition['questionNumber'], str(condition['acceptedAnswers'])
+            )
+        elif condition['type'] == "test condition":
+            Database.addTestCond(
+                node.id, condition['title'], condition['test'],
+                condition['satisfy']['type'],
+                condition['satisfy']['value']
+            )
+        elif condition['type'] == "trait condition":
+            Database.addTraitCond(
+                node.id, condition['title'], condition['test'],
+                condition['satisfy']['type'],
+                condition['satisfy']['value']['min'],
+                condition['satisfy']['value']['max']
+            )
+
     return node
 
 
@@ -81,12 +110,10 @@ def parse_Time_Node(node_dict):
 
 
 def add_times(time_node, other_node):
-    print(1)
     set_time(other_node, time_node.min_time, time_node.max_time)
 
 
 async def register_user(user_dict):
-    print('regiater')
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
         Database.addParticipant(user_dict['id'],
