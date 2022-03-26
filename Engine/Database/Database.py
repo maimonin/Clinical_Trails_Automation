@@ -111,12 +111,15 @@ def init_tables():
 
     create_Edges_table = """CREATE TABLE IF NOT EXISTS "Edges" (
             "id"	INTEGER NOT NULL UNIQUE,
-            "min_time"	INTEGER,
-            "max_time"	INTEGER,
             "from_id"	INTEGER,
             "to_id"	INTEGER,
+            "min_time"	INTEGER,
+            "max_time"	INTEGER,
+            "fixed_min"	DATETIME,
+            "fixed_max"	DATETIME,
+            FOREIGN KEY("to_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("from_id") REFERENCES "Nodes"("id"),
-            FOREIGN KEY("to_id") REFERENCES "Nodes"("id")
+            PRIMARY KEY("id")
             );"""
 
     create_Nodes_table = """CREATE TABLE IF NOT EXISTS "Nodes" (
@@ -251,6 +254,14 @@ def addComplexNode(node_id, flow_id):
                            (?, ?);"""
     node_data = (node_id, flow_id)
     insert_to_table(query, node_data)
+
+
+def addEdge(edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max):
+    query = """INSERT INTO Edges (id, from_id, to_id, min_time, max_time, fixed_time)
+                    VALUES 
+                       (?, ?, ?, ?, ?, ?, ?);"""
+    edge_data = (edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max)
+    insert_to_table(query, edge_data)
 
 
 def addForm(form):

@@ -172,6 +172,7 @@ def new_workflow(data_dict):
             e = NormalEdge(edge['id'])
             first.next_nodes.append(e)
             e.next_nodes.append(second)
+            Database.addEdge(e.id, first_id, second_id, None, None, None, None)
         elif edge['type'] == 1:
             min_json = edge['content']['Min']
             min_time = int(min_json['Seconds']) + (60 * int(min_json['Minutes'])) + (360 * int(min_json['Hours']))
@@ -180,12 +181,14 @@ def new_workflow(data_dict):
             e = RelativeTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
             e.next_nodes.append(second)
+            Database.addEdge(e.id, first_id, second_id, min_time, max_time, None, None)
         elif edge['type'] == 2:
             min_time = datetime.strptime(edge['content']['Min'], '%d/%m/%y %H:%M:%S')
             max_time = datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
             e = RelativeTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
             e.next_nodes.append(second)
+            Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time)
 
     Database.addWorkflow(data_dict["id"], "name")
     log("created workflow")
