@@ -6,7 +6,7 @@ import threading
 
 import Data
 from Database import Database
-from Edges import NormalEdge, RelativeTimeEdge
+from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
 from Form import Form
 from Logger import log
@@ -185,7 +185,7 @@ def new_workflow(data_dict):
         elif edge['type'] == 2:
             min_time = datetime.strptime(edge['content']['Min'], '%d/%m/%y %H:%M:%S')
             max_time = datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
-            e = RelativeTimeEdge(edge['id'], min_time, max_time)
+            e = FixedTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
             e.next_nodes.append(second)
             Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time, None)
