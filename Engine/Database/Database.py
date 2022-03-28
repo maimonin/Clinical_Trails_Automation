@@ -39,23 +39,21 @@ def insert_to_table(query, data):
 
 
 def init_tables():
-    create_Actors_To_Notify_table = """CREATE TABLE IF NOT EXISTS "Actors_To_Notify" (
+    queries = {"create_actors_to_notify_table": """CREATE TABLE IF NOT EXISTS "Actors_To_Notify" (
             "notification_id"	INTEGER NOT NULL,
             "actor_name"	TEXT,
             PRIMARY KEY("notification_id","actor_name"),
             FOREIGN KEY("notification_id") REFERENCES "String_Nodes"("id")
-            );"""
-
-    create_Answer_Options_table = """CREATE TABLE IF NOT EXISTS "Answer_Options" (
+            );""",
+               "create_answer_options_table": """CREATE TABLE IF NOT EXISTS "Answer_Options" (
             "form_id"	INTEGER NOT NULL,
             "number"	INTEGER NOT NULL,
             "option_num"	INTEGER NOT NULL,
             "option"	TEXT NOT NULL,
             FOREIGN KEY("form_id") REFERENCES "Questions"("form_id"),
             PRIMARY KEY("form_id","number","option_num")
-            );"""
-
-    create_Answers_table = """CREATE TABLE IF NOT EXISTS "Answers" (
+            );""",
+               "create_answers_table": """CREATE TABLE IF NOT EXISTS "Answers" (
             "form_id"	INTEGER NOT NULL,
             "question_num"	INTEGER NOT NULL,
             "user_id"	INTEGER NOT NULL,
@@ -65,16 +63,14 @@ def init_tables():
             FOREIGN KEY("form_id") REFERENCES "Questionnaires"("form_id"),
             FOREIGN KEY("question_num") REFERENCES "Questions"("number"),
             FOREIGN KEY("user_id") REFERENCES "Participants"("id")
-            );"""
-
-    create_Complex_Nodes_table = """CREATE TABLE IF NOT EXISTS "Complex_Nodes" (
+            );""",
+               "create_complex_nodes_table": """CREATE TABLE IF NOT EXISTS "Complex_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
             "flow"	INTEGER NOT NULL,
             PRIMARY KEY("id"),
             FOREIGN KEY("flow") REFERENCES "Workflows"("id")
-            );"""
-
-    create_Conditions_Questionnaire_table = """CREATE TABLE IF NOT EXISTS "Conditions_Questionnaire" (
+            );""",
+               "create_conditions_questionnaire_table": """CREATE TABLE IF NOT EXISTS "Conditions_Questionnaire" (
             "decision_id"	INTEGER NOT NULL,
             "title"	INTEGER NOT NULL,
             "form_id"	INTEGER NOT NULL,
@@ -84,9 +80,8 @@ def init_tables():
             FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("question_num") REFERENCES "Questions"("number")
             PRIMARY KEY("title","decision_id")
-            );"""
-
-    create_Conditions_Test_table = """CREATE TABLE IF NOT EXISTS "Conditions_Test" (
+            );""",
+               "create_conditions_test_table": """CREATE TABLE IF NOT EXISTS "Conditions_Test" (
             "decision_id"	INTEGER NOT NULL,
             "title"	TEXT NOT NULL,
             "test"	TEXT NOT NULL,
@@ -95,9 +90,8 @@ def init_tables():
             FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("test") REFERENCES "Tests"("title")
             PRIMARY KEY("decision_id","title")
-            );"""
-
-    create_Conditions_Trait_table = """CREATE TABLE IF NOT EXISTS "Conditions_Trait" (
+            );""",
+               "create_conditions_trait_table": """CREATE TABLE IF NOT EXISTS "Conditions_Trait" (
             "decision_id"	INTEGER NOT NULL,
             "title"	TEXT NOT NULL,
             "test"	TEXT NOT NULL,
@@ -107,9 +101,8 @@ def init_tables():
             PRIMARY KEY("decision_id","title"),
             FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("test") REFERENCES "Tests"("title")
-            );"""
-
-    create_Edges_table = """CREATE TABLE IF NOT EXISTS "Edges" (
+            );""",
+               "create_edges_table": """CREATE TABLE IF NOT EXISTS "Edges" (
             "id"	INTEGER NOT NULL UNIQUE,
             "from_id"	INTEGER,
             "to_id"	INTEGER,
@@ -121,16 +114,14 @@ def init_tables():
             FOREIGN KEY("to_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("from_id") REFERENCES "Nodes"("id"),
             PRIMARY KEY("id")
-            );"""
-
-    create_Nodes_table = """CREATE TABLE IF NOT EXISTS "Nodes" (
+            );""",
+               "create_nodes_table": """CREATE TABLE IF NOT EXISTS "Nodes" (
             "title"	TEXT NOT NULL,
             "type"	INTEGER NOT NULL,
             "id"	INTEGER,
             PRIMARY KEY("id")
-            );"""
-
-    create_Participants_table = """CREATE TABLE IF NOT EXISTS "Participants" (
+            );""",
+               "create_participants_table": """CREATE TABLE IF NOT EXISTS "Participants" (
             "id"	INTEGER NOT NULL,
             "name"	TEXT NOT NULL,
             "gender"	TEXT NOT NULL,
@@ -138,38 +129,33 @@ def init_tables():
             "workflow"	INTEGER NOT NULL,
             "node"	INTEGER NOT NULL,
             PRIMARY KEY("id")
-            );"""
-
-    create_Questionnaires_table = """CREATE TABLE IF NOT EXISTS "Questionnaires" (
+            );""",
+               "create_questionnaires_table": """CREATE TABLE IF NOT EXISTS "Questionnaires" (
             "id"	INTEGER NOT NULL UNIQUE,
             "form_id"	INTEGER NOT NULL,
             PRIMARY KEY("id"),
             FOREIGN KEY("id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("form_id") REFERENCES "Questions"("form_id")
-            );"""
-
-    create_Questions_table = """CREATE TABLE IF NOT EXISTS "Questions" (
+            );""",
+               "create_questions_table": """CREATE TABLE IF NOT EXISTS "Questions" (
             "form_id"	INTEGER NOT NULL,
             "number"	INTEGER NOT NULL,
             "question"	TEXT NOT NULL,
             "type"	TEXT NOT NULL,
             PRIMARY KEY("form_id","number"),
             FOREIGN KEY("form_id") REFERENCES "Questionnaires"("form_id")
-            );"""
-
-    create_Staff_table = """CREATE TABLE IF NOT EXISTS "Staff" (
+            );""",
+               "create_staff_table": """CREATE TABLE IF NOT EXISTS "Staff" (
             "name"	TEXT NOT NULL,
             "role"	TEXT NOT NULL,
             PRIMARY KEY("name")
-            );"""
-
-    create_String_Nodes_table = """CREATE TABLE IF NOT EXISTS "String_Nodes" (
+            );""",
+               "create_string_nodes_table": """CREATE TABLE IF NOT EXISTS "String_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
             "notification"	TEXT,
             PRIMARY KEY("id")
-            );"""
-
-    create_Test_Nodes_table = """CREATE TABLE IF NOT EXISTS "Test_Nodes" (
+            );""",
+               "create_test_nodes_table": """CREATE TABLE IF NOT EXISTS "Test_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
             "actors"	TEXT,
             "title"	TEXT NOT NULL,
@@ -177,9 +163,8 @@ def init_tables():
             "time"	INTEGER,
             FOREIGN KEY("id") REFERENCES "Nodes"("id"),
             PRIMARY KEY("id")
-            );"""
-
-    create_Test_Results_table = """CREATE TABLE IF NOT EXISTS "Test_Results" (
+            );""",
+               "create_test_results_table": """CREATE TABLE IF NOT EXISTS "Test_Results" (
             "test_id"	INTEGER NOT NULL,
             "step"	INTEGER NOT NULL,
             "user_id"	INTEGER NOT NULL,
@@ -189,45 +174,26 @@ def init_tables():
             PRIMARY KEY("test_id","step","user_id","time_taken"),
             FOREIGN KEY("user_id") REFERENCES "Participants"("id"),
             FOREIGN KEY("step") REFERENCES "Tests"("step")
-            );"""
-
-    create_Tests_table = """CREATE TABLE IF NOT EXISTS "Tests" (
+            );""",
+               "create_tests_table": """CREATE TABLE IF NOT EXISTS "Tests" (
             "node_id"	INTEGER NOT NULL,
             "title"	TEXT NOT NULL,
             "instructions"	TEXT NOT NULL,
             "staff"	TEXT,
             "duration"	INTEGER,
             FOREIGN KEY("node_id") REFERENCES "Nodes"("id"),
-	        PRIMARY KEY("title","node_id")
-            );"""
-
-    create_Workflows_table = """CREATE TABLE IF NOT EXISTS "Workflows" (
+            PRIMARY KEY("title","node_id")
+            );""",
+               "create_workflows_table": """CREATE TABLE IF NOT EXISTS "Workflows" (
             "id"	INTEGER NOT NULL,
             "name"	TEXT NOT NULL,
             PRIMARY KEY("id")
-            );"""
+            );"""}
 
     conn = create_connection()
     if conn is not None:
-        execute_sql(conn, create_Actors_To_Notify_table)
-        execute_sql(conn, create_Answer_Options_table)
-        execute_sql(conn, create_Answers_table)
-        execute_sql(conn, create_Complex_Nodes_table)
-        execute_sql(conn, create_Conditions_Questionnaire_table)
-        execute_sql(conn, create_Conditions_Test_table)
-        execute_sql(conn, create_Conditions_Trait_table)
-        execute_sql(conn, create_Edges_table)
-        execute_sql(conn, create_Nodes_table)
-        execute_sql(conn, create_Participants_table)
-        execute_sql(conn, create_Questionnaires_table)
-        execute_sql(conn, create_Questions_table)
-        execute_sql(conn, create_Staff_table)
-        execute_sql(conn, create_String_Nodes_table)
-        execute_sql(conn, create_Test_Nodes_table)
-        execute_sql(conn, create_Test_Results_table)
-        execute_sql(conn, create_Tests_table)
-        execute_sql(conn, create_Workflows_table)
-
+        for query in queries:
+            execute_sql(conn, query)
     else:
         print("Error! cannot create the database connection.")
     conn.close()
@@ -261,7 +227,7 @@ def addEdge(edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max, s
     query = """INSERT INTO Edges (id, from_id, to_id, min_time, max_time, fixed_time, start_time)
                     VALUES 
                        (?, ?, ?, ?, ?, ?, ?, ?);"""
-    edge_data = (edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max)
+    edge_data = (edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max, start_time)
     insert_to_table(query, edge_data)
 
 
