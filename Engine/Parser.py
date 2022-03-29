@@ -115,10 +115,10 @@ def add_times(time_node, other_node):
     set_time(other_node, time_node.min_time, time_node.max_time)
 
 
-def buildNode(dalnode):
-    print(dalnode)
-    if dalnode.op_code == 1:
-        return Questionnaire(dalnode.id, dalnode.title, formToJSON(dalnode.form), dalnode.form_id)
+def buildNode(dal_node):
+    print(dal_node)
+    if dal_node.op_code == 1:
+        return Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form), dal_node.form_id)
 
 
 async def register_user(user_dict):
@@ -134,9 +134,7 @@ async def register_user(user_dict):
                                     user_dict['age'], user_dict['workflow'], workflow[1])
             # start participant's workflow from start node
             dalStart = Database.getNode(workflow[1])
-            print(dalStart)
             start = buildNode(dalStart)
-            print(start)
             start.attach(user)
             await start.exec()
     else:
