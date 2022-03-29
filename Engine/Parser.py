@@ -36,7 +36,7 @@ def parse_Questionnaire(node_dict):
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
-    form = Form.buildFromJSON(content)
+    form = buildFromJSON()
     Database.addNode(node, node_dict['op_code'])
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
