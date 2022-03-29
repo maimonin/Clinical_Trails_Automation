@@ -229,7 +229,7 @@ class TestNode(Node):
         self.lock.release()
         for participant in participants2:
             for test in self.tests:
-                await take_test(participant.id, test, self.in_charge, participant.socket)
+                await take_test(participant.id, test, self.in_charge)
                 add_test_form(test.name, participant)
             for next_node in self.next_nodes:
                 next_node.attach(participant)
