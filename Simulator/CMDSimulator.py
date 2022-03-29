@@ -130,16 +130,7 @@ async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
     path = input("workflow path:")
-    try:
-        f = open(path)
-        data = json.load(f)
-        print(data)
-        data['type'] = "add workflow"
-        data['workflow_id'] = 2111561603920
-        s = await websockets.connect(url)
-        await s.send(json.dumps(data))
-    except Exception as e:
-        dumpException(e)
+    await send_json(path, url)
     for user in users:
         s = await websockets.connect(url)
         await register_user(user, s)
@@ -175,6 +166,18 @@ async def Main():
             lock.release()
         await asyncio.sleep(10)
 
+
+async def send_json(path, url):
+    try:
+        f = open(path)
+        data = json.load(f)
+        print(data)
+        data['type'] = "add workflow"
+        data['workflow_id'] = 2111561603920
+        s = await websockets.connect(url)
+        await s.send(json.dumps(data))
+    except Exception as e:
+        dumpException(e)
 
 
 asyncio.run(Main())
