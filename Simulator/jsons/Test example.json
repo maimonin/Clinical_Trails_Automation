@@ -1,0 +1,46 @@
+{
+
+    "nodes": [
+        {
+            "id": 2040194047520,
+            "title": "Test",
+
+            "inputs": [
+                {
+                    "id": 2040194079424,
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2040194079472,
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "hemoglobin",
+                    "actor in charge": "Lab Technician",
+                },
+                "tests": [
+                    {
+                        "name": "hemoglobin",
+                        "instructions": "take a red tube of blood",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "15"
+                    },
+                    {
+                        "name": "A1C test",
+                        "instructions": "take blue tube",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "15"
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": []
+}
