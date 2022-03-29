@@ -227,6 +227,7 @@ class TestNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
+        print(self.tests)
         for participant in participants2:
             for test in self.tests:
                 await take_test(participant.id, test, self.in_charge)

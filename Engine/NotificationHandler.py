@@ -9,8 +9,9 @@ def init():
 
 
 async def send_notification_by_id(id, message):
+    print('got message')
     if connections[id] is not None:
-        print('sending')
+        print('sending'+ json.dumps(message))
         await connections[id].send(json.dumps(message))
         print('sent')
 
