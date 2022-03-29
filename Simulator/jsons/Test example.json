@@ -1,5 +1,4 @@
 {
-
     "nodes": [
         {
             "id": 2040194047520,
@@ -7,18 +6,18 @@
 
             "inputs": [
                 {
-                    "id": 2040194079424,
+                    "id": 2040194079424
                 }
             ],
             "outputs": [
                 {
-                    "id": 2040194079472,
+                    "id": 2040194079472
                 }
             ],
             "content": {
                 "node_details": {
                     "title": "hemoglobin",
-                    "actor in charge": "Lab Technician",
+                    "actor in charge": "Lab Technician"
                 },
                 "tests": [
                     {
