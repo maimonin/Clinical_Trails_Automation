@@ -50,14 +50,11 @@ def parse_Test(node_dict):
     for test_data in content['tests']:
         test = Test(test_data['name'], test_data['duration'], test_data['instructions'], test_data['staff'])
         tests.append(test)
-        Database.addTest(
-            node_dict['id'], test_data['name'], test_data['instructions'], test_data['staff'], test_data['duration']
-        )
+        staff = ', '.join(test.staff)
+        Database.addTest(node_dict['id'], test.name, test.instructions, staff, test.duration)
     node = TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
     Database.addNode(node, node_dict['op_code'])
-    Database.addTestNode(
-        node.id, node_details['actors'], node_details['title'], node_details['actor in charge'], node_details['time']
-    )
+    Database.addTestNode(node)
     return node
 
 
@@ -116,9 +113,10 @@ def add_times(time_node, other_node):
 
 
 def buildNode(dal_node):
-    print(dal_node)
     if dal_node.op_code == 1:
         return Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form), dal_node.form_id)
+    elif dal_node.op_code == 2:
+        return TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
 
 
 async def register_user(user_dict):

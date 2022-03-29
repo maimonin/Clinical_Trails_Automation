@@ -9,16 +9,13 @@ from PyQt5.QtWidgets import QApplication
 from nodeeditor.utils import dumpException
 from qtpy import QtWidgets
 
-
-
-
 user_id = 0
 users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
-         {"name": "lab", "role": "lab", "sex": "male", "age": 30},
+         {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
-         #{"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
-         #{"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
+# {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
+# {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -93,7 +90,9 @@ async def actor_simulation(user, s):
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], user)
-                await s.send(json.dumps({'type':'add answers','questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans}))
+                await s.send(json.dumps(
+                    {'type': 'add answers', 'questionnaire_number': data_json['questionnaire_number'], 'id': user['id'],
+                     "answers": ans}))
             elif data_json['type'] == 'test':
                 lock.acquire()
                 print(
@@ -106,7 +105,8 @@ async def actor_simulation(user, s):
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")
                 lock.release()
-                await s.send(json.dumps({'type':'add results','id':user['id'],"test": data_json['test']['name'], 'result': val}))
+                await s.send(json.dumps(
+                    {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
                 await s.close()
                 break
@@ -124,8 +124,6 @@ async def register_user(user, s):
     await s.send(message)
 
 
-
-
 async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
@@ -138,26 +136,26 @@ async def Main():
         asyncio.create_task(actor_simulation(user, user['s']))
     while True:
         lock.acquire()
-        inp= input('want to register user? (y/n)')
+        inp = input('want to register user? (y/n)')
         lock.release()
-        if inp=='y':
+        if inp == 'y':
             lock.acquire()
-            id=int(input('id'))
+            id = int(input('id'))
             gender = input('gender')
-            age=int(input('age'))
+            age = int(input('age'))
             lock.release()
-            user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603920,
+            user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603921,
                     "sex": gender, "age": age,
                     "id": id}
             url = "ws://127.0.0.1:7890"
-            is_cn=True
+            is_cn = True
             while is_cn:
                 try:
                     s = await websockets.connect(url)
                     await register_user(user, s)
                     user['s'] = s
                     asyncio.create_task(actor_simulation(user, user['s']))
-                    is_cn=False
+                    is_cn = False
                 except:
                     continue
             lock.acquire()
@@ -166,7 +164,7 @@ async def Main():
         await asyncio.sleep(10)
 
 
-async def send_json( url):
+async def send_json(url):
     path = input("workflow path:")
     try:
         f = open(path)

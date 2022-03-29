@@ -1,9 +1,11 @@
 import sqlite3
 from Database.DALNodes import buildDALNodes, buildDALNodesFromNode
 from Form import Form
+from Test import Test
 
 workflows = {}
 questionnaires = {}
+testNodes = {}
 forms = {}
 
 
@@ -44,6 +46,18 @@ def extract_one_from_table(query, data):
     try:
         cur.execute(query, data)
         result = cur.fetchone()
+        conn.close()
+        return result
+    except sqlite3.Error as e:
+        print(e)
+
+
+def extract_many_from_table(query, data):
+    conn = create_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(query, data)
+        result = cur.fetchall()
         conn.close()
         return result
     except sqlite3.Error as e:
@@ -169,10 +183,8 @@ def init_tables():
             );""",
                "create_test_nodes_table": """CREATE TABLE IF NOT EXISTS "Test_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
-            "actors"	TEXT,
             "title"	TEXT NOT NULL,
             "in_charge"	TEXT NOT NULL,
-            "time"	INTEGER,
             FOREIGN KEY("id") REFERENCES "Nodes"("id"),
             PRIMARY KEY("id")
             );""",
@@ -329,12 +341,13 @@ def addTest(node_id, title, instructions, staff, duration):
     insert_to_table(query, test_data)
 
 
-def addTestNode(node_id, actors, title, in_charge, time):
-    query = """INSERT OR IGNORE INTO Test_Nodes (id, actors, title, in_charge, time)
+def addTestNode(node):
+    query = """INSERT OR IGNORE INTO Test_Nodes (id, title, in_charge)
                     VALUES 
-                       (?, ?, ?, ?, ?);"""
-    node_data = (node_id, actors, title, in_charge, time)
+                       (?, ?, ?);"""
+    node_data = (node.id, node.title, node.in_charge)
     insert_to_table(query, node_data)
+    testNodes[node.id] = node
 
 
 def addTestCond(decision_id, title, test, sat_type, value):
@@ -404,6 +417,30 @@ def getForm(form_id):
     return form
 
 
+def getNode(node_id):
+    node_data = extract_one_from_table("SELECT * FROM Nodes WHERE id=?", (node_id,))
+    if len(node_data) == 0:
+        return None
+    op_code = node_data[1]
+    title = node_data[0]
+    if op_code == 1:
+        form_id = extract_one_from_table("""SELECT form_id FROM Questionnaires WHERE id=?""", (node_id,))[0]
+        form = getForm(form_id)
+        return buildDALNodes([op_code, node_id, title, form, form_id])
+    elif node_data[1] == 2:
+        in_charge = extract_one_from_table("""SELECT in_charge FROM Test_Nodes WHERE id=?""", (node_id,))[0]
+        tests = getTests(node_id)
+        return buildDALNodes([op_code, node_id, title, tests, in_charge])
+
+
+def getTests(node_id):
+    tests = []
+    tests_data = extract_many_from_table("""SELECT * FROM Tests WHERE node_id=?""", (node_id,))
+    for test in tests_data:
+        tests.append(Test(test[1], test[4], test[2], test[3]))
+    return tests
+
+
 def getWorkflow(workflow_id):
     if workflow_id in workflows:
         return [workflow_id, workflows[workflow_id]]
@@ -412,24 +449,6 @@ def getWorkflow(workflow_id):
     if workflow is not None:
         workflows[workflow_id] = [workflow[1]]
     return workflow
-
-
-def getNode(node_id):
-    conn = create_connection()
-    curr = conn.cursor()
-    curr.execute("SELECT * FROM Nodes WHERE id=?", (node_id,))
-    node_data = curr.fetchone()
-    conn.close()
-    if len(node_data) == 0:
-        return None
-    if node_data[1] == 1:
-        query = """SELECT * FROM Questionnaires WHERE id=?"""
-        questionnaire_data = extract_one_from_table(query, (node_id,))
-        form = getForm(questionnaire_data[1])
-        return buildDALNodes([node_data[1], node_id, node_data[0], form, questionnaire_data[1]])
-    # elif node_data[1] == 1:
-#         TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
-#         return [node_id, node_data[0],]
 
 
 def updateNode(participant_id, node_id):
