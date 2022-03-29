@@ -66,7 +66,7 @@ def handle_questionnaire(questions, participant):
     for q in questions:
         if q['type'] == 'open':
             answers.append(handle_open_question(q))
-        elif q['type'] == 'radio':
+        elif q['type'] == 'one choice':
             answers.append(handle_radio_question(q))
         else:
             answers.append(handle_multi_question(q))
