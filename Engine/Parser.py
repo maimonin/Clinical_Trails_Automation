@@ -36,20 +36,7 @@ def parse_Questionnaire(node_dict):
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
-    questions = []
-    i = 1
-    for question in content["questions"]:
-        if question["type"] == "open":
-            questions.append({"number": i,
-                              "text": question["text"],
-                              "type": "open"})
-        else:
-            questions.append({"number": i,
-                              "text": question["text"],
-                              "type": question["type"],
-                              "options": question["options"]})
-        i = i + 1
-    form = Form(content["questionnaire_number"], questions)
+    form = Form.buildFromJSON(content)
     Database.addNode(node, node_dict['op_code'])
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
