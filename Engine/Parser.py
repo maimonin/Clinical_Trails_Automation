@@ -7,7 +7,7 @@ import Data
 from Database import Database
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
-from Form import Form
+from Form import Form, buildFromJSON, formToJSON
 from Logger import log
 import user_lists
 from Test import Test
@@ -36,7 +36,7 @@ def parse_Questionnaire(node_dict):
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
-    form = buildFromJSON()
+    form = buildFromJSON(content)
     Database.addNode(node, node_dict['op_code'])
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
@@ -118,7 +118,7 @@ def add_times(time_node, other_node):
 def buildNode(dalnode):
     print(dalnode)
     if dalnode.op_code == 1:
-        return Questionnaire(dalnode.id, dalnode.title, dalnode.form, dalnode.form_id)
+        return Questionnaire(dalnode.id, dalnode.title, formToJSON(dalnode.form), dalnode.form_id)
 
 
 async def register_user(user_dict):

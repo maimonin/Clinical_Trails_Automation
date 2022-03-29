@@ -15,6 +15,14 @@ def buildFromJSON(json):
     return Form(json["questionnaire_number"], questions)
 
 
+def formToJSON(form):
+    json = {}
+    json["questionnaire_number"] = form.questionnaire_number
+    json["questions"] = form.questions
+    return json
+
+
+
 class Form:
     def __init__(self, questionnaire_number, questions):
         self.questionnaire_number = questionnaire_number
