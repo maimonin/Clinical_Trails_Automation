@@ -437,7 +437,8 @@ def getTests(node_id):
     tests = []
     tests_data = extract_many_from_table("""SELECT * FROM Tests WHERE node_id=?""", (node_id,))
     for test in tests_data:
-        tests.append(Test(test[1], test[4], test[2], test[3]))
+        actors = test[3].split(', ')
+        tests.append(Test(test[1], test[4], test[2], actors))
     return tests
 
 

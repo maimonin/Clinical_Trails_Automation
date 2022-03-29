@@ -66,10 +66,10 @@ async def take_test(user_id, test, in_charge):
         actor = get_role(role)
         if actor is None:
             return None
-        await send_notification_by_id(actor.id,{'type': 'test', 'name': test.name,
-                                       'instructions': test.instructions,
-                                       'patient': user_id})
-    await send_notification_by_id(user_id,{'type': 'notification', 'text': "show up to " + test.name})
+        await send_notification_by_id(actor.id, {'type': 'test', 'name': test.name,
+                                                 'instructions': test.instructions,
+                                                 'patient': user_id})
+    await send_notification_by_id(user_id, {'type': 'notification', 'text': "show up to " + test.name})
     log("participant with id " + str(user_id) + " taking a test")
     await sleep(int(test.duration))
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
