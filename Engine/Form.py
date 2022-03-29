@@ -16,10 +16,7 @@ def buildFromJSON(json):
 
 
 def formToJSON(form):
-    json = {}
-    json["questionnaire_number"] = form.questionnaire_number
-    json["questions"] = form.questions
-    return json
+    return form.questions
 
 
 

@@ -93,7 +93,6 @@ async def actor_simulation(user, s):
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], user)
-                print({'type':'add answers', 'questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans})
                 await s.send(json.dumps({'type':'add answers','questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans}))
             elif data_json['type'] == 'test':
                 lock.acquire()
