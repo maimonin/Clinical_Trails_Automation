@@ -129,8 +129,7 @@ async def register_user(user, s):
 async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
-    path = input("workflow path:")
-    await send_json(path, url)
+    await send_json(url)
     for user in users:
         s = await websockets.connect(url)
         await register_user(user, s)
@@ -167,7 +166,8 @@ async def Main():
         await asyncio.sleep(10)
 
 
-async def send_json(path, url):
+async def send_json( url):
+    path = input("workflow path:")
     try:
         f = open(path)
         data = json.load(f)
