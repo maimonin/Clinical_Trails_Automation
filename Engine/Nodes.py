@@ -80,7 +80,7 @@ class Questionnaire(Node):
         self.lock.release()
         for participant in participants2:
             # send questionnaire to participant
-            await send_questionnaire(self.form,self.number, participant.id)
+            await send_questionnaire(self.form, self.number, participant.id)
             Data.add_Form(self.number, participant.id)
             for next_node in self.next_nodes:
                 next_node.attach(participant)

@@ -3,7 +3,6 @@ import json
 import socket
 from _thread import *
 import threading
-
 import Data
 from Database import Database
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
@@ -37,7 +36,20 @@ def parse_Questionnaire(node_dict):
     node_details = content['node_details']
     node = Questionnaire(node_dict['id'], node_details['title'], content['questions'],
                          content['questionnaire_number'])
-    form = Form(content)
+    questions = []
+    i = 1
+    for question in content["questions"]:
+        if question["type"] == "open":
+            questions.append({"number": i,
+                              "text": question["text"],
+                              "type": "open"})
+        else:
+            questions.append({"number": i,
+                              "text": question["text"],
+                              "type": question["type"],
+                              "options": question["options"]})
+        i = i + 1
+    form = Form(content["questionnaire_number"], questions)
     Database.addNode(node, node_dict['op_code'])
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
@@ -95,7 +107,7 @@ def parse_String_Node(node_dict):
     content = node_dict['content']
     node_details = content['node_details']
     node = StringNode(node_dict['id'], node_dict['title'], content['text'], node_details['actors'])
-    Database.addNode(node)
+    Database.addNode(node, node_dict['op_code'])
     Database.addStringNode(node.id, content['text'])
     for actor in node_details['actors']:
         Database.addActorToNotify(node.id, actor)
@@ -116,17 +128,30 @@ def add_times(time_node, other_node):
     set_time(other_node, time_node.min_time, time_node.max_time)
 
 
+def buildNode(dalnode):
+    print(dalnode)
+    if dalnode.op_code == 1:
+        return Questionnaire(dalnode.id, dalnode.title, dalnode.form, dalnode.form_id)
+
+
 async def register_user(user_dict):
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
-        Database.addParticipant(user_dict['id'],
-                                user_dict['name'], user_dict['sex'], user_dict['age'], user_dict['workflow'])
-        if len(workflows) == 0:
+        workflow = Database.getWorkflow(user_dict['workflow'])
+        if workflow is None:
             print("No workflow yet")
+            Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'],
+                                    user_dict['age'], user_dict['workflow'], None)
         else:
-            # start participant's workflow
-            workflows[user_dict["workflow"]].attach(user)
-            await workflows[user_dict["workflow"]].exec()
+            Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'],
+                                    user_dict['age'], user_dict['workflow'], workflow[1])
+            # start participant's workflow from start node
+            dalStart = Database.getNode(workflow[1])
+            print(dalStart)
+            start = buildNode(dalStart)
+            print(start)
+            start.attach(user)
+            await start.exec()
     else:
         Database.addStaff(user_dict['name'], user_dict['role'])
 
@@ -135,7 +160,7 @@ def parse_Complex_Node(node_dict):
     content = node_dict['content']
     flow = new_workflow(content['flow'])
     node = ComplexNode(node_dict['id'], flow)
-    Database.addNode(node)
+    Database.addNode(node, node_dict['op_code'])
     Database.addComplexNode(node.id, flow.id)
     return node
 
@@ -189,9 +214,13 @@ def new_workflow(data_dict):
             e.next_nodes.append(second)
             Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time, None)
 
-    Database.addWorkflow(data_dict["id"], "name")
+    Database.addWorkflow(data_dict["id"], first_node)
     log("created workflow")
     return nodes[first_node]
+
+
+def load_workflow(workflow_id):
+    Database.getWorkflow(workflow_id)
 
 
 def threaded(c):

@@ -1,5 +1,5 @@
 import sqlite3
-
+from Database.DALNodes import buildDALNodes, buildDALNodesFromNode
 from Form import Form
 
 workflows = {}
@@ -18,7 +18,7 @@ def create_connection():
     return conn
 
 
-def execute_sql(conn, query):
+def create_table(conn, query):
     try:
         c = conn.cursor()
         c.execute(query)
@@ -34,8 +34,20 @@ def insert_to_table(query, data):
         cur.execute(query, data)
         conn.commit()
         conn.close()
-    except sqlite3.Error:
-        return
+    except sqlite3.Error as e:
+        print(e)
+
+
+def extract_one_from_table(query, data):
+    conn = create_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(query, data)
+        result = cur.fetchone()
+        conn.close()
+        return result
+    except sqlite3.Error as e:
+        print(e)
 
 
 def init_tables():
@@ -186,21 +198,21 @@ def init_tables():
             );""",
                "create_workflows_table": """CREATE TABLE IF NOT EXISTS "Workflows" (
             "id"	INTEGER NOT NULL,
-            "name"	TEXT NOT NULL,
+            "first_node"	INTEGER NOT NULL,
             PRIMARY KEY("id")
             );"""}
 
     conn = create_connection()
     if conn is not None:
         for query in queries:
-            execute_sql(conn, query)
+            create_table(conn, queries[query])
     else:
         print("Error! cannot create the database connection.")
     conn.close()
 
 
 def addActorToNotify(notification_id, actor_name):
-    query = """INSERT INTO Actors_To_Notify (notification_id, actor_name)
+    query = """INSERT OR IGNORE INTO Actors_To_Notify (notification_id, actor_name)
                         VALUES 
                            (?, ?);"""
     answer_data = (notification_id, actor_name)
@@ -208,7 +220,7 @@ def addActorToNotify(notification_id, actor_name):
 
 
 def addAnswer(form_id, question_num, user_id, time_taken, answer):
-    query = """INSERT INTO Answers (form_id, question_num, user_id, time_taken, answer)
+    query = """INSERT OR IGNORE INTO Answers (form_id, question_num, user_id, time_taken, answer)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     answer_data = (form_id, question_num, user_id, time_taken, answer)
@@ -216,7 +228,7 @@ def addAnswer(form_id, question_num, user_id, time_taken, answer):
 
 
 def addComplexNode(node_id, flow_id):
-    query = """INSERT INTO Complex_Nodes (id, flow)
+    query = """INSERT OR IGNORE INTO Complex_Nodes (id, flow)
                         VALUES 
                            (?, ?);"""
     node_data = (node_id, flow_id)
@@ -224,7 +236,7 @@ def addComplexNode(node_id, flow_id):
 
 
 def addEdge(edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max, start_time):
-    query = """INSERT INTO Edges (id, from_id, to_id, min_time, max_time, fixed_time, start_time)
+    query = """INSERT OR IGNORE INTO Edges (id, from_id, to_id, min_time, max_time, fixed_time, start_time)
                     VALUES 
                        (?, ?, ?, ?, ?, ?, ?, ?);"""
     edge_data = (edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max, start_time)
@@ -235,7 +247,7 @@ def addForm(form):
     conn = create_connection()
     cur = conn.cursor()
     for question in form.questions:
-        query = """INSERT INTO Questions (form_id, number, question, type)
+        query = """INSERT OR IGNORE INTO Questions (form_id, number, question, type)
         VALUES 
            (?, ?, ?, ?);"""
         question_data = (form.questionnaire_number, question["number"], question["text"], question["type"])
@@ -261,23 +273,23 @@ def addForm(form):
 
 
 def addNode(node, op_code):
-    query = """INSERT INTO Nodes (title, type, id)
+    query = """INSERT OR IGNORE INTO Nodes (title, type, id)
                     VALUES 
                        (?, ?, ?);"""
     node_data = (node.title, op_code, node.id)
     insert_to_table(query, node_data)
 
 
-def addParticipant(user_id, name, gender, age, workflow):
-    query = """INSERT INTO Participants (user_id, name, gender, age, workflow)
+def addParticipant(user_id, name, gender, age, workflow, node):
+    query = """INSERT OR IGNORE INTO Participants (id, name, gender, age, workflow, node)
                 VALUES 
-                   (?, ?, ?, ?, ?);"""
-    participant_data = (user_id, name, gender, age, workflow)
+                   (?, ?, ?, ?, ?, ?);"""
+    participant_data = (user_id, name, gender, age, workflow, node)
     insert_to_table(query, participant_data)
 
 
 def addQuestionnaire(node_id, form_id, node):
-    query = """INSERT INTO Questionnaires (node_id, form_id)
+    query = """INSERT OR IGNORE INTO Questionnaires (id, form_id)
                 VALUES 
                    (?, ?);"""
     node_data = (node_id, form_id)
@@ -286,7 +298,7 @@ def addQuestionnaire(node_id, form_id, node):
 
 
 def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
-    query = """INSERT INTO Conditions_Questionnaire (decision_id, title, form_id, question_num, answers)
+    query = """INSERT OR IGNORE INTO Conditions_Questionnaire (decision_id, title, form_id, question_num, answers)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, form_id, question_num, answers)
@@ -294,7 +306,7 @@ def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
 
 
 def addStaff(name, role):
-    query = """INSERT INTO Staff (name, role)
+    query = """INSERT OR IGNORE INTO Staff (name, role)
                 VALUES 
                    (?, ?);"""
     staff_data = (name, role)
@@ -302,7 +314,7 @@ def addStaff(name, role):
 
 
 def addStringNode(notification_id, notification):
-    query = """INSERT INTO String_Nodes (notification_id, notification)
+    query = """INSERT OR IGNORE INTO String_Nodes (notification_id, notification)
                     VALUES 
                        (?, ?);"""
     node_data = (notification_id, notification)
@@ -310,7 +322,7 @@ def addStringNode(notification_id, notification):
 
 
 def addTest(node_id, title, instructions, staff, duration):
-    query = """INSERT INTO Tests (node_id, title, instructions, staff, duration)
+    query = """INSERT OR IGNORE INTO Tests (node_id, title, instructions, staff, duration)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     test_data = (node_id, title, instructions, staff, duration)
@@ -318,7 +330,7 @@ def addTest(node_id, title, instructions, staff, duration):
 
 
 def addTestNode(node_id, actors, title, in_charge, time):
-    query = """INSERT INTO Test_Nodes (id, actors, title, in_charge, time)
+    query = """INSERT OR IGNORE INTO Test_Nodes (id, actors, title, in_charge, time)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     node_data = (node_id, actors, title, in_charge, time)
@@ -326,7 +338,7 @@ def addTestNode(node_id, actors, title, in_charge, time):
 
 
 def addTestCond(decision_id, title, test, sat_type, value):
-    query = """INSERT INTO Conditions_Test (decision_id, title, test, type, value)
+    query = """INSERT OR IGNORE INTO Conditions_Test (decision_id, title, test, type, value)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, value)
@@ -334,20 +346,20 @@ def addTestCond(decision_id, title, test, sat_type, value):
 
 
 def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
-    query = """INSERT INTO Conditions_Trait (decision_id, title, test, type, min, max)
+    query = """INSERT OR IGNORE INTO Conditions_Trait (decision_id, title, test, type, min, max)
                     VALUES 
                        (?, ?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, min_val, max_val)
     insert_to_table(query, cond_data)
 
 
-def addWorkflow(workflow_id, name):
-    query = """INSERT INTO Workflows (id, name)
+def addWorkflow(workflow_id, first):
+    query = """INSERT OR IGNORE INTO Workflows (id, first_node)
                 VALUES 
                    (?, ?);"""
-    data = (workflow_id, name)
+    data = (workflow_id, first)
     insert_to_table(query, data)
-    workflows[workflow_id] = [workflow_id, name]
+    workflows[workflow_id] = first
 
 
 def getAnswer(form_id, question_number, participant_id):
@@ -386,11 +398,38 @@ def getForm(form_id):
                           "text": row[2],
                           "type": "open"})
     conn.close()
-
     form = Form(form_id, questions)
     forms[form_id] = form
 
     return form
+
+
+def getWorkflow(workflow_id):
+    if workflow_id in workflows:
+        return [workflow_id, workflows[workflow_id]]
+    query = """SELECT * FROM Workflows WHERE id=?"""
+    workflow = extract_one_from_table(query, (workflow_id,))
+    if workflow is not None:
+        workflows[workflow_id] = [workflow[1]]
+    return workflow
+
+
+def getNode(node_id):
+    conn = create_connection()
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM Nodes WHERE id=?", (node_id,))
+    node_data = curr.fetchone()
+    conn.close()
+    if len(node_data) == 0:
+        return None
+    if node_data[1] == 1:
+        query = """SELECT * FROM Questionnaires WHERE id=?"""
+        questionnaire_data = extract_one_from_table(query, (node_id,))
+        form = getForm(questionnaire_data[1])
+        return buildDALNodes([node_data[1], node_id, node_data[0], form, questionnaire_data[1]])
+    # elif node_data[1] == 1:
+#         TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
+#         return [node_id, node_data[0],]
 
 
 def updateNode(participant_id, node_id):

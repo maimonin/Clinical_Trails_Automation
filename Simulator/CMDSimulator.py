@@ -136,7 +136,7 @@ async def Main():
         data = json.load(f)
         print(data)
         data['type'] = "add workflow"
-        data['workflow_id'] = 0
+        data['workflow_id'] = 2111561603920
         s = await websockets.connect(url)
         await s.send(json.dumps(data))
     except Exception as e:
@@ -157,7 +157,7 @@ async def Main():
             gender = input('gender')
             age=int(input('age'))
             lock.release()
-            user = {"name": "participant " + str(id), "role": "participant", "workflow": 0,
+            user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603920,
                     "sex": gender, "age": age,
                     "id": id}
             url = "ws://127.0.0.1:7890"
