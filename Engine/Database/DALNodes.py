@@ -14,6 +14,8 @@ def buildDALNodes(node_data):
         return DALTestNode(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
     elif node_data[0] == 4:
         return DALStringNode(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
+    elif node_data[0] == 6:
+        return DALComplexNode(node_data[0], node_data[1], node_data[2], node_data[3])
 
 
 class DALQuestionnaire:
@@ -45,3 +47,10 @@ class DALStringNode:
             lower_actors.append(str(actor).lower())
         self.actors = lower_actors
 
+
+class DALComplexNode:
+    def __init__(self, op_code, node_id, title, flow):
+        self.op_code = op_code
+        self.id = node_id
+        self.title = title
+        self.flow = flow

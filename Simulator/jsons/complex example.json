@@ -1,0 +1,79 @@
+{
+    "id": 2111561603920,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2453429713072,
+            "title": "Sub Workflow",
+            "pos_x": -56.0,
+            "pos_y": -139.0,
+            "inputs": [
+                {
+                    "id": 2453429744976,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2453429745024,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "type": "complex",
+                "flow": {
+                    "id": 2453429745072,
+                    "scene_width": 64000,
+                    "scene_height": 64000,
+                    "nodes": [
+                        {
+                            "id": 2453429801216,
+                            "title": "Simple String",
+                            "pos_x": 18.0,
+                            "pos_y": -125.0,
+                            "inputs": [
+                                {
+                                    "id": 2453429801504,
+                                    "index": 0,
+                                    "multi_edges": true,
+                                    "position": 3,
+                                    "socket_type": 1
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 2453429801552,
+                                    "index": 0,
+                                    "multi_edges": true,
+                                    "position": 4,
+                                    "socket_type": 1
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "actors": [
+                                        "Doctor",
+                                        "Nurse"
+                                    ],
+                                    "title": ""
+                                },
+                                "text": "hi"
+                            },
+                            "op_code": 4
+                        }
+                    ],
+                    "edges": []
+                }
+            },
+            "op_code": 6
+        }
+    ],
+    "edges": []
+}

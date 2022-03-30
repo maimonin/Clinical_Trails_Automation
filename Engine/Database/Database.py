@@ -92,9 +92,9 @@ def init_tables():
             );""",
                "create_complex_nodes_table": """CREATE TABLE IF NOT EXISTS "Complex_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
-            "flow"	INTEGER NOT NULL,
+            "first_id"	INTEGER NOT NULL,
             PRIMARY KEY("id"),
-            FOREIGN KEY("flow") REFERENCES "Workflows"("id")
+            FOREIGN KEY("first_id") REFERENCES "Nodes"("id")
             );""",
                "create_conditions_questionnaire_table": """CREATE TABLE IF NOT EXISTS "Conditions_Questionnaire" (
             "decision_id"	INTEGER NOT NULL,
@@ -239,11 +239,11 @@ def addAnswer(form_id, question_num, user_id, time_taken, answer):
     insert_to_table(query, answer_data)
 
 
-def addComplexNode(node_id, flow_id):
-    query = """INSERT OR IGNORE INTO Complex_Nodes (id, flow)
+def addComplexNode(node_id, first_id):
+    query = """INSERT OR IGNORE INTO Complex_Nodes (id, first_id)
                         VALUES 
                            (?, ?);"""
-    node_data = (node_id, flow_id)
+    node_data = (node_id, first_id)
     insert_to_table(query, node_data)
 
 
@@ -326,7 +326,6 @@ def addStaff(name, role):
 
 
 def addStringNode(notification_id, notification):
-    print("hi")
     query = """INSERT OR IGNORE INTO String_Nodes (id, notification)
                     VALUES 
                        (?, ?);"""
@@ -368,6 +367,7 @@ def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
 
 
 def addWorkflow(workflow_id, first):
+    print(workflow_id)
     query = """INSERT OR IGNORE INTO Workflows (id, first_node)
                 VALUES 
                    (?, ?);"""
@@ -440,6 +440,10 @@ def getNode(node_id):
         for actor in actors_mashed:
             actors.append(actor[0])
         return buildDALNodes([op_code, node_id, title, text, actors])
+    elif op_code == 6:
+        first_id = extract_one_from_table("""SELECT first_id FROM Complex_Nodes WHERE id=?""", (node_id,))[0]
+        flow_node = getNode(first_id)
+        return buildDALNodes([op_code, node_id, title, flow_node])
 
 
 def getTests(node_id):

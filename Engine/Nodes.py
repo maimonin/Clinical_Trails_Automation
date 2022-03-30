@@ -280,9 +280,10 @@ class TimeNode(Node):
 
 
 class ComplexNode(Node):
-    def __init__(self, node_id, flow):
+    def __init__(self, node_id, title, flow):
         super(ComplexNode, self).__init__()
         self.id = node_id
+        self.title = title
         self.next_nodes = []
         self.lock = threading.Lock()
         self.participants: List[User] = []

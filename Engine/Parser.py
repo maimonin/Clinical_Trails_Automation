@@ -7,7 +7,7 @@ import Data
 from Database import Database
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
-from Form import Form, buildFromJSON, formToJSON
+from Form import buildFromJSON, formToJSON
 from Logger import log
 import user_lists
 from Test import Test
@@ -119,6 +119,9 @@ def buildNode(dal_node):
         return TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
     elif dal_node.op_code == 4:
         return StringNode(dal_node.id, dal_node.title, dal_node.text, dal_node.actors)
+    elif dal_node.op_code == 6:
+        flow = buildNode(dal_node.flow)
+        return ComplexNode(dal_node.id, dal_node.title, flow)
 
 
 async def register_user(user_dict):
@@ -144,8 +147,10 @@ async def register_user(user_dict):
 def parse_Complex_Node(node_dict):
     content = node_dict['content']
     flow = new_workflow(content['flow'])
-    node = ComplexNode(node_dict['id'], flow)
-    Database.addNode(node, node_dict['op_code'])
+    node = ComplexNode(node_dict['id'], node_dict['title'], flow)
+    # add complex node to nodes and complex nodes
+    # add flow to workflows
+    Database.addNode(node, node_dict["op_code"])
     Database.addComplexNode(node.id, flow.id)
     return node
 
