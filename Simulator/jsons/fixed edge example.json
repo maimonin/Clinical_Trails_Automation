@@ -1,0 +1,87 @@
+{
+    "id": 2111561603920,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1890421255808,
+            "title": "Simple String",
+            "pos_x": -9.0,
+            "pos_y": -168.0,
+            "inputs": [
+                {
+                    "id": 1890421256096,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1890421256144,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "hello"
+                },
+                "text": "hello"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1890421255856,
+            "title": "Simple String",
+            "pos_x": 28.0,
+            "pos_y": 65.0,
+            "inputs": [
+                {
+                    "id": 1890421297408,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1890421297456,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "world"
+                },
+                "text": "world"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1890421297696,
+            "type": 2,
+            "start": 1890421256144,
+            "end": 1890421297408,
+            "content": {
+                "min": "30/03/22 14:06:20",
+                "max": "30/04/22 13:30:00"
+            }
+        }
+    ]
+}

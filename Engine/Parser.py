@@ -24,6 +24,8 @@ testNodes = {}
 decisionNodes = {}
 stringNodes = {}
 complexNodes = {}
+edges = {}
+
 
 def get_data(s):
     data = ""
@@ -121,7 +123,8 @@ def buildNode(dal_node):
     if dal_node.op_code == 1:
         if dal_node.id in questionnaires:
             return questionnaires[dal_node.id]
-        questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form), dal_node.form_id)
+        questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form),
+                                                    dal_node.form_id)
         return questionnaires[dal_node.id]
     elif dal_node.op_code == 2:
         if dal_node.id in testNodes:
@@ -141,6 +144,21 @@ def buildNode(dal_node):
         return complexNodes[dal_node.id]
 
 
+def getEdge(edge_id, edge_type):
+    if edge_id in edges:
+        return edges[edge_id]
+    dal_edge = Database.getEdge(edge_id)
+    if edge_type == 0:
+        edges[edge_id] = NormalEdge(dal_edge.id)
+        return edges[edge_id]
+    elif edge_type == 1:
+        edges[edge_id] = RelativeTimeEdge(dal_edge.id, dal_edge.min_time, dal_edge.max_time)
+        return edges[edge_id]
+    else:
+        edges[edge_id] = FixedTimeEdge(dal_edge.id, dal_edge.min_time, dal_edge.max_time)
+        return edges[edge_id]
+
+
 async def register_user(user_dict):
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
@@ -148,10 +166,10 @@ async def register_user(user_dict):
         if workflow is None:
             print("No workflow yet")
             Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'],
-                                    user_dict['age'], user_dict['workflow'], None)
+                                    user_dict['age'], user_dict['workflow'], None, None, None)
         else:
             Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'],
-                                    user_dict['age'], user_dict['workflow'], workflow[1])
+                                    user_dict['age'], user_dict['workflow'], workflow[1], None, None)
             # start participant's workflow from start node
             dalStart = Database.getNode(workflow[1])
             start = buildNode(dalStart)
@@ -201,25 +219,25 @@ def new_workflow(data_dict):
         second = buildNode(Database.getNode(second_id))
         if edge['type'] == 0:
             e = NormalEdge(edge['id'])
-            first.next_nodes.append(e)
+            first.edges.append(e)
             e.next_nodes.append(second)
-            Database.addEdge(e.id, first_id, second_id, None, None, None, None, None)
+            Database.addEdge(e.id, first_id, second_id, None, None, None, None)
         elif edge['type'] == 1:
             min_json = edge['content']['min']
             min_time = int(min_json['seconds']) + (60 * int(min_json['minutes'])) + (360 * int(min_json['hours']))
             max_json = edge['content']['max']
             max_time = int(max_json['seconds']) + (60 * int(max_json['minutes'])) + (360 * int(max_json['hours']))
             e = RelativeTimeEdge(edge['id'], min_time, max_time)
-            first.next_nodes.append(e)
+            first.edges.append(e)
             e.next_nodes.append(second)
-            Database.addEdge(e.id, first_id, second_id, min_time, max_time, None, None, None)
+            Database.addEdge(e.id, first_id, second_id, min_time, max_time, None, None)
         elif edge['type'] == 2:
-            min_time = datetime.strptime(edge['content']['min'], '%d/%m/%y %H:%M:%S')
-            max_time = datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
+            min_time = datetime.datetime.strptime(edge['content']['min'], '%d/%m/%y %H:%M:%S')
+            max_time = datetime.datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
+            first.edges.append(e)
             e = FixedTimeEdge(edge['id'], min_time, max_time)
-            first.next_nodes.append(e)
             e.next_nodes.append(second)
-            Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time, None)
+            Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time)
 
     Database.addWorkflow(data_dict["id"], first_node)
     log("created workflow")

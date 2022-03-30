@@ -1,4 +1,6 @@
 import sqlite3
+
+from Database.DALEdges import buildDALEdge
 from Database.DALNodes import buildDALNodes, buildDALNodesFromNode
 from Form import Form
 from Test import Test
@@ -139,7 +141,6 @@ def init_tables():
             "max_time"	INTEGER,
             "min_fixed"	DATETIME,
             "max_fixed"	DATETIME,
-            "start_time"	DATETIME,
             FOREIGN KEY("to_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("from_id") REFERENCES "Nodes"("id"),
             PRIMARY KEY("id")
@@ -156,7 +157,11 @@ def init_tables():
             "gender"	TEXT NOT NULL,
             "age"	INTEGER NOT NULL,
             "workflow"	INTEGER NOT NULL,
-            "node"	INTEGER NOT NULL,
+            "node"	INTEGER,
+            "edge"	INTEGER,
+            "start_time"	INTEGER,
+            FOREIGN KEY("node") REFERENCES "Nodes"("id"),
+            FOREIGN KEY("edge") REFERENCES "Edges"("id"),
             PRIMARY KEY("id")
             );""",
                "create_questionnaires_table": """CREATE TABLE IF NOT EXISTS "Questionnaires" (
@@ -250,11 +255,11 @@ def addComplexNode(node_id, first_id):
     insert_to_table(query, node_data)
 
 
-def addEdge(edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed, start_time):
-    query = """INSERT OR IGNORE INTO Edges (id, from_id, to_id, min_time, max_time, min_fixed, max_fixed, start_time)
+def addEdge(edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed):
+    query = """INSERT OR IGNORE INTO Edges (id, from_id, to_id, min_time, max_time, min_fixed, max_fixed)
                     VALUES 
-                       (?, ?, ?, ?, ?, ?, ?, ?);"""
-    edge_data = (edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed, start_time)
+                       (?, ?, ?, ?, ?, ?, ?);"""
+    edge_data = (edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed)
     insert_to_table(query, edge_data)
 
 
@@ -295,11 +300,11 @@ def addNode(node, op_code):
     insert_to_table(query, node_data)
 
 
-def addParticipant(user_id, name, gender, age, workflow, node):
-    query = """INSERT OR IGNORE INTO Participants (id, name, gender, age, workflow, node)
+def addParticipant(user_id, name, gender, age, workflow, node, edge, start_time):
+    query = """INSERT OR IGNORE INTO Participants (id, name, gender, age, workflow, node, edge, start_time)
                 VALUES 
-                   (?, ?, ?, ?, ?, ?);"""
-    participant_data = (user_id, name, gender, age, workflow, node)
+                   (?, ?, ?, ?, ?, ?, ?, ?);"""
+    participant_data = (user_id, name, gender, age, workflow, node, edge, start_time)
     insert_to_table(query, participant_data)
 
 
@@ -388,6 +393,10 @@ def getAnswer(form_id, question_number, participant_id):
     return rows[0]
 
 
+def getEdge(edge_id):
+    return buildDALEdge(extract_one_from_table("SELECT * FROM Edges WHERE id=?", (edge_id,)))
+
+
 def getForm(form_id):
     if form_id in forms:
         return forms.get(form_id)
@@ -468,6 +477,12 @@ def getWorkflow(workflow_id):
 
 
 def updateNode(participant_id, node_id):
-    query = """UPDATE Participants SET node = ? WHERE id = ?"""
+    query = """UPDATE Participants SET node = ?, edge = NULL, start_time = NULL WHERE id = ?"""
     ids = (node_id, participant_id)
+    insert_to_table(query, ids)
+
+
+def updateEdge(participant_id, edge_id, start_time):
+    query = """UPDATE Participants SET edge = ?, start_time = ?, node = NULL WHERE id = ?"""
+    ids = (edge_id, start_time, participant_id)
     insert_to_table(query, ids)

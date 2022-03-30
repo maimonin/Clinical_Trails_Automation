@@ -4,6 +4,8 @@ import threading
 from abc import ABC, abstractmethod
 from asyncio import sleep
 from typing import List
+
+from Database import Database
 from Users import User
 
 
@@ -42,6 +44,7 @@ class RelativeTimeEdge(Edge):
         self.max_time = max_time
 
     def attach(self, participant: User) -> None:
+        Database.updateEdge(participant.id, self.id, datetime.datetime.now())
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -72,7 +75,7 @@ class RelativeTimeEdge(Edge):
 
 class FixedTimeEdge(Edge):
     def __init__(self, edge_id, min_time, max_time):
-        super(RelativeTimeEdge, self).__init__()
+        super(FixedTimeEdge, self).__init__()
         self.id = edge_id
         self.lock = threading.Lock()
         self.participants: List[User] = []
@@ -80,6 +83,7 @@ class FixedTimeEdge(Edge):
         self.max_time = max_time
 
     def attach(self, participant: User) -> None:
+        Database.updateEdge(participant.id, self.id, datetime.datetime.now())
         self.participants.append(participant)
 
     def detach(self, participant: User) -> None:
@@ -120,6 +124,7 @@ class NormalEdge(Edge):
         self.id = edge_id
 
     def attach(self, participant: User) -> None:
+        Database.updateEdge(participant.id, self.id, datetime.datetime.now())
         self.participants.append(participant)
         print("attached to edge")
 

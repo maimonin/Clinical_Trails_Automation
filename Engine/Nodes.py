@@ -33,7 +33,7 @@ class Node(ABC):
 
 
 async def end_test(node, participants):
-    if len(node.next_nodes) == 0:
+    if len(node.edges) == 0:
         for participant in participants:
             await send_notification_by_id(participant.id, {'type': 'terminate'})
 
@@ -50,7 +50,7 @@ class Questionnaire(Node):
         self.id = node_id
         self.title = title
         self.form = form
-        self.next_nodes = []
+        self.edges = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
         self.number = number
@@ -65,8 +65,8 @@ class Questionnaire(Node):
     async def exec(self) -> None:
         await self.notify()
         threads = []
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+        for edge in self.edges:
+            threads.append(asyncio.create_task(edge.exec()))
         for t in threads:
             await t
 
@@ -79,8 +79,8 @@ class Questionnaire(Node):
             # send questionnaire to participant
             await send_questionnaire(self.form, self.number, participant.id)
             Data.add_Form(self.number, participant.id)
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            for edge in self.edges:
+                edge.attach(participant)
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -92,7 +92,7 @@ class Decision(Node):
         super(Decision, self).__init__()
         self.id = node_id
         self.title = title
-        self.next_nodes = []
+        self.edges = []
         self.conditions = conditions
         self.lock = threading.Lock()
         self.participants: List[User] = []
@@ -107,10 +107,10 @@ class Decision(Node):
     async def exec(self) -> None:
         await self.notify()
         threads = []
-        if self.next_nodes[0].has_actors():
-            threads.append(asyncio.create_task(self.next_nodes[0].exec()))
-        if self.next_nodes[1].has_actors():
-            threads.append(asyncio.create_task(self.next_nodes[1].exec()))
+        if self.edges[0].has_actors():
+            threads.append(asyncio.create_task(self.edges[0].exec()))
+        if self.edges[1].has_actors():
+            threads.append(asyncio.create_task(self.edges[1].exec()))
         for t in threads:
             await t
 
@@ -124,9 +124,9 @@ class Decision(Node):
         self.lock.release()
         for participant in participants2:
             if await self.get_results(participant.id):
-                self.next_nodes[0].attach(participant)
+                self.edges[0].attach(participant)
             else:
-                self.next_nodes[1].attach(participant)
+                self.edges[1].attach(participant)
 
     async def get_results(self, participant):
         for condition in self.conditions:
@@ -151,7 +151,7 @@ class StringNode(Node):
         self.id = node_id
         self.title = title
         self.text = text
-        self.next_nodes = []
+        self.edges = []
         self.lock = threading.Lock()
         self.participants = []
         lower_actors = []
@@ -169,9 +169,9 @@ class StringNode(Node):
     async def exec(self) -> None:
         await self.notify()
         threads = []
-        print(self.next_nodes)
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+        print(self.edges)
+        for edge in self.edges:
+            threads.append(asyncio.create_task(edge.exec()))
         for t in threads:
             await t
 
@@ -183,8 +183,8 @@ class StringNode(Node):
         for participant in participants2:
             if self.actors.__contains__(participant.role):
                 await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            for edge in self.edges:
+                edge.attach(participant)
             for role in self.actors:
                 r = get_role(role)
                 if r is not None:
@@ -202,7 +202,7 @@ class TestNode(Node):
         self.title = title
         self.tests = tests
         self.in_charge = in_charge
-        self.next_nodes = []
+        self.edges = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
 
@@ -216,8 +216,8 @@ class TestNode(Node):
     async def exec(self) -> None:
         await self.notify()
         threads = []
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+        for edge in self.edges:
+            threads.append(asyncio.create_task(edge.exec()))
         for t in threads:
             await t
 
@@ -230,8 +230,8 @@ class TestNode(Node):
             for test in self.tests:
                 await take_test(participant.id, test, self.in_charge)
                 add_test_form(test.name, participant)
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            for edge in self.edges:
+                edge.attach(participant)
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -245,7 +245,7 @@ class TimeNode(Node):
         self.min_time = min_time
         self.max_time = max_time
         self.lock = threading.Lock()
-        self.next_nodes = []
+        self.edges = []
         self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
@@ -258,8 +258,8 @@ class TimeNode(Node):
     def exec(self) -> None:
         self.notify()
         threads = []
-        for next_node in self.next_nodes:
-            threads.append(threading.Thread(target=next_node.exec, args=()))
+        for edge in self.edges:
+            threads.append(threading.Thread(target=edge.exec, args=()))
         for t in threads:
             t.start()
         for t in threads:
@@ -271,8 +271,8 @@ class TimeNode(Node):
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            for edge in self.edges:
+                edge.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -283,7 +283,7 @@ class ComplexNode(Node):
         super(ComplexNode, self).__init__()
         self.id = node_id
         self.title = title
-        self.next_nodes = []
+        self.edges = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
         self.flow = flow
@@ -298,8 +298,8 @@ class ComplexNode(Node):
     async def exec(self) -> None:
         await self.notify()
         threads = []
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
+        for edge in self.edges:
+            threads.append(asyncio.create_task(edge.exec()))
         for t in threads:
             await t
 
@@ -312,8 +312,8 @@ class ComplexNode(Node):
         for participant in participants2:
             self.flow.attach(participant)
             threads.append(asyncio.create_task(self.flow.exec()))
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            for edge in self.edges:
+                edge.attach(participant)
         for t in threads:
             await t
         await end_test(self, participants2)
