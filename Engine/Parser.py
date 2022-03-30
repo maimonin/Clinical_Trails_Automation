@@ -19,6 +19,11 @@ OP_NODE_STRING = 4
 OP_NODE_TIME = 5
 OP_NODE_COMPLEX = 6
 
+questionnaires = {}
+testNodes = {}
+decisionNodes = {}
+stringNodes = {}
+complexNodes = {}
 
 def get_data(s):
     data = ""
@@ -114,14 +119,26 @@ def add_times(time_node, other_node):
 
 def buildNode(dal_node):
     if dal_node.op_code == 1:
-        return Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form), dal_node.form_id)
+        if dal_node.id in questionnaires:
+            return questionnaires[dal_node.id]
+        questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form), dal_node.form_id)
+        return questionnaires[dal_node.id]
     elif dal_node.op_code == 2:
-        return TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
+        if dal_node.id in testNodes:
+            return testNodes[dal_node.id]
+        testNodes[dal_node.id] = TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
+        return testNodes[dal_node.id]
     elif dal_node.op_code == 4:
-        return StringNode(dal_node.id, dal_node.title, dal_node.text, dal_node.actors)
+        if dal_node.id in stringNodes:
+            return stringNodes[dal_node.id]
+        stringNodes[dal_node.id] = StringNode(dal_node.id, dal_node.title, dal_node.text, dal_node.actors)
+        return stringNodes[dal_node.id]
     elif dal_node.op_code == 6:
+        if dal_node.id in complexNodes:
+            return complexNodes[dal_node.id]
         flow = buildNode(dal_node.flow)
-        return ComplexNode(dal_node.id, dal_node.title, flow)
+        complexNodes[dal_node.id] = ComplexNode(dal_node.id, dal_node.title, flow)
+        return complexNodes[dal_node.id]
 
 
 async def register_user(user_dict):
@@ -139,6 +156,7 @@ async def register_user(user_dict):
             dalStart = Database.getNode(workflow[1])
             start = buildNode(dalStart)
             start.attach(user)
+            print(start)
             await start.exec()
     else:
         Database.addStaff(user_dict['name'], user_dict['role'])
@@ -180,11 +198,13 @@ def new_workflow(data_dict):
     for edge in data_dict['edges']:
         first_id = outputs[edge['start']]
         second_id = inputs[edge['end']]
-        first = nodes[first_id]
-        second = nodes[second_id]
+        first = buildNode(Database.getNode(first_id))
+        second = buildNode(Database.getNode(second_id))
         if edge['type'] == 0:
             e = NormalEdge(edge['id'])
             first.next_nodes.append(e)
+            print(first)
+            print(first.next_nodes)
             e.next_nodes.append(second)
             Database.addEdge(e.id, first_id, second_id, None, None, None, None, None)
         elif edge['type'] == 1:

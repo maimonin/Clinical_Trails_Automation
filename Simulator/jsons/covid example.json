@@ -1,5 +1,7 @@
 {
-
+    "id": 2111561603920,
+    "scene_width": 64000,
+    "scene_height": 64000,
     "nodes": [
         {
             "id": 2846458731440,
@@ -11,12 +13,12 @@
             ],
             "outputs": [
                 {
-                    "id": 2846458763392,
+                    "id": 2846458763392
                 }
             ],
             "content": {
                 "node_details": {
-                    "title": "informed consent",
+                    "title": "informed consent"
                 },
                 "questions": [
                     {
@@ -49,17 +51,17 @@
             "title": "Decision",
             "inputs": [
                 {
-                    "id": 2846471721936,
+                    "id": 2846471721936
                 }
             ],
             "outputs": [
                 {
-                    "id": 2846471721984,
+                    "id": 2846471721984
                 }
             ],
             "content": {
                 "node_details": {
-                    "title": "informed consent desc",
+                    "title": "informed consent desc"
                 },
                 "condition": [
                     {
@@ -89,12 +91,12 @@
             "title": "Simple String",
             "inputs": [
                 {
-                    "id": 2846471768768,
+                    "id": 2846471768768
                 }
             ],
             "outputs": [
                 {
-                    "id": 2846471768816,
+                    "id": 2846471768816
                 }
             ],
             "content": {
@@ -113,12 +115,12 @@
             "title": "Sub Workflow",
             "inputs": [
                 {
-                    "id": 2846471769392,
+                    "id": 2846471769392
                 }
             ],
             "outputs": [
                 {
-                    "id": 2846471769440,
+                    "id": 2846471769440
                 }
             ],
             "content": {
@@ -130,12 +132,12 @@
                             "title": "Test",
                             "inputs": [
                                 {
-                                    "id": 2846471866784,
+                                    "id": 2846471866784
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471866832,
+                                    "id": 2846471866832
                                 }
                             ],
                             "content": {
@@ -147,7 +149,7 @@
                                 "tests": [
                                     {
                                         "name": "Antigen Test",
-                                        "instructions": "Take samples from both nostrils using a swab.\nPut the swab in tube and squeeze. Close the tube and drop the liquid on the test cassette. \nWait 15 minutes for the resultes.",
+                                        "instructions": "Take samples from both nostrils using a swab.\nPut the swab in tube and squeeze. Close the tube and drop the liquid on the test cassette. \nWait 15 minutes for the results.",
                                         "staff": [
                                             "Nurse"
                                         ],
@@ -162,17 +164,17 @@
                             "title": "Decision",
                             "inputs": [
                                 {
-                                    "id": 2846471868272,
+                                    "id": 2846471868272
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471916560,
+                                    "id": 2846471916560
                                 }
                             ],
                             "content": {
                                 "node_details": {
-                                    "title": "test antigen desc",
+                                    "title": "test antigen desc"
                                 },
                                 "condition": [
                                     {
@@ -193,12 +195,12 @@
                             "title": "Simple String",
                             "inputs": [
                                 {
-                                    "id": 2846471917184,
+                                    "id": 2846471917184
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471917232,
+                                    "id": 2846471917232
                                 }
                             ],
                             "content": {
@@ -218,18 +220,18 @@
                             "title": "Test",
                             "inputs": [
                                 {
-                                    "id": 2846471768912,
+                                    "id": 2846471768912
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471866976,
+                                    "id": 2846471866976
                                 }
                             ],
                             "content": {
                                 "node_details": {
                                     "title": "vaccine",
-                                    "actor in charge": "Lab Technician",
+                                    "actor in charge": "Lab Technician"
                                 },
                                 "tests": [
                                     {
@@ -247,17 +249,17 @@
                             "title": "Questionnaire",
                             "inputs": [
                                 {
-                                    "id": 2846460297616,
+                                    "id": 2846460297616
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846460297664,
+                                    "id": 2846460297664
                                 }
                             ],
                             "content": {
                                 "node_details": {
-                                    "title": "question after vaccine",
+                                    "title": "question after vaccine"
                                 },
                                 "questions": [
                                     {

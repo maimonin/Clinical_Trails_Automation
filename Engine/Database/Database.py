@@ -6,6 +6,9 @@ from Test import Test
 workflows = {}
 questionnaires = {}
 testNodes = {}
+decisionNodes = {}
+stringNodes = {}
+complexNodes = {}
 forms = {}
 
 
@@ -247,11 +250,11 @@ def addComplexNode(node_id, first_id):
     insert_to_table(query, node_data)
 
 
-def addEdge(edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max, start_time):
-    query = """INSERT OR IGNORE INTO Edges (id, from_id, to_id, min_time, max_time, fixed_time, start_time)
+def addEdge(edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed, start_time):
+    query = """INSERT OR IGNORE INTO Edges (id, from_id, to_id, min_time, max_time, min_fixed, max_fixed, start_time)
                     VALUES 
                        (?, ?, ?, ?, ?, ?, ?, ?);"""
-    edge_data = (edge_id, from_id, to_id, min_time, max_time, fixed_min, fixed_max, start_time)
+    edge_data = (edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed, start_time)
     insert_to_table(query, edge_data)
 
 
@@ -367,7 +370,6 @@ def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
 
 
 def addWorkflow(workflow_id, first):
-    print(workflow_id)
     query = """INSERT OR IGNORE INTO Workflows (id, first_node)
                 VALUES 
                    (?, ?);"""
@@ -435,8 +437,8 @@ def getNode(node_id):
     elif op_code == 4:
         text = extract_one_from_table("""SELECT notification FROM String_Nodes WHERE id=?""", (node_id,))[0]
         actors = []
-        actors_mashed = extract_many_from_table("""SELECT actor_name FROM Actors_To_Notify 
-        WHERE notification_id=?""", (node_id,))
+        actors_mashed = extract_many_from_table("""SELECT actor_name FROM Actors_To_Notify WHERE notification_id=?""",
+                                                (node_id,))
         for actor in actors_mashed:
             actors.append(actor[0])
         return buildDALNodes([op_code, node_id, title, text, actors])

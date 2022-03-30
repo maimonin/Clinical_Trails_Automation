@@ -1,12 +1,9 @@
 import asyncio
-import json
 import threading
-import time
-from _thread import start_new_thread
 from abc import ABC, abstractmethod
 from typing import List
 import Data
-from Data import add_questionnaire, add_test, add_test_form, parse_test_condition
+from Data import add_test_form, parse_test_condition
 from Database import Database
 from Engine.Users import User
 from NotificationHandler import send_notification_by_id, send_questionnaire
@@ -38,7 +35,7 @@ class Node(ABC):
 async def end_test(node, participants):
     if len(node.next_nodes) == 0:
         for participant in participants:
-            await send_notification_by_id(participant.id,{'type': 'terminate'})
+            await send_notification_by_id(participant.id, {'type': 'terminate'})
 
 
 def set_time(node, min_time, max_time):
@@ -137,7 +134,10 @@ class Decision(Node):
                 if not (Data.parse_trait_condition(participant, condition['satisfy'], condition['test'])):
                     return False
             elif condition['type'].rstrip() == 'questionnaire condition':
-                if not (await Data.parse_questionnaire_condition(participant, condition['questionnaireNumber'], condition['questionNumber'], condition['acceptedAnswers'])):
+                if not (await Data.parse_questionnaire_condition(participant,
+                                                                 condition['questionnaireNumber'],
+                                                                 condition['questionNumber'],
+                                                                 condition['acceptedAnswers'])):
                     return False
             elif condition['type'].rstrip() == 'test condition':
                 if not (await parse_test_condition(participant, condition['satisfy'], condition['test'])):
@@ -169,6 +169,7 @@ class StringNode(Node):
     async def exec(self) -> None:
         await self.notify()
         threads = []
+        print(self.next_nodes)
         for next_node in self.next_nodes:
             threads.append(asyncio.create_task(next_node.exec()))
         for t in threads:
@@ -179,9 +180,7 @@ class StringNode(Node):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        print(self.text)
         for participant in participants2:
-            print(participant.id)
             if self.actors.__contains__(participant.role):
                 await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
             for next_node in self.next_nodes:
@@ -321,5 +320,3 @@ class ComplexNode(Node):
 
     def has_actors(self):
         return len(self.participants) != 0
-
-

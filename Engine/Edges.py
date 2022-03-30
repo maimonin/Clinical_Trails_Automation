@@ -1,17 +1,16 @@
 import asyncio
 import datetime
 import threading
-import time
 from abc import ABC, abstractmethod
 from asyncio import sleep
 from typing import List
-
 from Users import User
 
 
 class Edge(ABC):
     def __init__(self):
         self.next_nodes = []
+
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
@@ -34,9 +33,9 @@ class Edge(ABC):
 
 
 class RelativeTimeEdge(Edge):
-    def __init__(self, id, min_time, max_time):
+    def __init__(self, edge_id, min_time, max_time):
         super(RelativeTimeEdge, self).__init__()
-        self.id = id
+        self.id = edge_id
         self.lock = threading.Lock()
         self.participants: List[User] = []
         self.min_time = min_time
@@ -72,9 +71,9 @@ class RelativeTimeEdge(Edge):
 
 
 class FixedTimeEdge(Edge):
-    def __init__(self, id, min_time, max_time):
+    def __init__(self, edge_id, min_time, max_time):
         super(RelativeTimeEdge, self).__init__()
-        self.id = id
+        self.id = edge_id
         self.lock = threading.Lock()
         self.participants: List[User] = []
         self.min_time = min_time
@@ -114,19 +113,21 @@ class FixedTimeEdge(Edge):
 
 
 class NormalEdge(Edge):
-    def __init__(self, id):
+    def __init__(self, edge_id):
         super(NormalEdge, self).__init__()
         self.lock = threading.Lock()
         self.participants: List[User] = []
-        self.id=id
+        self.id = edge_id
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
+        print("attached to edge")
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
     async def exec(self) -> None:
+        print("executing edge")
         await self.notify()
         threads = []
         for next_node in self.next_nodes:
@@ -139,6 +140,7 @@ class NormalEdge(Edge):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
+        print(self.next_nodes)
         for participant in participants2:
             for next_node in self.next_nodes:
                 next_node.attach(participant)
