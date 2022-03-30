@@ -156,7 +156,6 @@ async def register_user(user_dict):
             dalStart = Database.getNode(workflow[1])
             start = buildNode(dalStart)
             start.attach(user)
-            print(start)
             await start.exec()
     else:
         Database.addStaff(user_dict['name'], user_dict['role'])
@@ -203,21 +202,19 @@ def new_workflow(data_dict):
         if edge['type'] == 0:
             e = NormalEdge(edge['id'])
             first.next_nodes.append(e)
-            print(first)
-            print(first.next_nodes)
             e.next_nodes.append(second)
             Database.addEdge(e.id, first_id, second_id, None, None, None, None, None)
         elif edge['type'] == 1:
-            min_json = edge['content']['Min']
-            min_time = int(min_json['Seconds']) + (60 * int(min_json['Minutes'])) + (360 * int(min_json['Hours']))
+            min_json = edge['content']['min']
+            min_time = int(min_json['seconds']) + (60 * int(min_json['minutes'])) + (360 * int(min_json['hours']))
             max_json = edge['content']['max']
-            max_time = int(max_json['Seconds']) + (60 * int(max_json['Minutes'])) + (360 * int(max_json['Hours']))
+            max_time = int(max_json['seconds']) + (60 * int(max_json['minutes'])) + (360 * int(max_json['hours']))
             e = RelativeTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
             e.next_nodes.append(second)
             Database.addEdge(e.id, first_id, second_id, min_time, max_time, None, None, None)
         elif edge['type'] == 2:
-            min_time = datetime.strptime(edge['content']['Min'], '%d/%m/%y %H:%M:%S')
+            min_time = datetime.strptime(edge['content']['min'], '%d/%m/%y %H:%M:%S')
             max_time = datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
             e = FixedTimeEdge(edge['id'], min_time, max_time)
             first.next_nodes.append(e)
