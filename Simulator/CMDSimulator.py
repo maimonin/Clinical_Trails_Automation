@@ -144,7 +144,7 @@ async def Main():
             gender = input('gender')
             age = int(input('age'))
             lock.release()
-            user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603921,
+            user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603920,
                     "sex": gender, "age": age,
                     "id": id}
             url = "ws://127.0.0.1:7890"

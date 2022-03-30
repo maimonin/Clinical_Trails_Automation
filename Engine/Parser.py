@@ -117,6 +117,8 @@ def buildNode(dal_node):
         return Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form), dal_node.form_id)
     elif dal_node.op_code == 2:
         return TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
+    elif dal_node.op_code == 4:
+        return StringNode(dal_node.id, dal_node.title, dal_node.text, dal_node.actors)
 
 
 async def register_user(user_dict):

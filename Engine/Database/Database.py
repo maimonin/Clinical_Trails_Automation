@@ -326,7 +326,8 @@ def addStaff(name, role):
 
 
 def addStringNode(notification_id, notification):
-    query = """INSERT OR IGNORE INTO String_Nodes (notification_id, notification)
+    print("hi")
+    query = """INSERT OR IGNORE INTO String_Nodes (id, notification)
                     VALUES 
                        (?, ?);"""
     node_data = (notification_id, notification)
@@ -427,10 +428,18 @@ def getNode(node_id):
         form_id = extract_one_from_table("""SELECT form_id FROM Questionnaires WHERE id=?""", (node_id,))[0]
         form = getForm(form_id)
         return buildDALNodes([op_code, node_id, title, form, form_id])
-    elif node_data[1] == 2:
+    elif op_code == 2:
         in_charge = extract_one_from_table("""SELECT in_charge FROM Test_Nodes WHERE id=?""", (node_id,))[0]
         tests = getTests(node_id)
         return buildDALNodes([op_code, node_id, title, tests, in_charge])
+    elif op_code == 4:
+        text = extract_one_from_table("""SELECT notification FROM String_Nodes WHERE id=?""", (node_id,))[0]
+        actors = []
+        actors_mashed = extract_many_from_table("""SELECT actor_name FROM Actors_To_Notify 
+        WHERE notification_id=?""", (node_id,))
+        for actor in actors_mashed:
+            actors.append(actor[0])
+        return buildDALNodes([op_code, node_id, title, text, actors])
 
 
 def getTests(node_id):
