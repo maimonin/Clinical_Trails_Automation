@@ -4,10 +4,12 @@ import socket
 from _thread import *
 import threading
 import Data
+import Nodes
 from Database import Database
+from EdgeGetter import edges
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
-from Form import buildFromJSON, formToJSON
+from Form import buildFromJSON
 from Logger import log
 import user_lists
 from Test import Test
@@ -18,13 +20,6 @@ OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
 OP_NODE_TIME = 5
 OP_NODE_COMPLEX = 6
-
-questionnaires = {}
-testNodes = {}
-decisionNodes = {}
-stringNodes = {}
-complexNodes = {}
-edges = {}
 
 
 def get_data(s):
@@ -47,6 +42,7 @@ def parse_Questionnaire(node_dict):
     Database.addNode(node, node_dict['op_code'])
     Database.addForm(form)
     Database.addQuestionnaire(node.id, form.questionnaire_number, node)
+    Nodes.questionnaires[node.id] = node
     return node
 
 
@@ -62,6 +58,7 @@ def parse_Test(node_dict):
     node = TestNode(node_dict['id'], node_details['title'], tests, node_details['actor in charge'])
     Database.addNode(node, node_dict['op_code'])
     Database.addTestNode(node)
+    Nodes.testNodes[node.id] = node
     return node
 
 
@@ -102,6 +99,19 @@ def parse_String_Node(node_dict):
     Database.addStringNode(node.id, content['text'])
     for actor in node_details['actors']:
         Database.addActorToNotify(node.id, actor)
+    Nodes.stringNodes[node.id] = node
+    return node
+
+
+def parse_Complex_Node(node_dict):
+    content = node_dict['content']
+    flow = new_workflow(content['flow'])
+    node = ComplexNode(node_dict['id'], node_dict['title'], flow)
+    # add complex node to nodes and complex nodes
+    # add flow to workflows
+    Database.addNode(node, node_dict["op_code"])
+    Database.addComplexNode(node.id, flow.id)
+    Nodes.complexNodes[node.id] = node
     return node
 
 
@@ -119,46 +129,6 @@ def add_times(time_node, other_node):
     set_time(other_node, time_node.min_time, time_node.max_time)
 
 
-def buildNode(dal_node):
-    if dal_node.op_code == 1:
-        if dal_node.id in questionnaires:
-            return questionnaires[dal_node.id]
-        questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form),
-                                                    dal_node.form_id)
-        return questionnaires[dal_node.id]
-    elif dal_node.op_code == 2:
-        if dal_node.id in testNodes:
-            return testNodes[dal_node.id]
-        testNodes[dal_node.id] = TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
-        return testNodes[dal_node.id]
-    elif dal_node.op_code == 4:
-        if dal_node.id in stringNodes:
-            return stringNodes[dal_node.id]
-        stringNodes[dal_node.id] = StringNode(dal_node.id, dal_node.title, dal_node.text, dal_node.actors)
-        return stringNodes[dal_node.id]
-    elif dal_node.op_code == 6:
-        if dal_node.id in complexNodes:
-            return complexNodes[dal_node.id]
-        flow = buildNode(dal_node.flow)
-        complexNodes[dal_node.id] = ComplexNode(dal_node.id, dal_node.title, flow)
-        return complexNodes[dal_node.id]
-
-
-def getEdge(edge_id, edge_type):
-    if edge_id in edges:
-        return edges[edge_id]
-    dal_edge = Database.getEdge(edge_id)
-    if edge_type == 0:
-        edges[edge_id] = NormalEdge(dal_edge.id)
-        return edges[edge_id]
-    elif edge_type == 1:
-        edges[edge_id] = RelativeTimeEdge(dal_edge.id, dal_edge.min_time, dal_edge.max_time)
-        return edges[edge_id]
-    else:
-        edges[edge_id] = FixedTimeEdge(dal_edge.id, dal_edge.min_time, dal_edge.max_time)
-        return edges[edge_id]
-
-
 async def register_user(user_dict):
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
@@ -172,22 +142,11 @@ async def register_user(user_dict):
                                     user_dict['age'], user_dict['workflow'], workflow[1], None, None)
             # start participant's workflow from start node
             dalStart = Database.getNode(workflow[1])
-            start = buildNode(dalStart)
+            start = Nodes.buildNode(dalStart)
             start.attach(user)
             await start.exec()
     else:
         Database.addStaff(user_dict['name'], user_dict['role'])
-
-
-def parse_Complex_Node(node_dict):
-    content = node_dict['content']
-    flow = new_workflow(content['flow'])
-    node = ComplexNode(node_dict['id'], node_dict['title'], flow)
-    # add complex node to nodes and complex nodes
-    # add flow to workflows
-    Database.addNode(node, node_dict["op_code"])
-    Database.addComplexNode(node.id, flow.id)
-    return node
 
 
 def new_workflow(data_dict):
@@ -203,8 +162,6 @@ def new_workflow(data_dict):
             nodes[node['id']] = parse_Decision(node)
         elif node['op_code'] == OP_NODE_STRING:
             nodes[node['id']] = parse_String_Node(node)
-        # elif node['op_code'] == OP_NODE_TIME:
-        #    nodes[node['id']] = parse_Time_Node(node)
         elif node['op_code'] == OP_NODE_COMPLEX:
             nodes[node['id']] = parse_Complex_Node(node)
         for out in node['outputs']:
@@ -215,12 +172,9 @@ def new_workflow(data_dict):
     for edge in data_dict['edges']:
         first_id = outputs[edge['start']]
         second_id = inputs[edge['end']]
-        first = buildNode(Database.getNode(first_id))
-        second = buildNode(Database.getNode(second_id))
         if edge['type'] == 0:
             e = NormalEdge(edge['id'])
-            first.edges.append(e)
-            e.next_nodes.append(second)
+            edges[e.id] = e
             Database.addEdge(e.id, first_id, second_id, None, None, None, None)
         elif edge['type'] == 1:
             min_json = edge['content']['min']
@@ -228,15 +182,13 @@ def new_workflow(data_dict):
             max_json = edge['content']['max']
             max_time = int(max_json['seconds']) + (60 * int(max_json['minutes'])) + (360 * int(max_json['hours']))
             e = RelativeTimeEdge(edge['id'], min_time, max_time)
-            first.edges.append(e)
-            e.next_nodes.append(second)
+            edges[e.id] = e
             Database.addEdge(e.id, first_id, second_id, min_time, max_time, None, None)
         elif edge['type'] == 2:
             min_time = datetime.datetime.strptime(edge['content']['min'], '%d/%m/%y %H:%M:%S')
             max_time = datetime.datetime.strptime(edge['content']['max'], '%d/%m/%y %H:%M:%S')
-            first.edges.append(e)
             e = FixedTimeEdge(edge['id'], min_time, max_time)
-            e.next_nodes.append(second)
+            edges[e.id] = e
             Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time)
 
     Database.addWorkflow(data_dict["id"], first_node)
@@ -258,7 +210,7 @@ def threaded(c):
             break
         data_dict = json.loads(data)
         if data_dict['sender'] == 'simulator':
-            register_user(data_dict, c)
+            register_user(data_dict)
             break
         else:
             workflows[data_dict["workflow_id"]] = new_workflow(data_dict)

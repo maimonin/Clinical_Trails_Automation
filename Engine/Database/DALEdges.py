@@ -9,11 +9,13 @@ def buildDALEdge(edge_data):
 class DALNormalEdge:
     def __init__(self, edge_id):
         self.id = edge_id
+        self.type = 0
 
 
 class DALRelativeTimeEdge:
     def __init__(self, edge_id, min_time, max_time):
         self.id = edge_id
+        self.type = 1
         self.min_time = min_time
         self.max_time = max_time
 
@@ -21,5 +23,6 @@ class DALRelativeTimeEdge:
 class DALFixedTimeEdge:
     def __init__(self, edge_id, min_time, max_time):
         self.id = edge_id
+        self.type = 2
         self.min_time = min_time
         self.max_time = max_time

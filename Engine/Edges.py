@@ -4,8 +4,8 @@ import threading
 from abc import ABC, abstractmethod
 from asyncio import sleep
 from typing import List
-
 from Database import Database
+from NodeGetter import getNode
 from Users import User
 
 
@@ -38,10 +38,11 @@ class RelativeTimeEdge(Edge):
     def __init__(self, edge_id, min_time, max_time):
         super(RelativeTimeEdge, self).__init__()
         self.id = edge_id
-        self.lock = threading.Lock()
-        self.participants: List[User] = []
         self.min_time = min_time
         self.max_time = max_time
+        self.next_node = None
+        self.lock = threading.Lock()
+        self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         Database.updateEdge(participant.id, self.id, datetime.datetime.now())
@@ -51,23 +52,31 @@ class RelativeTimeEdge(Edge):
         self.participants.remove(participant)
 
     async def exec(self) -> None:
-        await self.notify()
-        threads = []
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
-        for t in threads:
-            await t
+        self.next_node = getNode(self.id)
+        if self.next_node is not None:
+            await self.notify()
+            await asyncio.create_task(self.next_node.exec())
 
     async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        if self.min_time is not None:
-            await sleep(self.min_time)
         for participant in participants2:
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            if self.min_time is not None:
+                started = datetime.datetime.strptime(Database.getTimeStarted(participant.id).rpartition('.')[0],
+                                                     '%Y-%m-%d %H:%M:%S')
+                print(started)
+                sleep_time = (started + datetime.timedelta(seconds=self.min_time)
+                              - datetime.datetime.now()).total_seconds()
+                print(sleep_time)
+                if sleep_time > 0:
+                    self.next_node.attach(participant)
+                    await sleep(sleep_time)
+                elif sleep_time < 0 and (self.max_time - self.min_time + sleep_time < 0):
+                    print("error node is late")
+                else:
+                    self.next_node.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -77,10 +86,11 @@ class FixedTimeEdge(Edge):
     def __init__(self, edge_id, min_time, max_time):
         super(FixedTimeEdge, self).__init__()
         self.id = edge_id
-        self.lock = threading.Lock()
-        self.participants: List[User] = []
         self.min_time = min_time
         self.max_time = max_time
+        self.next_node = None
+        self.lock = threading.Lock()
+        self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         Database.updateEdge(participant.id, self.id, datetime.datetime.now())
@@ -90,12 +100,10 @@ class FixedTimeEdge(Edge):
         self.participants.remove(participant)
 
     async def exec(self) -> None:
-        await self.notify()
-        threads = []
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
-        for t in threads:
-            await t
+        self.next_node = getNode(self.id)
+        if self.next_node is not None:
+            await self.notify()
+            await asyncio.create_task(self.next_node.exec())
 
     async def notify(self) -> None:
         self.lock.acquire()
@@ -109,8 +117,7 @@ class FixedTimeEdge(Edge):
         if self.min_time is not None:
             await sleep(self.min_time.total_seconds() - x.total_seconds())
         for participant in participants2:
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            self.next_node.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -119,36 +126,32 @@ class FixedTimeEdge(Edge):
 class NormalEdge(Edge):
     def __init__(self, edge_id):
         super(NormalEdge, self).__init__()
+        self.id = edge_id
+        self.next_node = None
         self.lock = threading.Lock()
         self.participants: List[User] = []
-        self.id = edge_id
 
     def attach(self, participant: User) -> None:
         Database.updateEdge(participant.id, self.id, datetime.datetime.now())
         self.participants.append(participant)
-        print("attached to edge")
 
     def detach(self, participant: User) -> None:
         self.participants.remove(participant)
 
     async def exec(self) -> None:
-        print("executing edge")
-        await self.notify()
-        threads = []
-        for next_node in self.next_nodes:
-            threads.append(asyncio.create_task(next_node.exec()))
-        for t in threads:
-            await t
+        self.next_node = getNode(self.id)
+        if self.next_node is not None:
+            await self.notify()
+            await asyncio.create_task(self.next_node.exec())
 
     async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        print(self.next_nodes)
+        print(self.next_node)
         for participant in participants2:
-            for next_node in self.next_nodes:
-                next_node.attach(participant)
+            self.next_node.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0

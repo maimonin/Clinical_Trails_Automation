@@ -393,8 +393,12 @@ def getAnswer(form_id, question_number, participant_id):
     return rows[0]
 
 
-def getEdge(edge_id):
-    return buildDALEdge(extract_one_from_table("SELECT * FROM Edges WHERE id=?", (edge_id,)))
+def getEdges(from_id):
+    edges = []
+    edges_data = extract_many_from_table("SELECT * FROM Edges WHERE from_id=?", (from_id,))
+    for edge_data in edges_data:
+        edges.append(buildDALEdge(edge_data))
+    return edges
 
 
 def getForm(form_id):
@@ -464,6 +468,14 @@ def getTests(node_id):
         actors = test[3].split(', ')
         tests.append(Test(test[1], test[4], test[2], actors))
     return tests
+
+
+def getTimeStarted(participant_id):
+    return extract_one_from_table("SELECT start_time FROM Participants WHERE id=?", (participant_id,))[0]
+
+
+def getToNode(edge_id):
+    return getNode(extract_one_from_table("SELECT to_id FROM Edges WHERE id=?", (edge_id,))[0])
 
 
 def getWorkflow(workflow_id):
