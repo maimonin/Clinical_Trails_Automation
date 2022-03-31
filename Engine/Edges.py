@@ -66,10 +66,8 @@ class RelativeTimeEdge(Edge):
             if self.min_time is not None:
                 started = datetime.datetime.strptime(Database.getTimeStarted(participant.id).rpartition('.')[0],
                                                      '%Y-%m-%d %H:%M:%S')
-                print(started)
                 sleep_time = (started + datetime.timedelta(seconds=self.min_time)
                               - datetime.datetime.now()).total_seconds()
-                print(sleep_time)
                 if sleep_time > 0:
                     self.next_node.attach(participant)
                     await sleep(sleep_time)
