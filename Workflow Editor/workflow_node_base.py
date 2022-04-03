@@ -249,6 +249,7 @@ class WorkflowGraphicSmallDiamond(QDMGraphicsNode):
             self.width,
             self.height
         ).normalized()
+
 class WorkflowGraphicWithIcon(QDMGraphicsNode):
 
     @property
@@ -294,7 +295,7 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         super().initSizes()
         self.edge_roundness = 20.0
 
-        self.width = 400
+        self.width = 250
         self.height = 120
         self.edge_size = 5
         self.edge_padding = 8
