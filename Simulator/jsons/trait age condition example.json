@@ -1,0 +1,102 @@
+{
+    "nodes": [
+        {
+            "id": 2216823306848,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 2216823342848
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216823342896
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "d1"
+                },
+                "condition": [
+                    {
+                        "title": "trait condition 1",
+                        "type": "trait condition    ",
+                        "test": "age",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 18,
+                                "max": 30
+                            }
+                        }
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2216823306800,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2216823408288
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216823408336
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1"
+                },
+                "text": "1"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2216823408624,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2216823408912
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216823408960
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2"
+                },
+                "text": "2"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2216823409008,
+            "edge_type": 2,
+            "type": 0,
+            "start": 2216823342896,
+            "end": 2216823408288
+        },
+        {
+            "id": 2216833595088,
+            "edge_type": 2,
+            "type": 0,
+            "start": 2216823342896,
+            "end": 2216823408912
+        }
+    ]
+}

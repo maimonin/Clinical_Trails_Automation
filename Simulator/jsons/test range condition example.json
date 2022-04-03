@@ -1,0 +1,140 @@
+{
+    "nodes": [
+        {
+            "id": 2216823408240,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 2216833658592
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216833658640
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "t1",
+                    "actor in charge": "Nurse"
+                },
+                "tests": [
+                    {
+                        "name": "hemoglobin",
+                        "instructions": "take blood",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "15"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2216823408768,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 2216833740960
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216833740912
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "d1"
+                },
+                "condition": [
+                    {
+                        "title": "test condition 1",
+                        "type": "test condition",
+                        "test": "hemoglobin",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 70,
+                                "max": 90
+                            }
+                        }
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2216833741152,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2216833741488
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216833741536
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1"
+                },
+                "text": "1"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2216833743600,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2216833743840
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2216833743888
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2"
+                },
+                "text": "2"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2216833741056,
+            "edge_type": 2,
+            "start": 2216833658640,
+            "type": 0,
+            "end": 2216833740960
+        },
+        {
+            "id": 2216833743984,
+            "edge_type": 2,
+            "start": 2216833740912,
+            "type": 0,
+            "end": 2216833741488
+        },
+        {
+            "id": 2216833744272,
+            "edge_type": 2,
+            "type": 0,
+            "start": 2216833740912,
+            "end": 2216833743840
+        }
+    ]
+}
