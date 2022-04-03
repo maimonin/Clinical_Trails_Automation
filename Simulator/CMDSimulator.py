@@ -124,6 +124,10 @@ async def register_user(user, s):
     await s.send(message)
 
 
+async def login_user(log_id, s):
+    await s.send(json.dumps({'type': 'sign in', 'id': log_id}))
+
+
 async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
@@ -136,9 +140,10 @@ async def Main():
         asyncio.create_task(actor_simulation(user, user['s']))
     while True:
         lock.acquire()
-        inp = input('want to register user? (y/n)')
+        inp = input('to register user press r, to log in user press l')
         lock.release()
-        if inp == 'y':
+        url = "ws://127.0.0.1:7890"
+        if inp == 'r':
             lock.acquire()
             id = int(input('id'))
             gender = input('gender')
@@ -147,7 +152,6 @@ async def Main():
             user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603920,
                     "sex": gender, "age": age,
                     "id": id}
-            url = "ws://127.0.0.1:7890"
             is_cn = True
             while is_cn:
                 try:
@@ -161,6 +165,22 @@ async def Main():
             lock.acquire()
             print('registered')
             lock.release()
+        elif inp == 'l':
+            lock.acquire()
+            user_id = int(input('id'))
+            lock.release()
+            is_cn = True
+            while is_cn:
+                try:
+                    s = await websockets.connect(url)
+                    await login_user(user_id, s)
+                    # here we need to receive the user json from the server
+                    asyncio.create_task(actor_simulation(user, user['s']))
+                    is_cn = False
+                except:
+                    continue
+
+
         await asyncio.sleep(10)
 
 

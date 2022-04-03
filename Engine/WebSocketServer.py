@@ -23,6 +23,8 @@ async def get_notifications(websocket, path):
             if data_dict['type'] == 'register':
                 NotificationHandler.connections[data_dict['id']] = websocket
                 await asyncio.create_task(register_user(data_dict))
+            elif data_dict['type'] == 'sign in':
+                Parser.load_workflow(data_dict['id'])
             elif data_dict['type'] == 'add workflow':
                 new_workflow(data_dict)
             elif data_dict['type'] == 'load workflow':

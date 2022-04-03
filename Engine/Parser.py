@@ -6,7 +6,7 @@ import threading
 import Data
 import Nodes
 from Database import Database
-from EdgeGetter import edges
+from EdgeGetter import edges, buildEdge
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
 from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, set_time, ComplexNode
 from Form import buildFromJSON
@@ -137,6 +137,20 @@ async def register_user(user_dict):
             await start.exec()
     else:
         Database.addStaff(user_dict['name'], user_dict['role'])
+
+
+async def load_user(user_id):
+    user = Database.getUser(user_id)
+    dal_current_positions = Database.getCurrentPositions(user.id)
+    for current in dal_current_positions:
+        if current[0] == "edge":
+            edge = buildEdge(current[1])
+            edge.attach(user)
+            edge.exec()
+        else:
+            node = Nodes.buildNode(current[1])
+            node.attach(user)
+            node.exec()
 
 
 def new_workflow(data_dict):

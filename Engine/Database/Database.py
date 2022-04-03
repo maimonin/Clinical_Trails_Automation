@@ -4,6 +4,7 @@ from Database.DALEdges import buildDALEdge
 from Database.DALNodes import buildDALNodes, buildDALNodesFromNode
 from Form import Form
 from Test import Test
+from Users import User
 
 workflows = {}
 questionnaires = {}
@@ -413,6 +414,22 @@ def getAnswer(form_id, question_number, participant_id):
     return rows[0]
 
 
+def getCurrentPositions(participant_id):
+    positions = extract_many_from_table("SELECT position_id, type FROM Current_Position WHERE participant_id=?",
+                                        (participant_id,))
+    output = []
+    for position in positions:
+        if position[2] == "edge":
+            output.append(("edge", getEdge(position[1])))
+        else:
+            output.append(("node", getNode(position[1])))
+
+
+def getEdge(edge_id):
+    edge = extract_one_from_table("SELECT * FROM Edges WHERE id=?", (edge_id,))
+    return buildDALEdge(edge)
+
+
 def getEdges(from_id):
     edges = []
     edges_data = extract_many_from_table("SELECT * FROM Edges WHERE from_id=?", (from_id,))
@@ -498,6 +515,11 @@ def getTimeStarted(participant_id, edge_id):
 
 def getToNode(edge_id):
     return getNode(extract_one_from_table("SELECT to_id FROM Edges WHERE id=?", (edge_id,))[0])
+
+
+def getUser(user_id):
+    user_data = extract_one_from_table("SELECT * FROM Participants WHERE id=?", (user_id,))[0]
+    return User(user_data[1], user_data[2], user_data[3], user_id)
 
 
 def getWorkflow(workflow_id):
