@@ -24,10 +24,6 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    async def detach(self, observer: User) -> None:
-        pass
-
-    @abstractmethod
     async def notify(self) -> None:
         pass
 
@@ -83,17 +79,14 @@ class Questionnaire(Node):
         self.id = node_id
         self.title = title
         self.form = form
-        self.edges = getEdges(node_id)
+        self.edges = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
         self.number = number
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.updateNode(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
+        Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -115,6 +108,7 @@ class Questionnaire(Node):
             Data.add_Form(self.number, participant.id)
             for edge in self.edges:
                 edge.attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -126,17 +120,14 @@ class Decision(Node):
         super(Decision, self).__init__()
         self.id = node_id
         self.title = title
-        self.edges = getEdges(node_id)
+        self.edges = []
         self.conditions = conditions
         self.lock = threading.Lock()
         self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.updateNode(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
+        Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -162,6 +153,7 @@ class Decision(Node):
                 self.edges[0].attach(participant)
             else:
                 self.edges[1].attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
 
     async def get_results(self, participant):
         for condition in self.conditions:
@@ -196,10 +188,7 @@ class StringNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.updateNode(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
+        Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -220,6 +209,7 @@ class StringNode(Node):
                 await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
             for edge in self.edges:
                 edge.attach(participant)
+                Database.deletePosition(participant.id, self.id, "node")
             for role in self.actors:
                 r = get_role(role)
                 if r is not None:
@@ -237,16 +227,13 @@ class TestNode(Node):
         self.title = title
         self.tests = tests
         self.in_charge = in_charge
-        self.edges = getEdges(node_id)
+        self.edges = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.updateNode(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
+        Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -268,48 +255,8 @@ class TestNode(Node):
                 add_test_form(test.name, participant)
             for edge in self.edges:
                 edge.attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
         await end_test(self, participants2)
-
-    def has_actors(self):
-        return len(self.participants) != 0
-
-
-class TimeNode(Node):
-    def __init__(self, node_id, min_time, max_time):
-        super(TimeNode, self).__init__()
-        self.id = node_id
-        self.min_time = min_time
-        self.max_time = max_time
-        self.lock = threading.Lock()
-        self.edges = getEdges(node_id)
-        self.participants: List[User] = []
-
-    def attach(self, participant: User) -> None:
-        self.participants.append(participant)
-        Database.updateNode(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
-
-    def exec(self) -> None:
-        self.edges = getEdges(self.id)
-        self.notify()
-        threads = []
-        for edge in self.edges:
-            threads.append(threading.Thread(target=edge.exec, args=()))
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-
-    def notify(self) -> None:
-        self.lock.acquire()
-        participants2 = self.participants.copy()
-        self.participants = []
-        self.lock.release()
-        for participant in participants2:
-            for edge in self.edges:
-                edge.attach(participant)
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -320,17 +267,14 @@ class ComplexNode(Node):
         super(ComplexNode, self).__init__()
         self.id = node_id
         self.title = title
-        self.edges = getEdges(node_id)
+        self.edges = []
         self.lock = threading.Lock()
         self.participants: List[User] = []
         self.flow = flow
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.updateNode(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
+        Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -352,6 +296,7 @@ class ComplexNode(Node):
             threads.append(asyncio.create_task(self.flow.exec()))
             for edge in self.edges:
                 edge.attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
         for t in threads:
             await t
         await end_test(self, participants2)

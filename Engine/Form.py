@@ -19,7 +19,6 @@ def formToJSON(form):
     return form.questions
 
 
-
 class Form:
     def __init__(self, questionnaire_number, questions):
         self.questionnaire_number = questionnaire_number
