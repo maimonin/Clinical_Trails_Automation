@@ -1,6 +1,7 @@
 import copy
 
 from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
     QCheckBox
 
@@ -22,9 +23,9 @@ class QDynamicDock(QDockWidget):
             "checklist": self.create_checklist_widget,
             "test sub tree": self.create_test_subtree_widget,
             "q sub tree": self.create_questionnaire_subtree_widget,
+            "cond sub tree": self.create_condition_subtree_widget,
         }
         self.setupUi()
-        self.generator = numGenerator()
 
     def setupUi(self):
         self.setWindowTitle("Attributes")
@@ -69,7 +70,6 @@ class QDynamicDock(QDockWidget):
     def change_data(self, data):
         self.data = data
         self.treeWidget.clear()
-        self.generator.reset()
         if data is not None:
             self.callback = data["callback"]
             self.build_tree()
@@ -140,127 +140,6 @@ class QDynamicDock(QDockWidget):
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
 
-    # def load_subtree(self, father, field):
-    #     for root in field["value"]:
-    #         # left side with line edit
-    #         widget = QLineEdit()
-    #         widget.setPlaceholderText(field["placeholder"])
-    #         widget.editingFinished.connect(
-    #             lambda: self.create_subtree_widget(QtWidgets.QTreeWidgetItem(father.parent()), field, (widget, root)))
-    #         widget.setText(root["text"])
-    #         self.treeWidget.setItemWidget(father, 0, widget)
-    #
-    #         # right side with combobox
-    #         widget2 = QComboBox()
-    #         for opt in field["options"]:
-    #             widget2.addItem(opt["name"])
-    #         widget2.activated.connect(
-    #             lambda index: self.handle_combobox_change(father, field, index, root))
-    #         widget2.setCurrentIndex(root["type"])
-    #         self.treeWidget.setItemWidget(father, 1, widget2)
-    #
-    #         # children
-    #         if "sub" in root.keys():
-    #             for sub in root["sub"]:
-    #                 widget = QtWidgets.QTreeWidgetItem(father)
-    #                 widget2 = QLineEdit()
-    #                 widget2.setText(sub)
-    #                 widget2_index = len(root["sub"])
-    #                 widget2.editingFinished.connect(
-    #                     lambda: self.lineedit_update(father, field, "", widget2, root, widget2_index))
-    #                 self.treeWidget.setItemWidget(widget, 0, widget2)
-    #
-    #             widget_item = QtWidgets.QTreeWidgetItem(father)
-    #             widget3 = QLineEdit()
-    #             widget3.setPlaceholderText(field["placeholder"])
-    #             widget_index = len(root["sub"])
-    #             widget3.editingFinished.connect(
-    #                 lambda: self.lineedit_update(father, field, field["placeholder"], widget3, root, widget_index))
-    #             self.treeWidget.setItemWidget(widget_item, 0, widget3)
-    #
-    # # @field dict should have keys: value,options
-    # def create_subtree_widget(self, father, field, caller=None):
-    #     # check if its the first call or a callback
-    #     if caller is None:
-    #         self.load_subtree(father, field)
-    #         father = QtWidgets.QTreeWidgetItem(father.parent())
-    #     else:
-    #         # update the data with the caller text
-    #         caller[1]["text"] = str(caller[0].text())
-    #
-    #     #   create the next empty item
-    #     template = {"name": "", "type": 0, "text": ""}
-    #     field["value"].append(template)
-    #
-    #     widget = QLineEdit()
-    #     widget.setPlaceholderText(field["placeholder"])
-    #     widget.editingFinished.connect(
-    #         lambda: self.create_subtree_widget(QtWidgets.QTreeWidgetItem(father.parent()), field, (widget, template)))
-    #     self.treeWidget.setItemWidget(father, 0, widget)
-    #
-    #     # case of multi choose
-    #     if len(field["options"]) > 0:
-    #         widget2 = QComboBox()
-    #         for opt in field["options"]:
-    #             widget2.addItem(opt["name"])
-    #         widget2.activated.connect(
-    #             lambda index: self.handle_combobox_change(father, field, index, template))
-    #         self.treeWidget.setItemWidget(father, 1, widget2)
-    #
-    #     # update node
-    #     self.callback(self.data)
-    #
-    # # @option _index_ that is selected in the combobox
-    # # @root - data variable for the option includes:[name,type,text,sub]
-    # def handle_combobox_change(self, father, field, option, root):
-    #     root["name"] = field["options"][option]["name"]
-    #     root["type"] = option
-    #
-    #     if field["options"][option]["inputs"]:
-    #         # in case a double click on the same combo
-    #         if father.childCount() == 1:
-    #             return
-    #         root["sub"] = []
-    #         widget = QtWidgets.QTreeWidgetItem(father)
-    #         widget2 = QLineEdit()
-    #         widget2.setPlaceholderText(field["options"][option]["placeholder"])
-    #         widget2_index = len(root["sub"])
-    #         widget2.editingFinished.connect(
-    #             lambda: self.lineedit_update(father, field, field["options"][option]["placeholder"], widget2, root,
-    #                                          widget2_index))
-    #         self.treeWidget.setItemWidget(widget, 0, widget2)
-    #     else:
-    #         for i in reversed(range(father.childCount())):
-    #             father.removeChild(father.child(i))
-    #
-    #     # update node
-    #     self.callback(self.data)
-    #
-    # def lineedit_update(self, father, field, placeholder, caller, root, line_index):
-    #     if caller.text() == "":
-    #         caller.setPlaceholderText("Enter Here")
-    #
-    #     if caller.text() != "" and caller.text() not in root["sub"]:
-    #         if line_index < len(root["sub"]):
-    #             root["sub"][line_index] = caller.text()
-    #         else:
-    #             root["sub"].append(caller.text())
-    #
-    #         # max 6 childrens
-    #         if father.childCount() == 6:
-    #             return
-    #
-    #         widget_item = QtWidgets.QTreeWidgetItem(father)
-    #         widget = QLineEdit()
-    #         widget.setPlaceholderText(placeholder)
-    #         widget_index = len(root["sub"])
-    #         widget.editingFinished.connect(
-    #             lambda: self.lineedit_update(father, field, placeholder, widget, root, widget_index))
-    #         self.treeWidget.setItemWidget(widget_item, 0, widget)
-    #
-    #         # update node
-    #         self.callback(self.data)
-
     def change_checklist(self, field, option_text, newState):
         if newState == 0:
             field["value"].remove(option_text)
@@ -274,84 +153,17 @@ class QDynamicDock(QDockWidget):
         field["value"] = value
         self.callback(self.data)
 
-    # # @field of type "sub tree" must have:
-    # # "root name" - the default name of a new item
-    # # "template" - how to build the items
-    # def create_dynamicSubTree_widget(self, father, field):
-    #     widget = QPushButton("Add")
-    #     widget.clicked.connect(lambda: self.on_click(father, field))
-    #     self.treeWidget.setItemWidget(father, 1, widget)
-    #     widget.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
-    #
-    #     for value in field["value"]:
-    #         item = QtWidgets.QTreeWidgetItem(father)
-    #         next_id = self.generator.gen_next()  # FIXME : always start from one , if we change the first tests, will get after that test1
-    #         for option in value:
-    #             # do we want to change the widget title to the test name - child widget (happens only on next update)
-    #             if option["name"] == "Name" and option["value"] != "":
-    #                 item.setText(0, option["value"])
-    #             elif option["name"] == "Name" and option["value"] == "":
-    #                 item.setText(0, field["root name"] + f" #{next_id}")
-    #             widget = QtWidgets.QTreeWidgetItem(item)
-    #             widget.setText(0, option["name"])
-    #             if option["type"] in self.functions.keys():
-    #                 self.functions[option["type"]](widget, option)
-    #
-    #         remove = QtWidgets.QTreeWidgetItem(item)
-    #         remove_button = QPushButton("Remove")
-    #         remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
-    #         self.treeWidget.setItemWidget(remove, 1, remove_button)
-    #         remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
-    #
-    # def on_click(self, father, field):
-    #     field["value"].append(copy.deepcopy(field["template"]))
-    #     # self.change_data(field, copy.deepcopy(field["template"]))
-    #     next_id = self.generator.gen_next()
-    #     item = QtWidgets.QTreeWidgetItem(father)
-    #     # FIXME: think of another implementation of name generation - other than using @next object
-    #     item.setText(0, field["root name"] + f" #{next_id}")
-    #     for option in field["value"][-1]:
-    #         widget = QtWidgets.QTreeWidgetItem(item)
-    #         widget.setText(0, option["name"])
-    #         if option["type"] in self.functions.keys():
-    #             self.functions[option["type"]](widget, option)
-    #
-    #     remove = QtWidgets.QTreeWidgetItem(item)
-    #     remove_button = QPushButton("Remove")
-    #     remove_button.clicked.connect(lambda: self.on_remove_click(father, item, next_id - 1))
-    #     self.treeWidget.setItemWidget(remove, 1, remove_button)
-    #     remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
-    #
-    #     self.callback(self.data)
-    #
-    # # removing the child item from the parent item
-    # # and from @self.data, using index in the list
-    # def on_remove_click(self, parent, child, child_id):
-    #     parent.removeChild(child)
-    #     self.data["Content"][0]["value"].pop(child_id)
-    #     self.callback(self.data)
-
     def create_test_subtree_widget(self, father, field):
         TestTree(self.treeWidget, father, field["value"], self.update_dynamic)
 
     def create_questionnaire_subtree_widget(self, father, field):
         QuestionnaireTree(self.treeWidget, father, field["value"], self.update_dynamic)
 
-    def update_dynamic(self, tests):
+    def create_condition_subtree_widget(self, father, field):
+        ConditionTree(self.treeWidget, father, field["value"], self.update_dynamic)
+
+    def update_dynamic(self):
         self.callback(self.data)
-
-
-class numGenerator:
-
-    def __init__(self):
-        self.number = 0
-
-    def gen_next(self):
-        self.number += 1
-        return self.number
-
-    def reset(self):
-        self.number = 0
 
 
 class TestTree:
@@ -548,7 +360,7 @@ class QuestionnaireTree:
     def add_question(self, root):
         question_data = {
             "id": self.get_next_id(),
-            "type": "open",     #default
+            "type": "open",  # default
             "text": "",
             # "options": [],
         }
@@ -621,6 +433,374 @@ class QuestionnaireTree:
         data["options"][answer_index] = text_widget.text()
 
         self.call_dock(self.questions)
+
+    def get_next_id(self):
+        self.next_question_id += 1
+        return self.next_question_id
+
+
+class ConditionTree:
+
+    def __init__(self, dock, tree_widget_item, data, update_dock):
+        self.conditions = data
+        self.next_question_id = 0
+        self.dock = dock
+        self.call_dock = update_dock
+
+        add_button = QPushButton("Add")
+        add_button.clicked.connect(lambda: self.add_condition(tree_widget_item))
+        add_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+
+        tree_widget_item.setText(0, "Conditions")
+        self.dock.setItemWidget(tree_widget_item, 1, add_button)
+
+        if len(self.conditions) > 0:
+            # self.load_data()      - in case of deleting "id" key
+            self.next_condition_id = self.conditions[-1]["id"]
+            self.rebuild_tree(tree_widget_item)
+
+    def add_condition(self, root):
+        id = self.get_next_id()
+        condition_data = {
+            "id": id,
+            "title": "condition_" + str(id),
+            "type": "trait condition",  # default
+            "satisfy": {
+                "type": "range",
+                "value": {"min": "-1", "max": "-1"},
+            },
+        }
+        self.conditions.append(condition_data)
+
+        new_widget = QtWidgets.QTreeWidgetItem(root)
+        new_widget.setText(0, "New Condition #" + str(id))
+
+        remove_button = QPushButton("Remove")
+        remove_button.clicked.connect(lambda bool, id=condition_data["id"]: self.rebuild_tree(root, id))
+        remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+        self.dock.setItemWidget(new_widget, 1, remove_button)
+
+        self.build_trait_type(new_widget, condition_data)
+
+    def rebuild_tree(self, root, remove_id=-1):
+        root.takeChildren()
+
+        if remove_id > -1:
+            for i in range(len(self.conditions)):
+                if self.conditions[i]['id'] == remove_id:
+                    del self.conditions[i]
+                    break
+
+        for condition_data in self.conditions:
+            new_widget = QtWidgets.QTreeWidgetItem(root)
+            new_widget.setText(0, "New Condition #" + str(condition_data["id"]))
+
+            remove_button = QPushButton("Remove")
+            remove_button.clicked.connect(lambda bool, id=condition_data["id"]: self.rebuild_tree(root, id))
+            remove_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
+            self.dock.setItemWidget(new_widget, 1, remove_button)
+
+            if condition_data["type"].lower() == "trait condition":
+                self.build_trait_type(new_widget, condition_data)
+            elif condition_data["type"].lower() == "test condition":
+                self.build_test_type(new_widget, condition_data)
+            else:
+                self.build_questionnaire_type(new_widget, condition_data)
+
+    def build_trait_type(self, parent, data):
+        if "trait" not in data.keys():
+            data["trait"] = ""
+
+        combo_item = QtWidgets.QTreeWidgetItem(parent)
+        combo_item.setText(0, "Type")
+        combo_widget = QComboBox()
+        options = ["Trait", "Test", "Questionnaire"]
+        for opt in options:
+            combo_widget.addItem(opt)
+        combo_widget.activated.connect(
+            lambda index: self.combo_changed(options, index, data, parent))
+
+        self.dock.setItemWidget(combo_item, 1, combo_widget)
+        condition_item = QtWidgets.QTreeWidgetItem(parent)
+        condition_item.setText(0, "Trait:")
+        condition_widget = QLineEdit()
+        condition_widget.setPlaceholderText("Enter Trait")
+        condition_widget.setMinimumWidth(100)
+        if data["trait"] != "":
+            condition_widget.setText(data["trait"])
+        condition_widget.editingFinished.connect(
+            lambda widget=condition_widget: self.line_changed(widget, data, "trait"))
+        self.dock.setItemWidget(condition_item, 1, condition_widget)
+
+        satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
+        satisfy_type_item.setText(0, "Satisfy Type:")
+        satisfy_type_widget = QComboBox()
+        satisfy_type_widget.addItem("Range")
+        satisfy_type_widget.addItem("One Choice")
+        satisfy_type_widget.activated.connect(
+            lambda index: self.combo2_changed(["Range", "One Choice"], index, data, parent))
+        self.dock.setItemWidget(satisfy_type_item, 1, satisfy_type_widget)
+
+        if data["satisfy"]["type"] == "one_choice":
+            satisfy_type_widget.setCurrentIndex(1)
+
+            satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+            satisfy_value_item.setText(0, "Satisfy Value:")
+            value_widget = QLineEdit()
+            value_widget.setPlaceholderText("Enter Value")
+            value_widget.setText(data["satisfy"]["value"])
+            value_widget.editingFinished.connect(
+                lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+            self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+            return
+
+        satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+        satisfy_value_item.setText(0, "Satisfy Value:")
+        min_value_widget = QLineEdit()
+        min_value_widget.setPlaceholderText("Min")
+        min_value_widget.editingFinished.connect(
+            lambda widget=min_value_widget: self.line_changed(widget, data["satisfy"], "value", "min"))
+        onlyInt = QIntValidator()
+        min_value_widget.setValidator(onlyInt)
+        if data["satisfy"]["value"]["min"] != "-1":
+            min_value_widget.setText(data["satisfy"]["value"]["min"])
+        self.dock.setItemWidget(satisfy_value_item, 1, min_value_widget)
+
+        satisfy_value_item2 = QtWidgets.QTreeWidgetItem(parent)
+        max_value_widget = QLineEdit()
+        max_value_widget.setPlaceholderText("Max")
+        max_value_widget.editingFinished.connect(
+            lambda widget=max_value_widget: self.line_changed(widget, data["satisfy"], "value", "max"))
+        max_value_widget.setValidator(onlyInt)
+        if data["satisfy"]["value"]["max"] != "-1":
+            max_value_widget.setText(data["satisfy"]["value"]["max"])
+        self.dock.setItemWidget(satisfy_value_item2, 1, max_value_widget)
+
+    def build_test_type(self, parent, data):
+        combo_item = QtWidgets.QTreeWidgetItem(parent)
+        combo_item.setText(0, "Type")
+        combo_widget = QComboBox()
+        options = ["Trait", "Test", "Questionnaire"]
+        for opt in options:
+            combo_widget.addItem(opt)
+        combo_widget.activated.connect(
+            lambda index: self.combo_changed(options, index, data, parent))
+        combo_widget.setCurrentIndex(1)
+        self.dock.setItemWidget(combo_item, 1, combo_widget)
+
+        condition_item = QtWidgets.QTreeWidgetItem(parent)
+        condition_item.setText(0, "Test:")
+        condition_widget = QLineEdit()
+        condition_widget.setPlaceholderText("Enter Test")
+        condition_widget.setMinimumWidth(100)
+        if "condition" not in data["test"]:
+            condition_widget.setText(data["test"])
+        condition_widget.editingFinished.connect(
+            lambda widget=condition_widget: self.line_changed(widget, data, "test"))
+        self.dock.setItemWidget(condition_item, 1, condition_widget)
+
+        satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
+        satisfy_type_item.setText(0, "Satisfy Type:")
+        satisfy_type_widget = QComboBox()
+        satisfy_type_widget.addItem("Range")
+        satisfy_type_widget.addItem("One Choice")
+        satisfy_type_widget.activated.connect(
+            lambda index: self.combo2_changed(["Range", "One Choice"], index, data, parent))
+        self.dock.setItemWidget(satisfy_type_item, 1, satisfy_type_widget)
+
+        if data["satisfy"]["type"] == "one_choice":
+            satisfy_type_widget.setCurrentIndex(1)
+
+            satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+            satisfy_value_item.setText(0, "Satisfy Value:")
+            value_widget = QLineEdit()
+            value_widget.setPlaceholderText("Enter Value")
+            value_widget.setText(data["satisfy"]["value"])
+            value_widget.editingFinished.connect(
+                lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+            self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+            return
+
+        satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+        satisfy_value_item.setText(0, "Satisfy Value:")
+        min_value_widget = QLineEdit()
+        min_value_widget.setPlaceholderText("Min")
+        min_value_widget.editingFinished.connect(
+            lambda widget=min_value_widget: self.line_changed(widget, data["satisfy"], "value", "min"))
+        onlyInt = QIntValidator()
+        min_value_widget.setValidator(onlyInt)
+        if data["satisfy"]["value"]["min"] != "-1":
+            min_value_widget.setText(data["satisfy"]["value"]["min"])
+        self.dock.setItemWidget(satisfy_value_item, 1, min_value_widget)
+
+        satisfy_value_item2 = QtWidgets.QTreeWidgetItem(parent)
+        max_value_widget = QLineEdit()
+        max_value_widget.setPlaceholderText("Max")
+        max_value_widget.editingFinished.connect(
+            lambda widget=max_value_widget: self.line_changed(widget, data["satisfy"], "value", "max"))
+        max_value_widget.setValidator(onlyInt)
+        if data["satisfy"]["value"]["max"] != "-1":
+            max_value_widget.setText(data["satisfy"]["value"]["max"])
+        self.dock.setItemWidget(satisfy_value_item2, 1, max_value_widget)
+
+    def build_questionnaire_type(self, parent, data):
+        combo_item = QtWidgets.QTreeWidgetItem(parent)
+        combo_item.setText(0, "Type")
+        combo_widget = QComboBox()
+        options = ["Trait", "Test", "Questionnaire"]
+        for opt in options:
+            combo_widget.addItem(opt)
+        combo_widget.activated.connect(
+            lambda index: self.combo_changed(options, index, data, parent))
+        combo_widget.setCurrentIndex(2)
+        self.dock.setItemWidget(combo_item, 1, combo_widget)
+
+        id_item = QtWidgets.QTreeWidgetItem(parent)
+        id_item.setText(0, "Questionnaire ID:")
+        id_widget = QLineEdit()
+        id_widget.setPlaceholderText("Enter Questionnaire ID")
+        id_widget.editingFinished.connect(
+            lambda widget=id_widget: self.line_changed(widget, data, "questionnaireNumber"))
+        if data["questionnaireNumber"] != "0":
+            id_widget.setText(data["questionnaireNumber"])
+        self.dock.setItemWidget(id_item, 1, id_widget)
+
+        question_item = QtWidgets.QTreeWidgetItem(parent)
+        question_item.setText(0, "Question Number:")
+        question_widget = QLineEdit()
+        question_widget.setPlaceholderText("Enter Question #")
+        question_widget.editingFinished.connect(
+            lambda widget=question_widget: self.line_changed(widget, data, "questionNumber"))
+        if data["questionNumber"] != "0":
+            id_widget.setText(data["questionNumber"])
+        self.dock.setItemWidget(question_item, 1, question_widget)
+
+        answers_item = QtWidgets.QTreeWidgetItem(parent)
+        answers_item.setText(0, "Accepted Answers:")
+        answers_widget = QLineEdit()
+        answers_widget.setPlaceholderText("Enter Accepted Answers")
+        answers_widget.editingFinished.connect(
+            lambda widget=answers_widget: self.line_changed(widget, data, "acceptedAnswers"))
+        if data["acceptedAnswers"] == "":
+            id_widget.setText(data["acceptedAnswers"])
+        self.dock.setItemWidget(id_item, 1, answers_widget)
+
+    def combo_changed(self, options, index_changed, data, parent):
+        old_type = data["type"]
+        if options[index_changed].lower() in old_type.lower():  # same
+            return
+
+        old_id = data["id"]
+        old_title = data["title"]
+        self.remove_condition(old_id)
+
+        if options[index_changed] == "Trait":
+            data = {
+                "id": old_id,
+                "title": old_title,
+                "type": "trait condition",
+                "satisfy": {
+                    "type": "range",
+                    "value": {"min": "-1", "max": "-1"},
+                },
+                "trait": "",
+            }
+            self.conditions.append(data)
+
+            parent.takeChildren()
+            self.build_trait_type(parent, data)
+
+        elif options[index_changed] == "Test":
+            data = {
+                "id": old_id,
+                "title": old_title,
+                "type": "test condition",
+                "satisfy": {
+                    "type": "range",
+                    "value": {"min": "-1", "max": "-1"},
+                },
+                "test": "",
+            }
+            self.conditions.append(data)
+
+            parent.takeChildren()
+            self.build_test_type(parent, data)
+
+        elif options[index_changed] == "Questionnaire":
+            data = {
+                "id": old_id,
+                "title": old_title,
+                "type": "questionnaire condition",
+                "questionnaireNumber": "0",
+                "questionNumber": "0",
+                "acceptedAnswers": "",
+            }
+            self.conditions.append(data)
+
+            parent.takeChildren()
+            self.build_questionnaire_type(parent, data)
+
+        self.call_dock()
+
+    def combo2_changed(self, options, index_changed, data, parent):
+        state = parent.childCount()  # know state by children number, 4 = one choice, 5 = range
+        if (options[index_changed] == "Range" and state == 5) or (
+                options[index_changed] == "One Choice" and state == 4):
+            return
+        else:
+            if options[index_changed] == "Range":
+                data["satisfy"]["type"] = "range"
+                data["satisfy"]["value"] = {"min": "-1", "max": "-1"}
+
+                parent.takeChild(state - 1)  # pop last children
+                satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+                satisfy_value_item.setText(0, "Satisfy Value:")
+                min_value_widget = QLineEdit()
+                min_value_widget.setPlaceholderText("Min")
+                min_value_widget.editingFinished.connect(
+                    lambda widget=min_value_widget: self.line_changed(widget, data["satisfy"], "value", "min"))
+                self.dock.setItemWidget(satisfy_value_item, 1, min_value_widget)
+
+                satisfy_value_item2 = QtWidgets.QTreeWidgetItem(parent)
+                max_value_widget = QLineEdit()
+                max_value_widget.setPlaceholderText("Max")
+                max_value_widget.editingFinished.connect(
+                    lambda widget=max_value_widget: self.line_changed(widget, data["satisfy"], "value", "max"))
+                self.dock.setItemWidget(satisfy_value_item2, 1, max_value_widget)
+
+            else:
+                parent.takeChild(state - 1)
+                parent.takeChild(state - 2)
+
+                satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+                satisfy_value_item.setText(0, "Satisfy Value:")
+                value_widget = QLineEdit()
+                value_widget.setPlaceholderText("Enter Value")
+                value_widget.editingFinished.connect(
+                    lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+                self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+
+                data["satisfy"]["type"] = "one_choice"
+                data["satisfy"]["value"] = "0"
+            self.call_dock()
+
+    def line_changed(self, widget, data, field, field2=None):
+        if field2 is None:
+            data[field] = widget.text()
+        else:
+            data[field][field2] = widget.text()
+
+        self.call_dock()
+
+    def remove_condition(self, id):
+        idx = 0
+
+        for condition in self.conditions:
+            if condition["id"] == id:
+                break
+            idx += 1
+
+        del self.conditions[idx]
 
     def get_next_id(self):
         self.next_question_id += 1
