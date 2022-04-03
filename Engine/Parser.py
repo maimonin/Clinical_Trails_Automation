@@ -8,7 +8,7 @@ import Nodes
 from Database import Database
 from EdgeGetter import edges
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
-from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, TimeNode, set_time, ComplexNode
+from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, set_time, ComplexNode
 from Form import buildFromJSON
 from Logger import log
 import user_lists
@@ -115,16 +115,6 @@ def parse_Complex_Node(node_dict):
     return node
 
 
-def parse_Time_Node(node_dict):
-    content = node_dict['content']
-    min_time = int(content["Min"]['Seconds']) + 60 * int(content["Min"]['Minutes']) + 3600 * int(
-        content["Min"]['Hours'])
-    max_time = int(content["Max"]['Seconds']) + 60 * int(content["Max"]['Minutes']) + 3600 * int(
-        content["Max"]['Hours'])
-    node = TimeNode(node_dict['id'], min_time, max_time)
-    return node
-
-
 def add_times(time_node, other_node):
     set_time(other_node, time_node.min_time, time_node.max_time)
 
@@ -135,11 +125,11 @@ async def register_user(user_dict):
         workflow = Database.getWorkflow(user_dict['workflow'])
         if workflow is None:
             print("No workflow yet")
-            Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'],
-                                    user_dict['age'], user_dict['workflow'], None, None, None)
+            Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'], user_dict['age'],
+                                    user_dict['workflow'])
         else:
             Database.addParticipant(user_dict['id'], user_dict['name'], user_dict['sex'],
-                                    user_dict['age'], user_dict['workflow'], workflow[1], None, None)
+                                    user_dict['age'], user_dict['workflow'])
             # start participant's workflow from start node
             dalStart = Database.getNode(workflow[1])
             start = Nodes.buildNode(dalStart)
@@ -200,51 +190,9 @@ def load_workflow(workflow_id):
     Database.getWorkflow(workflow_id)
 
 
-def threaded(c):
-    print('conn')
-    global workflows
-    while True:
-        data = get_data(c)
-        if not data:
-            print('Bye')
-            break
-        data_dict = json.loads(data)
-        if data_dict['sender'] == 'simulator':
-            register_user(data_dict)
-            break
-        else:
-            workflows[data_dict["workflow_id"]] = new_workflow(data_dict)
-            break
-
-
-def send_feedback(user_socket, text):
-    user_socket.send((text + '$').encode('ascii'))
-
-
 def parser_init():
     global workflows
     global print_lock
     workflows = {}
     print_lock = threading.Lock()
 
-
-def Main():
-    open('Logger.txt', 'w').close()
-    user_lists.init()
-    Data.init()
-    Database.init_tables()
-    host = ""
-    port = 8000
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((host, port))
-
-    # put the socket into listening mode
-    s.listen(5)
-
-    while True:
-        c, addr = s.accept()
-        start_new_thread(threaded, (c,))
-
-
-if __name__ == '__main__':
-    Main()

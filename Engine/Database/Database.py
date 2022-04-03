@@ -34,7 +34,7 @@ def create_table(conn, query):
         print(e)
 
 
-def insert_to_table(query, data):
+def change_table(query, data):
     conn = create_connection()
     cur = conn.cursor()
     try:
@@ -133,6 +133,14 @@ def init_tables():
             FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("test") REFERENCES "Tests"("title")
             );""",
+               "create_current_position_table": """CREATE TABLE IF NOT EXISTS "Current_Position" (
+            "participant_id"	INTEGER NOT NULL,
+            "position_id"	INTEGER,
+            "type"	TEXT,
+            "start_time"	DATETIME,
+            PRIMARY KEY("participant_id","position_id","type"),
+            FOREIGN KEY("participant_id") REFERENCES "Participants"("id")
+            );""",
                "create_edges_table": """CREATE TABLE IF NOT EXISTS "Edges" (
             "id"	INTEGER NOT NULL UNIQUE,
             "from_id"	INTEGER,
@@ -157,11 +165,6 @@ def init_tables():
             "gender"	TEXT NOT NULL,
             "age"	INTEGER NOT NULL,
             "workflow"	INTEGER NOT NULL,
-            "node"	INTEGER,
-            "edge"	INTEGER,
-            "start_time"	INTEGER,
-            FOREIGN KEY("node") REFERENCES "Nodes"("id"),
-            FOREIGN KEY("edge") REFERENCES "Edges"("id"),
             PRIMARY KEY("id")
             );""",
                "create_questionnaires_table": """CREATE TABLE IF NOT EXISTS "Questionnaires" (
@@ -236,7 +239,7 @@ def addActorToNotify(notification_id, actor_name):
                         VALUES 
                            (?, ?);"""
     answer_data = (notification_id, actor_name)
-    insert_to_table(query, answer_data)
+    change_table(query, answer_data)
 
 
 def addAnswer(form_id, question_num, user_id, time_taken, answer):
@@ -244,7 +247,7 @@ def addAnswer(form_id, question_num, user_id, time_taken, answer):
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     answer_data = (form_id, question_num, user_id, time_taken, answer)
-    insert_to_table(query, answer_data)
+    change_table(query, answer_data)
 
 
 def addComplexNode(node_id, first_id):
@@ -252,7 +255,7 @@ def addComplexNode(node_id, first_id):
                         VALUES 
                            (?, ?);"""
     node_data = (node_id, first_id)
-    insert_to_table(query, node_data)
+    change_table(query, node_data)
 
 
 def addEdge(edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed):
@@ -260,7 +263,14 @@ def addEdge(edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed):
                     VALUES 
                        (?, ?, ?, ?, ?, ?, ?);"""
     edge_data = (edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed)
-    insert_to_table(query, edge_data)
+    change_table(query, edge_data)
+
+
+def addEdgePosition(participant_id, edge_id, start_time):
+    query = """INSERT OR IGNORE INTO Current_Position (participant_id, position_id, type, start_time)
+                VALUES (?, ?, ?, ?)"""
+    ids = (participant_id, edge_id, "edge", start_time)
+    change_table(query, ids)
 
 
 def addForm(form):
@@ -294,18 +304,24 @@ def addForm(form):
 
 def addNode(node, op_code):
     query = """INSERT OR IGNORE INTO Nodes (title, type, id)
-                    VALUES 
-                       (?, ?, ?);"""
+                    VALUES (?, ?, ?);"""
     node_data = (node.title, op_code, node.id)
-    insert_to_table(query, node_data)
+    change_table(query, node_data)
 
 
-def addParticipant(user_id, name, gender, age, workflow, node, edge, start_time):
-    query = """INSERT OR IGNORE INTO Participants (id, name, gender, age, workflow, node, edge, start_time)
+def addNodePosition(participant_id, node_id):
+    query = """INSERT OR IGNORE INTO Current_Position (participant_id, position_id, type, start_time)
+                VALUES (?, ?, ?, ?)"""
+    ids = (participant_id, node_id, "node", None)
+    change_table(query, ids)
+
+
+def addParticipant(user_id, name, gender, age, workflow):
+    query = """INSERT OR IGNORE INTO Participants (id, name, gender, age, workflow)
                 VALUES 
-                   (?, ?, ?, ?, ?, ?, ?, ?);"""
-    participant_data = (user_id, name, gender, age, workflow, node, edge, start_time)
-    insert_to_table(query, participant_data)
+                   (?, ?, ?, ?, ?);"""
+    participant_data = (user_id, name, gender, age, workflow)
+    change_table(query, participant_data)
 
 
 def addQuestionnaire(node_id, form_id, node):
@@ -313,7 +329,7 @@ def addQuestionnaire(node_id, form_id, node):
                 VALUES 
                    (?, ?);"""
     node_data = (node_id, form_id)
-    insert_to_table(query, node_data)
+    change_table(query, node_data)
     questionnaires[node_id] = node
 
 
@@ -322,7 +338,7 @@ def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, form_id, question_num, answers)
-    insert_to_table(query, cond_data)
+    change_table(query, cond_data)
 
 
 def addStaff(name, role):
@@ -330,7 +346,7 @@ def addStaff(name, role):
                 VALUES 
                    (?, ?);"""
     staff_data = (name, role)
-    insert_to_table(query, staff_data)
+    change_table(query, staff_data)
 
 
 def addStringNode(notification_id, notification):
@@ -338,7 +354,7 @@ def addStringNode(notification_id, notification):
                     VALUES 
                        (?, ?);"""
     node_data = (notification_id, notification)
-    insert_to_table(query, node_data)
+    change_table(query, node_data)
 
 
 def addTest(node_id, title, instructions, staff, duration):
@@ -346,7 +362,7 @@ def addTest(node_id, title, instructions, staff, duration):
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     test_data = (node_id, title, instructions, staff, duration)
-    insert_to_table(query, test_data)
+    change_table(query, test_data)
 
 
 def addTestNode(node):
@@ -354,7 +370,7 @@ def addTestNode(node):
                     VALUES 
                        (?, ?, ?);"""
     node_data = (node.id, node.title, node.in_charge)
-    insert_to_table(query, node_data)
+    change_table(query, node_data)
     testNodes[node.id] = node
 
 
@@ -363,7 +379,7 @@ def addTestCond(decision_id, title, test, sat_type, value):
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, value)
-    insert_to_table(query, cond_data)
+    change_table(query, cond_data)
 
 
 def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
@@ -371,16 +387,21 @@ def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
                     VALUES 
                        (?, ?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, min_val, max_val)
-    insert_to_table(query, cond_data)
+    change_table(query, cond_data)
 
 
 def addWorkflow(workflow_id, first):
     query = """INSERT OR IGNORE INTO Workflows (id, first_node)
-                VALUES 
-                   (?, ?);"""
+                VALUES (?, ?);"""
     data = (workflow_id, first)
-    insert_to_table(query, data)
+    change_table(query, data)
     workflows[workflow_id] = first
+
+
+def deletePosition(participant_id, position_id, position_type):
+    print("deleting position")
+    change_table("""DELETE FROM Current_Position WHERE participant_id=? AND position_id=? AND type=?
+                 VALUES (?, ?, ?)""", (participant_id, position_id, position_type))
 
 
 def getAnswer(form_id, question_number, participant_id):
@@ -470,8 +491,10 @@ def getTests(node_id):
     return tests
 
 
-def getTimeStarted(participant_id):
-    return extract_one_from_table("SELECT start_time FROM Participants WHERE id=?", (participant_id,))[0]
+def getTimeStarted(participant_id, edge_id):
+    return extract_one_from_table("""SELECT start_time FROM Current_Position 
+                                  WHERE participant_id=? AND position_id=? AND type = "edge" """,
+                                  (participant_id, edge_id))[0]
 
 
 def getToNode(edge_id):
@@ -486,15 +509,3 @@ def getWorkflow(workflow_id):
     if workflow is not None:
         workflows[workflow_id] = [workflow[1]]
     return workflow
-
-
-def updateNode(participant_id, node_id):
-    query = """UPDATE Participants SET node = ?, edge = NULL, start_time = NULL WHERE id = ?"""
-    ids = (node_id, participant_id)
-    insert_to_table(query, ids)
-
-
-def updateEdge(participant_id, edge_id, start_time):
-    query = """UPDATE Participants SET edge = ?, start_time = ?, node = NULL WHERE id = ?"""
-    ids = (edge_id, start_time, participant_id)
-    insert_to_table(query, ids)
