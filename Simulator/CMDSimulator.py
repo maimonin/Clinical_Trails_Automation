@@ -1,13 +1,8 @@
 import asyncio
 import json
-import socket
-import sys
 import threading
-
 import websockets
-from PyQt5.QtWidgets import QApplication
 from nodeeditor.utils import dumpException
-from qtpy import QtWidgets
 
 user_id = 0
 users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
@@ -126,6 +121,7 @@ async def register_user(user, s):
 
 async def login_user(log_id, s):
     await s.send(json.dumps({'type': 'sign in', 'id': log_id}))
+    return await get_data(s)
 
 
 async def Main():
@@ -142,7 +138,7 @@ async def Main():
         lock.acquire()
         inp = input('to register user press r, to log in user press l')
         lock.release()
-        url = "ws://127.0.0.1:7890"
+        # url = "ws://127.0.0.1:7890"
         if inp == 'r':
             lock.acquire()
             id = int(input('id'))
@@ -167,19 +163,17 @@ async def Main():
             lock.release()
         elif inp == 'l':
             lock.acquire()
-            user_id = int(input('id'))
+            log_id = int(input('id'))
             lock.release()
             is_cn = True
             while is_cn:
                 try:
                     s = await websockets.connect(url)
-                    await login_user(user_id, s)
-                    # here we need to receive the user json from the server
+                    user = await login_user(log_id, s)
                     asyncio.create_task(actor_simulation(user, user['s']))
                     is_cn = False
                 except:
                     continue
-
 
         await asyncio.sleep(10)
 
