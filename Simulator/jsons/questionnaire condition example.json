@@ -1,0 +1,137 @@
+{
+    "nodes": [
+        {
+            "id": 2225378966112,
+            "title": "Questionnaire",
+            "inputs": [
+                {
+                    "id": 2225379002112
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225379002160
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "q1"
+                },
+                "questions": [
+                    {
+                        "text": "Ok?",
+                        "options": [
+                            "yes",
+                            "no"
+                        ],
+                        "type": "one choice"
+                    }
+                ],
+                "questionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2225379076560,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 2225379078048
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225379078000
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "d1"
+                },
+                "condition": [
+                    {
+                        "title": "questionnaire condition 1",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": 0,
+                        "questionNumber": 0,
+                        "acceptedAnswers": [
+                            1
+                        ]
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2225389267360,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2225389267840
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225389267888
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "string"
+                },
+                "text": "1"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2225389267984,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2225389268416
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225389268464
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "string"
+                },
+                "text": "2"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2225379076512,
+            "edge_type": 2,
+            "type": 0,
+            "start": 2225379002160,
+            "end": 2225379078048
+        },
+        {
+            "id": 2225389268032,
+            "edge_type": 2,
+            "type": 0,
+            "start": 2225379078000,
+            "end": 2225389267840
+        },
+        {
+            "id": 2225389268560,
+            "type": 0,
+            "edge_type": 2,
+            "start": 2225379078000,
+            "end": 2225389268416
+        }
+    ]
+}
