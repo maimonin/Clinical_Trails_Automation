@@ -127,7 +127,7 @@ async def login_user(log_id, s):
 async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
-    #await send_json(url)
+    # await send_json(url)
     for user in users:
         s = await websockets.connect(url)
         await register_user(user, s)
@@ -167,13 +167,13 @@ async def Main():
             lock.release()
             is_cn = True
             while is_cn:
-                try:
-                    s = await websockets.connect(url)
-                    user = await login_user(log_id, s)
-                    asyncio.create_task(actor_simulation(user, user['s']))
-                    is_cn = False
-                except:
-                    continue
+                # try:
+                s = await websockets.connect(url)
+                user = json.loads(await login_user(log_id, s))
+                asyncio.create_task(actor_simulation(user, s))
+                is_cn = False
+                # except:
+                #     continue
 
         await asyncio.sleep(10)
 

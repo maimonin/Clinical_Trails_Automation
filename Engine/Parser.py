@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import json
 import socket
@@ -146,11 +147,11 @@ async def load_user(user_id):
         if current[0] == "edge":
             edge = buildEdge(current[1])
             edge.attach(user)
-            edge.exec()
+            asyncio.create_task(edge.exec())
         else:
             node = Nodes.buildNode(current[1])
             node.attach(user)
-            node.exec()
+            asyncio.create_task(node.exec())
 
 
 def new_workflow(data_dict):

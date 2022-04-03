@@ -80,12 +80,12 @@
             "end": 1890421297408,
             "content": {
                 "min": {
-                    "seconds": 3,
+                    "seconds": 15,
                     "minutes": 0,
                     "hours": 0
                 },
                 "max": {
-                    "seconds": 5,
+                    "seconds": 20,
                     "minutes": 0,
                     "hours": 0
                 }

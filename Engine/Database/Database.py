@@ -518,7 +518,8 @@ def getToNode(edge_id):
 
 
 def getUser(user_id):
-    user_data = extract_one_from_table("SELECT * FROM Participants WHERE id=?", (user_id,))[0]
+    user_data = extract_one_from_table("SELECT * FROM Participants WHERE id=?", (user_id,))
+    print(user_data)
     return User(user_data[1], user_data[2], user_data[3], user_id)
 
 
