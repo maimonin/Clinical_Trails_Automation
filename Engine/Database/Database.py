@@ -399,9 +399,8 @@ def addWorkflow(workflow_id, first):
 
 
 def deletePosition(participant_id, position_id, position_type):
-    print("deleting position")
-    change_table("""DELETE FROM Current_Position WHERE participant_id=? AND position_id=? AND type=?
-                 VALUES (?, ?, ?)""", (participant_id, position_id, position_type))
+    change_table("""DELETE FROM Current_Position WHERE participant_id=? AND position_id=? AND type=?""",
+                 (participant_id, position_id, position_type))
 
 
 def getAnswer(form_id, question_number, participant_id):

@@ -24,10 +24,6 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    async def detach(self, observer: User) -> None:
-        pass
-
-    @abstractmethod
     async def notify(self) -> None:
         pass
 
@@ -92,10 +88,6 @@ class Questionnaire(Node):
         self.participants.append(participant)
         Database.addNodePosition(participant.id, self.id)
 
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
-        Database.deletePosition(participant.id, self.id, "node")
-
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
         await self.notify()
@@ -116,6 +108,7 @@ class Questionnaire(Node):
             Data.add_Form(self.number, participant.id)
             for edge in self.edges:
                 edge.attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -135,10 +128,6 @@ class Decision(Node):
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
         Database.addNodePosition(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
-        Database.deletePosition(participant.id, self.id, "node")
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -164,6 +153,7 @@ class Decision(Node):
                 self.edges[0].attach(participant)
             else:
                 self.edges[1].attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
 
     async def get_results(self, participant):
         for condition in self.conditions:
@@ -200,11 +190,6 @@ class StringNode(Node):
         self.participants.append(participant)
         Database.addNodePosition(participant.id, self.id)
 
-    def detach(self, participant: User) -> None:
-        print("detaching")
-        self.participants.remove(participant)
-        Database.deletePosition(participant.id, self.id, "node")
-
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
         await self.notify()
@@ -224,6 +209,7 @@ class StringNode(Node):
                 await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
             for edge in self.edges:
                 edge.attach(participant)
+                Database.deletePosition(participant.id, self.id, "node")
             for role in self.actors:
                 r = get_role(role)
                 if r is not None:
@@ -249,10 +235,6 @@ class TestNode(Node):
         self.participants.append(participant)
         Database.addNodePosition(participant.id, self.id)
 
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
-        Database.deletePosition(participant.id, self.id, "node")
-
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
         await self.notify()
@@ -273,6 +255,7 @@ class TestNode(Node):
                 add_test_form(test.name, participant)
             for edge in self.edges:
                 edge.attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -292,10 +275,6 @@ class ComplexNode(Node):
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
         Database.addNodePosition(participant.id, self.id)
-
-    def detach(self, participant: User) -> None:
-        self.participants.remove(participant)
-        Database.deletePosition(participant.id, self.id, "node")
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -317,6 +296,7 @@ class ComplexNode(Node):
             threads.append(asyncio.create_task(self.flow.exec()))
             for edge in self.edges:
                 edge.attach(participant)
+            Database.deletePosition(participant.id, self.id, "node")
         for t in threads:
             await t
         await end_test(self, participants2)
