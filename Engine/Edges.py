@@ -104,7 +104,7 @@ class FixedTimeEdge(Edge):
         if self.max_time is not None and self.max_time < x:
             print("error node is late")
             return
-        if self.min_time is not None:
+        if self.min_time is not None and x < self.min_time:
             await sleep((self.min_time - x).total_seconds())
         for participant in participants2:
             self.next_node.attach(participant)
