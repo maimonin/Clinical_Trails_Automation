@@ -67,6 +67,23 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
+    QNum = "999"  # TODO : implement number generator
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.color = "Grey"
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "time": datetime.time(hour=0, minute=0),
+                    "title": "New Questionnaire Node",
+                    "color": self.color
+                },
+                "questions": [],
+                "questionnaire_number": self.QNum
+            }
+        }
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -74,31 +91,76 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
-        from Windows.questionnaire_builder import Ui_QuestionnaireBuild
-        QuestionnaireBuild = QtWidgets.QDialog()
-        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild))
-        ui.setupUi(QuestionnaireBuild)
-        QuestionnaireBuild.exec_()
-        self.onDoubleClicked(self.edit_nodes_details)
+        if self.attributes_dock_callback is not None:
+            self.attributes_dock_callback(self.get_tree_build())
 
-        # self.
-
-    def callback_from_window(self, content, window):
-        print(content)
-        window.close()
-        if content is None:
-            self.remove()
-
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
         else:
-            self.data = content
+            self.attributes_dock_callback(None)
 
-    def edit_nodes_details(self):
-        from Windows.questionnaire_builder import Ui_QuestionnaireBuild
-        QuestionnaireBuild = QtWidgets.QDialog()
-        ui = Ui_QuestionnaireBuild(lambda content: self.callback_from_window(content, QuestionnaireBuild),
-                                   data=self.data)
-        ui.setupUi(QuestionnaireBuild)
-        QuestionnaireBuild.exec_()
+    def callback_from_window(self, content):
+        try:
+            if content is None:
+                self.remove()  # remove node
+            else:
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
+                self.data["content"]["questions"] = []
+                self.data["content"]["questions"] = content["Content"][1]["value"]
+                self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
+
+        except Exception as e:
+            dumpException(e)
+
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Color", "type": "combobox icons", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
+            ],
+            "Content": [
+                {"name": "Questionnaire #", "type": "text", "value": self.data["content"]["questionnaire_number"]},
+                {"name": "Questions", "type": "q sub tree", "value": self.data["content"]["questions"]}
+            ],
+            "callback": self.callback_from_window
+        }
+        return to_send
+
+    # template for questions:
+    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
+    # "One Choice": { "text":"","options":[],"type":"one choice"}
+    # "Open": {"text":"","type":"open"}
+
+    def export_to_UI(self, export):
+        result = []
+        for item in export:
+            name = list(item.keys())[0]
+
+            if name == "Multiple Choice":
+                type_idx = 1
+            elif name == "One Choice":
+                type_idx = 2
+            elif name == "Open":
+                type_idx = 3
+
+            if type_idx != 3:
+                result.append(
+                    {"name": name, "type": type_idx, "text": item[name]["text"], "sub": item[name]["options"]})
+            else:
+                result.append(
+                    {"name": name, "type": type_idx, "text": item[name]["text"]})
+
+        return result
 
 
 @register_node(OP_NODE_Test)
@@ -108,34 +170,77 @@ class WorkflowNode_DataEntry(WorkflowNode):
     op_title = "Test"
     content_label_objname = "workflow_node_data_entry"
 
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.color = "Grey"
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "time": datetime.time(hour=0, minute=0),
+                    "title": "New Test Node",
+                    "actor in charge": "Nurse",
+                    "color": self.color
+                },
+                "tests": []
+            }
+        }
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
-    def drop_action(self):
-        from Windows.tests_builder import Ui_Test_Builder
-        DataEntryBuild = QtWidgets.QDialog()
-        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild))
-        ui.setupUi(DataEntryBuild)
-        DataEntryBuild.exec_()
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
+        else:
+            self.attributes_dock_callback(None)
 
-    def callback_from_window(self, content, window):
+    def drop_action(self):
+        if self.attributes_dock_callback is not None:
+            self.attributes_dock_callback(self.get_tree_build())
+
+    def callback_from_window(self, content):
         try:
-            window.close()
             if content is None:
                 self.remove()  # remove node
             else:
-                self.data = content
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
+
+                self.data["content"]["tests"] = []
+                for test in content["Content"][0]["value"]:
+                    # FIXME : need to delete id key from dict (coupled with the dock data)
+                    self.data["content"]["tests"].append(test)
+                print(self.data["content"]["tests"])
+
         except Exception as e:
             dumpException(e)
 
-    def edit_nodes_details(self):
-        from Windows.tests_builder import Ui_Test_Builder
-        DataEntryBuild = QtWidgets.QDialog()
-        ui = Ui_Test_Builder(lambda content: self.callback_from_window(content, DataEntryBuild), data=self.data)
-        ui.setupUi(DataEntryBuild)
-        DataEntryBuild.exec_()
+    def get_tree_build(self):
+
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Actor In Charge", "type": "combobox",
+                 "value": self.data["content"]["node_details"]["actor in charge"],
+                 "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]},
+                {"name": "Color", "type": "combobox icons", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
+            ],
+            "Content": [
+                {"name": "Tests", "type": "test sub tree", "value": self.data["content"]["tests"]}],
+            "callback": self.callback_from_window
+        }
+        return to_send
 
 
 @register_node(OP_NODE_DECISION)
@@ -144,37 +249,64 @@ class WorkflowNode_Decision(WorkflowNode):
     op_code = OP_NODE_DECISION
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
-    def __init__(self, scene, inputs=[1], outputs=[4,2]):
+
+    def __init__(self, scene, inputs=[1], outputs=[4, 2]):
         super().__init__(scene, inputs, outputs)
+        # self.color = "Green"
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "time": datetime.time(hour=0, minute=0),
+                    "title": "New Decision Node",
+                    # "color": self.color
+                },
+                "condition": [],
+            }
+        }
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicSmallDiamond(self)
 
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
+        else:
+            self.attributes_dock_callback(None)
+
     def drop_action(self):
-        pass
+        if self.attributes_dock_callback is not None:
+            self.attributes_dock_callback(self.get_tree_build())
 
-    def edit_nodes_details(self):
-        Decision_Node = QtWidgets.QDialog()
-        ui = Ui_Decision_Node(lambda content: self.callback_from_window(content, Decision_Node), data=self.data)
-        ui.setupUi(Decision_Node)
-        Decision_Node.exec_()
-
-    def callback_from_window(self, content, window):
+    def callback_from_window(self, content):
         try:
-            window.close()
             if content is None:
                 self.remove()  # remove node
             else:
-                self.data = content
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                    # if field["name"].lower() == "color":
+                    #     self.grNode.change_background(field["value"].lower())
+                    #     self.color = field["value"]
+                self.data["content"]["condition"] = []
+                # FIXME: change "accepted answers" implementation
+                for condition in content["Condition"][0]["value"]:
+                    self.data["content"]["condition"].append(condition)
+
         except Exception as e:
             dumpException(e)
+
     def initSettings(self):
         """Initialize properties and socket information"""
 
         self.socket_spacing = 22
         TOP = 7
-        self.input_socket_position = 7 # Top - new position we creates
+        self.input_socket_position = 7  # Top - new position we creates
         self.output_socket_position_good = RIGHT_CENTER
         self.output_socket_position_bad = LEFT_CENTER
 
@@ -183,10 +315,10 @@ class WorkflowNode_Decision(WorkflowNode):
         self.socket_offsets = {
             LEFT_CENTER: 0,
             RIGHT_CENTER: 0,
-            TOP : 0
+            TOP: 0
         }
 
-    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+    def initSockets(self, inputs: list, outputs: list, reset: bool = True):
         """
         Create sockets for inputs and outputs
 
@@ -219,7 +351,7 @@ class WorkflowNode_Decision(WorkflowNode):
             self.inputs.append(socket)
 
         counter = 0
-        #bad socket
+        # bad socket
         bad_socket = self.__class__.Socket_class(
             node=self, index=counter, position=self.output_socket_position_bad,
             socket_type=outputs[0], multi_edges=self.output_multi_edged,
@@ -234,14 +366,31 @@ class WorkflowNode_Decision(WorkflowNode):
         )
         self.outputs.append(good_socket)
 
-    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+    def getSocketPosition(self, index: int, position: int, num_out_of: int = 1) -> '(x, y)':
         """
         return the only position for this node: on the right of this node
         """
-        x = 0 if (position is LEFT_CENTER) else self.grNode.width if position is RIGHT_CENTER else self.grNode.width/2
-        y= 0 if position in (LEFT_CENTER,RIGHT_CENTER) else -self.grNode.height/2
+        x = 0 if (position is LEFT_CENTER) else self.grNode.width if position is RIGHT_CENTER else self.grNode.width / 2
+        y = 0 if position in (LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2
 
         return [x, y]
+
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                # {"name": "Color", "type": "combobox icons", "value": self.color,
+                #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
+            ],
+            "Condition": [
+                {"name": "Conditions", "type": "cond sub tree", "value": self.data["content"]["condition"]},
+            ],
+            "callback": self.callback_from_window
+        }
+
+        return to_send
+
 
 @register_node(OP_NODE_STRING)
 class WorkflowNode_SimpleString(WorkflowNode):
@@ -249,6 +398,21 @@ class WorkflowNode_SimpleString(WorkflowNode):
     op_code = OP_NODE_STRING
     op_title = "Notification"
     content_label_objname = "workflow_node_string"
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.color = "Grey"
+        # @data to send to engine.
+        self.data = {
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "New Notification Node",
+                    "color": self.color
+                },
+                "text": ""
+            }
+        }
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -259,53 +423,51 @@ class WorkflowNode_SimpleString(WorkflowNode):
         self.data = text
 
     def drop_action(self):
-        to_send = {
-            "sections": [{
-                "name": "Node Details",
-                "fields": [
-                    {"name": "Title", "type": "Text", "value": ""},
-                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
-                    {"name": "Actor in charge", "type": "combobox",
-                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
-                    {"name": "Actors", "type": "list",
-                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
-                               {"name": "Doctor", "value": 0, "type": "spinbox"},
-                               {"name": "Participant", "value": 0, "type": "spinbox"},
-                               {"name": "Investigator", "value": 0, "type": "spinbox"},
-                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]}
-                ]},
-                {
-                    "name": "Notification",
-                    "fields": [
-                        {"name": "Text", "type": "Text", "value": ""}
-                    ]
-                }
-
-            ],
-            "callback": self.callback_from_window("")
-        }
-
         if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(to_send)
+            self.attributes_dock_callback(self.get_tree_build())
+
+    # for dock build
+    def doSelect(self, new_state: bool = True):
+        print("WorkflowNode::doSelect")
+        if new_state:
+            self.attributes_dock_callback(self.get_tree_build())
+        else:
+            self.attributes_dock_callback(None)
 
     def callback_from_window(self, content):
         try:
             if content is None:
                 self.remove()  # remove node
             else:
-                self.data = content
+
+                for field in content["Node Details"]:
+                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
+
+                self.data["content"]["text"] = content["Notification"][0]["value"]
+
         except Exception as e:
             dumpException(e)
 
-    def callback_to_window(self):
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Actors", "type": "checklist",
+                 "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
+                 "value": self.data["content"]["node_details"]["actors"]},
+                {"name": "Color", "type": "combobox icons", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
+            ],
+            "Notification": [{"name": "Text", "type": "text", "value": self.data["content"]["text"]}],
+            "callback": self.callback_from_window
+        }
+        return to_send
 
-        pass
-
-    def edit_nodes_details(self):
-        String_Node = QtWidgets.QDialog()
-        ui = Ui_string_node(lambda content: self.callback_from_window(content, String_Node), data=self.data)
-        ui.setupUi(String_Node)
-        String_Node.exec_()
 
 @register_node(OP_NODE_START)
 class WorkflowNode_Start(WorkflowNode):
@@ -313,6 +475,7 @@ class WorkflowNode_Start(WorkflowNode):
     op_code = OP_NODE_START
     op_title = "Start"
     content_label_objname = "workflow_node_start"
+
     def __init__(self, scene, inputs=[], outputs=[2]):
         super().__init__(scene, inputs, outputs)
 
@@ -324,11 +487,9 @@ class WorkflowNode_Start(WorkflowNode):
     def drop_action(self):
         pass
 
-    def edit_nodes_details(self):
-        pass
-
     def callback_from_window(self, content, window):
         pass
+
     def initSettings(self):
         """Initialize properties and socket information"""
         self.socket_spacing = 22
@@ -344,7 +505,7 @@ class WorkflowNode_Start(WorkflowNode):
             RIGHT_TOP: 1,
         }
 
-    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+    def initSockets(self, inputs: list, outputs: list, reset: bool = True):
         """
         Create sockets for inputs and outputs
 
@@ -375,14 +536,20 @@ class WorkflowNode_Start(WorkflowNode):
             )
             counter += 1
             self.outputs.append(socket)
-    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int = 1) -> '(x, y)':
         """
         return the only position for this node: on the right of this node
         """
         x = self.grNode.radius
-        y= 0
+        y = 0
 
         return [x, y]
+
+    # Override the remove method. ( it cant be removed)
+    def remove(self):
+        pass
+
 
 @register_node(OP_NODE_FINISH)
 class WorkflowNode_Finish(WorkflowNode):
@@ -390,6 +557,7 @@ class WorkflowNode_Finish(WorkflowNode):
     op_code = OP_NODE_FINISH
     op_title = "finish"
     content_label_objname = "workflow_node_finish"
+
     def __init__(self, scene, inputs=[2], outputs=[]):
         super().__init__(scene, inputs, outputs)
 
@@ -406,6 +574,7 @@ class WorkflowNode_Finish(WorkflowNode):
 
     def callback_from_window(self, content, window):
         pass
+
     def initSettings(self):
         """Initialize properties and socket information"""
         self.socket_spacing = 22
@@ -421,7 +590,7 @@ class WorkflowNode_Finish(WorkflowNode):
             RIGHT_TOP: 1,
         }
 
-    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
+    def initSockets(self, inputs: list, outputs: list, reset: bool = True):
         """
         Create sockets for inputs and outputs
 
@@ -452,42 +621,19 @@ class WorkflowNode_Finish(WorkflowNode):
             )
             counter += 1
             self.inputs.append(socket)
-    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int = 1) -> '(x, y)':
         """
         return the only position for this node: on the right of this node
         """
         x = -self.grNode.radius
-        y= 0
+        y = 0
 
         return [x, y]
 
-# @register_node(OP_NODE_TIME_CONSTRAINT)
-# class WorkflowNode_TimeConstraint(WorkflowNode):
-#     icon = "icons/time.png"
-#     op_code = OP_NODE_TIME_CONSTRAINT
-#     op_title = "Time Constraint"
-#     content_label_objname = "workflow_node_time_constraint"
-#
-#     def initInnerClasses(self):
-#         self.content = WorkflowTimeInputContent(self, self.save_data_when_changed)
-#         self.grNode = WorkflowGraphicNode_long(self)
-#         self.data = {"type" : "time","Hours": 0,"Minutes": 0,"Seconds": 0}
-#
-#
-#     def save_data_when_changed(self, Seconds,Minutes,Hours):
-#         try:
-#             Hours = int(Hours)
-#         except:
-#             Hours=0
-#         try:
-#             Minutes = int(Minutes)
-#         except:
-#             Minutes = 0
-#         try:
-#             Seconds = int(Seconds)
-#         except:
-#             Seconds = 0
-#         self.data = {"type" : "time","Hours": Hours,"Minutes": Minutes,"Seconds": Seconds}
+    # Override the remove method. ( it cant be removed)
+    def remove(self):
+        pass
 
 
 @register_node(OP_NODE_COMPLEX)

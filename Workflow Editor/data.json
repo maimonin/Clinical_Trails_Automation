@@ -1,17 +1,17 @@
 {
-    "id": 1883856286720,
+    "id": 3076256358064,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 1883907605744,
+            "id": 3076264947920,
             "title": "New Start Node",
-            "pos_x": -353.0,
-            "pos_y": -235.0,
+            "pos_x": -478.0,
+            "pos_y": -333.0,
             "inputs": [],
             "outputs": [
                 {
-                    "id": 1883907605840,
+                    "id": 3076264976688,
                     "index": 0,
                     "multi_edges": true,
                     "position": 5,
@@ -22,13 +22,13 @@
             "op_code": 7
         },
         {
-            "id": 1883907605792,
+            "id": 3076264976976,
             "title": "New finish Node",
-            "pos_x": 202.0,
-            "pos_y": -8.0,
+            "pos_x": 441.0,
+            "pos_y": 49.0,
             "inputs": [
                 {
-                    "id": 1883907605984,
+                    "id": 3076264977168,
                     "index": 0,
                     "multi_edges": true,
                     "position": 2,
@@ -38,32 +38,6 @@
             "outputs": [],
             "content": "",
             "op_code": 8
-        },
-        {
-            "id": 1883907605936,
-            "title": "New Notification Node",
-            "pos_x": -538.0,
-            "pos_y": -27.0,
-            "inputs": [
-                {
-                    "id": 1883907606272,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 2,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
-                {
-                    "id": 1883907606320,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 5,
-                    "socket_type": 1
-                }
-            ],
-            "content": "",
-            "op_code": 4
         }
     ],
     "edges": []
