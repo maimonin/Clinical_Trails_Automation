@@ -13,34 +13,46 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Questionnaire from '../Question/Question';
+import {TestQuestionnaire} from '../Question/Question';
 
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Pagination from '@mui/material/Pagination';
+
+import {questionnaire_1} from '../../Mock/MockQuestions'
 
 export default function SubWindow(props) { // should have connection object
-    const [state,setState] = useState(1);
     
-    const [currentComponent,setCurrentComponent] = useState(null)
-    
-    const [itemsQueue,setItemsQueue] = useState([]);
-    
+    const [currentComponent,setCurrentComponent] = useState(0)
+    const [items,setItems] = useState([]);
+    const [numOfItems,setNumOfItems] = useState (0)
+
+
     const isNotification = (item) => false
-    const addToQueue = (itemToAdd) => {
+    const addItem = (itemToAdd) => {
       if (isNotification(itemToAdd)){
           handleIncomingNotification(itemToAdd)
       }
-      else if (currentComponent != null){
-          setItemsQueue(prevState =>[ itemToAdd,...prevState])
+      else{
+        const incoming_component = getComponent(itemToAdd)
+        setItems(prevState =>[ itemToAdd,...prevState])
+        setNumOfItems(numOfItems+1)
+        if (currentComponent == 0){
+          setCurrentComponent(1);
         }
-        else
-        {
-          // currentComponent = g
-        }
+      }
+      
     }
+    const getComponent = (itemToAdd) => {
+      <TestQuestionnaire/>  //change to switch case, and parse json accordingly
 
+    }
+    const handlePaginationChange = (event,value) => {
+      setCurrentComponent(value)
+    }
     const handleIncomingNotification = (text) =>
     {
       toast(text, {
@@ -59,7 +71,6 @@ export default function SubWindow(props) { // should have connection object
       position: 'relative',
     
     };
-    const renderit=[1,2,3,4,5,6,7,8,9]
   return (
     <div>
     <Card sx={{ maxWidth: 345 , minHeight:300, maxHeight:300 }} >
@@ -82,32 +93,14 @@ export default function SubWindow(props) { // should have connection object
 {/* Same as */}
       <CardContent >
         <div  style={ {scrollBehavior: "smooth", overflowY: "scroll" , maxHeight:210}}>
-        {renderit.map((num)=>     <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="demo-simple-select-helper-label">Age</InputLabel>
-        <Select
-          labelId="demo-simple-select-helper-label"
-          id="demo-simple-select-helper"
-          // value={answer}
-          label={"Age"}
-          // onChange={handleChange}
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={2}>2</MenuItem>
-          <MenuItem value={2}>2</MenuItem>
+        {items[currentComponent]}
 
-          <MenuItem value={2}>2</MenuItem>
+        {/* <TestQuestionnaire num={20}/>   */}
+        <TestQuestionnaire/>
+      <Pagination count={8} page={1} onChange={handlePaginationChange} size="small"/>
 
-          <MenuItem value={2}>2</MenuItem>
-
-          <MenuItem value={2}>2</MenuItem>
-
-        </Select>
-      </FormControl>)}
       </div>
         <Typography variant="body2" color="text.secondary">
-       
         {/* <Box
       sx={{
         width: 300,
@@ -116,24 +109,24 @@ export default function SubWindow(props) { // should have connection object
        
       }}
     />   */}
-            <questionnaire />
+            {/* <Questionnaire /> */}
         </Typography>
 
 
       </CardContent>
       <ToastContainer style={styles}
-position="top-right"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-containerId={props.id}
-enableMultiContainer
-limit ={1}
+  position="top-right"
+  autoClose={5000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  containerId={props.id}
+  enableMultiContainer
+  limit ={1}
 />
 
     </Card>
