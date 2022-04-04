@@ -48,6 +48,11 @@ def buildNode(dal_node):
             return testNodes[dal_node.id]
         testNodes[dal_node.id] = TestNode(dal_node.id, dal_node.title, dal_node.tests, dal_node.in_charge)
         return testNodes[dal_node.id]
+    elif dal_node.op_code == 3:
+        if dal_node.id in testNodes:
+            return decisionNodes[dal_node.id]
+        decisionNodes[dal_node.id] = Decision(dal_node.id, dal_node.title, dal_node.conditions)
+        return decisionNodes[dal_node.id]
     elif dal_node.op_code == 4:
         if dal_node.id in stringNodes:
             return stringNodes[dal_node.id]
@@ -131,6 +136,7 @@ class Decision(Node):
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
+        print(self.edges)
         await self.notify()
         threads = []
         if self.edges[0].has_actors():

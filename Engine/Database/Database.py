@@ -411,7 +411,8 @@ def getAnswer(form_id, question_number, participant_id):
                 (form_id, question_number, participant_id))
     rows = cur.fetchall()
     conn.close()
-    return rows[0]
+    print(rows)
+    return rows
 
 
 def getCurrentPositions(participant_id):
@@ -484,6 +485,12 @@ def getNode(node_id):
         in_charge = extract_one_from_table("""SELECT in_charge FROM Test_Nodes WHERE id=?""", (node_id,))[0]
         tests = getTests(node_id)
         return buildDALNodes([op_code, node_id, title, tests, in_charge])
+    elif op_code == 3:
+        quest_conditions = extract_many_from_table("""SELECT * FROM Conditions_Questionnaire WHERE decision_id=?""",
+                                                   (node_id,))
+        test_conditions = extract_many_from_table("""SELECT * FROM Conditions_Test WHERE decision_id=?""", (node_id,))
+        trait_conditions = extract_many_from_table("""SELECT * FROM Conditions_Trait WHERE decision_id=?""", (node_id,))
+        return buildDALNodes([op_code, node_id, title, quest_conditions, test_conditions, trait_conditions])
     elif op_code == 4:
         text = extract_one_from_table("""SELECT notification FROM String_Nodes WHERE id=?""", (node_id,))[0]
         actors = []
@@ -519,7 +526,6 @@ def getToNode(edge_id):
 
 def getUser(user_id):
     user_data = extract_one_from_table("SELECT * FROM Participants WHERE id=?", (user_id,))
-    print(user_data)
     return User(user_data[1], user_data[2], user_data[3], user_id)
 
 

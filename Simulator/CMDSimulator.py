@@ -127,7 +127,7 @@ async def login_user(log_id, s):
 async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
-    # await send_json(url)
+    await send_json(url)
     for user in users:
         s = await websockets.connect(url)
         await register_user(user, s)

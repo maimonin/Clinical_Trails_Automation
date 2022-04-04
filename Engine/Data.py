@@ -89,5 +89,5 @@ async def parse_test_condition(patient, satisfy, test_name):
 async def check_data(participant, questionnaire_number, question_number, accepted_answers):
     if questionnaire_number in answers[participant]:
         await answers[participant][questionnaire_number].wait()
-    ans = Database.getAnwer(questionnaire_number, question_number, participant)
+    ans = Database.getAnswer(questionnaire_number, question_number, participant)
     return ans == accepted_answers

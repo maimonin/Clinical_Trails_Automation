@@ -3,6 +3,8 @@ def buildDALNodesFromNode(node, op_code):
         return DALQuestionnaire(op_code, node.id, node.title, node.number)
     elif op_code == 2:
         return DALTestNode(op_code, node.id, node.title, node.tests, node.in_charge)
+    elif op_code == 3:
+        return DALDecision(op_code, node.id, node.title, node.conditions)
     elif op_code == 4:
         return DALStringNode(op_code, node.id, node.title, node.text, node.actors)
 
@@ -12,10 +14,51 @@ def buildDALNodes(node_data):
         return DALQuestionnaire(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
     elif node_data[0] == 2:
         return DALTestNode(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
+    elif node_data[0] == 3:
+        return DALDecision(node_data[0], node_data[1], node_data[2], condJSON(node_data[3], node_data[4], node_data[5]))
     elif node_data[0] == 4:
         return DALStringNode(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
     elif node_data[0] == 6:
         return DALComplexNode(node_data[0], node_data[1], node_data[2], node_data[3])
+
+
+def condJSON(quest_conditions, test_conditions, trait_conditions):
+    conditions = []
+    for cond in quest_conditions:
+        # convert string list of accepted answers from database to integer list
+        answers = list(map(int, cond[4][1:len(cond[4])-1].split(',')))
+        conditions.append({
+            "title": cond[1],
+            "type": "questionnaire condition",
+            "questionnaireNumber": cond[2],
+            "questionNumber": cond[3],
+            "acceptedAnswers": answers
+        })
+    for cond in test_conditions:
+        conditions.append({
+            "title": cond[1],
+            "type": "test condition",
+            "test": cond[2],
+            "satisfy": {
+                "type": "one_choice",
+                "value": "positive"
+            }
+        })
+    for cond in trait_conditions:
+        conditions.append({
+            "title": cond[1],
+            "type": "trait condition    ",
+            "test": "age",
+            "satisfy": {
+                "type": "range",
+                "value": {
+                    "min": 18,
+                    "max": 30
+                }
+            }
+        })
+    print(conditions)
+    return conditions
 
 
 class DALQuestionnaire:
@@ -34,6 +77,14 @@ class DALTestNode:
         self.title = title
         self.tests = tests
         self.in_charge = in_charge
+
+
+class DALDecision:
+    def __init__(self, op_code, node_id, title, conditions):
+        self.op_code =  op_code
+        self.id = node_id
+        self.title = title
+        self.conditions = conditions
 
 
 class DALStringNode:
