@@ -252,14 +252,14 @@ class WorkflowNode_Decision(WorkflowNode):
 
     def __init__(self, scene, inputs=[1], outputs=[4, 2]):
         super().__init__(scene, inputs, outputs)
-        self.color = "Green"
+        # self.color = "Green"
         # @data to send to engine.
         self.data = {
             "content": {
                 "node_details": {
                     "time": datetime.time(hour=0, minute=0),
                     "title": "New Decision Node",
-                    "color": self.color
+                    # "color": self.color
                 },
                 "condition": [],
             }
@@ -290,9 +290,9 @@ class WorkflowNode_Decision(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
-                    if field["name"].lower() == "color":
-                        self.grNode.change_background(field["value"].lower())
-                        self.color = field["value"]
+                    # if field["name"].lower() == "color":
+                    #     self.grNode.change_background(field["value"].lower())
+                    #     self.color = field["value"]
                 self.data["content"]["condition"] = []
                 # FIXME: change "accepted answers" implementation
                 for condition in content["Condition"][0]["value"]:
@@ -380,8 +380,8 @@ class WorkflowNode_Decision(WorkflowNode):
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
-                {"name": "Color", "type": "combobox", "value": self.color,
-                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
+                # {"name": "Color", "type": "combobox", "value": self.color,
+                #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Condition": [
                 {"name": "Conditions", "type": "cond sub tree", "value": self.data["content"]["condition"]},
