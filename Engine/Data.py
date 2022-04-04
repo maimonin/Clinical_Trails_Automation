@@ -90,4 +90,6 @@ async def check_data(participant, questionnaire_number, question_number, accepte
     if questionnaire_number in answers[participant]:
         await answers[participant][questionnaire_number].wait()
     ans = Database.getAnswer(questionnaire_number, question_number, participant)
+    print(ans)
+    print(accepted_answers)
     return ans == accepted_answers

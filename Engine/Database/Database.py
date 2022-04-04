@@ -405,12 +405,8 @@ def deletePosition(participant_id, position_id, position_type):
 
 
 def getAnswer(form_id, question_number, participant_id):
-    conn = create_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? ORDER BY time_taken DESC",
-                (form_id, question_number, participant_id))
-    rows = cur.fetchall()
-    conn.close()
+    rows = extract_many_from_table("""SELECT * FROM Answers WHERE form_id=? AND question_num=? AND user_id=? 
+    ORDER BY time_taken DESC""", (form_id, question_number, participant_id))
     print(rows)
     return rows
 

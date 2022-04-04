@@ -77,7 +77,6 @@ async def actor_simulation(user, s):
                 data = await get_data(s)
             except:
                 break
-            print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()
