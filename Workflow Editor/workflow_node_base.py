@@ -320,8 +320,8 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         super().initSizes()
         self.edge_roundness = 20.0
 
-        self.width = 250
-        self.height = 120
+        self.width = 220
+        self.height = 80
         self.edge_size = 5
         self.edge_padding = 8
 
