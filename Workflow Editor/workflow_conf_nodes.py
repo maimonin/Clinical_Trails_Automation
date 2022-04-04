@@ -125,7 +125,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
-                {"name": "Color", "type": "combobox", "value": self.color,
+                {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Content": [
@@ -233,7 +233,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
                 {"name": "Actor In Charge", "type": "combobox",
                  "value": self.data["content"]["node_details"]["actor in charge"],
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]},
-                {"name": "Color", "type": "combobox", "value": self.color,
+                {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Content": [
@@ -380,7 +380,7 @@ class WorkflowNode_Decision(WorkflowNode):
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
-                # {"name": "Color", "type": "combobox", "value": self.color,
+                # {"name": "Color", "type": "combobox icons", "value": self.color,
                 #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Condition": [
@@ -460,7 +460,7 @@ class WorkflowNode_SimpleString(WorkflowNode):
                 {"name": "Actors", "type": "checklist",
                  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
                  "value": self.data["content"]["node_details"]["actors"]},
-                {"name": "Color", "type": "combobox", "value": self.color,
+                {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Notification": [{"name": "Text", "type": "text", "value": self.data["content"]["text"]}],

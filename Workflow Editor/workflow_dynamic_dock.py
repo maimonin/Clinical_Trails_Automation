@@ -1,7 +1,7 @@
 import copy
 
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QIntValidator
+from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
     QCheckBox
 
@@ -18,6 +18,7 @@ class QDynamicDock(QDockWidget):
             "text": self.create_text_input_widget,
             "time": self.create_time_input_widget,
             "combobox": self.create_combobox_input_widget,
+            "combobox icons": self.create_combobox_icons_widget,
             "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
@@ -124,6 +125,16 @@ class QDynamicDock(QDockWidget):
         options = field["options"]
         for opt in options:
             widget.addItem(opt)
+        widget.currentTextChanged.connect(lambda text: self.change_combolist(field, text))
+        widget.setCurrentIndex(field["options"].index(field["value"]))
+        self.treeWidget.setItemWidget(father, 1, widget)
+
+    def create_combobox_icons_widget(self, father, field):
+        widget = QComboBox()
+        options = field["options"]
+        for i, opt in enumerate(options):
+            widget.addItem(opt)
+            widget.setItemIcon(i, QIcon(".\\assets\\icons\\"+opt.lower()+"_icon.png"))
         widget.currentTextChanged.connect(lambda text: self.change_combolist(field, text))
         widget.setCurrentIndex(field["options"].index(field["value"]))
         self.treeWidget.setItemWidget(father, 1, widget)
