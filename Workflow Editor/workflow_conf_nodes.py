@@ -294,6 +294,7 @@ class WorkflowNode_Decision(WorkflowNode):
                         self.grNode.change_background(field["value"].lower())
                         self.color = field["value"]
                 self.data["content"]["condition"] = []
+                # FIXME: change "accepted answers" implementation
                 for condition in content["Condition"][0]["value"]:
                     self.data["content"]["condition"].append(condition)
 

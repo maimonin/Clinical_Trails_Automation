@@ -278,7 +278,8 @@ class TestTree:
             option_item = QtWidgets.QTreeWidgetItem(staff_item)
 
             option_title = QLabel(option)
-            option_title.setMinimumWidth(100)
+            # option_title.setMinimumWidth(100)
+            option_title.setWordWrap(True)
             self.dock.setItemWidget(option_item, 0, option_title)
 
             # FIXME not aligned properly
@@ -330,7 +331,10 @@ class QuestionnaireTree:
 
         for question_data in self.questions:
             new_widget = QtWidgets.QTreeWidgetItem(root)
-            new_widget.setText(0, "New Question #" + str(question_data["id"]))
+            # new_widget.setText(0, "New Question #" + str(question_data["id"]))
+            new_widget_label = QLabel("New Question #" + str(question_data["id"]))
+            new_widget_label.setWordWrap(True)
+            self.dock.setItemWidget(new_widget, 0, new_widget_label)
 
             remove_button = QPushButton("Remove")
             remove_button.clicked.connect(lambda bool, id=question_data["id"]: self.rebuild_tree(root, id))
@@ -372,7 +376,10 @@ class QuestionnaireTree:
         self.questions.append(question_data)
 
         new_widget = QtWidgets.QTreeWidgetItem(root)
-        new_widget.setText(0, "New Question #" + str(question_data["id"]))
+        # new_widget.setText(0, "New Question #" + str(question_data["id"]))
+        new_widget_label = QLabel("New Question #" + str(question_data["id"]))
+        new_widget_label.setWordWrap(True)
+        self.dock.setItemWidget(new_widget, 0, new_widget_label)
 
         remove_button = QPushButton("Remove")
         remove_button.clicked.connect(lambda bool, id=question_data["id"]: self.rebuild_tree(root, id))
@@ -429,7 +436,7 @@ class QuestionnaireTree:
                 answer_widget.setPlaceholderText("Answer #" + str(i + 1))
                 if data["options"][i] is not None:
                     answer_widget.setText(data["options"][i])
-                # answer_item.setMinimumWidth(80)
+                # answer_item.setMinimumWidth(100)
                 answer_widget.editingFinished.connect(
                     lambda index=i, widget=answer_widget: self.answer_changed(widget, index, data))
                 self.dock.setItemWidget(answer_item, 0, answer_widget)
@@ -478,7 +485,10 @@ class ConditionTree:
         self.conditions.append(condition_data)
 
         new_widget = QtWidgets.QTreeWidgetItem(root)
-        new_widget.setText(0, "New Condition #" + str(id))
+        # new_widget.setText(0, "New Condition #" + str(id))
+        new_widget_label = QLabel("New Condition #" + str(id))
+        new_widget_label.setWordWrap(True)
+        self.dock.setItemWidget(new_widget, 0, new_widget_label)
 
         remove_button = QPushButton("Remove")
         remove_button.clicked.connect(lambda bool, id=condition_data["id"]: self.rebuild_tree(root, id))
@@ -560,7 +570,11 @@ class ConditionTree:
             return
 
         satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
-        satisfy_value_item.setText(0, "Satisfy Value:")
+        # satisfy_value_item.setText(0, "Satisfy Value:")
+        satisfy_value_label = QLabel("Satisfy Value:")
+        satisfy_value_label.setWordWrap(True)
+        self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
+
         min_value_widget = QLineEdit()
         min_value_widget.setPlaceholderText("Min")
         min_value_widget.editingFinished.connect(
@@ -627,7 +641,10 @@ class ConditionTree:
             return
 
         satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
-        satisfy_value_item.setText(0, "Satisfy Value:")
+        # satisfy_value_item.setText(0, "Satisfy Value:")
+        satisfy_value_label = QLabel("Satisfy Value:")
+        satisfy_value_label.setWordWrap(True)
+        self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
         min_value_widget = QLineEdit()
         min_value_widget.setPlaceholderText("Min")
         min_value_widget.editingFinished.connect(
@@ -661,7 +678,11 @@ class ConditionTree:
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 
         id_item = QtWidgets.QTreeWidgetItem(parent)
-        id_item.setText(0, "Questionnaire ID:")
+        # id_item.setText(0, "Questionnaire ID:")
+        id_label = QLabel("Questionnaire ID:")
+        id_label.setWordWrap(True)
+        self.dock.setItemWidget(id_item, 0, id_label)
+
         id_widget = QLineEdit()
         id_widget.setPlaceholderText("Enter Questionnaire ID")
         id_widget.editingFinished.connect(
@@ -671,7 +692,11 @@ class ConditionTree:
         self.dock.setItemWidget(id_item, 1, id_widget)
 
         question_item = QtWidgets.QTreeWidgetItem(parent)
-        question_item.setText(0, "Question Number:")
+        # question_item.setText(0, "Question Number:")
+        question_label = QLabel("Question Number:")
+        question_label.setWordWrap(True)
+        self.dock.setItemWidget(question_item, 0, question_label)
+
         question_widget = QLineEdit()
         question_widget.setPlaceholderText("Enter Question #")
         question_widget.editingFinished.connect(
@@ -681,14 +706,18 @@ class ConditionTree:
         self.dock.setItemWidget(question_item, 1, question_widget)
 
         answers_item = QtWidgets.QTreeWidgetItem(parent)
-        answers_item.setText(0, "Accepted Answers:")
+        # answers_item.setText(0, "Accepted Answers:")
+        answers_label = QLabel("Accepted Answers:")
+        answers_label.setWordWrap(True)
+        self.dock.setItemWidget(answers_item, 0, answers_label)
+
         answers_widget = QLineEdit()
         answers_widget.setPlaceholderText("Enter Accepted Answers")
         answers_widget.editingFinished.connect(
             lambda widget=answers_widget: self.line_changed(widget, data, "acceptedAnswers"))
         if data["acceptedAnswers"] == "":
             id_widget.setText(data["acceptedAnswers"])
-        self.dock.setItemWidget(id_item, 1, answers_widget)
+        self.dock.setItemWidget(answers_item, 1, answers_widget)
 
     def combo_changed(self, options, index_changed, data, parent):
         old_type = data["type"]
@@ -759,7 +788,11 @@ class ConditionTree:
 
                 parent.takeChild(state - 1)  # pop last children
                 satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
-                satisfy_value_item.setText(0, "Satisfy Value:")
+                # satisfy_value_item.setText(0, "Satisfy Value:")
+                satisfy_value_label = QLabel("Satisfy Value:")
+                satisfy_value_label.setWordWrap(True)
+                self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
+
                 min_value_widget = QLineEdit()
                 min_value_widget.setPlaceholderText("Min")
                 min_value_widget.editingFinished.connect(
@@ -778,7 +811,11 @@ class ConditionTree:
                 parent.takeChild(state - 2)
 
                 satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
-                satisfy_value_item.setText(0, "Satisfy Value:")
+                # satisfy_value_item.setText(0, "Satisfy Value:")
+                satisfy_value_label = QLabel("Satisfy Value:")
+                satisfy_value_label.setWordWrap(True)
+                self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
+
                 value_widget = QLineEdit()
                 value_widget.setPlaceholderText("Enter Value")
                 value_widget.editingFinished.connect(
