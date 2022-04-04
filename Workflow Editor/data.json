@@ -1,0 +1,44 @@
+{
+    "id": 3076256358064,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 3076264947920,
+            "title": "New Start Node",
+            "pos_x": -478.0,
+            "pos_y": -333.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 3076264976688,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 7
+        },
+        {
+            "id": 3076264976976,
+            "title": "New finish Node",
+            "pos_x": 441.0,
+            "pos_y": 49.0,
+            "inputs": [
+                {
+                    "id": 3076264977168,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 8
+        }
+    ],
+    "edges": []
+}

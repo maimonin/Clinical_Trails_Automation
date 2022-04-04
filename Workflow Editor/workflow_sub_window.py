@@ -8,6 +8,7 @@ from nodeeditor.node_scene import InvalidFile
 from qtpy import QtWidgets, QtCore
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
+from workflow_conf_nodes import WorkflowNode_Start, WorkflowNode_Finish
 from workflow_graphics_view import WFGraphicsView
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -20,7 +21,7 @@ from workflow_scene import WorkflowScene
 
 DEBUG = False
 
-
+# Grid Window
 class WorkflowSubWindow(NodeEditorWidget):
     Scene_class = WorkflowScene
     GraphicsView_class = WFGraphicsView
@@ -37,6 +38,14 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
         self.dockCallback = dockCallback
         self.scene.addAttributesDockCallback(self.dockCallback)
+        self.add_start_finish_nodes()
+
+    # add the permanent start and finish nodes
+    def add_start_finish_nodes(self):
+        start_node = WorkflowNode_Start(self.scene, "Start")
+        finish_node = WorkflowNode_Finish(self.scene, "Finish")
+        start_node.setPos(-350, -250)
+        finish_node.setPos(200, 0)
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node

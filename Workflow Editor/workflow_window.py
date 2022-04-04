@@ -169,6 +169,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
+    # left dock
     def createNodesDock(self):
         self.nodesListWidget = QDMDragListbox()
 

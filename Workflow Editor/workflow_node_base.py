@@ -390,7 +390,6 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         painter.drawEllipse(self.icon_circle_horizontal_padding, self.icon_circle_vertical_padding,
                             2 * self.icon_circle_radius, 2 * self.icon_circle_radius)
 
-
 class WorkflowNode(Node):
     op_icon = ""
     op_code = 0

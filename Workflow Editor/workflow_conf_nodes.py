@@ -535,6 +535,10 @@ class WorkflowNode_Start(WorkflowNode):
 
         return [x, y]
 
+    # Override the remove method. ( it cant be removed)
+    def remove(self):
+        pass
+
 
 @register_node(OP_NODE_FINISH)
 class WorkflowNode_Finish(WorkflowNode):
@@ -615,6 +619,11 @@ class WorkflowNode_Finish(WorkflowNode):
         y = 0
 
         return [x, y]
+
+    # Override the remove method. ( it cant be removed)
+    def remove(self):
+        pass
+
 
 
 @register_node(OP_NODE_COMPLEX)
