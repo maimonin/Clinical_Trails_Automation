@@ -1,5 +1,6 @@
 import asyncio
 import queue
+from asyncio import sleep
 from datetime import datetime
 
 from Database import Database
@@ -16,12 +17,13 @@ def init():
 def add_questionnaire(results, participant):
     log("adding questionnaire of participant with id " + str(participant))
     message = 'participant ' + str(participant) + ' answers: '
-    i = 1
+    i = 0
     for result in results['answers']:
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
         Database.addAnswer(results['questionnaire_number'], i, participant, datetime.now(), str(result['answer']))
         i = i + 1
     log(message)
+    print('entered answers to db')
     event = answers[participant][results['questionnaire_number']]
     event.set()
 
@@ -87,8 +89,11 @@ async def parse_test_condition(patient, satisfy, test_name):
 
 
 async def check_data(participant, questionnaire_number, question_number, accepted_answers):
+    print(answers[participant])
     if questionnaire_number in answers[participant]:
         await answers[participant][questionnaire_number].wait()
+    print(answers[participant])
+    print(questionnaire_number, question_number, participant)
     ans = Database.getAnswer(questionnaire_number, question_number, participant)
     print(ans)
     print(accepted_answers)

@@ -1,5 +1,5 @@
 created workflow
 sending questionnaire
-adding questionnaire of participant with id 1
-participant 1 answers: 
+adding questionnaire of participant with id 20
+participant 20 answers: 
 	Ok?: [1]

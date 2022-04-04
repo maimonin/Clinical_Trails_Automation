@@ -19,5 +19,11 @@
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:F:\university\2021-2022\Clinical_Trails_Automation\Engine\Database\data.db</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="data [4]" uuid="0ba78be9-01af-4223-96cc-3c5aac5f98b4">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:F:\university\2021-2022\final proj\Clinical_Trails_Automation\Engine\Database\data.db</jdbc-url>
+    </data-source>
   </component>
 </project>

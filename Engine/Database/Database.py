@@ -405,9 +405,9 @@ def deletePosition(participant_id, position_id, position_type):
 
 
 def getAnswer(form_id, question_number, participant_id):
-    rows = extract_many_from_table("""SELECT * FROM Answers WHERE form_id=? AND question_num=? AND user_id=? 
-    ORDER BY time_taken DESC""", (form_id, question_number, participant_id))
-    print(rows)
+    rows = extract_one_from_table("""SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? """, (form_id, question_number, participant_id))[0]
+    rows=rows[1:-1].split(', ')
+    rows=[int(i) for i in rows]
     return rows
 
 
