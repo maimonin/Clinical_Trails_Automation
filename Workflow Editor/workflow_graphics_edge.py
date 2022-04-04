@@ -35,9 +35,9 @@ class WFGraphicsEdgeText(QGraphicsItem):
 
         @property
         def text(self):
-            """title of this `Node`
+            """title of this `Edge`
 
-            :getter: current Graphics Node title
+            :getter: current Graphics Edge title
             :setter: stores and make visible the new title
             :type: str
             """

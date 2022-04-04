@@ -8,7 +8,7 @@ class WorkflowEdge(Edge):
 
         super().__init__(scene,start_socket,end_socket,edge_type)
         self._text = text
-
+        self.attributes_dock_callback = None
 
 
         if self.end_socket is not None:
@@ -29,6 +29,7 @@ class WorkflowEdge(Edge):
     def text(self, value):
         self._text = value
         self.grTextEdge.text = self._text
+
     def createEdgeClassInstance(self):
         """
         Create instance of grEdge class
@@ -39,6 +40,7 @@ class WorkflowEdge(Edge):
             self.updatePositionsNoText()
         self.scene.grScene.addItem(self.grEdge)
         return self.grEdge
+
     def createTextEdgeClassInstance(self):
         """
         Create instance of grEdge class
@@ -48,6 +50,7 @@ class WorkflowEdge(Edge):
         self.scene.grScene.addItem(self.grTextEdge)
 
         return self.grTextEdge
+
     def getTextGraphicsEdgeClass(self):
         return WFGraphicsEdgeText
 
@@ -76,3 +79,6 @@ class WorkflowEdge(Edge):
 
     def updatePositionsNoText(self):
         super().updatePositions()
+
+    def set_attributes_dock_callback(self, callback):
+        self.attributes_dock_callback = callback

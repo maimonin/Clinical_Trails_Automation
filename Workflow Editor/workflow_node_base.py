@@ -237,11 +237,11 @@ class WorkflowGraphicSmallDiamond(QDMGraphicsNode):
         painter.setBrush(self._brush_background)
         painter.drawPath(path_node.simplified())
 
-    # def boundingRect(self) -> QRectF:
-    #     """Defining Qt' bounding rectangle"""
-    #     return QRectF(
-    #      0,-self.height/2, self.width, self.height
-    #     ).normalized()
+        # def boundingRect(self) -> QRectF:
+        #     """Defining Qt' bounding rectangle"""
+        #     return QRectF(
+        #      0,-self.height/2, self.width, self.height
+        #     ).normalized()
 
     def boundingRect(self) -> QRectF:
         """Defining Qt' bounding rectangle"""
@@ -390,14 +390,6 @@ class WorkflowGraphicWithIcon(QDMGraphicsNode):
         #icon's circle
         painter.setBrush(self._icon_background_brush)
         painter.drawEllipse(self.icon_circle_horizontal_padding, self.icon_circle_vertical_padding, 2 * self.icon_circle_radius, 2 * self.icon_circle_radius)
-
-
-
-
-
-
-
-
 
 class WorkflowNode(Node):
     op_icon = ""
