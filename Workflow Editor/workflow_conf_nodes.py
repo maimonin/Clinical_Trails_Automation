@@ -71,12 +71,14 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
     def __init__(self, scene):
         super().__init__(scene)
+        self.color = "Grey"
         # @data to send to engine.
         self.data = {
             "content": {
                 "node_details": {
                     "time": datetime.time(hour=0, minute=0),
-                    "title": "New Questionnaire Node"
+                    "title": "New Questionnaire Node",
+                    "color": self.color
                 },
                 "questions": [],
                 "questionnaire_number": self.QNum
@@ -108,6 +110,9 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
                 self.data["content"]["questions"] = []
                 self.data["content"]["questions"] = content["Content"][1]["value"]
                 self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
@@ -119,7 +124,9 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Color", "type": "combobox", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Content": [
                 {"name": "Questionnaire #", "type": "text", "value": self.data["content"]["questionnaire_number"]},
@@ -165,20 +172,19 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
     def __init__(self, scene):
         super().__init__(scene)
+        self.color = "Grey"
         # @data to send to engine.
         self.data = {
             "content": {
                 "node_details": {
                     "time": datetime.time(hour=0, minute=0),
                     "title": "New Test Node",
-                    "actor in charge": "Nurse"
+                    "actor in charge": "Nurse",
+                    "color": self.color
                 },
                 "tests": []
             }
         }
-
-    # template for test:
-    # "Test":{"name":"", "instructions":"","staff":[],"duration": 0,"facility":""}
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -205,6 +211,9 @@ class WorkflowNode_DataEntry(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
 
                 self.data["content"]["tests"] = []
                 for test in content["Content"][0]["value"]:
@@ -223,7 +232,9 @@ class WorkflowNode_DataEntry(WorkflowNode):
                 {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
                 {"name": "Actor In Charge", "type": "combobox",
                  "value": self.data["content"]["node_details"]["actor in charge"],
-                 "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]}
+                 "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]},
+                {"name": "Color", "type": "combobox", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Content": [
                 {"name": "Tests", "type": "test sub tree", "value": self.data["content"]["tests"]}],
@@ -241,12 +252,14 @@ class WorkflowNode_Decision(WorkflowNode):
 
     def __init__(self, scene, inputs=[1], outputs=[4, 2]):
         super().__init__(scene, inputs, outputs)
+        self.color = "Green"
         # @data to send to engine.
         self.data = {
             "content": {
                 "node_details": {
                     "time": datetime.time(hour=0, minute=0),
-                    "title": "New Decision Node"
+                    "title": "New Decision Node",
+                    "color": self.color
                 },
                 "condition": [],
             }
@@ -277,27 +290,15 @@ class WorkflowNode_Decision(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
                 self.data["content"]["condition"] = []
                 for condition in content["Condition"][0]["value"]:
                     self.data["content"]["condition"].append(condition)
 
         except Exception as e:
             dumpException(e)
-
-    def get_tree_build(self):
-        to_send = {
-            "Node Details": [
-                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
-            ],
-            "Condition": [
-                # {"name": "Questions", "type": "edit window", "value": self.data["content"]["questions"]},
-            ],
-            "callback": self.callback_from_window
-        }
-        # TODO: create new window for conditions creation
-
-        return to_send
 
     def initSettings(self):
         """Initialize properties and socket information"""
@@ -377,7 +378,9 @@ class WorkflowNode_Decision(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]}
+                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Color", "type": "combobox", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Condition": [
                 {"name": "Conditions", "type": "cond sub tree", "value": self.data["content"]["condition"]},
@@ -397,12 +400,14 @@ class WorkflowNode_SimpleString(WorkflowNode):
 
     def __init__(self, scene):
         super().__init__(scene)
+        self.color = "Grey"
         # @data to send to engine.
         self.data = {
             "content": {
                 "node_details": {
                     "actors": [],
-                    "title": "New Notification Node"
+                    "title": "New Notification Node",
+                    "color": self.color
                 },
                 "text": ""
             }
@@ -438,6 +443,9 @@ class WorkflowNode_SimpleString(WorkflowNode):
                     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
 
                 self.data["content"]["text"] = content["Notification"][0]["value"]
 
@@ -450,7 +458,9 @@ class WorkflowNode_SimpleString(WorkflowNode):
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
                 {"name": "Actors", "type": "checklist",
                  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-                 "value": self.data["content"]["node_details"]["actors"]}
+                 "value": self.data["content"]["node_details"]["actors"]},
+                {"name": "Color", "type": "combobox", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Notification": [{"name": "Text", "type": "text", "value": self.data["content"]["text"]}],
             "callback": self.callback_from_window
@@ -623,7 +633,6 @@ class WorkflowNode_Finish(WorkflowNode):
     # Override the remove method. ( it cant be removed)
     def remove(self):
         pass
-
 
 
 @register_node(OP_NODE_COMPLEX)

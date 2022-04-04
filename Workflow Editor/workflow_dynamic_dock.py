@@ -124,7 +124,8 @@ class QDynamicDock(QDockWidget):
         options = field["options"]
         for opt in options:
             widget.addItem(opt)
-
+        widget.currentTextChanged.connect(lambda text: self.change_combolist(field, text))
+        widget.setCurrentIndex(field["options"].index(field["value"]))
         self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_spinbox_widget(self, father, field):
@@ -139,6 +140,10 @@ class QDynamicDock(QDockWidget):
             item_line.setText(0, item["name"])
             if item["type"] in self.functions.keys():
                 self.functions[item["type"]](item_line, item)
+
+    def change_combolist(self, field, option):
+        field["value"] = option
+        self.callback(self.data)
 
     def change_checklist(self, field, option_text, newState):
         if newState == 0:
