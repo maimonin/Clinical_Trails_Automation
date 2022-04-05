@@ -119,6 +119,8 @@ def init_tables():
             "test"	TEXT NOT NULL,
             "type"	TEXT NOT NULL,
             "value"	TEXT,
+            "min"   INTEGER,
+            "max"   INTEGER,
             FOREIGN KEY("decision_id") REFERENCES "Nodes"("id"),
             FOREIGN KEY("test") REFERENCES "Tests"("title")
             PRIMARY KEY("decision_id","title")
@@ -368,11 +370,11 @@ def addTest(node_id, title, instructions, staff, duration):
     change_table(query, test_data)
 
 
-def addTestCond(decision_id, title, test, sat_type, value):
-    query = """INSERT OR IGNORE INTO Conditions_Test (decision_id, title, test, type, value)
+def addTestCond(decision_id, title, test, sat_type, value, min, max):
+    query = """INSERT OR IGNORE INTO Conditions_Test (decision_id, title, test, type, value, min, max)
                     VALUES 
-                       (?, ?, ?, ?, ?);"""
-    cond_data = (decision_id, title, test, sat_type, value)
+                       (?, ?, ?, ?, ?, ?, ?);"""
+    cond_data = (decision_id, title, test, sat_type, value, min, max)
     change_table(query, cond_data)
 
 

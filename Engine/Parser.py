@@ -76,11 +76,20 @@ def parse_Decision(node_dict):
                 condition['questionNumber'], str(condition['acceptedAnswers'])
             )
         elif condition['type'] == "test condition":
-            Database.addTestCond(
-                node.id, condition['title'], condition['test'],
-                condition['satisfy']['type'],
-                condition['satisfy']['value']
-            )
+            if condition['satisfy']['type'] == "one_choice":
+                Database.addTestCond(
+                    node.id, condition['title'], condition['test'],
+                    condition['satisfy']['type'],
+                    condition['satisfy']['value'],
+                    None, None
+                )
+            else:
+                Database.addTestCond(
+                    node.id, condition['title'], condition['test'],
+                    condition['satisfy']['type'],
+                    None, condition['satisfy']['value']['min'],
+                    condition['satisfy']['value']['max']
+                )
         elif condition['type'] == "trait condition":
             Database.addTraitCond(
                 node.id, condition['title'], condition['test'],

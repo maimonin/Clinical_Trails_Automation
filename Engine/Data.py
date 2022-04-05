@@ -56,6 +56,7 @@ async def get_test_result(participant_id, test_name):
     for test in reversed(tests[participant_id]):
         if test[0] == test_name:
             await test[1].wait()
+            print("im here")
     return Database.getTestResult(participant_id, test_name)
 
 
@@ -74,6 +75,7 @@ def parse_trait_condition(patient, satisfy, trait):
 async def parse_test_condition(patient, satisfy, test_name):
     if satisfy['type'] == 'range':
         values = satisfy['value']
+        print(values)
         return True if values['min'] <= int(await get_test_result(patient, test_name)) <= values[
             'max'] else False
     else:

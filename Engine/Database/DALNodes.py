@@ -35,15 +35,29 @@ def condJSON(quest_conditions, test_conditions, trait_conditions):
             "acceptedAnswers": answers
         })
     for cond in test_conditions:
-        conditions.append({
-            "title": cond[1],
-            "type": "test condition",
-            "test": cond[2],
-            "satisfy": {
-                "type": "one_choice",
-                "value": "positive"
-            }
-        })
+        if cond[3] == "one_choice":
+            conditions.append({
+                "title": cond[1],
+                "type": "test condition",
+                "test": cond[2],
+                "satisfy": {
+                    "type": "one_choice",
+                    "value": cond[4]
+                }
+            })
+        else:
+            conditions.append({
+                "title": cond[1],
+                "type": "test condition",
+                "test": cond[2],
+                "satisfy": {
+                    "type": "one_choice",
+                    "value": {
+                        "min": cond[5],
+                        "max": cond[6]
+                    }
+                }
+            })
     for cond in trait_conditions:
         conditions.append({
             "title": cond[1],

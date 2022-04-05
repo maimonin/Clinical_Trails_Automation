@@ -1,4 +1,4 @@
 created workflow
 participant with id 1 taking a test
-getting results of test antigen of participant 1
-participant 1 results of test antigen: negative
+getting results of test hemoglobin of participant 1
+participant 1 results of test hemoglobin: 1
