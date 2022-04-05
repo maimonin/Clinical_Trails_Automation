@@ -34,13 +34,14 @@ def add_form(number, participant):
 
 
 def add_test(name, results, participant):
-    log('participant ' + str(participant.id) + ' results of test ' + results['test'] + ": " + str(results['result']))
+    log('participant ' + str(participant) + ' results of test ' + results['test'] + ": " + str(results['result']))
     print(results)
-    Database.addTestResults(name, participant.id, datetime.now(), results['result'])
+    print(tests )
+    Database.addTestResults(name, participant, datetime.now(), results['result'])
     for test in reversed(tests[participant]):
+        print(test)
         if test[0] == name:
-            event = tests[participant][1]
-            tests[participant][1] = results
+            event = test[1]
             event.set()
 
 

@@ -259,8 +259,8 @@ class TestNode(Node):
         self.lock.release()
         for participant in participants2:
             for test in self.tests:
+                add_test_form(test.name, participant.id)
                 await take_test(participant.id, test, self.in_charge)
-                add_test_form(test.name, participant)
             for edge in self.edges:
                 edge.attach(participant)
             Database.deletePosition(participant.id, self.id, "node")

@@ -1,3 +1,5 @@
 created workflow
-participant with id 1 taking a test
-participant with id 1 taking a test
+participant with id 20 taking a test
+participant with id 20 taking a test
+participant 20 results of test hemoglobin: 55
+participant 20 results of test A1C test: 80
