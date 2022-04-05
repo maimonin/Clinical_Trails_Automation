@@ -184,9 +184,13 @@ def init_tables():
             FOREIGN KEY("form_id") REFERENCES "Questionnaires"("form_id")
             );""",
                "create_staff_table": """CREATE TABLE IF NOT EXISTS "Staff" (
+            "id"    INTEGER NOT NULL,
             "name"	TEXT NOT NULL,
             "role"	TEXT NOT NULL,
-            PRIMARY KEY("name")
+            "gender" TEXT NOT NULL,
+            "age" INTEGER NOT NULL,
+            "available"  TEXT NOT NULL,
+            PRIMARY KEY("id")
             );""",
                "create_string_nodes_table": """CREATE TABLE IF NOT EXISTS "String_Nodes" (
             "id"	INTEGER NOT NULL UNIQUE,
@@ -201,15 +205,13 @@ def init_tables():
             PRIMARY KEY("id")
             );""",
                "create_test_results_table": """CREATE TABLE IF NOT EXISTS "Test_Results" (
-            "test_id"	INTEGER NOT NULL,
-            "step"	INTEGER NOT NULL,
+            "test_name"	INTEGER NOT NULL,
             "user_id"	INTEGER NOT NULL,
             "time_taken"	DATETIME NOT NULL,
             "result"	TEXT NOT NULL,
-            FOREIGN KEY("test_id") REFERENCES "Tests"("id"),
-            PRIMARY KEY("test_id","step","user_id","time_taken"),
+            FOREIGN KEY("test_name") REFERENCES "Tests"("title"),
             FOREIGN KEY("user_id") REFERENCES "Participants"("id"),
-            FOREIGN KEY("step") REFERENCES "Tests"("step")
+            PRIMARY KEY("test_name","user_id","time_taken")
             );""",
                "create_tests_table": """CREATE TABLE IF NOT EXISTS "Tests" (
             "node_id"	INTEGER NOT NULL,
@@ -342,11 +344,12 @@ def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
     change_table(query, cond_data)
 
 
-def addStaff(name, role):
-    query = """INSERT OR IGNORE INTO Staff (name, role)
+def addStaff(user_id, name, role, gender, age, available):
+    query = """INSERT OR IGNORE INTO Staff (id, name, role, gender, age, available)
                 VALUES 
-                   (?, ?);"""
-    staff_data = (name, role)
+                   (?, ?, ?, ?, ?, ?);"""
+    staff_data = (user_id, name, role, gender, age, available)
+    print(staff_data)
     change_table(query, staff_data)
 
 
@@ -366,21 +369,29 @@ def addTest(node_id, title, instructions, staff, duration):
     change_table(query, test_data)
 
 
-def addTestNode(node):
-    query = """INSERT OR IGNORE INTO Test_Nodes (id, title, in_charge)
-                    VALUES 
-                       (?, ?, ?);"""
-    node_data = (node.id, node.title, node.in_charge)
-    change_table(query, node_data)
-    testNodes[node.id] = node
-
-
 def addTestCond(decision_id, title, test, sat_type, value):
     query = """INSERT OR IGNORE INTO Conditions_Test (decision_id, title, test, type, value)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, value)
     change_table(query, cond_data)
+
+
+def addTestNode(node):
+    query = """INSERT OR IGNORE INTO Test_Nodes (id, title, in_charge)
+                VALUES (?, ?, ?);"""
+    node_data = (node.id, node.title, node.in_charge)
+    change_table(query, node_data)
+    testNodes[node.id] = node
+
+
+def addTestResults(test_name, user_id, time_taken, result):
+    print(test_name)
+    print(user_id)
+    print(time_taken)
+    print(result)
+    change_table("""INSERT OR IGNORE INTO Test_Results (test_name, user_id, time_taken, result)
+                 VALUES (?, ?, ?, ?)""", (test_name, user_id, time_taken, result))
 
 
 def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
@@ -501,6 +512,14 @@ def getNode(node_id):
         return buildDALNodes([op_code, node_id, title, flow_node])
 
 
+def getStaff(role):
+    user_data = extract_one_from_table("""SELECT * FROM Staff WHERE role=? AND available="yes" """, (role.lower(),))
+    if len(user_data) == 0:
+        return None
+    change_table("""UPDATE Staff SET available = "no" WHERE name=?""", (user_data[0],))
+    return User(user_data[2], user_data[3], user_data[4], user_data[0])
+
+
 def getTests(node_id):
     tests = []
     tests_data = extract_many_from_table("""SELECT * FROM Tests WHERE node_id=?""", (node_id,))
@@ -533,3 +552,7 @@ def getWorkflow(workflow_id):
     if workflow is not None:
         workflows[workflow_id] = [workflow[1]]
     return workflow
+
+
+def releaseStaff(user_id):
+    change_table("""UPDATE Staff SET available = "yes" WHERE id=?""", (user_id,))

@@ -111,7 +111,7 @@ class Questionnaire(Node):
         for participant in participants2:
             # send questionnaire to participant
             await send_questionnaire(self.form, self.number, participant.id)
-            Data.add_Form(self.number, participant.id)
+            Data.add_form(self.number, participant.id)
             for edge in self.edges:
                 edge.attach(participant)
             Database.deletePosition(participant.id, self.id, "node")

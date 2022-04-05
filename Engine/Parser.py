@@ -137,7 +137,8 @@ async def register_user(user_dict):
             start.attach(user)
             await start.exec()
     else:
-        Database.addStaff(user_dict['name'], user_dict['role'])
+        Database.addStaff(user_dict['id'], user_dict['name'], user_dict['role'],
+                          user_dict['sex'], user_dict['age'], "yes")
 
 
 async def load_user(user_id):

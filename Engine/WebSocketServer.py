@@ -35,7 +35,7 @@ async def get_notifications(websocket, path):
             elif data_dict['type'] == 'add answers':
                 Data.add_questionnaire(data_dict, data_dict['id'])
             elif data_dict['type'] == 'add results':
-                Data.add_test(data_dict, data_dict['id'])
+                Data.add_test(data_dict['test'], data_dict, data_dict['id'])
     # Handle disconnecting clients
     except websockets.exceptions.ConnectionClosed as e:
         print("A client just disconnected")

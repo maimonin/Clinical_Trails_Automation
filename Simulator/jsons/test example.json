@@ -27,7 +27,7 @@
                         "staff": [
                             "Nurse"
                         ],
-                        "duration": "15"
+                        "duration": "3"
                     },
                     {
                         "name": "A1C test",
@@ -35,7 +35,7 @@
                         "staff": [
                             "Nurse"
                         ],
-                        "duration": "15"
+                        "duration": "3"
                     }
                 ]
             },
