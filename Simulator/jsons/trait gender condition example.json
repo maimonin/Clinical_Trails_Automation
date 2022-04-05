@@ -16,7 +16,7 @@
             ],
             "content": {
                 "node_details": {
-                    "title": "d1"
+                    "title": "decision"
                 },
                 "condition": [
                     {
@@ -52,7 +52,7 @@
                     ],
                     "title": "s1"
                 },
-                "text": "s1"
+                "text": "you're a boy"
             },
             "op_code": 4
         },
@@ -76,7 +76,7 @@
                     ],
                     "title": "s2"
                 },
-                "text": "2"
+                "text": "you're a girl"
             },
             "op_code": 4
         }
