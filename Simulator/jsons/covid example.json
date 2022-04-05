@@ -342,7 +342,6 @@
     "edges": [
         {
             "id": 2846471722032,
-            "edge_type": 2,
             "type": 0,
             "start": 2846458763392,
             "end": 2846471721936
@@ -350,24 +349,22 @@
         {
             "id": 2846471769008,
             "type": 0,
-            "edge_type": 2,
             "start": 2846471721984,
             "end": 2846471768768
         },
         {
             "id": 2846460297952,
-            "edge_type": 2,
             "type": 1,
             "content": {
-                "Min": {
-                    "Hours":0,
-                    "Minutes":0,
-                    "Seconds": 10
+                "min": {
+                    "hours":0,
+                    "minutes":0,
+                    "seconds": 10
                 },
                 "max": {
-                    "Hours":0,
-                    "Minutes":0,
-                    "Seconds": 10
+                    "hours":0,
+                    "minutes":0,
+                    "seconds": 10
                  }
             },
             "start": 2846471721984,
