@@ -244,6 +244,7 @@ def addActorToNotify(notification_id, actor_name):
 
 
 def addAnswer(form_id, question_num, user_id, time_taken, answer):
+    print("adding answer")
     query = """INSERT OR IGNORE INTO Answers (form_id, question_num, user_id, time_taken, answer)
                     VALUES 
                        (?, ?, ?, ?, ?);"""
@@ -405,6 +406,7 @@ def deletePosition(participant_id, position_id, position_type):
 
 
 def getAnswer(form_id, question_number, participant_id):
+    print("getting answer")
     rows = extract_many_from_table("""SELECT * FROM Answers WHERE form_id=? AND question_num=? AND user_id=? 
     ORDER BY time_taken DESC""", (form_id, question_number, participant_id))
     print(rows)

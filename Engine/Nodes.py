@@ -94,6 +94,7 @@ class Questionnaire(Node):
         Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
+        print("taking questionnaire")
         self.edges = getEdges(self.id)
         await self.notify()
         threads = []
@@ -135,6 +136,7 @@ class Decision(Node):
         Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
+        print("making decision")
         self.edges = getEdges(self.id)
         print(self.edges)
         await self.notify()
