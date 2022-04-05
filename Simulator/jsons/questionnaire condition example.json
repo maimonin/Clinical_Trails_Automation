@@ -53,7 +53,7 @@
                     {
                         "title": "questionnaire condition 1",
                         "type": "questionnaire condition",
-                        "questionnaireNumber": 0,
+                        "questionnaireNumber": 1,
                         "questionNumber": 0,
                         "acceptedAnswers": [
                             1

@@ -18,10 +18,11 @@ async def get_notifications(websocket, path):
     # Handle incoming messages
     try:
         async for message in websocket:
+            print(message)
             data_dict = json.loads(message)
             if data_dict['type'] == 'register':
                 NotificationHandler.connections[data_dict['id']] = websocket
-                await asyncio.create_task(register_user(data_dict))
+                asyncio.create_task(register_user(data_dict))
             elif data_dict['type'] == 'sign in':
                 NotificationHandler.connections[data_dict['id']] = websocket
                 # Parser.load_workflow(data_dict['id'])
