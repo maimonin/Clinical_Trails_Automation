@@ -16,7 +16,7 @@
             ],
             "content": {
                 "node_details": {
-                    "title": "t1",
+                    "title": "test node",
                     "actor in charge": "Nurse"
                 },
                 "tests": [
@@ -26,7 +26,7 @@
                         "staff": [
                             "Nurse"
                         ],
-                        "duration": "15"
+                        "duration": "3"
                     }
                 ]
             },
@@ -47,7 +47,7 @@
             ],
             "content": {
                 "node_details": {
-                    "title": "d1"
+                    "title": "decision"
                 },
                 "condition": [
                     {
@@ -83,7 +83,7 @@
                     ],
                     "title": "s1"
                 },
-                "text": "1"
+                "text": "continue trail"
             },
             "op_code": 4
         },
@@ -107,7 +107,7 @@
                     ],
                     "title": "s2"
                 },
-                "text": "2"
+                "text": "you have been found positive and will not continue trail"
             },
             "op_code": 4
         }

@@ -1,5 +1,4 @@
 created workflow
-participant with id 20 taking a test
-participant with id 20 taking a test
-participant 20 results of test hemoglobin: 55
-participant 20 results of test A1C test: 80
+participant with id 1 taking a test
+getting results of test antigen of participant 1
+participant 1 results of test antigen: negative

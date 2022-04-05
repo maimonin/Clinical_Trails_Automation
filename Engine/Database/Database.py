@@ -349,7 +349,6 @@ def addStaff(user_id, name, role, gender, age, available):
                 VALUES 
                    (?, ?, ?, ?, ?, ?);"""
     staff_data = (user_id, name, role, gender, age, available)
-    print(staff_data)
     change_table(query, staff_data)
 
 
@@ -386,10 +385,6 @@ def addTestNode(node):
 
 
 def addTestResults(test_name, user_id, time_taken, result):
-    print(test_name)
-    print(user_id)
-    print(time_taken)
-    print(result)
     change_table("""INSERT OR IGNORE INTO Test_Results (test_name, user_id, time_taken, result)
                  VALUES (?, ?, ?, ?)""", (test_name, user_id, time_taken, result))
 
@@ -516,8 +511,14 @@ def getStaff(role):
     user_data = extract_one_from_table("""SELECT * FROM Staff WHERE role=? AND available="yes" """, (role.lower(),))
     if len(user_data) == 0:
         return None
-    change_table("""UPDATE Staff SET available = "no" WHERE name=?""", (user_data[0],))
+    # change_table("""UPDATE Staff SET available = "no" WHERE id=?""", (user_data[0],))
     return User(user_data[2], user_data[3], user_data[4], user_data[0])
+
+
+def getTestResult(user_id, test_name):
+    result_data = extract_one_from_table("""SELECT result FROM Test_Results WHERE user_id=? AND test_name=? 
+                                            ORDER BY time_taken DESC""", (user_id, test_name))
+    return result_data[0]
 
 
 def getTests(node_id):

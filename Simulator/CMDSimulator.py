@@ -182,7 +182,6 @@ async def send_json(url):
     try:
         f = open(path)
         data = json.load(f)
-        print(data)
         data['type'] = "add workflow"
         data['workflow_id'] = 2111561603920
         s = await websockets.connect(url)

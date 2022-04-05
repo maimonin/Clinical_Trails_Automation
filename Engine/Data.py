@@ -35,11 +35,8 @@ def add_form(number, participant):
 
 def add_test(name, results, participant):
     log('participant ' + str(participant) + ' results of test ' + results['test'] + ": " + str(results['result']))
-    print(results)
-    print(tests )
     Database.addTestResults(name, participant, datetime.now(), results['result'])
     for test in reversed(tests[participant]):
-        print(test)
         if test[0] == name:
             event = test[1]
             event.set()
@@ -54,16 +51,12 @@ def add_test_form(name, participant):
         tests[participant] = ans
 
 
-async def get_test_result(participant, test_name):
-    log("getting test of " + str(participant))
-    for test in reversed(tests[participant]):
+async def get_test_result(participant_id, test_name):
+    log("getting results of test " + test_name + " of participant " + str(participant_id))
+    for test in reversed(tests[participant_id]):
         if test[0] == test_name:
-            if isinstance(test[1], asyncio.Event()):
-                await test[1].wait()
-            res = test[1]
-            return res['result']
-        else:
-            return None
+            await test[1].wait()
+    return Database.getTestResult(participant_id, test_name)
 
 
 async def parse_questionnaire_condition(patient, questionnaire_number, question_number, accepted_answers):

@@ -73,7 +73,6 @@ async def end_test(node, participants):
 
 
 def set_time(node, min_time, max_time):
-    print(2)
     node.min_time = min_time
     node.max_time = max_time
 
@@ -94,7 +93,6 @@ class Questionnaire(Node):
         Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
-        print("taking questionnaire")
         self.edges = getEdges(self.id)
         await self.notify()
         threads = []
@@ -136,9 +134,7 @@ class Decision(Node):
         Database.addNodePosition(participant.id, self.id)
 
     async def exec(self) -> None:
-        print("making decision")
         self.edges = getEdges(self.id)
-        print(self.edges)
         await self.notify()
         threads = []
         if self.edges[0].has_actors():
@@ -219,6 +215,8 @@ class StringNode(Node):
                 edge.attach(participant)
                 Database.deletePosition(participant.id, self.id, "node")
             for role in self.actors:
+                if role.lower() == "participant":
+                    continue
                 r = get_role(role)
                 if r is not None:
                     await send_notification_by_id(r.id, {'type': 'notification', 'text': self.text})

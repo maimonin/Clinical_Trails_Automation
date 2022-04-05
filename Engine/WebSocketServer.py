@@ -18,7 +18,6 @@ async def get_notifications(websocket, path):
     # Handle incoming messages
     try:
         async for message in websocket:
-            print(message)
             data_dict = json.loads(message)
             if data_dict['type'] == 'register':
                 NotificationHandler.connections[data_dict['id']] = websocket
