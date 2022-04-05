@@ -90,13 +90,21 @@ def parse_Decision(node_dict):
                     None, condition['satisfy']['value']['min'],
                     condition['satisfy']['value']['max']
                 )
-        elif condition['type'] == "trait condition":
-            Database.addTraitCond(
-                node.id, condition['title'], condition['test'],
-                condition['satisfy']['type'],
-                condition['satisfy']['value']['min'],
-                condition['satisfy']['value']['max']
-            )
+        elif condition['type'] == "trait condition    ":
+            if condition['satisfy']['type'] == "one_choice":
+                Database.addTraitCond(
+                    node.id, condition['title'], condition['test'],
+                    condition['satisfy']['type'],
+                    condition['satisfy']['value'],
+                    None, None
+                )
+            else:
+                Database.addTraitCond(
+                    node.id, condition['title'], condition['test'],
+                    condition['satisfy']['type'],
+                    None, condition['satisfy']['value']['min'],
+                    condition['satisfy']['value']['max']
+                )
 
     return node
 

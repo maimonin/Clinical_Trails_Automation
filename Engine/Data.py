@@ -64,12 +64,13 @@ async def parse_questionnaire_condition(patient, questionnaire_number, question_
     return await check_data(patient, questionnaire_number, question_number, accepted_answers)
 
 
-def parse_trait_condition(patient, satisfy, trait):
+def parse_trait_condition(participant_id, satisfy, trait):
+    participant = Database.getUser(participant_id)
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return True if values['min'] <= patient.get_traits()[trait] <= values['max'] else False
+        return True if values['min'] <= participant.get_traits()[trait] <= values['max'] else False
     else:
-        return True if patient.get_traits()[trait] == satisfy['value'] else False
+        return True if participant.get_traits()[trait] == satisfy['value'] else False
 
 
 async def parse_test_condition(patient, satisfy, test_name):

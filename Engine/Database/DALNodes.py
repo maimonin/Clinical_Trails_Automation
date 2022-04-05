@@ -59,19 +59,29 @@ def condJSON(quest_conditions, test_conditions, trait_conditions):
                 }
             })
     for cond in trait_conditions:
-        conditions.append({
-            "title": cond[1],
-            "type": "trait condition    ",
-            "test": "age",
-            "satisfy": {
-                "type": "range",
-                "value": {
-                    "min": 18,
-                    "max": 30
+        if cond[3] == "one_choice":
+            conditions.append({
+                "title": cond[1],
+                "type": "trait condition    ",
+                "test": cond[2],
+                "satisfy": {
+                    "type": "one_choice",
+                    "value": cond[4]
                 }
-            }
-        })
-    print(conditions)
+            })
+        else:
+            conditions.append({
+                "title": cond[1],
+                "type": "trait condition    ",
+                "test": cond[2],
+                "satisfy": {
+                    "type": "range",
+                    "value": {
+                        "min": cond[5],
+                        "max": cond[6]
+                    }
+                }
+            })
     return conditions
 
 

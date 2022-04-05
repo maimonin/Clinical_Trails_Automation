@@ -16,7 +16,7 @@
             ],
             "content": {
                 "node_details": {
-                    "title": "d1"
+                    "title": "decision"
                 },
                 "condition": [
                     {
@@ -55,7 +55,7 @@
                     ],
                     "title": "s1"
                 },
-                "text": "1"
+                "text": "in range"
             },
             "op_code": 4
         },
@@ -79,7 +79,7 @@
                     ],
                     "title": "s2"
                 },
-                "text": "2"
+                "text": "out of range"
             },
             "op_code": 4
         }

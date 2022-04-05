@@ -130,6 +130,7 @@ def init_tables():
             "title"	TEXT NOT NULL,
             "test"	TEXT NOT NULL,
             "type"	TEXT NOT NULL,
+            "gender" TEXT,
             "min"	INTEGER,
             "max"	INTEGER,
             PRIMARY KEY("decision_id","title"),
@@ -391,11 +392,11 @@ def addTestResults(test_name, user_id, time_taken, result):
                  VALUES (?, ?, ?, ?)""", (test_name, user_id, time_taken, result))
 
 
-def addTraitCond(decision_id, title, test, sat_type, min_val, max_val):
-    query = """INSERT OR IGNORE INTO Conditions_Trait (decision_id, title, test, type, min, max)
-                    VALUES 
-                       (?, ?, ?, ?, ?, ?);"""
-    cond_data = (decision_id, title, test, sat_type, min_val, max_val)
+def addTraitCond(decision_id, title, test, sat_type, gender, min_val, max_val):
+    query = """INSERT OR IGNORE INTO Conditions_Trait (decision_id, title, test, type, gender, min, max)
+                VALUES (?, ?, ?, ?, ?, ?, ?);"""
+    cond_data = (decision_id, title, test, sat_type, gender, min_val, max_val)
+    print(cond_data)
     change_table(query, cond_data)
 
 
