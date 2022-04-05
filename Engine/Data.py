@@ -73,12 +73,13 @@ def parse_trait_condition(patient, satisfy, trait):
 
 
 async def parse_test_condition(patient, satisfy, test_name):
+    print(satisfy)
     if satisfy['type'] == 'range':
         values = satisfy['value']
         print(values)
-        return True if values['min'] <= int(await get_test_result(patient, test_name)) <= values[
-            'max'] else False
+        return True if values['min'] <= int(await get_test_result(patient, test_name)) <= values['max'] else False
     else:
+        print('hola')
         return True if await get_test_result(patient, test_name) == satisfy['value'] else False
 
 

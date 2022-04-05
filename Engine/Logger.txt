@@ -1,4 +1,7 @@
 created workflow
-participant with id 1 taking a test
-getting results of test hemoglobin of participant 1
-participant 1 results of test hemoglobin: 1
+participant with id 20 taking a test
+getting results of test hemoglobin of participant 20
+participant 20 results of test hemoglobin: 80
+participant with id 58 taking a test
+getting results of test hemoglobin of participant 58
+participant 58 results of test hemoglobin: 5

@@ -51,7 +51,7 @@ def condJSON(quest_conditions, test_conditions, trait_conditions):
                 "type": "test condition",
                 "test": cond[2],
                 "satisfy": {
-                    "type": "one_choice",
+                    "type": "range",
                     "value": {
                         "min": cond[5],
                         "max": cond[6]

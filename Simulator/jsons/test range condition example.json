@@ -86,7 +86,7 @@
                     ],
                     "title": "s1"
                 },
-                "text": "out of range"
+                "text": "in range"
             },
             "op_code": 4
         },
@@ -110,7 +110,7 @@
                     ],
                     "title": "s2"
                 },
-                "text": "in range"
+                "text": "out of range"
             },
             "op_code": 4
         }
