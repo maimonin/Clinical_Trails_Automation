@@ -1,24 +1,16 @@
 import asyncio
 import json
-import socket
-import sys
 import threading
-
 import websockets
-from PyQt5.QtWidgets import QApplication
 from nodeeditor.utils import dumpException
-from qtpy import QtWidgets
-
-
-
 
 user_id = 0
 users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
-         {"name": "lab", "role": "lab", "sex": "male", "age": 30},
+         {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
-         #{"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
-         #{"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
+# {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
+# {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -66,7 +58,7 @@ def handle_questionnaire(questions, participant):
     for q in questions:
         if q['type'] == 'open':
             answers.append(handle_open_question(q))
-        elif q['type'] == 'radio':
+        elif q['type'] == 'one choice':
             answers.append(handle_radio_question(q))
         else:
             answers.append(handle_multi_question(q))
@@ -85,7 +77,6 @@ async def actor_simulation(user, s):
                 data = await get_data(s)
             except:
                 break
-            print(data)
             data_json = json.loads(data)
             if data_json['type'] == 'notification':
                 lock.acquire()
@@ -93,8 +84,9 @@ async def actor_simulation(user, s):
                 lock.release()
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], user)
-                print({'type':'add answers', 'questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans})
-                await s.send(json.dumps({'type':'add answers','questionnaire_number':data_json['questionnaire_number'],'id':user['id'],"answers": ans}))
+                await s.send(json.dumps(
+                    {'type': 'add answers', 'questionnaire_number': data_json['questionnaire_number'], 'id': user['id'],"answers": ans}))
+                print('sent')
             elif data_json['type'] == 'test':
                 lock.acquire()
                 print(
@@ -107,7 +99,8 @@ async def actor_simulation(user, s):
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")
                 lock.release()
-                await s.send(json.dumps({'type':'add results','id':user['id'],"test": data_json['test']['name'], 'result': val}))
+                await s.send(json.dumps(
+                    {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
                 await s.close()
                 break
@@ -125,22 +118,15 @@ async def register_user(user, s):
     await s.send(message)
 
 
+async def login_user(log_id, s):
+    await s.send(json.dumps({'type': 'sign in', 'id': log_id}))
+    return await get_data(s)
 
 
 async def Main():
     threads = []
     url = "ws://127.0.0.1:7890"
-    path = input("workflow path:")
-    try:
-        f = open(path)
-        data = json.load(f)
-        print(data)
-        data['type'] = "add workflow"
-        data['workflow_id'] = 0
-        s = await websockets.connect(url)
-        await s.send(json.dumps(data))
-    except Exception as e:
-        dumpException(e)
+    await send_json(url)
     for user in users:
         s = await websockets.connect(url)
         await register_user(user, s)
@@ -149,33 +135,59 @@ async def Main():
         asyncio.create_task(actor_simulation(user, user['s']))
     while True:
         lock.acquire()
-        inp= input('want to register user? (y/n)')
+        inp = input('to register user press r, to log in user press l')
         lock.release()
-        if inp=='y':
+        # url = "ws://127.0.0.1:7890"
+        if inp == 'r':
             lock.acquire()
-            id=int(input('id'))
+            id = int(input('id'))
             gender = input('gender')
-            age=int(input('age'))
+            age = int(input('age'))
             lock.release()
-            user = {"name": "participant " + str(id), "role": "participant", "workflow": 0,
+            user = {"name": "participant " + str(id), "role": "participant", "workflow": 2111561603920,
                     "sex": gender, "age": age,
                     "id": id}
-            url = "ws://127.0.0.1:7890"
-            is_cn=True
+            is_cn = True
             while is_cn:
                 try:
                     s = await websockets.connect(url)
                     await register_user(user, s)
                     user['s'] = s
                     asyncio.create_task(actor_simulation(user, user['s']))
-                    is_cn=False
+                    is_cn = False
                 except:
                     continue
             lock.acquire()
             print('registered')
             lock.release()
+        elif inp == 'l':
+            lock.acquire()
+            log_id = int(input('id'))
+            lock.release()
+            is_cn = True
+            while is_cn:
+                # try:
+                s = await websockets.connect(url)
+                user = json.loads(await login_user(log_id, s))
+                asyncio.create_task(actor_simulation(user, s))
+                is_cn = False
+                # except:
+                #     continue
+
         await asyncio.sleep(10)
 
+
+async def send_json(url):
+    path = input("workflow path:")
+    try:
+        f = open(path)
+        data = json.load(f)
+        data['type'] = "add workflow"
+        data['workflow_id'] = 2111561603920
+        s = await websockets.connect(url)
+        await s.send(json.dumps(data))
+    except Exception as e:
+        dumpException(e)
 
 
 asyncio.run(Main())

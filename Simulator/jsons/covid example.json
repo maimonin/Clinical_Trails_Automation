@@ -1,5 +1,5 @@
 {
-
+    "id": 2111561603920,
     "nodes": [
         {
             "id": 2846458731440,
@@ -11,12 +11,12 @@
             ],
             "outputs": [
                 {
-                    "id": 2846458763392,
+                    "id": 2846458763392
                 }
             ],
             "content": {
                 "node_details": {
-                    "title": "informed consent",
+                    "title": "informed consent"
                 },
                 "questions": [
                     {
@@ -49,24 +49,24 @@
             "title": "Decision",
             "inputs": [
                 {
-                    "id": 2846471721936,
+                    "id": 2846471721936
                 }
             ],
             "outputs": [
                 {
-                    "id": 2846471721984,
+                    "id": 2846471721984
                 }
             ],
             "content": {
                 "node_details": {
-                    "title": "informed consent desc",
+                    "title": "informed consent desc"
                 },
                 "condition": [
                     {
                         "title": "questionnaire condition 1",
                         "type": "questionnaire condition",
-                        "questionnaireNumber": 0,
-                        "questionNumber": 0,
+                        "questionnaireNumber": 1,
+                        "questionNumber": 1,
                         "acceptedAnswers": [
                             1
                         ]
@@ -74,8 +74,8 @@
                     {
                         "title": "questionnaire condition 2",
                         "type": "questionnaire condition",
-                        "questionnaireNumber": 0,
-                        "questionNumber": 1,
+                        "questionnaireNumber": 1,
+                        "questionNumber": 2,
                         "acceptedAnswers": [
                             1
                         ]
@@ -89,12 +89,12 @@
             "title": "Simple String",
             "inputs": [
                 {
-                    "id": 2846471768768,
+                    "id": 2846471768768
                 }
             ],
             "outputs": [
                 {
-                    "id": 2846471768816,
+                    "id": 2846471768816
                 }
             ],
             "content": {
@@ -104,7 +104,7 @@
                     ],
                     "title": "end trail"
                 },
-                "text": "You can participate in this trail"
+                "text": "You can't participate in this trail"
             },
             "op_code": 4
         },
@@ -113,45 +113,45 @@
             "title": "Sub Workflow",
             "inputs": [
                 {
-                    "id": 2846471769392,
+                    "id": 2846471769392
                 }
             ],
             "outputs": [
                 {
-                    "id": 2846471769440,
+                    "id": 2846471769440
                 }
             ],
             "content": {
                 "type": "complex",
                 "flow": {
+                    "id": 2453429745072,
                     "nodes": [
                         {
                             "id": 2846471768528,
                             "title": "Test",
                             "inputs": [
                                 {
-                                    "id": 2846471866784,
+                                    "id": 2846471866784
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471866832,
+                                    "id": 2846471866832
                                 }
                             ],
                             "content": {
                                 "node_details": {
                                     "title": "antigen test",
-                                    "actor in charge": "Nurse",
-                                    "time": ""
+                                    "actor in charge": "Nurse"
                                 },
                                 "tests": [
                                     {
                                         "name": "Antigen Test",
-                                        "instructions": "Take samples from both nostrils using a swab.\nPut the swab in tube and squeeze. Close the tube and drop the liquid on the test cassette. \nWait 15 minutes for the resultes.",
+                                        "instructions": "Take samples from both nostrils using a swab.\nPut the swab in tube and squeeze. Close the tube and drop the liquid on the test cassette. \nWait 15 minutes for the results.",
                                         "staff": [
                                             "Nurse"
                                         ],
-                                        "duration": "15"
+                                        "duration": "3"
                                     }
                                 ]
                             },
@@ -162,17 +162,17 @@
                             "title": "Decision",
                             "inputs": [
                                 {
-                                    "id": 2846471868272,
+                                    "id": 2846471868272
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471916560,
+                                    "id": 2846471916560
                                 }
                             ],
                             "content": {
                                 "node_details": {
-                                    "title": "test antigen desc",
+                                    "title": "test antigen desc"
                                 },
                                 "condition": [
                                     {
@@ -181,7 +181,7 @@
                                         "test": "Antigen Test",
                                         "satisfy": {
                                             "type": "one_choice",
-                                            "value": "positive"
+                                            "value": "negative"
                                         }
                                     }
                                 ]
@@ -189,16 +189,45 @@
                             "op_code": 3
                         },
                         {
-                            "id": 2846471916944,
-                            "title": "Simple String",
+                            "id": 2846471916512,
+                            "title": "Test",
                             "inputs": [
                                 {
-                                    "id": 2846471917184,
+                                    "id": 2846471768912
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846471917232,
+                                    "id": 2846471866976
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "title": "vaccine",
+                                    "actor in charge": "Lab Technician"
+                                },
+                                "tests": [
+                                    {
+                                        "name": "Vaccine",
+                                        "instructions": "inject 5 ml to arm",
+                                        "staff": ["Nurse"],
+                                        "duration": "2"
+                                    }
+                                ]
+                            },
+                            "op_code": 2
+                        },
+                        {
+                            "id": 2846471916944,
+                            "title": "Simple String",
+                            "inputs": [
+                                {
+                                    "id": 2846471917184
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 2846471917232
                                 }
                             ],
                             "content": {
@@ -214,50 +243,21 @@
                             "op_code": 4
                         },
                         {
-                            "id": 2846471916512,
-                            "title": "Test",
-                            "inputs": [
-                                {
-                                    "id": 2846471768912,
-                                }
-                            ],
-                            "outputs": [
-                                {
-                                    "id": 2846471866976,
-                                }
-                            ],
-                            "content": {
-                                "node_details": {
-                                    "title": "vaccine",
-                                    "actor in charge": "Lab Technician",
-                                },
-                                "tests": [
-                                    {
-                                        "name": "Vaccine",
-                                        "instructions": "inject 5 ml to arm",
-                                        "staff": ["Nurse"],
-                                        "duration": "10"
-                                    }
-                                ]
-                            },
-                            "op_code": 2
-                        },
-                        {
                             "id": 2846460297376,
                             "title": "Questionnaire",
                             "inputs": [
                                 {
-                                    "id": 2846460297616,
+                                    "id": 2846460297616
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "id": 2846460297664,
+                                    "id": 2846460297664
                                 }
                             ],
                             "content": {
                                 "node_details": {
-                                    "title": "question after vaccine",
+                                    "title": "question after vaccine"
                                 },
                                 "questions": [
                                     {
@@ -300,15 +300,15 @@
                             "edge_type": 2,
                             "type": 1,
                             "content": {
-                                "Min": {
-                                    "Hours":0,
-                                    "Minutes":0,
-                                    "Seconds": 15
+                                "min": {
+                                    "hours":0,
+                                    "minutes":0,
+                                    "seconds": 5
                                 },
                                 "max": {
-                                    "Hours":0,
-                                    "Minutes":0,
-                                    "Seconds": 15
+                                    "hours":0,
+                                    "minutes":0,
+                                    "seconds": 5
                                  }
                             },
                             "start": 2846471916560,
@@ -321,15 +321,15 @@
                             "end": 2846460297616,
                             "type": 1,
                             "content": {
-                                "Min": {
-                                    "Hours":0,
-                                    "Minutes":0,
-                                    "Seconds": 10
+                                "min": {
+                                    "hours":0,
+                                    "minutes":0,
+                                    "seconds": 10
                                 },
                                 "max": {
-                                    "Hours":0,
-                                    "Minutes":0,
-                                    "Seconds": 10
+                                    "hours":0,
+                                    "minutes":0,
+                                    "seconds": 10
                                  }
                             }
                         }
@@ -342,7 +342,6 @@
     "edges": [
         {
             "id": 2846471722032,
-            "edge_type": 2,
             "type": 0,
             "start": 2846458763392,
             "end": 2846471721936
@@ -350,24 +349,22 @@
         {
             "id": 2846471769008,
             "type": 0,
-            "edge_type": 2,
             "start": 2846471721984,
             "end": 2846471768768
         },
         {
             "id": 2846460297952,
-            "edge_type": 2,
             "type": 1,
             "content": {
-                "Min": {
-                    "Hours":0,
-                    "Minutes":0,
-                    "Seconds": 10
+                "min": {
+                    "hours":0,
+                    "minutes":0,
+                    "seconds": 10
                 },
                 "max": {
-                    "Hours":0,
-                    "Minutes":0,
-                    "Seconds": 10
+                    "hours":0,
+                    "minutes":0,
+                    "seconds": 10
                  }
             },
             "start": 2846471721984,

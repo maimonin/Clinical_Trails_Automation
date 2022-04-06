@@ -1,9 +1,7 @@
 import asyncio
-import queue
 from datetime import datetime
 
 from Database import Database
-from Database.Database import getForm
 from Logger import log
 
 
@@ -27,7 +25,7 @@ def add_questionnaire(results, participant):
     event.set()
 
 
-def add_Form(number, participant):
+def add_form(number, participant):
     if participant in answers:
         answers[participant][number] = asyncio.Event()
     else:
@@ -36,12 +34,11 @@ def add_Form(number, participant):
 
 
 def add_test(name, results, participant):
-    log('participant ' + str(participant.id) + ' results of test ' + results['test'] + ": " + str(results['result']))
-    print(results)
+    log('participant ' + str(participant) + ' results of test ' + results['test'] + ": " + str(results['result']))
+    Database.addTestResults(name, participant, datetime.now(), results['result'])
     for test in reversed(tests[participant]):
         if test[0] == name:
-            event = tests[participant][1]
-            tests[participant][1] = results
+            event = test[1]
             event.set()
 
 
@@ -54,35 +51,34 @@ def add_test_form(name, participant):
         tests[participant] = ans
 
 
-async def get_test_result(participant, test_name):
-    log("getting test of " + str(participant))
-    for test in reversed(tests[participant]):
+async def get_test_result(participant_id, test_name):
+    log("getting results of test " + test_name + " of participant " + str(participant_id))
+    for test in reversed(tests[participant_id]):
         if test[0] == test_name:
-            if isinstance(test[1], asyncio.Event()):
-                await test[1].wait()
-            res = test[1]
-            return res['result']
-        else:
-            return None
+            await test[1].wait()
+            print("im here")
+    return Database.getTestResult(participant_id, test_name)
 
 
 async def parse_questionnaire_condition(patient, questionnaire_number, question_number, accepted_answers):
     return await check_data(patient, questionnaire_number, question_number, accepted_answers)
 
 
-def parse_trait_condition(patient, satisfy, trait):
+def parse_trait_condition(participant_id, satisfy, trait):
+    participant = Database.getUser(participant_id)
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return True if values['min'] <= patient.get_traits()[trait] <= values['max'] else False
+        return True if values['min'] <= participant.get_traits()[trait] <= values['max'] else False
     else:
-        return True if patient.get_traits()[trait] == satisfy['value'] else False
+        return True if participant.get_traits()[trait] == satisfy['value'] else False
 
 
 async def parse_test_condition(patient, satisfy, test_name):
+    print(satisfy)
     if satisfy['type'] == 'range':
         values = satisfy['value']
-        return True if values['min'] <= int(await get_test_result(patient, test_name)) <= values[
-            'max'] else False
+        print(values)
+        return True if values['min'] <= int(await get_test_result(patient, test_name)) <= values['max'] else False
     else:
         return True if await get_test_result(patient, test_name) == satisfy['value'] else False
 
@@ -90,5 +86,5 @@ async def parse_test_condition(patient, satisfy, test_name):
 async def check_data(participant, questionnaire_number, question_number, accepted_answers):
     if questionnaire_number in answers[participant]:
         await answers[participant][questionnaire_number].wait()
-    ans = getAns(questionnaire_number, question_number, participant)
+    ans = Database.getAnswer(questionnaire_number, question_number, participant)
     return ans == accepted_answers
