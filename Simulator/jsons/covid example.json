@@ -104,7 +104,7 @@
                     ],
                     "title": "end trail"
                 },
-                "text": "You can participate in this trail"
+                "text": "You can't participate in this trail"
             },
             "op_code": 4
         },
@@ -181,7 +181,7 @@
                                         "test": "Antigen Test",
                                         "satisfy": {
                                             "type": "one_choice",
-                                            "value": "positive"
+                                            "value": "negative"
                                         }
                                     }
                                 ]
