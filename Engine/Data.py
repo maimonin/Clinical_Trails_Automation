@@ -15,7 +15,7 @@ def init():
 def add_questionnaire(results, participant):
     log("adding questionnaire of participant with id " + str(participant))
     message = 'participant ' + str(participant) + ' answers: '
-    i = 0
+    i = 1
     for result in results['answers']:
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
         Database.addAnswer(results['questionnaire_number'], i, participant, datetime.now(), str(result['answer']))
@@ -80,7 +80,6 @@ async def parse_test_condition(patient, satisfy, test_name):
         print(values)
         return True if values['min'] <= int(await get_test_result(patient, test_name)) <= values['max'] else False
     else:
-        print('hola')
         return True if await get_test_result(patient, test_name) == satisfy['value'] else False
 
 

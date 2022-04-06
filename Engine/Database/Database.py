@@ -1,7 +1,7 @@
 import sqlite3
 
 from Database.DALEdges import buildDALEdge
-from Database.DALNodes import buildDALNodes, buildDALNodesFromNode
+from Database.DALNodes import buildDALNodes
 from Form import Form
 from Test import Test
 from Users import User
@@ -371,11 +371,11 @@ def addTest(node_id, title, instructions, staff, duration):
     change_table(query, test_data)
 
 
-def addTestCond(decision_id, title, test, sat_type, value, min, max):
+def addTestCond(decision_id, title, test, sat_type, value, min_time, max_time):
     query = """INSERT OR IGNORE INTO Conditions_Test (decision_id, title, test, type, value, min, max)
                     VALUES 
                        (?, ?, ?, ?, ?, ?, ?);"""
-    cond_data = (decision_id, title, test, sat_type, value, min, max)
+    cond_data = (decision_id, title, test, sat_type, value, min_time, max_time)
     change_table(query, cond_data)
 
 
@@ -414,9 +414,17 @@ def deletePosition(participant_id, position_id, position_type):
 
 
 def getAnswer(form_id, question_number, participant_id):
-    rows = extract_one_from_table("""SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? """, (form_id, question_number, participant_id))[0]
-    rows=rows[1:-1].split(', ')
-    rows=[int(i) for i in rows]
+    rows = extract_one_from_table("""SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? """,
+                                  (form_id, question_number, participant_id))[0]
+    q_type = extract_one_from_table("""SELECT type FROM Questions WHERE form_id=? AND number=?""",
+                                    (form_id, question_number))[0]
+    print(form_id)
+    print(question_number)
+    print(participant_id)
+    if q_type == "open":
+        return rows
+    rows = rows[1:-1].split(', ')
+    rows = [int(i) for i in rows]
     return rows
 
 
