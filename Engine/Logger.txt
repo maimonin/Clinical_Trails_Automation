@@ -11,8 +11,8 @@ participant with id 1 taking a test
 getting results of test Antigen Test of participant 1
 participant 1 results of test Antigen Test: positive
 participant with id 1 taking a test
-participant 1 results of test Vaccine: good
 sending questionnaire
+participant 1 results of test Vaccine: good
 adding questionnaire of participant with id 1
 participant 1 answers: 
 	Choose your symptoms: [1]

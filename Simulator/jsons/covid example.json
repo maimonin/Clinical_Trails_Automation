@@ -189,31 +189,6 @@
                             "op_code": 3
                         },
                         {
-                            "id": 2846471916944,
-                            "title": "Simple String",
-                            "inputs": [
-                                {
-                                    "id": 2846471917184
-                                }
-                            ],
-                            "outputs": [
-                                {
-                                    "id": 2846471917232
-                                }
-                            ],
-                            "content": {
-                                "node_details": {
-                                    "actors": [
-                                        "Investigator",
-                                        "Nurse"
-                                    ],
-                                    "title": "positive for covid"
-                                },
-                                "text": "Participant is positive for covid"
-                            },
-                            "op_code": 4
-                        },
-                        {
                             "id": 2846471916512,
                             "title": "Test",
                             "inputs": [
@@ -241,6 +216,31 @@
                                 ]
                             },
                             "op_code": 2
+                        },
+                        {
+                            "id": 2846471916944,
+                            "title": "Simple String",
+                            "inputs": [
+                                {
+                                    "id": 2846471917184
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 2846471917232
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "actors": [
+                                        "Investigator",
+                                        "Nurse"
+                                    ],
+                                    "title": "positive for covid"
+                                },
+                                "text": "Participant is positive for covid"
+                            },
+                            "op_code": 4
                         },
                         {
                             "id": 2846460297376,
