@@ -11,8 +11,7 @@ from Windows.string_node import Ui_string_node
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
-
-
+from workflow_graphics_socket import WFGraphicsSocketDecision , WFGraphicsSocket
 class WorkflowInputContent(QDMNodeContentWidget):
     def __init__(self, node, callback):
         super().__init__(node)
@@ -306,9 +305,10 @@ class WorkflowNode_Decision(WorkflowNode):
 
         self.socket_spacing = 22
         TOP = 7
+        DOWN = 8
         self.input_socket_position = 7  # Top - new position we creates
         self.output_socket_position_good = RIGHT_CENTER
-        self.output_socket_position_bad = LEFT_CENTER
+        self.output_socket_position_bad = 8
 
         self.input_multi_edged = False
         self.output_multi_edged = True
@@ -329,7 +329,7 @@ class WorkflowNode_Decision(WorkflowNode):
         :param reset: if ``True`` destroys and removes old `Sockets`
         :type reset: ``bool``
         """
-
+        Socket.Socket_GR_Class = WFGraphicsSocketDecision
         if reset:
             # clear old sockets
             if hasattr(self, 'inputs') and hasattr(self, 'outputs'):
@@ -349,7 +349,7 @@ class WorkflowNode_Decision(WorkflowNode):
             )
             counter += 1
             self.inputs.append(socket)
-
+            socket.grSocket.change_orientation(2)
         counter = 0
         # bad socket
         bad_socket = self.__class__.Socket_class(
@@ -357,21 +357,25 @@ class WorkflowNode_Decision(WorkflowNode):
             socket_type=outputs[0], multi_edges=self.output_multi_edged,
             count_on_this_node_side=len(outputs), is_input=False
         )
-        self.outputs.append(bad_socket)
+        try:
+            bad_socket.grSocket.change_orientation(1)
 
+            self.outputs.append(bad_socket)
+        except Exception as e : dumpException(e)
         good_socket = self.__class__.Socket_class(
             node=self, index=counter, position=self.output_socket_position_good,
             socket_type=outputs[1], multi_edges=self.output_multi_edged,
             count_on_this_node_side=len(outputs), is_input=False
         )
         self.outputs.append(good_socket)
+        Socket.Socket = WFGraphicsSocket
 
     def getSocketPosition(self, index: int, position: int, num_out_of: int = 1) -> '(x, y)':
         """
         return the only position for this node: on the right of this node
         """
         x = 0 if (position is LEFT_CENTER) else self.grNode.width if position is RIGHT_CENTER else self.grNode.width / 2
-        y = 0 if position in (LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2
+        y = 0 if position in (LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position is 7 else self.grNode.height / 2
 
         return [x, y]
 
@@ -390,6 +394,7 @@ class WorkflowNode_Decision(WorkflowNode):
         }
 
         return to_send
+
 
 
 @register_node(OP_NODE_STRING)
