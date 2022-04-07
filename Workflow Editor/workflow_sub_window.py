@@ -9,6 +9,7 @@ from qtpy import QtWidgets, QtCore
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
 from workflow_conf_nodes import WorkflowNode_Start, WorkflowNode_Finish
+from workflow_edge import WorkflowEdge
 from workflow_graphics_view import WFGraphicsView
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -39,7 +40,7 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.dockCallback = dockCallback
         self.scene.addAttributesDockCallback(self.dockCallback)
         self.add_start_finish_nodes()
-
+        WorkflowEdge.attributes_dock_callback = self.dockCallback
     # add the permanent start and finish nodes
     def add_start_finish_nodes(self):
         start_node = WorkflowNode_Start(self.scene, "Start")

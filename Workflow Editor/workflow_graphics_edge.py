@@ -2,7 +2,7 @@ from PyQt5.QtCore import QRectF, Qt
 from PyQt5.QtGui import QFont, QColor, QPen, QBrush
 from PyQt5.QtWidgets import QGraphicsItem, QWidget, QGraphicsTextItem
 from nodeeditor.node_edge import Edge
-from nodeeditor.node_socket import Socket
+from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from qtpy import QtCore
 
 
@@ -56,7 +56,7 @@ class WFGraphicsEdgeText(QGraphicsItem):
 
             # init title
             self.initText()
-            self.text = ""
+            self.text = self.edge.text
 
 
         def initSizes(self):
@@ -116,3 +116,72 @@ class WFGraphicsEdgeText(QGraphicsItem):
 
         def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
             pass
+
+
+class WFGraphicsRegularEdgeWithText(QDMGraphicsEdge):
+    def __init__(self, edge:'Edge', parent:QWidget = None):
+        self.text_item = None
+
+        super().__init__(edge,parent)
+
+    def initUI(self):
+        super().initUI()
+        self.initTitle()
+
+    @property
+    def text(self):
+        """title of this `Edge`
+
+        :getter: current Graphics Edge title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        self._text = value
+        # if self.text_item is not None:
+        self.text_item.setPlainText(self._text)
+
+    def initAssets(self):
+        super().initAssets()
+        self._title_color = Qt.black
+        self._title_font = QFont("Ubuntu", 10)
+
+    def initTitle(self):
+        """Set up the title Graphics representation: font, color, position, etc."""
+        self.text_item = QGraphicsTextItem(self)
+        self.text_item.setFlag(QGraphicsItem.ItemIsMovable)
+        # self.title_item.node = self.edge
+        self.text_item.setDefaultTextColor(self._title_color)
+        self.text_item.setFont(self._title_font)
+        # print(self.pos().x())
+        self.text_item.setPos(self.pos().x(), 0)
+        self.text_item.setTextWidth(
+            200
+        )
+
+    def update_text_item(self):
+        self.text_item.setPos(self.posSource[0] + ((self.posDestination[0] - self.posSource[0]) / 2), self.posSource[1] + ((self.posDestination[1] - self.posSource[1]) / 2))
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Qt's overridden method to paint this Graphics Edge. Path calculated
+            in :func:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge.calcPath` method"""
+        self.setPath(self.calcPath())
+
+        self.update_text_item()
+        if self.hovered and self.edge.end_socket is not None:
+
+            painter.setPen(self._pen_hovered)
+            painter.drawPath(self.path())
+
+        if self.edge.end_socket is None:
+            painter.setPen(self._pen_dragging)
+        else:
+            painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
+        if self.isSelected():
+            print("selected")
+            pass
+        painter.drawPath(self.path())
+

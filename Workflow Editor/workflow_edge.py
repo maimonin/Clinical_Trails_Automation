@@ -1,20 +1,31 @@
 from nodeeditor.node_edge import Edge, EDGE_TYPE_DIRECT
+from nodeeditor.utils import dumpException
 
-from workflow_graphics_edge import WFGraphicsEdgeText
+from workflow_graphics_edge import WFGraphicsEdgeText, WFGraphicsRegularEdgeWithText
 
-
+NORMAL = 0
+RELATIVE = 1
+FIXED = 2
 class WorkflowEdge(Edge):
-    def __init__(self, scene:'Scene', start_socket:'Socket'=None, end_socket:'Socket'=None, edge_type=EDGE_TYPE_DIRECT,text="No Node"):
-
-        super().__init__(scene,start_socket,end_socket,edge_type)
+    attributes_dock_callback = None
+    def __init__(self, scene:'Scene', start_socket:'Socket'=None, end_socket:'Socket'=None, edge_type=EDGE_TYPE_DIRECT,text="No Node",attributes_dock_callback = None):
         self._text = text
-        self.attributes_dock_callback = None
+        super().__init__(scene,start_socket,end_socket,edge_type)
+        self.data = {
+            "content": {
+                "edge_details": {
+                    "title": "",
+                    "type": NORMAL,
+                    "min": "",
+                    "max" : ""
+                },
+                "callback": self.callback_from_dock,
+
+        }}
+        self.text = text
+        # self.attributes_dock_callback = attributes_dock_callback
 
 
-        if self.end_socket is not None:
-            self.grTextEdge = self.createTextEdgeClassInstance()
-            self.text = text
-            self.updatePositions()
     @property
     def text(self):
         """title of this `Node`
@@ -28,57 +39,37 @@ class WorkflowEdge(Edge):
     @text.setter
     def text(self, value):
         self._text = value
-        self.grTextEdge.text = self._text
-
-    def createEdgeClassInstance(self):
-        """
-        Create instance of grEdge class
-        :return: Instance of `grEdge` class representing the Graphics Edge in the grScene
-        """
-        self.grEdge = self.getGraphicsEdgeClass()(self)
-        if self.start_socket is not None:
-            self.updatePositionsNoText()
-        self.scene.grScene.addItem(self.grEdge)
-        return self.grEdge
-
-    def createTextEdgeClassInstance(self):
-        """
-        Create instance of grEdge class
-        :return: Instance of `grEdge` class representing the Graphics Edge in the grScene
-        """
-        self.grTextEdge = self.getTextGraphicsEdgeClass()(self)
-        self.scene.grScene.addItem(self.grTextEdge)
-
-        return self.grTextEdge
-
-    def getTextGraphicsEdgeClass(self):
-        return WFGraphicsEdgeText
-
-    def updatePositions(self):
-        """
-        Updates the internal `Graphics Edge` positions according to the start and end :class:`~nodeeditor.node_socket.Socket`.
-        This should be called if you update ``Edge`` positions.
-        """
-        source_pos = self.start_socket.getSocketPosition()
-        source_pos[0] += self.start_socket.node.grNode.pos().x()
-        source_pos[1] += self.start_socket.node.grNode.pos().y()
-        self.grEdge.setSource(*source_pos)
-
-        self.grTextEdge.setSource(*source_pos)
-        if self.end_socket is not None:
-            end_pos = self.end_socket.getSocketPosition()
-            end_pos[0] += self.end_socket.node.grNode.pos().x()
-            end_pos[1] += self.end_socket.node.grNode.pos().y()
-            self.grEdge.setDestination(*end_pos)
-            self.grTextEdge.setDestination(*end_pos)
-
-        else:
-            self.grEdge.setDestination(*source_pos)
-        self.grEdge.update()
-        self.grTextEdge.update()
-
-    def updatePositionsNoText(self):
-        super().updatePositions()
+        self.grEdge.text = self._text
 
     def set_attributes_dock_callback(self, callback):
         self.attributes_dock_callback = callback
+
+    def getGraphicsEdgeClass(self):
+        """Returns the class representing Graphics Edge"""
+        return WFGraphicsRegularEdgeWithText
+
+    def doSelect(self, new_state:bool=True):
+        try:
+            if new_state:
+                self.attributes_dock_callback(self.get_tree_build())
+            else:
+                self.attributes_dock_callback(None)
+        except Exception as e : dumpException(e)
+
+    def callback_from_dock(self, content):
+        try:
+            for field in content["Edge Details"]:
+                # self.data["content"]["edge_details"][field["name"].lower()] = field["value"]
+                if field["name"].lower() == "title":
+                    self.text = field["value"]
+        except Exception as e: dumpException(e)
+
+
+    def get_tree_build(self):
+        to_send = {
+            "Edge Details": [
+                {"name": "Title", "type": "text", "value": self.data["content"]["edge_details"]["title"]},
+],
+            "callback": self.callback_from_dock
+        }
+        return to_send
