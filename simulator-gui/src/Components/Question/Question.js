@@ -36,12 +36,18 @@ import Button from '@mui/material/Button';
         // }]}
 export default function Questionnaire(props){ 
     const [answers,setAnswers] = useState({})
+
+
     useEffect(()=>{props.questions.map((question)=>  question_init(question))} , [])
+
+
+
     // const 
     const handle_send = () => // we will get connection details in props so we can send it
     {
+      //TODO: check all single choice answers aren't empty
       console.log(JSON.stringify(answers))
-      // props.connection.send(JSON.stringify(parse_answers(answers)))
+      // props.connection.send(JSON.stringify(parse_answers(answers))) should be something like: {action:send,await_approval:"yes",data:answers}
     }
 
     const question_init = (question) => {
@@ -49,8 +55,10 @@ export default function Questionnaire(props){
       const options = question["Options"];
       const type = question["type"];
     
-      if (type ==="onechoice" || type ==="multichoice"){
-        setAnswers(prevState => ({...prevState,[question_text]:options[0]}))}
+      if (type ==="onechoice"){
+        setAnswers(prevState => ({...prevState,[question_text]:""}))}
+        if (type ==="multichoice"){
+          setAnswers(prevState => ({...prevState,[question_text]:[""]}))}
       else // (type ==="open")
         setAnswers(prevState => ({...prevState,[question_text]:""}))}
 
@@ -67,7 +75,7 @@ export default function Questionnaire(props){
       const changedAnswer = handleChange;
     
       if (type ==="onechoice"){
-        return (<SingleChoice question ={question_text} value={answers[question_text]} options = {options} changedAnswer={changedAnswer} key={key}/>)}
+        return (<SingleChoice question ={question_text} options = {options} changedAnswer={changedAnswer} key={key}/>)}
       else if (type ==="multichoice")
         return (<MultiChoice question ={question_text} options = {options} changedAnswer={changedAnswer} key={key}/>)
       if (type ==="open")
@@ -88,20 +96,20 @@ export default function Questionnaire(props){
 export function SingleChoice(props){ // props: {changedAnswer : (answer) => setAnswers(answers => ({...answers, "question": answer}))}
 
     const [answer,setAnswer] = useState('')
+
+    useEffect(()=>props.changedAnswer(answer),[answer])
+
     const handleChange = (event) => {
-        console.log("SingleChoice:: change is " + event.target.value + "answer is "+ answer  )
-
-        props.changedAnswer(answer)
         setAnswer(event.target.value);
-
       }
+      
     return (
         <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id="demo-simple-select-helper-label">{props.question}</InputLabel>
         <Select
           labelId="demo-simple-select-helper-label"
           id="demo-simple-select-helper"
-          value={props.value}
+          value={answer}
           label={props.question}
           onChange={handleChange}
         >
@@ -116,6 +124,8 @@ export function MultiChoice(props){ // props: {changedAnswer : (answer) => setAn
 
   const [answer,setAnswer] = useState([])
 
+  useEffect(()=>props.changedAnswer(answer),[answer])
+
     const handleChange = (event) => {
       
       const {
@@ -126,8 +136,6 @@ export function MultiChoice(props){ // props: {changedAnswer : (answer) => setAn
         typeof value === 'string' ? value.split(',') : value,
       );
       setAnswer(value)
-      console.log("value is " + JSON.stringify(value) + ", answer is " + answer)
-      props.changedAnswer(answer)
     };
   return (
       <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -152,10 +160,13 @@ export function MultiChoice(props){ // props: {changedAnswer : (answer) => setAn
 export function Open(props){ // props: {changedAnswer : (answer) => setAnswers(answers => ({...answers, "question": answer}))}
 
   const [answer,setAnswer] = useState('')
+  
+  useEffect(()=>props.changedAnswer(answer),[answer])
+
   const handleChange = (event) => {
       setAnswer(event.target.value);
-      props.changedAnswer(answer)
     }
+
   return (
     <div>
   <TextareaAutosize

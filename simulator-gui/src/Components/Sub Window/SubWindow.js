@@ -21,8 +21,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
-
-import {questionnaire_1} from '../../Mock/MockQuestions'
+import {TestNotification} from '../Notification/Notification'
 
 export default function SubWindow(props) { // should have connection object
     
@@ -96,7 +95,8 @@ export default function SubWindow(props) { // should have connection object
         {items[currentComponent]}
 
         {/* <TestQuestionnaire num={20}/>   */}
-        <TestQuestionnaire/>
+        {/* <TestQuestionnaire/> */}
+        <TestNotification/>
       <Pagination count={8} page={1} onChange={handlePaginationChange} size="small"/>
 
       </div>
