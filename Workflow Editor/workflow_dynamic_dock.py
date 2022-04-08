@@ -19,9 +19,9 @@ class QDynamicDock(QDockWidget):
             "time": self.create_time_input_widget,
             "combobox": self.create_combobox_input_widget,
             "combobox icons": self.create_combobox_icons_widget,
-            "list": self.create_list_widget,
             "spinbox": self.create_spinbox_widget,
             "checklist": self.create_checklist_widget,
+            "tree": self.create_tree_widget,
             "test sub tree": self.create_test_subtree_widget,
             "q sub tree": self.create_questionnaire_subtree_widget,
             "cond sub tree": self.create_condition_subtree_widget,
@@ -100,6 +100,8 @@ class QDynamicDock(QDockWidget):
         widget.setText(field["value"])
         # widget.textChanged.connect(lambda text: self.change_value(field, text))
         widget.editingFinished.connect(lambda: self.change_value(field, widget.text()))
+        if "placeholder" in field.keys():
+            widget.setPlaceholderText(field["placeholder"])
         self.treeWidget.setItemWidget(father, 1, widget)
 
     def create_time_input_widget(self, father, field):
@@ -144,7 +146,7 @@ class QDynamicDock(QDockWidget):
         widget.setValue(field["value"])
         self.treeWidget.setItemWidget(father, 1, widget)
 
-    def create_list_widget(self, father, field):
+    def create_tree_widget(self, father, field):
         items = field["items"]
         for item in items:
             item_line = QtWidgets.QTreeWidgetItem(father)
