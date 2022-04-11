@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect,useRef} from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -23,6 +23,7 @@ import Select from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
 import {TestNotification} from '../Notification/Notification'
 import { MockTestDataEntry } from '../TestEntryData/TestEntryData';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 export default function SubWindow(props) { // should have connection object
     
@@ -31,23 +32,71 @@ export default function SubWindow(props) { // should have connection object
     const [numOfItems,setNumOfItems] = useState (0)
 
 
-    const isNotification = (item) => false
+    const ws = useRef(null);
+
+    useEffect(() => {
+        ws.current = new W3CWebSocket('ws://127.0.0.1:7890');
+        var register=props.user;
+        register.type = "register"
+        ws.current.onopen = () => ws.current.send(JSON.stringify(register));
+        ws.current.onclose = () => console.log("ws closed");
+        ws.current.onmessage = (message) => {
+          console.log("SubWindow::useEffect::ws.onmessage ~~ got item! "+JSON.stringify(message))
+          addItem(JSON.parse(message.data))
+        };  
+        const wsCurrent = ws.current;
+
+        return () => {
+            wsCurrent.close();
+        };
+    }, []);
+
+    useEffect(()=>setNumOfItems(items.length),[items])
+
     const addItem = (itemToAdd) => {
       if (isNotification(itemToAdd)){
           handleIncomingNotification(itemToAdd)
       }
       else{
+
         const incoming_component = getComponent(itemToAdd)
-        setItems(prevState =>[ itemToAdd,...prevState])
-        setNumOfItems(numOfItems+1)
+
+        setItems(prevState =>[ incoming_component,...prevState])
+
         if (currentComponent == 0){
           setCurrentComponent(1);
         }
       }
-      
     }
+   
+    const isNotification = (item) => false
+
+    const sendData = (object_to_send) =>{
+      if (!ws.current) return;
+      object_to_send.id = props.user.id
+      
+      ws.current.send(JSON.stringify(object_to_send))
+      let newArr = [...items];
+      newArr.splice(currentComponent,1)
+      setItems(newArr)
+    }
+    
     const getComponent = (itemToAdd) => {
-      <TestQuestionnaire/>  //change to switch case, and parse json accordingly
+      return (<TestNotification test={})
+      switch(itemToAdd["type"]) {
+        case "questionnaire":
+
+          return (<Questionnaire questionnaire = {itemToAdd} send ={sendData}/>)
+          
+          break;
+        case "":
+          break;
+        default:
+          console.log("SubWindow::getComponent::default block ~ ")
+
+          // code block
+      } 
+      // <TestQuestionnaire/>  //change to switch case, and parse json accordingly
 
     }
     const handlePaginationChange = (event,value) => {
@@ -93,12 +142,11 @@ export default function SubWindow(props) { // should have connection object
 {/* Same as */}
       <CardContent >
         <div  style={ {scrollBehavior: "smooth", overflowY: "scroll" , maxHeight:210}}>
-        {items[currentComponent]}
+        {
+        currentComponent>0? items[currentComponent-1]: undefined}
 
-        {/* <TestQuestionnaire num={20}/>   */}
-        {/* <TestQuestionnaire/> */}
-        <MockTestDataEntry/>
-      <Pagination count={8} page={1} onChange={handlePaginationChange} size="small"/>
+
+      <Pagination count={numOfItems} page={currentComponent} onChange={handlePaginationChange} size="small"/>
 
       </div>
         <Typography variant="body2" color="text.secondary">
