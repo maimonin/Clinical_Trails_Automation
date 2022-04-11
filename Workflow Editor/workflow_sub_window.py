@@ -37,8 +37,9 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
         self.dockCallback = dockCallback
-        self.scene.addAttributesDockCallback(self.dockCallback)
+        self.scene.addAttributesDockCallback(self.dockCallback)     # TODO: should we delete?
         self.add_start_finish_nodes()
+        WorkflowNode.attributes_dock_callback = self.dockCallback
 
     # add the permanent start and finish nodes
     def add_start_finish_nodes(self):

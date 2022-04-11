@@ -1,17 +1,17 @@
 {
-    "id": 3076256358064,
+    "id": 2228224896928,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 3076264947920,
+            "id": 2228224779408,
             "title": "New Start Node",
-            "pos_x": -478.0,
-            "pos_y": -333.0,
+            "pos_x": -350.0,
+            "pos_y": -250.0,
             "inputs": [],
             "outputs": [
                 {
-                    "id": 3076264976688,
+                    "id": 2228224726304,
                     "index": 0,
                     "multi_edges": true,
                     "position": 5,
@@ -22,22 +22,134 @@
             "op_code": 7
         },
         {
-            "id": 3076264976976,
+            "id": 2228224779456,
             "title": "New finish Node",
-            "pos_x": 441.0,
-            "pos_y": 49.0,
+            "pos_x": 200.0,
+            "pos_y": 0.0,
             "inputs": [
                 {
-                    "id": 3076264977168,
+                    "id": 2228224726448,
                     "index": 0,
                     "multi_edges": true,
                     "position": 2,
-                    "socket_type": 2
+                    "socket_type": "F"
+                },
+                {
+                    "id": 2228224726496,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "i"
+                },
+                {
+                    "id": 2228224726544,
+                    "index": 2,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "n"
+                },
+                {
+                    "id": 2228224726592,
+                    "index": 3,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "i"
+                },
+                {
+                    "id": 2228224726640,
+                    "index": 4,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "s"
+                },
+                {
+                    "id": 2228224726688,
+                    "index": 5,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "h"
                 }
             ],
             "outputs": [],
             "content": "",
             "op_code": 8
+        },
+        {
+            "id": 2228233428080,
+            "title": "New Test Node",
+            "pos_x": -152.0,
+            "pos_y": -279.0,
+            "inputs": [
+                {
+                    "id": 2228233406496,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2228233406448,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "time": "05:02:00",
+                        "title": "New Test Node",
+                        "actor in charge": "Nurse",
+                        "color": "Grey"
+                    },
+                    "tests": []
+                }
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2228233345824,
+            "title": "New Decision Node",
+            "pos_x": -191.0,
+            "pos_y": -37.0,
+            "inputs": [
+                {
+                    "id": 2228233345728,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2228233345872,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 4
+                },
+                {
+                    "id": 2228233345680,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "time": "03:02:00",
+                        "title": "New Decision Node"
+                    },
+                    "condition": []
+                }
+            },
+            "op_code": 3
         }
     ],
     "edges": []
