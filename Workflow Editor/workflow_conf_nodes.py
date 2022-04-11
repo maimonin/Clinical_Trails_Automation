@@ -95,11 +95,13 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             self.attributes_dock_callback(self.get_tree_build())
 
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
-        if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
-        else:
-            self.attributes_dock_callback(None)
+        try:
+            if new_state:
+                self.attributes_dock_callback(self.get_tree_build())
+            else:
+                self.attributes_dock_callback(None)
+        except Exception as e:
+            dumpException(e)
 
     def callback_from_window(self, content):
         try:

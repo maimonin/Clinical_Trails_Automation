@@ -31,15 +31,16 @@ class WorkflowSubWindow(NodeEditorWidget):
 
     def __init__(self, dockCallback=None):
         super().__init__()
+        self.dockCallback = dockCallback
+        self.scene.addAttributesDockCallback(self.dockCallback)     # TODO: should we delete?
+        WorkflowNode.attributes_dock_callback = self.dockCallback
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
-        self.dockCallback = dockCallback
-        self.scene.addAttributesDockCallback(self.dockCallback)     # TODO: should we delete?
         self.add_start_finish_nodes()
-        WorkflowNode.attributes_dock_callback = self.dockCallback
+
 
     # add the permanent start and finish nodes
     def add_start_finish_nodes(self):

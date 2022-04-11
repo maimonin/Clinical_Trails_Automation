@@ -554,7 +554,6 @@ class WorkflowNode(Node):
             self.op_code = data['op_code']
         except Exception as e:
             dumpException(e)
-        # print("Deserialized node base '%s'" % self.__class__.__name__, "res:", res)
         return res
 
     def edit_nodes_details(self):
