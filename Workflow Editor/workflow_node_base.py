@@ -429,6 +429,7 @@ class WorkflowNode(Node):
     op_title = "Undefined"
     content_label = ""
     content_label_objname = "calc_node_bg"
+    attributes_dock_callback = None
 
     @property
     def type(self):
@@ -468,7 +469,7 @@ class WorkflowNode(Node):
         self.type = self.__class__.op_title
         self.icon = self.op_icon
         self.data = None
-        self.attributes_dock_callback = None
+        # self.attributes_dock_callback = None
 
     def initInnerClasses(self):
         # self.content = WorkflowContent(self)
@@ -531,7 +532,8 @@ class WorkflowNode(Node):
         pass
 
     def set_attributes_dock_callback(self, callback):
-        self.attributes_dock_callback = callback
+        # self.attributes_dock_callback = callback
+        pass
 
     def serialize(self):
         try:
@@ -546,10 +548,12 @@ class WorkflowNode(Node):
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        res = super().deserialize(data, hashmap, restore_id)
-        self.data = data['content']
-        self.op_code = data['op_code']
-        # print("Deserialized node base '%s'" % self.__class__.__name__, "res:", res)
+        try:
+            res = super().deserialize(data, hashmap, restore_id)
+            self.data = data['content']
+            self.op_code = data['op_code']
+        except Exception as e:
+            dumpException(e)
         return res
 
     def edit_nodes_details(self):

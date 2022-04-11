@@ -75,7 +75,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.data = {
             "content": {
                 "node_details": {
-                    "time": datetime.time(hour=0, minute=0),
+                    "time": QTime.toString(QTime(0,0)),
                     "title": "New Questionnaire Node",
                     "color": self.color
                 },
@@ -94,24 +94,30 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             self.attributes_dock_callback(self.get_tree_build())
 
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
-        if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
-        else:
-            self.attributes_dock_callback(None)
+        try:
+            if new_state:
+                self.attributes_dock_callback(self.get_tree_build())
+            else:
+                self.attributes_dock_callback(None)
+        except Exception as e:
+            dumpException(e)
 
     def callback_from_window(self, content):
         try:
             if content is None:
                 self.remove()  # remove node
             else:
-                for field in content["Node Details"]:
-                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
-                    if field["name"].lower() == "title":
-                        self.title = field["value"]
-                    if field["name"].lower() == "color":
-                        self.grNode.change_background(field["value"].lower())
-                        self.color = field["value"]
+                # for field in content["Node Details"]:
+                #     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                #     if field["name"].lower() == "title":
+                #         self.title = field["value"]
+                #     if field["name"].lower() == "color":
+                #         self.grNode.change_background(field["value"].lower())
+                #         self.color = field["value"]
+                self.data["content"]["node_details"]["title"] = content["Node Details"][0]["value"]
+                self.title = content["Node Details"][0]["value"]
+                self.data["content"]["node_details"]["time"] = content["Node Details"][1]["value"].toString()
+                self.data["content"]["node_details"]["color"] = content["Node Details"][2]["value"]
                 self.data["content"]["questions"] = []
                 self.data["content"]["questions"] = content["Content"][1]["value"]
                 self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
@@ -123,7 +129,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Time", "type": "time", "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
                 {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
@@ -176,7 +182,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
         self.data = {
             "content": {
                 "node_details": {
-                    "time": datetime.time(hour=0, minute=0),
+                    "time": QTime.toString(QTime(0,0)),
                     "title": "New Test Node",
                     "actor in charge": "Nurse",
                     "color": self.color
@@ -213,6 +219,8 @@ class WorkflowNode_DataEntry(WorkflowNode):
                     if field["name"].lower() == "color":
                         self.grNode.change_background(field["value"].lower())
                         self.color = field["value"]
+                    if field["name"].lower() == "time":
+                        self.data["content"]["node_details"][field["name"].lower()] = field["value"].toString()
 
                 self.data["content"]["tests"] = []
                 for test in content["Content"][0]["value"]:
@@ -228,7 +236,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Time", "type": "time", "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
                 {"name": "Actor In Charge", "type": "combobox",
                  "value": self.data["content"]["node_details"]["actor in charge"],
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]},
@@ -256,7 +264,7 @@ class WorkflowNode_Decision(WorkflowNode):
         self.data = {
             "content": {
                 "node_details": {
-                    "time": datetime.time(hour=0, minute=0),
+                    "time": QTime.toString(QTime(0,0)),
                     "title": "New Decision Node",
                     # "color": self.color
                 },
@@ -292,6 +300,8 @@ class WorkflowNode_Decision(WorkflowNode):
                     # if field["name"].lower() == "color":
                     #     self.grNode.change_background(field["value"].lower())
                     #     self.color = field["value"]
+                    if field["name"].lower() == "time":
+                        self.data["content"]["node_details"][field["name"].lower()] = field["value"].toString()
                 self.data["content"]["condition"] = []
                 # FIXME: change "accepted answers" implementation
                 for condition in content["Condition"][0]["value"]:
@@ -383,7 +393,7 @@ class WorkflowNode_Decision(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": self.data["content"]["node_details"]["time"]},
+                {"name": "Time", "type": "time", "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
                 # {"name": "Color", "type": "combobox icons", "value": self.color,
                 #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
