@@ -6,8 +6,6 @@ from PyQt5.QtCore import *
 from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_TOP, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER
 from qtpy import QtCore
 
-from Windows.decisionNode.win_deciosionNode import Ui_Decision_Node
-from Windows.string_node import Ui_string_node
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
@@ -118,6 +116,8 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 self.title = content["Node Details"][0]["value"]
                 self.data["content"]["node_details"]["time"] = content["Node Details"][1]["value"].toString()
                 self.data["content"]["node_details"]["color"] = content["Node Details"][2]["value"]
+                self.color = content["Node Details"][2]["value"]
+                self.grNode.change_background(content["Node Details"][2]["value"].lower())
                 self.data["content"]["questions"] = []
                 self.data["content"]["questions"] = content["Content"][1]["value"]
                 self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
