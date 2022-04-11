@@ -384,8 +384,8 @@ class WorkflowNode_Decision(WorkflowNode):
         """
         return the only position for this node: on the right of this node
         """
-        x = 0 if (position is LEFT_CENTER) else self.grNode.width if position is RIGHT_CENTER else self.grNode.width / 2
-        y = 0 if position in (LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position is 7 else self.grNode.height / 2
+        x = 0 if (position == LEFT_CENTER) else self.grNode.width if position == RIGHT_CENTER else self.grNode.width / 2
+        y = 0 if position in (LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position == 7 else self.grNode.height / 2
 
         return [x, y]
 

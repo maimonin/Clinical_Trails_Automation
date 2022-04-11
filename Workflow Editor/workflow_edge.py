@@ -63,7 +63,10 @@ class WorkflowEdge(Edge):
     def callback_from_dock(self, content):
         try:
             self.data["content"]["edge_details"]["title"] = content["Edge Details"][0]["value"]
-            self.text = content["Edge Details"][0]["value"]
+            if content["Edge Details"][1]["items"][0]["value"] != "" and content["Edge Details"][1]["items"][1]["value"] != "":
+                self.text = content["Edge Details"][1]["items"][0]["value"] + " - " + content["Edge Details"][1]["items"][1]["value"]
+            else:
+                self.text = content["Edge Details"][0]["value"]
             self.data["content"]["edge_details"]["min"] = content["Edge Details"][1]["items"][0]["value"]
             self.data["content"]["edge_details"]["max"] = content["Edge Details"][1]["items"][1]["value"]
         except Exception as e:
