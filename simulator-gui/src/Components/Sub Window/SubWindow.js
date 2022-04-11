@@ -22,7 +22,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
 import {TestNotification} from '../Notification/Notification'
-import { TestTest } from '../Test/Test';
+import { MockTestDataEntry } from '../TestEntryData/TestEntryData';
 
 export default function SubWindow(props) { // should have connection object
     
@@ -97,7 +97,7 @@ export default function SubWindow(props) { // should have connection object
 
         {/* <TestQuestionnaire num={20}/>   */}
         {/* <TestQuestionnaire/> */}
-        <TestTest/>
+        <MockTestDataEntry/>
       <Pagination count={8} page={1} onChange={handlePaginationChange} size="small"/>
 
       </div>
