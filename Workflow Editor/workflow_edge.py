@@ -12,7 +12,7 @@ class WorkflowEdge(Edge):
     attributes_dock_callback = None
 
     def __init__(self, scene: 'Scene', start_socket: 'Socket' = None, end_socket: 'Socket' = None,
-                 edge_type=EDGE_TYPE_DIRECT, text="No Node", attributes_dock_callback=None):
+                 edge_type=EDGE_TYPE_DIRECT, text="No Title", attributes_dock_callback=None):
         self._text = text
         super().__init__(scene, start_socket, end_socket, edge_type)
         self.data = {
@@ -62,13 +62,21 @@ class WorkflowEdge(Edge):
 
     def callback_from_dock(self, content):
         try:
-            self.data["content"]["edge_details"]["title"] = content["Edge Details"][0]["value"]
-            if content["Edge Details"][1]["items"][0]["value"] != "" and content["Edge Details"][1]["items"][1]["value"] != "":
-                self.text = content["Edge Details"][1]["items"][0]["value"] + " - " + content["Edge Details"][1]["items"][1]["value"]
+            input_title = content["Edge Details"][0]["value"]
+            input_min = content["Edge Details"][1]["items"][0]["value"]
+            input_max = content["Edge Details"][1]["items"][1]["value"]
+            if input_title == "":
+                self.text = "No Title"
+                if input_min != "" and input_max != "":
+                    self.text += " : " + input_min + " - " + input_max
             else:
-                self.text = content["Edge Details"][0]["value"]
-            self.data["content"]["edge_details"]["min"] = content["Edge Details"][1]["items"][0]["value"]
-            self.data["content"]["edge_details"]["max"] = content["Edge Details"][1]["items"][1]["value"]
+                self.text = input_title
+                if input_min != "" and input_max != "":
+                    self.text += " : " + input_min + " - " + input_max
+
+            self.data["content"]["edge_details"]["title"] = input_title
+            self.data["content"]["edge_details"]["min"] = input_min
+            self.data["content"]["edge_details"]["max"] = input_max
         except Exception as e:
             dumpException(e)
 
