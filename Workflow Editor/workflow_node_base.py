@@ -535,16 +535,27 @@ class WorkflowNode(Node):
         # self.attributes_dock_callback = callback
         pass
 
-    def serialize(self):
+    def serialize(self, engine_save=False):
         try:
             res = super().serialize()
-            # ser_content = self.content.serialize() if isinstance(self.content, Serializable) else {}
-
             res[
                 'content'] = self.data if self.data is not None else ""  # changed it from content to data due to issues,Raviv.
             res['op_code'] = self.__class__.op_code
+
+            # remove features that's for node_UI
+            if engine_save:
+                del res['pos_x']
+                del res['pos_y']
+
+                try:
+                    res["content"]["content"]["node_details"].pop("color", None)
+                except TypeError:
+                    # not a node serialization
+                    pass
+
         except Exception as e:
             dumpException(e)
+
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):

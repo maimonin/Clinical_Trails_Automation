@@ -1,5 +1,10 @@
+import json
+import os
+from collections import OrderedDict
+
 from nodeeditor.node_graphics_scene import QDMGraphicsScene
-from nodeeditor.node_scene import Scene
+from nodeeditor.node_scene import Scene, InvalidFile
+from nodeeditor.utils import dumpException
 
 from workflow_edge import WorkflowEdge
 from workflow_graphics_scene import WFGraphicsScene
@@ -8,17 +13,20 @@ from workflow_graphics_scene import WFGraphicsScene
 class WorkflowScene(Scene):
     def __init__(self):
         super().__init__()
-        self.dockCallback=lambda x:x #dull function so it won't crash in any case
+        self.dockCallback = lambda x: x  # dull function so it won't crash in any case
 
-    def addAttributesDockCallback(self,callback):
-        self.dockCallback=callback
+    def addAttributesDockCallback(self, callback):
+        self.dockCallback = callback
+
     def initUI(self):
         self.grScene = WFGraphicsScene(self)
         self.grScene.setGrScene(self.scene_width, self.scene_height)
+
     def getEdgeClass(self):
         """Return the class representing Edge. Override me if needed"""
         return WorkflowEdge
-    def pass_to_attribute_dock(self,data):
+
+    def pass_to_attribute_dock(self, data):
         self.dockCallback(data)
 
     def onItemSelected(self, silent: bool = False):
@@ -50,3 +58,69 @@ class WorkflowScene(Scene):
                 self.history.storeHistory("Deselected Everything")
                 for callback in self._items_deselected_listeners: callback()
 
+    def saveToFile(self, filename: str):
+        """
+        Save this `Scene` to the file on disk.
+
+        :param filename: where to save this scene
+        :type filename: ``str``
+        """
+        filename_split = filename.split(".")
+        if len(filename_split) != 2:
+            print("Invalid file name")
+            return
+
+        editor_file = filename_split[0] + "_editor." + filename_split[1]
+        # save for editor
+        with open(editor_file, "w") as file:
+            file.write(json.dumps(self.serialize(), indent=4))
+            print("saving to", editor_file, "was successful.")
+
+            self.has_been_modified = False
+            self.filename = filename
+
+        try:
+            engine_file = filename_split[0] + "_engine." + filename_split[1]
+            # save for engine
+            with open(engine_file, "w") as file:
+                file.write(json.dumps(self.serialize(True), indent=4))
+                print("saving to", engine_file, "was successful.")
+
+                self.has_been_modified = False
+        except Exception as e:
+            print(e)
+            exit(1)
+
+    def loadFromFile(self, filename: str):
+        """
+        Load `Scene` from a file on disk
+
+        :param filename: from what file to load the `Scene`
+        :type filename: ``str``
+        :raises: :class:`~nodeeditor.node_scene.InvalidFile` if there was an error decoding JSON file
+        """
+
+        with open(filename, "r") as file:
+            raw_data = file.read()
+            try:
+                raw_data = raw_data.encode('utf-8')
+                data = json.loads(raw_data)
+                self.filename = filename
+                self.deserialize(data)
+                self.has_been_modified = False
+            except json.JSONDecodeError:
+                raise InvalidFile("%s is not a valid JSON file" % os.path.basename(filename))
+            except Exception as e:
+                dumpException(e)
+
+    def serialize(self, engine_save=False) -> OrderedDict:
+        nodes, edges = [], []
+        for node in self.nodes: nodes.append(node.serialize(engine_save))
+        for edge in self.edges: edges.append(edge.serialize())
+        return OrderedDict([
+            ('id', self.id),
+            ('scene_width', self.scene_width),
+            ('scene_height', self.scene_height),
+            ('nodes', nodes),
+            ('edges', edges),
+        ])
