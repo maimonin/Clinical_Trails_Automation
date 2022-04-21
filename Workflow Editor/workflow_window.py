@@ -149,7 +149,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
                         self.mdiArea.setActiveSubWindow(existing)
                     else:
                         # we need to create new subWindow and open the file
-                        nodeeditor = WorkflowSubWindow()
+                        nodeeditor = WorkflowSubWindow(self.attributes.change_data)
                         if nodeeditor.fileLoad(fname):
                             self.statusBar().showMessage("File %s loaded" % fname, 5000)
                             nodeeditor.setTitle()

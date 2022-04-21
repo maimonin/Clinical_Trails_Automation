@@ -41,12 +41,10 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
-        self.dockCallback = dockCallback
-        self.scene.addAttributesDockCallback(self.dockCallback)
         self.add_start_finish_nodes()
-        WorkflowEdge.attributes_dock_callback = self.dockCallback
         Socket.Socket_GR_Class = WFGraphicsSocket
-    # add the permanent start and finish nodes
+
+    # add permanent start and finish nodes
     def add_start_finish_nodes(self):
         start_node = WorkflowNode_Start(self.scene, "Start")
         finish_node = WorkflowNode_Finish(self.scene, "Finish")
@@ -135,37 +133,6 @@ class WorkflowSubWindow(NodeEditorWidget):
             raise InvalidFile("%s is not a valid JSON data" % name)
         except Exception as e:
             dumpException(e)
-
-    # TODO serialize, and send the json to server
-
-    # def get_node_by_socket(self,socket):
-    #     for node in self.scene.nodes:
-    #         if len(node.inputs[0].edges) > 0 and node.inputs[0].edges[0].end_socket == socket:
-    #             return node
-    #     return None
-    # def all_logic(self):
-    #     try:
-    #         current_node = None
-    #
-    #         for node in self.scene.nodes:
-    #             if len(node.inputs[0].edges) == 0:
-    #                 current_node = node
-    #                 break
-    #         x=current_node.content.edit.text().split('/')
-    #         print(x[0])
-    #         time.sleep(int(x[1]))
-    #         while current_node is not None and len(current_node.outputs[0].edges) != 0:
-    #             current_node = self.get_node_by_socket(current_node.outputs[0].edges[0].end_socket)
-    #             x = current_node.content.edit.text().split('/')
-    #             print(x[0])
-    #             time.sleep(int(x[1]))
-    #         # while (len(current_node.outputs[0]) != 0 ):
-    #         #     print(current_node.outputs[0].edges)
-    #         #     print('PyQt5 button click')
-    #     except Exception as e:
-    #         dumpException(e)
-    #     # doing something........
-    # @pyqtSlot()
 
     def on_click(self):
         print("clicked")

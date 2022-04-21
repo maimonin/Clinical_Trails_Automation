@@ -66,11 +66,16 @@ class WorkflowScene(Scene):
         :type filename: ``str``
         """
         filename_split = filename.split(".")
-        if len(filename_split) != 2:
+        if len(filename_split) == 2:
+            editor_file = filename_split[0] + ".editor." + filename_split[1]
+            engine_file = filename_split[0] + ".engine." + filename_split[1]
+        elif len(filename_split) == 3 and (filename_split[1] == "editor" or filename_split[1] == "engine" ):
+            editor_file = filename
+            engine_file = filename_split[0] + ".engine." + filename_split[2]
+        else:
             print("Invalid file name")
             return
 
-        editor_file = filename_split[0] + "_editor." + filename_split[1]
         # save for editor
         with open(editor_file, "w") as file:
             file.write(json.dumps(self.serialize(), indent=4))
@@ -79,17 +84,12 @@ class WorkflowScene(Scene):
             self.has_been_modified = False
             self.filename = filename
 
-        try:
-            engine_file = filename_split[0] + "_engine." + filename_split[1]
-            # save for engine
-            with open(engine_file, "w") as file:
-                file.write(json.dumps(self.serialize(True), indent=4))
-                print("saving to", engine_file, "was successful.")
+        # save for engine
+        with open(engine_file, "w") as file:
+            file.write(json.dumps(self.serialize(True), indent=4))
+            print("saving to", engine_file, "was successful.")
 
-                self.has_been_modified = False
-        except Exception as e:
-            print(e)
-            exit(1)
+            self.has_been_modified = False
 
     def loadFromFile(self, filename: str):
         """
@@ -99,6 +99,10 @@ class WorkflowScene(Scene):
         :type filename: ``str``
         :raises: :class:`~nodeeditor.node_scene.InvalidFile` if there was an error decoding JSON file
         """
+        filename_split = filename.split(".")
+        if len(filename_split) != 3 or filename_split[1] != "editor":
+            print("Invalid file name")
+            return
 
         with open(filename, "r") as file:
             raw_data = file.read()
@@ -106,6 +110,7 @@ class WorkflowScene(Scene):
                 raw_data = raw_data.encode('utf-8')
                 data = json.loads(raw_data)
                 self.filename = filename
+                # FIXME: need to add "attributes_dock_callback to edge deserialization
                 self.deserialize(data)
                 self.has_been_modified = False
             except json.JSONDecodeError:

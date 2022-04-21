@@ -44,7 +44,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         if self.getCurrentNodeEditorWidget() is None:
             try:
                 if self.data is not None:
-                    nodeeditor = WorkflowSubWindow()        # grid window
+                    nodeeditor = WorkflowSubWindow(self.attributes.change_data)        # grid window
                     nodeeditor.data_load(self.data, name=self.name)
                     subwnd = self.createMdiChild(nodeeditor)
                     subwnd.show()

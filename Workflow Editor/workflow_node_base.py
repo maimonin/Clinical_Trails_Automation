@@ -539,11 +539,12 @@ class WorkflowNode(Node):
         try:
             res = super().serialize()
             res[
-                'content'] = self.data if self.data is not None else ""  # changed it from content to data due to issues,Raviv.
+                'content'] = self.data if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
 
             # remove features that's for node_UI
             if engine_save:
+                # TODO: check again what is unnecessary
                 del res['pos_x']
                 del res['pos_y']
 
@@ -563,6 +564,8 @@ class WorkflowNode(Node):
             res = super().deserialize(data, hashmap, restore_id)
             self.data = data['content']
             self.op_code = data['op_code']
+            # TODO : add to each node his specific attribues. e.g. color \ text
+
         except Exception as e:
             dumpException(e)
         return res
