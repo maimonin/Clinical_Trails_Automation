@@ -570,7 +570,7 @@ class WorkflowNode_Start(WorkflowNode):
 class WorkflowNode_Finish(WorkflowNode):
     op_icon = ""
     op_code = OP_NODE_FINISH
-    op_title = "finish"
+    op_title = "Finish"
     content_label_objname = "workflow_node_finish"
 
     def __init__(self, scene, inputs=[2], outputs=[]):

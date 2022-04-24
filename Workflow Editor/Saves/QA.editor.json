@@ -1,17 +1,17 @@
 {
-    "id": 2012280077616,
+    "id": 2503446939056,
     "scene_width": 64000,
     "scene_height": 64000,
     "nodes": [
         {
-            "id": 2012279976336,
+            "id": 2503446981504,
             "title": "New Start Node",
             "pos_x": -350.0,
             "pos_y": -250.0,
             "inputs": [],
             "outputs": [
                 {
-                    "id": 2012280103600,
+                    "id": 2503447014128,
                     "index": 0,
                     "multi_edges": true,
                     "position": 5,
@@ -22,48 +22,48 @@
             "op_code": 7
         },
         {
-            "id": 2012279964480,
-            "title": "New finish Node",
+            "id": 2503446956496,
+            "title": "New Finish Node",
             "pos_x": 200.0,
             "pos_y": 0.0,
             "inputs": [
                 {
-                    "id": 2012280103744,
+                    "id": 2503447014080,
                     "index": 0,
                     "multi_edges": true,
                     "position": 2,
                     "socket_type": "F"
                 },
                 {
-                    "id": 2012280103792,
+                    "id": 2503447014320,
                     "index": 1,
                     "multi_edges": true,
                     "position": 2,
                     "socket_type": "i"
                 },
                 {
-                    "id": 2012280103840,
+                    "id": 2503447014176,
                     "index": 2,
                     "multi_edges": true,
                     "position": 2,
                     "socket_type": "n"
                 },
                 {
-                    "id": 2012280103888,
+                    "id": 2503447014368,
                     "index": 3,
                     "multi_edges": true,
                     "position": 2,
                     "socket_type": "i"
                 },
                 {
-                    "id": 2012280103936,
+                    "id": 2503447014416,
                     "index": 4,
                     "multi_edges": true,
                     "position": 2,
                     "socket_type": "s"
                 },
                 {
-                    "id": 2012280103984,
+                    "id": 2503447014464,
                     "index": 5,
                     "multi_edges": true,
                     "position": 2,
@@ -75,13 +75,13 @@
             "op_code": 8
         },
         {
-            "id": 2012279775536,
-            "title": "New Tetx",
-            "pos_x": -183.0,
-            "pos_y": -157.0,
+            "id": 2503447116096,
+            "title": "New Notification Node",
+            "pos_x": -169.0,
+            "pos_y": -107.0,
             "inputs": [
                 {
-                    "id": 2012279788928,
+                    "id": 2503447141728,
                     "index": 0,
                     "multi_edges": true,
                     "position": 2,
@@ -90,7 +90,7 @@
             ],
             "outputs": [
                 {
-                    "id": 2012279788976,
+                    "id": 2503447141776,
                     "index": 0,
                     "multi_edges": true,
                     "position": 5,
@@ -101,8 +101,8 @@
                 "content": {
                     "node_details": {
                         "actors": [],
-                        "title": "New Tetx",
-                        "color": "Grey"
+                        "title": "New Notification Node",
+                        "color": "Red"
                     },
                     "text": ""
                 }
@@ -112,16 +112,28 @@
     ],
     "edges": [
         {
-            "id": 2012279866848,
+            "id": 2503446879920,
             "edge_type": 2,
-            "start": 2012280103600,
-            "end": 2012279788928
+            "start": 2503447014128,
+            "end": 2503447141728,
+            "edge_details": {
+                "title": "Start",
+                "type": 0,
+                "min": "10",
+                "max": "15"
+            }
         },
         {
-            "id": 2012279866656,
+            "id": 2503446709344,
             "edge_type": 2,
-            "start": 2012279788976,
-            "end": 2012280103984
+            "start": 2503447141776,
+            "end": 2503447014464,
+            "edge_details": {
+                "title": "END",
+                "type": 0,
+                "min": "",
+                "max": ""
+            }
         }
     ]
 }

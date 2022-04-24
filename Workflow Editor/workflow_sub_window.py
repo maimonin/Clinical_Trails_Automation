@@ -125,7 +125,7 @@ class WorkflowSubWindow(NodeEditorWidget):
     def fileLoad(self, filename):
         return super().fileLoad(filename)
 
-    def data_load(self, json_data, name):  # used to load data from complex node data
+    def data_load(self, json_data, name):
         try:
             self.filename = name
             self.scene.deserialize(json_data)

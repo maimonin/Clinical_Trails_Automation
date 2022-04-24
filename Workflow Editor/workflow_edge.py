@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from nodeeditor.node_edge import Edge, EDGE_TYPE_DIRECT
 from nodeeditor.utils import dumpException
 
@@ -69,10 +71,12 @@ class WorkflowEdge(Edge):
                 self.text = "No Title"
                 if input_min != "" and input_max != "":
                     self.text += " : " + input_min + " - " + input_max
+                    # self.edge_type = 1
             else:
                 self.text = input_title
                 if input_min != "" and input_max != "":
                     self.text += " : " + input_min + " - " + input_max
+                    # self.edge_type = 1
 
             self.data["content"]["edge_details"]["title"] = input_title
             self.data["content"]["edge_details"]["min"] = input_min
@@ -85,10 +89,29 @@ class WorkflowEdge(Edge):
             "Edge Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["edge_details"]["title"]},
                 {"name": "Accepted Delay", "type": "tree", "items": [
-                    {"name": "Min", "type": "text", "value": self.data["content"]["edge_details"]["min"], "placeholder": "Enter Min Delay"},
-                    {"name": "Max", "type": "text", "value": self.data["content"]["edge_details"]["max"], "placeholder": "Enter Max Delay"}
+                    {"name": "Min", "type": "text", "value": self.data["content"]["edge_details"]["min"],
+                     "placeholder": "Enter Min Delay"},
+                    {"name": "Max", "type": "text", "value": self.data["content"]["edge_details"]["max"],
+                     "placeholder": "Enter Max Delay"}
                 ]}
             ],
             "callback": self.callback_from_dock
         }
         return to_send
+
+    def serialize(self) -> OrderedDict:
+        return OrderedDict([
+            ('id', self.id),
+            ('edge_type', self.edge_type),
+            ('start', self.start_socket.id if self.start_socket is not None else None),
+            ('end', self.end_socket.id if self.end_socket is not None else None),
+            ('edge_details', self.data['content']['edge_details'])
+        ])
+
+    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True, *args, **kwargs) -> bool:
+        if restore_id: self.id = data['id']
+        self.start_socket = hashmap[data['start']]
+        self.end_socket = hashmap[data['end']]
+        self.edge_type = data['edge_type']
+        self.data['content']['edge_details'] = data['edge_details']
+        self.doSelect() # reload the data when opening a new file

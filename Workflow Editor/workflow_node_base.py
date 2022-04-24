@@ -565,6 +565,9 @@ class WorkflowNode(Node):
             self.data = data['content']
             self.op_code = data['op_code']
             # TODO : add to each node his specific attribues. e.g. color \ text
+            if self.op_code in [1,2,4]:
+                self.color = data['content']['content']['node_details']['color']
+            self.attributes_dock_callback(self.get_tree_build())
 
         except Exception as e:
             dumpException(e)
