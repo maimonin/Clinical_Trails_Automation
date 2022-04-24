@@ -4,6 +4,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
     QCheckBox
+from nodeeditor.utils import dumpException
 
 
 class QDynamicDock(QDockWidget):
@@ -419,7 +420,7 @@ class QuestionnaireTree:
     def line_changed(self, data, key, questionnaire_widget):
         data[key] = questionnaire_widget.text()
 
-        self.call_dock(self.questions)
+        self.call_dock()
 
     def combo_changed(self, options, index_changed, data, parent):
         if options[index_changed] == "Open":
