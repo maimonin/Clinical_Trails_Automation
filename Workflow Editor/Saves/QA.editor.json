@@ -6,8 +6,8 @@
         {
             "id": 2503446981504,
             "title": "New Start Node",
-            "pos_x": -350.0,
-            "pos_y": -250.0,
+            "pos_x": -337.0,
+            "pos_y": -91.0,
             "inputs": [],
             "outputs": [
                 {
@@ -24,8 +24,8 @@
         {
             "id": 2503446956496,
             "title": "New Finish Node",
-            "pos_x": 200.0,
-            "pos_y": 0.0,
+            "pos_x": 222.0,
+            "pos_y": -161.0,
             "inputs": [
                 {
                     "id": 2503447014080,

@@ -170,7 +170,11 @@ class WorkflowScene(Scene):
         # that means they were not in the graph before...
         while all_nodes != []:
             node = all_nodes.pop()
-            node.remove()
+            # patch for deleting init start and finish nodes
+            if node.op_code == 7 or  node.op_code == 8:
+                node.remove(True)
+            else:
+                node.remove()
 
         # -- deserialize EDGES
 

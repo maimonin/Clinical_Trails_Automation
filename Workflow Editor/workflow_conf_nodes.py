@@ -9,7 +9,9 @@ from qtpy import QtCore
 from workflow_conf import *
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
-from workflow_graphics_socket import WFGraphicsSocketDecision , WFGraphicsSocket
+from workflow_graphics_socket import WFGraphicsSocketDecision, WFGraphicsSocket
+
+
 class WorkflowInputContent(QDMNodeContentWidget):
     def __init__(self, node, callback):
         super().__init__(node)
@@ -73,7 +75,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.data = {
             "content": {
                 "node_details": {
-                    "time": QTime.toString(QTime(0,0)),
+                    "time": QTime.toString(QTime(0, 0)),
                     "title": "New Questionnaire Node",
                     "color": self.color
                 },
@@ -129,7 +131,8 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
+                {"name": "Time", "type": "time",
+                 "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
                 {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
@@ -182,7 +185,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
         self.data = {
             "content": {
                 "node_details": {
-                    "time": QTime.toString(QTime(0,0)),
+                    "time": QTime.toString(QTime(0, 0)),
                     "title": "New Test Node",
                     "actor in charge": "Nurse",
                     "color": self.color
@@ -236,7 +239,8 @@ class WorkflowNode_DataEntry(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
+                {"name": "Time", "type": "time",
+                 "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
                 {"name": "Actor In Charge", "type": "combobox",
                  "value": self.data["content"]["node_details"]["actor in charge"],
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]},
@@ -264,7 +268,7 @@ class WorkflowNode_Decision(WorkflowNode):
         self.data = {
             "content": {
                 "node_details": {
-                    "time": QTime.toString(QTime(0,0)),
+                    "time": QTime.toString(QTime(0, 0)),
                     "title": "New Decision Node",
                     # "color": self.color
                 },
@@ -371,7 +375,8 @@ class WorkflowNode_Decision(WorkflowNode):
             bad_socket.grSocket.change_orientation(1)
 
             self.outputs.append(bad_socket)
-        except Exception as e : dumpException(e)
+        except Exception as e:
+            dumpException(e)
         good_socket = self.__class__.Socket_class(
             node=self, index=counter, position=self.output_socket_position_good,
             socket_type=outputs[1], multi_edges=self.output_multi_edged,
@@ -385,7 +390,8 @@ class WorkflowNode_Decision(WorkflowNode):
         return the only position for this node: on the right of this node
         """
         x = 0 if (position == LEFT_CENTER) else self.grNode.width if position == RIGHT_CENTER else self.grNode.width / 2
-        y = 0 if position in (LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position == 7 else self.grNode.height / 2
+        y = 0 if position in (
+        LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position == 7 else self.grNode.height / 2
 
         return [x, y]
 
@@ -393,7 +399,8 @@ class WorkflowNode_Decision(WorkflowNode):
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time", "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
+                {"name": "Time", "type": "time",
+                 "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
                 # {"name": "Color", "type": "combobox icons", "value": self.color,
                 #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
@@ -404,7 +411,6 @@ class WorkflowNode_Decision(WorkflowNode):
         }
 
         return to_send
-
 
 
 @register_node(OP_NODE_STRING)
@@ -562,8 +568,10 @@ class WorkflowNode_Start(WorkflowNode):
         return [x, y]
 
     # Override the remove method. ( it cant be removed)
-    def remove(self):
-        pass
+    # unless called from a new file
+    def remove(self, new_file=False):
+        if new_file:
+            super().remove()
 
 
 @register_node(OP_NODE_FINISH)
@@ -647,8 +655,10 @@ class WorkflowNode_Finish(WorkflowNode):
         return [x, y]
 
     # Override the remove method. ( it cant be removed)
-    def remove(self):
-        pass
+    # unless called from a new file
+    def remove(self, new_file=False):
+        if new_file:
+            super().remove()
 
 
 @register_node(OP_NODE_COMPLEX)
