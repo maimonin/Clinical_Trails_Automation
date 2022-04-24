@@ -54,6 +54,7 @@ class WorkflowEdge(Edge):
         return WFGraphicsRegularEdgeWithText
 
     def doSelect(self, new_state: bool = True):
+        self.grEdge.text = self.text
         try:
             if new_state:
                 self.attributes_dock_callback(self.get_tree_build())
@@ -67,22 +68,25 @@ class WorkflowEdge(Edge):
             input_title = content["Edge Details"][0]["value"]
             input_min = content["Edge Details"][1]["items"][0]["value"]
             input_max = content["Edge Details"][1]["items"][1]["value"]
-            if input_title == "":
-                self.text = "No Title"
-                if input_min != "" and input_max != "":
-                    self.text += " : " + input_min + " - " + input_max
-                    # self.edge_type = 1
-            else:
-                self.text = input_title
-                if input_min != "" and input_max != "":
-                    self.text += " : " + input_min + " - " + input_max
-                    # self.edge_type = 1
+            self.update_label(input_title, input_min, input_max)
 
             self.data["content"]["edge_details"]["title"] = input_title
             self.data["content"]["edge_details"]["min"] = input_min
             self.data["content"]["edge_details"]["max"] = input_max
         except Exception as e:
             dumpException(e)
+
+    def update_label(self, input_title, input_min, input_max):
+        if input_title == "":
+            self.text = "No Title"
+            if input_min != "" and input_max != "":
+                self.text += " : " + input_min + " - " + input_max
+                # self.edge_type = 1
+        else:
+            self.text = input_title
+            if input_min != "" and input_max != "":
+                self.text += " : " + input_min + " - " + input_max
+                # self.edge_type = 1
 
     def get_tree_build(self):
         to_send = {
@@ -100,6 +104,7 @@ class WorkflowEdge(Edge):
         return to_send
 
     def serialize(self) -> OrderedDict:
+        # FIXME: save what the engine needs.(also fix open)
         return OrderedDict([
             ('id', self.id),
             ('edge_type', self.edge_type),
@@ -108,10 +113,11 @@ class WorkflowEdge(Edge):
             ('edge_details', self.data['content']['edge_details'])
         ])
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True, *args, **kwargs) -> bool:
+    def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
         if restore_id: self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
         self.edge_type = data['edge_type']
         self.data['content']['edge_details'] = data['edge_details']
-        self.doSelect() # reload the data when opening a new file
+        self.update_label(data['edge_details']["title"],data['edge_details']["min"],data['edge_details']["max"])
+        self.doSelect()  # reload the data when opening a new file
