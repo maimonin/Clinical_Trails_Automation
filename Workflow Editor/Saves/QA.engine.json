@@ -1,0 +1,120 @@
+{
+    "id": 2012280077616,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2012279976336,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2012280103600,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 7
+        },
+        {
+            "id": 2012279964480,
+            "title": "New finish Node",
+            "inputs": [
+                {
+                    "id": 2012280103744,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "F"
+                },
+                {
+                    "id": 2012280103792,
+                    "index": 1,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "i"
+                },
+                {
+                    "id": 2012280103840,
+                    "index": 2,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "n"
+                },
+                {
+                    "id": 2012280103888,
+                    "index": 3,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "i"
+                },
+                {
+                    "id": 2012280103936,
+                    "index": 4,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "s"
+                },
+                {
+                    "id": 2012280103984,
+                    "index": 5,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": "h"
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 8
+        },
+        {
+            "id": 2012279775536,
+            "title": "New Tetx",
+            "inputs": [
+                {
+                    "id": 2012279788928,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2012279788976,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "actors": [],
+                        "title": "New Tetx"
+                    },
+                    "text": ""
+                }
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2012279866848,
+            "edge_type": 2,
+            "start": 2012280103600,
+            "end": 2012279788928
+        },
+        {
+            "id": 2012279866656,
+            "edge_type": 2,
+            "start": 2012279788976,
+            "end": 2012280103984
+        }
+    ]
+}

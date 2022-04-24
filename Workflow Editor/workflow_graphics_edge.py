@@ -181,7 +181,7 @@ class WFGraphicsRegularEdgeWithText(QDMGraphicsEdge):
         else:
             painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
         if self.isSelected():
-            print("selected")
+            # print("selected")
             pass
         painter.drawPath(self.path())
 

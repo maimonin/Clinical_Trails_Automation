@@ -36,6 +36,7 @@ class WorkflowSubWindow(NodeEditorWidget):
         self.dockCallback = dockCallback
         self.scene.addAttributesDockCallback(self.dockCallback)     # TODO: should we delete?
         WorkflowNode.attributes_dock_callback = self.dockCallback
+        WorkflowEdge.attributes_dock_callback = self.dockCallback
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
