@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from Logger import log
 
@@ -15,4 +16,4 @@ async def send_notification_by_id(id, message):
 
 async def send_questionnaire(questions, number, id):
     await send_notification_by_id(id, {'type': 'questionnaire', 'questionnaire_number': number, 'questions': questions})
-    log("sending questionnaire")
+    log(datetime.now().strftime("%H:%M:%S") + " sending questionnaire")

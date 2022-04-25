@@ -13,14 +13,14 @@ def init():
 
 
 def add_questionnaire(results, participant):
-    log("adding questionnaire of participant with id " + str(participant))
+    log(datetime.now().strftime("%H:%M:%S") + " adding questionnaire of participant with id " + str(participant))
     message = 'participant ' + str(participant) + ' answers: '
     i = 1
     for result in results['answers']:
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
         Database.addAnswer(results['questionnaire_number'], i, participant, datetime.now(), str(result['answer']))
         i = i + 1
-    log(message)
+    log(datetime.now().strftime("%H:%M:%S") + " " +message)
     event = answers[participant][results['questionnaire_number']]
     event.set()
 
@@ -34,7 +34,8 @@ def add_form(number, participant):
 
 
 def add_test(name, results, participant):
-    log('participant ' + str(participant) + ' results of test ' + results['test'] + ": " + str(results['result']))
+    log(datetime.now().strftime("%H:%M:%S") + ' participant ' + str(participant) + ' results of test ' + results['test']
+        + ': ' + str(results['result']))
     Database.addTestResults(name, participant, datetime.now(), results['result'])
     for test in reversed(tests[participant]):
         if test[0] == name:
@@ -52,7 +53,8 @@ def add_test_form(name, participant):
 
 
 async def get_test_result(participant_id, test_name):
-    log("getting results of test " + test_name + " of participant " + str(participant_id))
+    log(datetime.now().strftime("%H:%M:%S") + " getting results of test " + test_name + " of participant " +
+        str(participant_id))
     for test in reversed(tests[participant_id]):
         if test[0] == test_name:
             await test[1].wait()
