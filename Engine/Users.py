@@ -27,6 +27,9 @@ class User:
     def get_traits(self):
         return {"gender": self.sex, "age": self.age}
 
+    def to_json(self):
+        return {'role':self.role, 'age': self.age, 'id':self.id, 'sex': self.sex}
+
 
 
 
