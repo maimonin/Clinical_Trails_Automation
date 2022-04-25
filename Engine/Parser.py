@@ -215,7 +215,7 @@ def new_workflow(data_dict):
             Database.addEdge(e.id, first_id, second_id, None, None, min_time, max_time)
 
     Database.addWorkflow(data_dict["id"], first_node)
-    log("created workflow")
+    log(datetime.datetime.now().strftime("%H:%M:%S") + " created workflow")
     return nodes[first_node]
 
 

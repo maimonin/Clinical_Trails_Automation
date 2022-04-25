@@ -1,8 +1,5 @@
-import json
-import time
 from asyncio import sleep
-from random import randint
-
+from datetime import datetime
 from Database import Database
 from Logger import log
 from NotificationHandler import send_notification_by_id
@@ -54,7 +51,7 @@ async def take_test(user_id, test, in_charge):
                                                  'instructions': test.instructions,
                                                  'patient': user_id})
     await send_notification_by_id(user_id, {'type': 'notification', 'text': "show up to " + test.name})
-    log("participant with id " + str(user_id) + " taking a test")
+    log(datetime.now().strftime("%H:%M:%S") + " participant with id " + str(user_id) + " taking a test")
     await sleep(int(test.duration))
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
     # r = get_role(in_charge)
