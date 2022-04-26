@@ -20,6 +20,8 @@ complexNodes = {}
 
 
 class Node(ABC):
+    def __init__(self):
+        self.id = None
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
@@ -38,7 +40,13 @@ class Node(ABC):
 
 
 def buildNode(dal_node):
-    if dal_node.op_code == 1:
+    if dal_node.op_code == 0 or dal_node.op_code == 6:
+        if dal_node.id in questionnaires:
+            return questionnaires[dal_node.id]
+        questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form),
+                                                    dal_node.form_id)
+        return questionnaires[dal_node.id]
+    elif dal_node.op_code == 1:
         if dal_node.id in questionnaires:
             return questionnaires[dal_node.id]
         questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form),
@@ -59,7 +67,7 @@ def buildNode(dal_node):
             return stringNodes[dal_node.id]
         stringNodes[dal_node.id] = StringNode(dal_node.id, dal_node.title, dal_node.text, dal_node.actors)
         return stringNodes[dal_node.id]
-    elif dal_node.op_code == 6:
+    elif dal_node.op_code == 5:
         if dal_node.id in complexNodes:
             return complexNodes[dal_node.id]
         flow = buildNode(dal_node.flow)
@@ -76,6 +84,43 @@ async def end_test(node, participants):
 def set_time(node, min_time, max_time):
     node.min_time = min_time
     node.max_time = max_time
+
+
+class StartFinish(Node):
+    def __init__(self, node_id, title):
+        super(StartFinish, self).__init__()
+        self.id = node_id
+        self.title = title
+        self.edges = []
+        self.lock = threading.Lock()
+        self.participants: List[User] = []
+
+    def attach(self, participant: User) -> None:
+        self.participants.append(participant)
+        Database.addNodePosition(participant.id, self.id, datetime.now())
+
+    async def exec(self) -> None:
+        self.edges = getEdges(self.id)
+        await self.notify()
+        threads = []
+        for edge in self.edges:
+            threads.append(asyncio.create_task(edge.exec()))
+        for t in threads:
+            await t
+
+    async def notify(self) -> None:
+        self.lock.acquire()
+        participants2 = self.participants.copy()
+        self.participants = []
+        self.lock.release()
+        for participant in participants2:
+            for edge in self.edges:
+                edge.attach(participant)
+            Database.releasePosition(participant.id, self.id, "node")
+        await end_test(self, participants2)
+
+    def has_actors(self):
+        return len(self.participants) != 0
 
 
 class Questionnaire(Node):

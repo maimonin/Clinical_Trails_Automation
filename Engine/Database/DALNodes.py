@@ -1,5 +1,7 @@
 def buildDALNodesFromNode(node, op_code):
-    if op_code == 1:
+    if op_code == 0 or op_code == 6:
+        return DALQuestionnaire(op_code, node.id, node.title)
+    elif op_code == 1:
         return DALQuestionnaire(op_code, node.id, node.title, node.number)
     elif op_code == 2:
         return DALTestNode(op_code, node.id, node.title, node.tests, node.in_charge)
@@ -7,10 +9,14 @@ def buildDALNodesFromNode(node, op_code):
         return DALDecision(op_code, node.id, node.title, node.conditions)
     elif op_code == 4:
         return DALStringNode(op_code, node.id, node.title, node.text, node.actors)
+    if op_code == 5:
+        return DALComplexNode(op_code, node.id, node.title, node.flow)
 
 
 def buildDALNodes(node_data):
-    if node_data[0] == 1:
+    if node_data[0] == 0 or node_data[0] == 6:
+        return DALStartFinish(node_data[0], node_data[1], node_data[2])
+    elif node_data[0] == 1:
         return DALQuestionnaire(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
     elif node_data[0] == 2:
         return DALTestNode(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
@@ -18,7 +24,7 @@ def buildDALNodes(node_data):
         return DALDecision(node_data[0], node_data[1], node_data[2], condJSON(node_data[3], node_data[4], node_data[5]))
     elif node_data[0] == 4:
         return DALStringNode(node_data[0], node_data[1], node_data[2], node_data[3], node_data[4])
-    elif node_data[0] == 6:
+    elif node_data[0] == 5:
         return DALComplexNode(node_data[0], node_data[1], node_data[2], node_data[3])
 
 
@@ -83,6 +89,13 @@ def condJSON(quest_conditions, test_conditions, trait_conditions):
                 }
             })
     return conditions
+
+
+class DALStartFinish:
+    def __init__(self, op_code, node_id, title):
+        self.op_code = op_code
+        self.id = node_id
+        self.title = title
 
 
 class DALQuestionnaire:

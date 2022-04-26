@@ -500,7 +500,9 @@ def getNode(node_id):
         return None
     op_code = node_data[1]
     title = node_data[0]
-    if op_code == 1:
+    if op_code == 0:
+        return buildDALNodes([op_code, node_id, "new start node"])
+    elif op_code == 1:
         form_id = extract_one_from_table("""SELECT form_id FROM Questionnaires WHERE id=?""", (node_id,))[0]
         form = getForm(form_id)
         return buildDALNodes([op_code, node_id, title, form, form_id])
@@ -522,10 +524,12 @@ def getNode(node_id):
         for actor in actors_mashed:
             actors.append(actor[0])
         return buildDALNodes([op_code, node_id, title, text, actors])
-    elif op_code == 6:
+    elif op_code == 5:
         first_id = extract_one_from_table("""SELECT first_id FROM Complex_Nodes WHERE id=?""", (node_id,))[0]
         flow_node = getNode(first_id)
         return buildDALNodes([op_code, node_id, title, flow_node])
+    elif op_code == 6:
+        return buildDALNodes([op_code, node_id, "new finish node"])
 
 
 def getStaff(role):
@@ -567,12 +571,9 @@ def getUser(user_id):
 
 
 def getWaitList(node_id, participant_id):
-    # visited = [(1)...]
     visited = extract_many_from_table("""SELECT wait FROM Wait_List WHERE node_id=? AND participant_id=?""",
                                       (node_id, participant_id))
-    # wait_list = [(1),(2)...]
     wait_list = extract_many_from_table("""SELECT id FROM Edges WHERE to_id=?""", (node_id,))
-    print(set(wait_list) - set(visited))
     return set(wait_list) - set(visited)
 
 
@@ -593,3 +594,7 @@ def releasePosition(participant_id, position_id, position_type):
 
 def releaseStaff(user_id):
     change_table("""UPDATE Staff SET available = "yes" WHERE id=?""", (user_id,))
+
+
+def releaseWaiter(node_id, participant_id):
+    change_table("""DELETE FROM Wait_List WHERE node_id=? AND participant_id=?""", (node_id, participant_id))
