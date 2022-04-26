@@ -66,11 +66,11 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
-    QNum = "-1"
 
     def __init__(self, scene):
         super().__init__(scene)
         self.color = "Grey"
+        self.QNum = str(scene.getNextQuestionnaireNumber())
         # @data to send to engine.
         self.data = {
             "content": {
@@ -83,7 +83,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 "questionnaire_number": self.QNum
             }
         }
-        QNum = str(scene.getNextQuestionnaireNumber())
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -263,6 +262,7 @@ class WorkflowNode_Decision(WorkflowNode):
     content_label_objname = "workflow_node_decision"
 
     def __init__(self, scene, inputs=[1], outputs=[4, 2]):
+        self.scene = scene
         super().__init__(scene, inputs, outputs)
         # self.color = "Green"
         # @data to send to engine.
@@ -392,11 +392,21 @@ class WorkflowNode_Decision(WorkflowNode):
         """
         x = 0 if (position == LEFT_CENTER) else self.grNode.width if position == RIGHT_CENTER else self.grNode.width / 2
         y = 0 if position in (
-        LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position == 7 else self.grNode.height / 2
+            LEFT_CENTER, RIGHT_CENTER) else -self.grNode.height / 2 if position == 7 else self.grNode.height / 2
 
         return [x, y]
 
     def get_tree_build(self):
+        # TODO: connect questionnaries and tests data to condition
+        # nodes_content = []
+        #
+        # for node in self.scene.nodes:
+        #     if node.op_code == OP_NODE_QUESTIONNAIRE:
+        #         nodes_content.append(
+        #             {"node": OP_NODE_QUESTIONNAIRE, "content": {"ID": node.QNum, "questions": node.content}})
+        #     elif node.op_code == OP_NODE_Test:
+        #         nodes_content.append({"node": OP_NODE_Test, "content": node.content})
+
         to_send = {
             "Node Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},

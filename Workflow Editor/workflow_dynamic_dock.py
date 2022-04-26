@@ -137,7 +137,7 @@ class QDynamicDock(QDockWidget):
         options = field["options"]
         for i, opt in enumerate(options):
             widget.addItem(opt)
-            widget.setItemIcon(i, QIcon(".\\assets\\icons\\"+opt.lower()+"_icon.png"))
+            widget.setItemIcon(i, QIcon(".\\assets\\icons\\" + opt.lower() + "_icon.png"))
         widget.currentTextChanged.connect(lambda text: self.change_combolist(field, text))
         widget.setCurrentIndex(field["options"].index(field["value"]))
         self.treeWidget.setItemWidget(father, 1, widget)
@@ -181,7 +181,8 @@ class QDynamicDock(QDockWidget):
     def create_condition_subtree_widget(self, father, field):
         ConditionTree(self.treeWidget, father, field["value"], self.update_dynamic)
 
-    def update_dynamic(self):
+    def update_dynamic(self, data=None):
+        # FIXME: why it receives data?
         self.callback(self.data)
 
 
@@ -420,7 +421,7 @@ class QuestionnaireTree:
     def line_changed(self, data, key, questionnaire_widget):
         data[key] = questionnaire_widget.text()
 
-        self.call_dock()
+        self.call_dock(self.questions)
 
     def combo_changed(self, options, index_changed, data, parent):
         if options[index_changed] == "Open":

@@ -209,4 +209,5 @@ class WorkflowScene(Scene):
         return True
 
     def getNextQuestionnaireNumber(self):
-        return self.questionnaire_index+1
+        self.questionnaire_index += 1
+        return self.questionnaire_index
