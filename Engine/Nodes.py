@@ -76,6 +76,7 @@ async def end_test(node, participants):
     if len(node.edges) == 0:
         for participant in participants:
             if len(Database.getAllActives(participant.id)) == 1:
+                print("terminating")
                 await send_notification_by_id(participant.id, {'type': 'terminate'})
 
 
