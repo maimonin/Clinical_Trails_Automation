@@ -4,18 +4,17 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-import {flow_1} from '../../Mock/MockFlow'
+
 export default function TestEntryData(props){
 
     const test_data = props.test_data_entry.test
     const patient = props.test_data_entry.patient
     const [answer,setAnswer] = useState("")
     // useEffect (()=>console.log(answers),[answers]) // for checking purposes only
-    const client = new W3CWebSocket('ws://127.0.0.1:7890');
+    // const client = new W3CWebSocket('ws://127.0.0.1:7890');
 
     const handleClick = ()=>{
-        client.send(JSON.stringify(flow_1))
-        console.log(JSON.stringify(client))
+        // console.log(JSON.stringify(client))
     //    console.log({"type":"add results","id": patient, "test":test_data.name , "result":answer})
 
         // props.send(answers)

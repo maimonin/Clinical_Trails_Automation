@@ -5,37 +5,27 @@ import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import PersonIcon from '@mui/icons-material/Person';
-import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
-import Stack from '@mui/material/Stack';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Questionnaire from '../Question/Question';
-import {TestQuestionnaire} from '../Question/Question';
 
-
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
-import {TestNotification} from '../Notification/Notification'
-import { MockTestDataEntry } from '../TestEntryData/TestEntryData';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
-export default function SubWindow(props) { // should have connection object
+
+
+  export default function MemberScreen(props) { 
     
     const [currentComponent,setCurrentComponent] = useState(0)
     const [items,setItems] = useState([]);
     const [numOfItems,setNumOfItems] = useState (0)
+    const ws = useRef(new W3CWebSocket('ws://127.0.0.1:7890'));
 
 
-    const ws = useRef(null);
 
     useEffect(() => {
-        ws.current = new W3CWebSocket('ws://127.0.0.1:7890');
         var register=props.user;
         register.type = "register"
         ws.current.onopen = () => ws.current.send(JSON.stringify(register));
@@ -82,7 +72,7 @@ export default function SubWindow(props) { // should have connection object
     }
     
     const getComponent = (itemToAdd) => {
-      return (<TestNotification test={})
+      // return (<TestNotification test={1}/>)
       switch(itemToAdd["type"]) {
         case "questionnaire":
 
@@ -142,22 +132,14 @@ export default function SubWindow(props) { // should have connection object
 {/* Same as */}
       <CardContent >
         <div  style={ {scrollBehavior: "smooth", overflowY: "scroll" , maxHeight:210}}>
-        {
-        currentComponent>0? items[currentComponent-1]: undefined}
+        {currentComponent>0? items[currentComponent-1]: undefined}
 
 
       <Pagination count={numOfItems} page={currentComponent} onChange={handlePaginationChange} size="small"/>
 
       </div>
         <Typography variant="body2" color="text.secondary">
-        {/* <Box
-      sx={{
-        width: 300,
-        height: 300,
-        backgroundColor: '#bdbdbd',
-       
-      }}
-    />   */}
+
             {/* <Questionnaire /> */}
         </Typography>
 

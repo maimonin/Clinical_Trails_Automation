@@ -1,6 +1,5 @@
 import logo from './logo.svg';
 import './App.css';
-import SubWindow from './Components/Sub Window/SubWindow'
 
 import MainWindow from './Components/Main Window/MainWindow';
 
