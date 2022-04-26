@@ -12,7 +12,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Questionnaire from '../Question/Question';
 
 import Pagination from '@mui/material/Pagination';
-import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 
 
@@ -21,55 +20,23 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
     const [currentComponent,setCurrentComponent] = useState(0)
     const [items,setItems] = useState([]);
     const [numOfItems,setNumOfItems] = useState (0)
-    const ws = useRef(new W3CWebSocket('ws://127.0.0.1:7890'));
 
 
-
-    useEffect(() => {
-        var register=props.user;
-        register.type = "register"
-        ws.current.onopen = () => ws.current.send(JSON.stringify(register));
-        ws.current.onclose = () => console.log("ws closed");
-        ws.current.onmessage = (message) => {
-          console.log("SubWindow::useEffect::ws.onmessage ~~ got item! "+JSON.stringify(message))
-          addItem(JSON.parse(message.data))
-        };  
-        const wsCurrent = ws.current;
-
-        return () => {
-            wsCurrent.close();
-        };
-    }, []);
-
-    useEffect(()=>setNumOfItems(items.length),[items])
-
-    const addItem = (itemToAdd) => {
-      if (isNotification(itemToAdd)){
-          handleIncomingNotification(itemToAdd)
-      }
-      else{
-
-        const incoming_component = getComponent(itemToAdd)
-
-        setItems(prevState =>[ incoming_component,...prevState])
-
-        if (currentComponent == 0){
-          setCurrentComponent(1);
+    useEffect(()=>{
+      setNumOfItems(props.items.length)
+      if(currentComponent >= props.items.length){
+          props.items.length==0? setCurrentComponent(0) : setCurrentComponent(1)
         }
+      if( props.items.length>0 & currentComponent ==0){
+        setCurrentComponent(1)
       }
-    }
-   
-    const isNotification = (item) => false
+    },[props.items])
 
-    const sendData = (object_to_send) =>{
-      if (!ws.current) return;
-      object_to_send.id = props.user.id
-      
-      ws.current.send(JSON.stringify(object_to_send))
-      let newArr = [...items];
-      newArr.splice(currentComponent,1)
-      setItems(newArr)
-    }
+    
+
+    const sendData = (object_to_send) =>props.sendData(object_to_send,currentComponent);
+     
+    
     
     const getComponent = (itemToAdd) => {
       // return (<TestNotification test={1}/>)
@@ -112,55 +79,11 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
     };
   return (
     <div>
-    <Card sx={{ maxWidth: 345 , minHeight:300, maxHeight:300 }} >
-      <CardHeader
-        avatar={
-          <PersonIcon>
-            
-          </PersonIcon>
-        }
-        action={
-          <IconButton aria-label="settings" onClick  = {handleIncomingNotification}>
-            <MoreVertIcon  /> {/* change it to fynamically */}
-
-          </IconButton>
-        }
-        title={props.name}
-        subheader={props.role}
-      />
-
-{/* Same as */}
-      <CardContent >
-        <div  style={ {scrollBehavior: "smooth", overflowY: "scroll" , maxHeight:210}}>
-        {currentComponent>0? items[currentComponent-1]: undefined}
+         {currentComponent>0? props.items[currentComponent-1]: undefined}
 
 
       <Pagination count={numOfItems} page={currentComponent} onChange={handlePaginationChange} size="small"/>
 
-      </div>
-        <Typography variant="body2" color="text.secondary">
-
-            {/* <Questionnaire /> */}
-        </Typography>
-
-
-      </CardContent>
-      <ToastContainer style={styles}
-  position="top-right"
-  autoClose={5000}
-  hideProgressBar={false}
-  newestOnTop={false}
-  closeOnClick
-  rtl={false}
-  pauseOnFocusLoss
-  draggable
-  pauseOnHover
-  containerId={props.id}
-  enableMultiContainer
-  limit ={1}
-/>
-
-    </Card>
     </div>
   );
 }

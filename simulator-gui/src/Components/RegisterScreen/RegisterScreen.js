@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
@@ -9,17 +9,9 @@ import {isValidUserData} from '../../Utils/Validations'
 const ariaLabel = { 'aria-label': 'description' };
 function RegisterScreen(props){
     const [userDetails,setUserDetails] = useState(blankUser)
-    const registerComplete = ()=>{return true;}
-
     const handle_send = () => {
-        console.log("RegisterScreen::handle_send ~ user is: "+ JSON.stringify(userDetails))
         if(isValidUserData(userDetails)){
-            var register_request = {...userDetails}
-            register_request.type = "register"
-            register_request.workflow = props.flowID
-            props.webSocket.send(JSON.stringify(register_request))
-            if(registerComplete())
-                props.update_user_details(userDetails)
+          props.sendRegister(userDetails)
         }
     }
     const set_value = (e) =>{

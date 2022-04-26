@@ -34,7 +34,7 @@ export default function MainWindow() {
   const [flowSent,setFlowSent] = useState(false)
     useEffect(()=>{
       const ws = new W3CWebSocket('ws://127.0.0.1:7890');
-      ws.onopen = (event)=>{
+      ws.onopen = ()=>{
       ws.send(JSON.stringify(flow_1))
       console.log("MainWindow::useEffect ~ sent flow to server")
       setFlowSent(true)
@@ -61,7 +61,7 @@ export default function MainWindow() {
               users.map((user) => (
               <Grid item key={user.id} xs={12} sm={6} md={4}>
                 {/* <MemberScreen id={user} user={user}> </MemberScreen> */}
-                <UserWindow flowID={1}> </UserWindow>
+                <UserWindow workflow_id={flow_1.id}> </UserWindow>
               </Grid>
             )) :<div></div>
           }
