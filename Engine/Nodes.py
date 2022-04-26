@@ -19,6 +19,8 @@ complexNodes = {}
 
 
 class Node(ABC):
+    def __init__(self):
+        self.id = None
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
