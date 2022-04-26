@@ -45,11 +45,11 @@ class RelativeTimeEdge(Edge):
 
     def can_exec(self, participant):
         self.next_node = getNode(self.id)
-        if len(getWaitList(self.next_node.id, participant.id))==1:
-            # add clear
+        if len(Database.getWaitList(self.next_node.id, participant.id)) == 1:
+            Database.releaseWaiter(self.next_node.id, participant.id)
             return True
         else:
-            addWaiter(self.next_node.id, self.id, participant.id)
+            Database.addWaiter(self.next_node.id, self.id, participant.id)
 
     async def exec(self) -> None:
         if self.next_node is not None:
@@ -60,9 +60,9 @@ class RelativeTimeEdge(Edge):
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
-        t=[]
+        t = []
         for participant in participants2:
-            task=asyncio.create_task(self.notify_participant(participant))
+            task = asyncio.create_task(self.notify_participant(participant))
             t.append(task)
         for th in t:
             await th
@@ -79,11 +79,14 @@ class RelativeTimeEdge(Edge):
                 await sleep(sleep_time)
             elif sleep_time < 0 and (self.max_time - self.min_time + sleep_time < 0):
                 print("error node is late")
+                Database.deletePosition(participant.id, self.id, "edge")
             else:
-                self.next_node.attach(participant)
-            Database.deletePosition(participant.id, self.id, "edge")
-            if self.can_exec(participant):
-                await self.next_node.exec()
+                if self.can_exec(participant):
+                    self.next_node.attach(participant)
+                    Database.deletePosition(participant.id, self.id, "edge")
+                    await self.next_node.exec()
+                else:
+                    Database.deletePosition(participant.id, self.id, "edge")
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -108,6 +111,14 @@ class FixedTimeEdge(Edge):
             await self.notify()
             await asyncio.create_task(self.next_node.exec())
 
+    def can_exec(self, participant):
+        self.next_node = getNode(self.id)
+        if len(Database.getWaitList(self.next_node.id, participant.id)) == 1:
+            Database.releaseWaiter(self.next_node.id, participant.id)
+            return True
+        else:
+            Database.addWaiter(self.next_node.id, self.id, participant.id)
+
     async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
@@ -120,7 +131,8 @@ class FixedTimeEdge(Edge):
         if self.min_time is not None and x < self.min_time:
             await sleep((self.min_time - x).total_seconds())
         for participant in participants2:
-            self.next_node.attach(participant)
+            if self.can_exec(participant):
+                self.next_node.attach(participant)
             Database.deletePosition(participant.id, self.id, "edge")
 
     def has_actors(self):
@@ -144,14 +156,24 @@ class NormalEdge(Edge):
             await self.notify()
             await asyncio.create_task(self.next_node.exec())
 
+    def can_exec(self, participant):
+        self.next_node = getNode(self.id)
+        if len(Database.getWaitList(self.next_node.id, participant.id)) == 1:
+            Database.releaseWaiter(self.next_node.id, participant.id)
+            return True
+        else:
+            Database.addWaiter(self.next_node.id, self.id, participant.id)
+
     async def notify(self) -> None:
         self.lock.acquire()
         participants2 = self.participants.copy()
         self.participants = []
         self.lock.release()
         for participant in participants2:
-            self.next_node.attach(participant)
+            if self.can_exec(participant):
+                self.next_node.attach(participant)
             Database.deletePosition(participant.id, self.id, "edge")
+
 
     def has_actors(self):
         return len(self.participants) != 0
