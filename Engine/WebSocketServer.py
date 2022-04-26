@@ -42,6 +42,7 @@ async def get_notifications(websocket, path):
 
 def Main():
     open('Logger.txt', 'w').close()
+    Database.set_name('Database/data.db')
     user_lists.init()
     Data.init()
     parser_init()
