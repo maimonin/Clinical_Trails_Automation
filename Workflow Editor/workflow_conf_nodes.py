@@ -66,7 +66,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     op_code = OP_NODE_QUESTIONNAIRE
     op_title = "Questionnaire"
     content_label_objname = "workflow_node_questionnaire"
-    QNum = "999"  # TODO : implement number generator
+    QNum = "-1"
 
     def __init__(self, scene):
         super().__init__(scene)
@@ -83,6 +83,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 "questionnaire_number": self.QNum
             }
         }
+        QNum = str(scene.getNextQuestionnaireNumber())
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )

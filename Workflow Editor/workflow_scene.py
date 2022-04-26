@@ -11,6 +11,8 @@ from workflow_graphics_scene import WFGraphicsScene
 
 
 class WorkflowScene(Scene):
+    questionnaire_index = 0
+
     def __init__(self):
         super().__init__()
         self.dockCallback = lambda x: x  # dull function so it won't crash in any case
@@ -205,3 +207,6 @@ class WorkflowScene(Scene):
             edge.remove()
 
         return True
+
+    def getNextQuestionnaireNumber(self):
+        return self.questionnaire_index+1

@@ -89,6 +89,7 @@ class WorkflowEdge(Edge):
                 # self.edge_type = 1
 
     def get_tree_build(self):
+        # TODO: add edge timing types (None, Relative (implemented), Fixed)
         to_send = {
             "Edge Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["edge_details"]["title"]},
@@ -105,12 +106,13 @@ class WorkflowEdge(Edge):
 
     def serialize(self) -> OrderedDict:
         # FIXME: save what the engine needs.(also fix open)
+        # FIXME: edge type for engine(relative fixed etc)
         return OrderedDict([
             ('id', self.id),
-            ('edge_type', self.edge_type),
+            ('type', self.edge_type),
             ('start', self.start_socket.id if self.start_socket is not None else None),
             ('end', self.end_socket.id if self.end_socket is not None else None),
-            ('edge_details', self.data['content']['edge_details'])
+            ('content', self.data['content']['edge_details'])
         ])
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
