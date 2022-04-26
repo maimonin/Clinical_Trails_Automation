@@ -6,7 +6,9 @@ from Logger import log
 
 
 def init():
+    # noinspection PyGlobalUndefined
     global answers
+    # noinspection PyGlobalUndefined
     global tests
     answers = {}
     tests = {}
@@ -20,7 +22,7 @@ def add_questionnaire(results, participant):
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
         Database.addAnswer(results['questionnaire_number'], i, participant, datetime.now(), str(result['answer']))
         i = i + 1
-    log(datetime.now().strftime("%H:%M:%S") + " " +message)
+    log(datetime.now().strftime("%H:%M:%S") + " " + message)
     event = answers[participant][results['questionnaire_number']]
     event.set()
 
