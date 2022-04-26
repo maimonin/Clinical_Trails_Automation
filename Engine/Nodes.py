@@ -1,6 +1,7 @@
 import asyncio
 import threading
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import List
 import Data
 from Data import add_test_form, parse_test_condition
@@ -92,7 +93,7 @@ class Questionnaire(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.addNodePosition(participant.id, self.id)
+        Database.addNodePosition(participant.id, self.id, datetime.now())
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -114,7 +115,7 @@ class Questionnaire(Node):
             Data.add_form(self.number, participant.id)
             for edge in self.edges:
                 edge.attach(participant)
-            Database.deletePosition(participant.id, self.id, "node")
+            Database.releasePosition(participant.id, self.id, "node")
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -133,7 +134,7 @@ class Decision(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.addNodePosition(participant.id, self.id)
+        Database.addNodePosition(participant.id, self.id, datetime.now())
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -159,7 +160,7 @@ class Decision(Node):
                 self.edges[0].attach(participant)
             else:
                 self.edges[1].attach(participant)
-            Database.deletePosition(participant.id, self.id, "node")
+            Database.releasePosition(participant.id, self.id, "node")
 
     async def get_results(self, participant):
         for condition in self.conditions:
@@ -194,7 +195,7 @@ class StringNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.addNodePosition(participant.id, self.id)
+        Database.addNodePosition(participant.id, self.id, datetime.now())
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -215,7 +216,7 @@ class StringNode(Node):
                 await send_notification_by_id(participant.id, {'type': 'notification', 'text': self.text})
             for edge in self.edges:
                 edge.attach(participant)
-                Database.deletePosition(participant.id, self.id, "node")
+                Database.releasePosition(participant.id, self.id, "node")
             for role in self.actors:
                 if role.lower() == "participant":
                     continue
@@ -241,7 +242,7 @@ class TestNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.addNodePosition(participant.id, self.id)
+        Database.addNodePosition(participant.id, self.id, datetime.now())
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -263,7 +264,7 @@ class TestNode(Node):
                 await take_test(participant.id, test, self.in_charge)
             for edge in self.edges:
                 edge.attach(participant)
-            Database.deletePosition(participant.id, self.id, "node")
+            Database.releasePosition(participant.id, self.id, "node")
         await end_test(self, participants2)
 
     def has_actors(self):
@@ -282,7 +283,7 @@ class ComplexNode(Node):
 
     def attach(self, participant: User) -> None:
         self.participants.append(participant)
-        Database.addNodePosition(participant.id, self.id)
+        Database.addNodePosition(participant.id, self.id, datetime.now())
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
@@ -304,7 +305,7 @@ class ComplexNode(Node):
             threads.append(asyncio.create_task(self.flow.exec()))
             for edge in self.edges:
                 edge.attach(participant)
-            Database.deletePosition(participant.id, self.id, "node")
+            Database.releasePosition(participant.id, self.id, "node")
         for t in threads:
             await t
         await end_test(self, participants2)
