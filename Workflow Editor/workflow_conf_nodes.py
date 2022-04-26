@@ -107,13 +107,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             if content is None:
                 self.remove()  # remove node
             else:
-                # for field in content["Node Details"]:
-                #     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
-                #     if field["name"].lower() == "title":
-                #         self.title = field["value"]
-                #     if field["name"].lower() == "color":
-                #         self.grNode.change_background(field["value"].lower())
-                #         self.color = field["value"]
                 self.data["content"]["node_details"]["title"] = content["Node Details"][0]["value"]
                 self.title = content["Node Details"][0]["value"]
                 self.data["content"]["node_details"]["time"] = content["Node Details"][1]["value"].toString()
@@ -397,15 +390,22 @@ class WorkflowNode_Decision(WorkflowNode):
         return [x, y]
 
     def get_tree_build(self):
-        # TODO: connect questionnaries and tests data to condition
-        # nodes_content = []
-        #
-        # for node in self.scene.nodes:
-        #     if node.op_code == OP_NODE_QUESTIONNAIRE:
-        #         nodes_content.append(
-        #             {"node": OP_NODE_QUESTIONNAIRE, "content": {"ID": node.QNum, "questions": node.content}})
-        #     elif node.op_code == OP_NODE_Test:
-        #         nodes_content.append({"node": OP_NODE_Test, "content": node.content})
+        # TODO: connect questionnaries and tests data to condition, also update when deleted
+        nodes_content = []
+
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_QUESTIONNAIRE:
+                new_questions = []
+                for question in node.data["content"]["questions"]:
+                    if question["type"] != "open":
+                        new_questions.append({"type": question["type"], "question": question["text"], "answers": question["options"]})
+                nodes_content.append(
+                    {"node": OP_NODE_QUESTIONNAIRE, "content": {"id": node.QNum, "questions": new_questions}})
+            elif node.op_code == OP_NODE_Test:
+                tests_names = []
+                for test in node.data["content"]["tests"]:
+                    tests_names.append(test["name"])
+                nodes_content.append({"node": OP_NODE_Test, "content": tests_names})
 
         to_send = {
             "Node Details": [
@@ -416,7 +416,7 @@ class WorkflowNode_Decision(WorkflowNode):
                 #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Condition": [
-                {"name": "Conditions", "type": "cond sub tree", "value": self.data["content"]["condition"]},
+                {"name": "Conditions", "type": "cond sub tree", "value": self.data["content"]["condition"], "known": nodes_content},
             ],
             "callback": self.callback_from_window
         }
