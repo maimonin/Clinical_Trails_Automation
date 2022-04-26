@@ -139,9 +139,10 @@ def init_tables():
             );""",
                "create_current_position_table": """CREATE TABLE IF NOT EXISTS "Current_Position" (
             "participant_id"	INTEGER NOT NULL,
-            "position_id"	INTEGER,
-            "type"	TEXT,
-            "start_time"	DATETIME,
+            "position_id"	    INTEGER,
+            "type"	            TEXT,
+            "start_time"	    DATETIME,
+            "active"            TEXT,
             PRIMARY KEY("participant_id","position_id","type"),
             FOREIGN KEY("participant_id") REFERENCES "Participants"("id")
             );""",
@@ -225,6 +226,15 @@ def init_tables():
             FOREIGN KEY("node_id") REFERENCES "Nodes"("id"),
             PRIMARY KEY("title","node_id")
             );""",
+               "create_wait_list_table": """CREATE TABLE IF NOT EXISTS "Wait_List" (
+            "node_id"	        INTEGER NOT NULL,
+            "wait"	            INTEGER NOT NULL,
+            "participant_id"    INTEGER NOT NULL,
+            FOREIGN KEY("node_id") REFERENCES "Nodes"("id"),
+            FOREIGN KEY("wait") REFERENCES "Edges"("id"),
+            FOREIGN KEY("participant_id") REFERENCES "Participants"("id"),
+            PRIMARY KEY("node_id", "wait", "participant_id")
+            );""",
                "create_workflows_table": """CREATE TABLE IF NOT EXISTS "Workflows" (
             "id"	INTEGER NOT NULL,
             "first_node"	INTEGER NOT NULL,
@@ -273,9 +283,9 @@ def addEdge(edge_id, from_id, to_id, min_time, max_time, min_fixed, max_fixed):
 
 
 def addEdgePosition(participant_id, edge_id, start_time):
-    query = """INSERT OR IGNORE INTO Current_Position (participant_id, position_id, type, start_time)
-                VALUES (?, ?, ?, ?)"""
-    ids = (participant_id, edge_id, "edge", start_time)
+    query = """INSERT OR IGNORE INTO Current_Position (participant_id, position_id, type, start_time, active)
+                VALUES (?, ?, ?, ?, ?)"""
+    ids = (participant_id, edge_id, "edge", start_time, "yes")
     change_table(query, ids)
 
 
@@ -315,10 +325,10 @@ def addNode(node, op_code):
     change_table(query, node_data)
 
 
-def addNodePosition(participant_id, node_id):
-    query = """INSERT OR IGNORE INTO Current_Position (participant_id, position_id, type, start_time)
-                VALUES (?, ?, ?, ?)"""
-    ids = (participant_id, node_id, "node", None)
+def addNodePosition(participant_id, node_id, start_time):
+    query = """INSERT OR IGNORE INTO Current_Position (participant_id, position_id, type, start_time, active)
+                VALUES (?, ?, ?, ?, ?)"""
+    ids = (participant_id, node_id, "node", start_time, "yes")
     change_table(query, ids)
 
 
@@ -400,17 +410,17 @@ def addTraitCond(decision_id, title, test, sat_type, gender, min_val, max_val):
     change_table(query, cond_data)
 
 
+def addWaiter(node_id, wait, participant_id):
+    change_table("""INSERT OR IGNORE INTO Wait_List (node_id, wait, participant_id)
+                VALUES (?, ?, ?);""", (node_id, wait, participant_id))
+
+
 def addWorkflow(workflow_id, first):
     query = """INSERT OR IGNORE INTO Workflows (id, first_node)
                 VALUES (?, ?);"""
     data = (workflow_id, first)
     change_table(query, data)
     workflows[workflow_id] = first
-
-
-def deletePosition(participant_id, position_id, position_type):
-    change_table("""DELETE FROM Current_Position WHERE participant_id=? AND position_id=? AND type=?""",
-                 (participant_id, position_id, position_type))
 
 
 def getAnswer(form_id, question_number, participant_id):
@@ -556,6 +566,16 @@ def getUser(user_id):
     return User(user_data[1], user_data[2], user_data[3], user_id)
 
 
+def getWaitList(node_id, participant_id):
+    # visited = [(1)...]
+    visited = extract_many_from_table("""SELECT wait FROM Wait_List WHERE node_id=? AND participant_id=?""",
+                                      (node_id, participant_id))
+    # wait_list = [(1),(2)...]
+    wait_list = extract_many_from_table("""SELECT id FROM Edges WHERE to_id=?""", (node_id,))
+    print(set(wait_list) - set(visited))
+    return set(wait_list) - set(visited)
+
+
 def getWorkflow(workflow_id):
     if workflow_id in workflows:
         return [workflow_id, workflows[workflow_id]]
@@ -564,6 +584,11 @@ def getWorkflow(workflow_id):
     if workflow is not None:
         workflows[workflow_id] = [workflow[1]]
     return workflow
+
+
+def releasePosition(participant_id, position_id, position_type):
+    change_table("""UPDATE current_position SET active = "no" WHERE participant_id=? AND position_id=? AND type=?""",
+                 (participant_id, position_id, position_type))
 
 
 def releaseStaff(user_id):

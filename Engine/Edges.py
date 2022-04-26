@@ -69,7 +69,7 @@ class RelativeTimeEdge(Edge):
                     print("error node is late")
                 else:
                     self.next_node.attach(participant)
-                Database.deletePosition(participant.id, self.id, "edge")
+                Database.releasePosition(participant.id, self.id, "edge")
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -108,7 +108,7 @@ class FixedTimeEdge(Edge):
             await sleep((self.min_time - x).total_seconds())
         for participant in participants2:
             self.next_node.attach(participant)
-            Database.deletePosition(participant.id, self.id, "edge")
+            Database.releasePosition(participant.id, self.id, "edge")
 
     def has_actors(self):
         return len(self.participants) != 0
@@ -139,7 +139,7 @@ class NormalEdge(Edge):
         self.lock.release()
         for participant in participants2:
             self.next_node.attach(participant)
-            Database.deletePosition(participant.id, self.id, "edge")
+            Database.releasePosition(participant.id, self.id, "edge")
 
     def has_actors(self):
         return len(self.participants) != 0

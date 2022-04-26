@@ -1,7 +1,2 @@
-created workflow
-sending questionnaire
-13:33:24adding questionnaire of participant with id 1
-participant 1 answers: 
-	aaaaa: [1]
-	bbbbb: [1]
-	ccccc: hi
+16:57:11 created workflow
+16:57:11 created workflow
