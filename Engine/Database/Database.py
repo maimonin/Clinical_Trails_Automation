@@ -593,3 +593,7 @@ def releasePosition(participant_id, position_id, position_type):
 
 def releaseStaff(user_id):
     change_table("""UPDATE Staff SET available = "yes" WHERE id=?""", (user_id,))
+
+
+def releaseWaiter(node_id, participant_id):
+    change_table("""DELETE FROM Wait_List WHERE node_id=? AND participant_id=?""", (node_id, participant_id))
