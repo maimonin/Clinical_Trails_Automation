@@ -9,7 +9,8 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import Stack from '@mui/material/Stack';
 import {questionnaire_1} from '../../Mock/MockQuestions'
 import Button from '@mui/material/Button';
-
+import { isValidAnswersSet } from "../../Utils/Validations";
+export const empty_singlechoice_answer = "No Answer"
 // props :{"questions":[{
         //     "text": "Gender",
         //     "type": "onechoice",
@@ -38,44 +39,39 @@ export default function Questionnaire(props){
 
     const [answers,setAnswers] = useState([])
 
-
     useEffect(()=>{
       setAnswers(Array.apply(null, Array(props["questionnaire"]["questions"].length)).map(function (x, i) { return ""; }));
       // props["questionnaire"]["questions"].map((question)=>  question_init(question))} , [])
     },[])
 
-    // useEffect(()=>{console.log(JSON.stringify(props["questionnaire"]))}, [])
-
     // const 
     const handle_send = () => // we will get connection details in props so we can send it
     {
-      //TODO: check all single choice answers aren't empty
-      console.log(JSON.stringify(answers))
+      if(isValidAnswersSet(answers))
+      {
     var questionnaire_answers =  {
           "type": "add answers",
          "questionnaire_number": props.questionnaire["questionnaire_number"], 
          "answers":props["questionnaire"]["questions"].map((question,index) =>{ return ({"question":question,"answer":answers[index]})})
       }
       props.send(questionnaire_answers)
-
+    }
       
     }
       
 
     const question_init = (question) => {
-      const question_text = question["text"];
-      const options = question["options"];
       const type = question["type"];
     
       if (type ==="one choice"){
         var newArr =[...answers]
-        newArr.push([])
+        newArr.push(["No Answer"])
         setAnswers(prevState => ([...prevState,"one"]))
         // // setAnswers(prevState => ({...prevState, [question_text]:e}))
 
         
       }
-      else if (type ==="multichoice"){
+      else if (type ==="multi"){
         var newArr =[...answers]
         newArr.push([])
         setAnswers(newArr)}
@@ -92,11 +88,11 @@ export default function Questionnaire(props){
       const key = question["id"];
       const handleChange = e => {
         let newArr = [...answers]
-        if(type === "open")
-        newArr[index] = e
+      
+        if(type === "one choice")
+          newArr[index] =[e]
         else
-        newArr[index] =[e]
-
+          newArr[index] = e
         // // setAnswers(prevState => ({...prevState, [question_text]:e}))
         setAnswers(newArr)
 
@@ -105,7 +101,7 @@ export default function Questionnaire(props){
     
       if (type ==="one choice"){
         return (<SingleChoice question ={question_text} options = {options} changedAnswer={changedAnswer} key={key}/>)}
-      else if (type ==="multichoice")
+      else if (type ==="multi")
         return (<MultiChoice question ={question_text} options = {options} changedAnswer={changedAnswer} key={key}/>)
       if (type ==="open")
         return (<Open question ={question_text} changedAnswer={changedAnswer} key={key}/>)
@@ -124,7 +120,7 @@ export default function Questionnaire(props){
 
 export function SingleChoice(props){ // props: {changedAnswer : (answer) => setAnswers(answers => ({...answers, "question": answer}))}
 
-    const [answer,setAnswer] = useState(0)
+    const [answer,setAnswer] = useState(empty_singlechoice_answer)
 
     useEffect(()=>props.changedAnswer(answer),[answer])
 
@@ -142,7 +138,9 @@ export function SingleChoice(props){ // props: {changedAnswer : (answer) => setA
           label={props.question}
           onChange={handleChange}
         >
-         
+        <MenuItem value={empty_singlechoice_answer} key={-1}>
+          <em>None</em>
+        </MenuItem>
           {props.options.map((option,key)=><MenuItem value={key} key = {key}>{option}</MenuItem>)}
         </Select>
       </FormControl>
@@ -153,18 +151,16 @@ export function MultiChoice(props){ // props: {changedAnswer : (answer) => setAn
 
   const [answer,setAnswer] = useState([])
 
-  useEffect(()=>props.changedAnswer(answer),[answer])
+  useEffect(()=>{
+    props.changedAnswer(answer)
+  },[answer])
 
     const handleChange = (event) => {
       
       const {
         target: { value },
       } = event;
-      setAnswer(
-        // On autofill we get a stringified value.
-        typeof value === 'string' ? value.split(',') : value,
-      );
-      setAnswer(value)
+      setAnswer(value);
     };
   return (
       <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -172,15 +168,15 @@ export function MultiChoice(props){ // props: {changedAnswer : (answer) => setAn
       <Select
         labelId="demo-simple-select-helper-label"
         id="demo-simple-select-helper"
-        value={answer}
+        value={typeof answer === 'string' ? answer.split(',') : answer}
         multiple
         label={props.question}
         onChange={handleChange}
       >
-        <MenuItem value="" key={0}>
+        <MenuItem value="None" key={0}>
           <em>None</em>
         </MenuItem>
-        {props.options.map((option,key)=><MenuItem value={option} key={key}>{option}</MenuItem>)}
+        {props.options.map((option,key)=><MenuItem value={key} key={key}>{option}</MenuItem>)}
       </Select>
     </FormControl>
   )

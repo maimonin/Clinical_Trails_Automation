@@ -20,7 +20,7 @@ export const flow_1 = {
                     "title": "informed consent"
                 },
                 "questions": [
-                    {
+                   {
                         "text": "If you join, you will have injections, blood draws, saliva samples, and nasal swabs of your nose.",
                         "options": [
                             "Agree",
@@ -69,7 +69,7 @@ export const flow_1 = {
                         "questionnaireNumber": 1,
                         "questionNumber": 1,
                         "acceptedAnswers": [
-                            1
+                            0
                         ]
                     },
                     {
@@ -78,7 +78,7 @@ export const flow_1 = {
                         "questionnaireNumber": 1,
                         "questionNumber": 2,
                         "acceptedAnswers": [
-                            1
+                            0
                         ]
                     }
                 ]
@@ -360,12 +360,12 @@ export const flow_1 = {
                 "min": {
                     "hours":0,
                     "minutes":0,
-                    "seconds": 10
+                    "seconds": 5
                 },
                 "max": {
                     "hours":0,
                     "minutes":0,
-                    "seconds": 10
+                    "seconds": 5
                  }
             },
             "start": 2846471721984,

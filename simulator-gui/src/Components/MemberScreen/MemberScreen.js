@@ -1,24 +1,11 @@
 import React, {useState, useEffect,useRef} from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import PersonIcon from '@mui/icons-material/Person';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Questionnaire from '../Question/Question';
-
 import Pagination from '@mui/material/Pagination';
-
-
 
   export default function MemberScreen(props) { 
     
     const [currentComponent,setCurrentComponent] = useState(0)
-    const [items,setItems] = useState([]);
     const [numOfItems,setNumOfItems] = useState (0)
 
 
@@ -39,7 +26,6 @@ import Pagination from '@mui/material/Pagination';
     
     
     const getComponent = (itemToAdd) => {
-      // return (<TestNotification test={1}/>)
       switch(itemToAdd["type"]) {
         case "questionnaire":
 
@@ -51,28 +37,13 @@ import Pagination from '@mui/material/Pagination';
         default:
           console.log("SubWindow::getComponent::default block ~ ")
 
-          // code block
       } 
-      // <TestQuestionnaire/>  //change to switch case, and parse json accordingly
 
     }
     const handlePaginationChange = (event,value) => {
       setCurrentComponent(value)
     }
-    const handleIncomingNotification = (text) =>
-    {
-      toast(text, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        containerId: props.id  
-
-        });
-    }
+  
     const styles = {
       position: 'relative',
     

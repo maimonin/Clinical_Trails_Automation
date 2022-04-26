@@ -9,6 +9,7 @@ import {isValidUserData} from '../../Utils/Validations'
 const ariaLabel = { 'aria-label': 'description' };
 function RegisterScreen(props){
     const [userDetails,setUserDetails] = useState(blankUser)
+    
     const handle_send = () => {
         if(isValidUserData(userDetails)){
           props.sendRegister(userDetails)
