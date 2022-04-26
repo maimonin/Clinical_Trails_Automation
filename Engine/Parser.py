@@ -145,6 +145,7 @@ def add_times(time_node, other_node):
 
 
 async def register_user(user_dict):
+    log(datetime.datetime.now().strftime("%H:%M:%S") + " " + user_dict['name'] + " registered")
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
         workflow = Database.getWorkflow(user_dict['workflow'])
@@ -187,7 +188,7 @@ def new_workflow(data_dict):
     for node in data_dict['nodes']:
         if node['op_code'] == OP_NODE_START:
             nodes[node['id']] = parse_start_finish(node)
-            first_node = nodes[node['id']]
+            first_node = node['id']
         elif node['op_code'] == OP_NODE_QUESTIONNAIRE:
             nodes[node['id']] = parse_Questionnaire(node)
         elif node['op_code'] == OP_NODE_DATA_ENTRY:
@@ -240,4 +241,3 @@ def parser_init():
     global print_lock
     workflows = {}
     print_lock = threading.Lock()
-

@@ -22,6 +22,7 @@ complexNodes = {}
 class Node(ABC):
     def __init__(self):
         self.id = None
+
     @abstractmethod
     def attach(self, observer: User) -> None:
         pass
@@ -41,11 +42,7 @@ class Node(ABC):
 
 def buildNode(dal_node):
     if dal_node.op_code == 0 or dal_node.op_code == 6:
-        if dal_node.id in questionnaires:
-            return questionnaires[dal_node.id]
-        questionnaires[dal_node.id] = Questionnaire(dal_node.id, dal_node.title, formToJSON(dal_node.form),
-                                                    dal_node.form_id)
-        return questionnaires[dal_node.id]
+        return StartFinish(dal_node.id, dal_node.title)
     elif dal_node.op_code == 1:
         if dal_node.id in questionnaires:
             return questionnaires[dal_node.id]
@@ -78,7 +75,8 @@ def buildNode(dal_node):
 async def end_test(node, participants):
     if len(node.edges) == 0:
         for participant in participants:
-            await send_notification_by_id(participant.id, {'type': 'terminate'})
+            if len(Database.getAllActives(participant.id)) == 1:
+                await send_notification_by_id(participant.id, {'type': 'terminate'})
 
 
 def set_time(node, min_time, max_time):
@@ -266,7 +264,7 @@ class StringNode(Node):
                 r = get_role(role)
                 if r is not None:
                     await send_notification_by_id(r.id, {'type': 'notification', 'text': self.text})
-        # end_test(self, participants2)
+            # await end_test(self, participants2)
 
     def has_actors(self):
         return len(self.participants) != 0

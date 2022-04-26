@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 from Database.DALEdges import buildDALEdge
@@ -15,10 +16,25 @@ complexNodes = {}
 forms = {}
 
 
+def set_name(name):
+    # noinspection PyGlobalUndefined
+    global db_name
+    db_name = name
+
+
+def delete_db(name):
+    if os.path.exists(name):
+        os.remove(name)
+    else:
+        print(name)
+
+
 def create_connection():
+    # noinspection PyGlobalUndefined
+    global db_name
     conn = None
     try:
-        conn = sqlite3.connect('Database/data.db')
+        conn = sqlite3.connect(db_name)
         return conn
     except sqlite3.Error as e:
         print(e)
@@ -421,6 +437,11 @@ def addWorkflow(workflow_id, first):
     data = (workflow_id, first)
     change_table(query, data)
     workflows[workflow_id] = first
+
+
+def getAllActives(participant_id):
+    return extract_many_from_table("""SELECT position_id FROM Current_Position 
+                                        WHERE participant_id=? AND active ="yes" """, (participant_id,))
 
 
 def getAnswer(form_id, question_number, participant_id):

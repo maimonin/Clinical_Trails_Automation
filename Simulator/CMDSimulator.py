@@ -9,8 +9,6 @@ users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
          {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
          {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
          {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
-# {"name": "participant1", "role": "participant", "workflow": 0, "sex": "male", "age": 30},
-# {"name": "participant2", "role": "participant", "workflow": 0, "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -102,6 +100,7 @@ async def actor_simulation(user, s):
                 await s.send(json.dumps(
                     {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
+                print('terminated')
                 await s.close()
                 break
 
