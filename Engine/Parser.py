@@ -15,12 +15,13 @@ from Logger import log
 import user_lists
 from Test import Test
 
+OP_NODE_START = 0
 OP_NODE_QUESTIONNAIRE = 1
 OP_NODE_DATA_ENTRY = 2
 OP_NODE_DECISION = 3
 OP_NODE_STRING = 4
-OP_NODE_TIME = 5
-OP_NODE_COMPLEX = 6
+OP_NODE_COMPLEX = 5
+OP_NODE_FINISH = 6
 
 
 def get_data(s):
@@ -32,6 +33,12 @@ def get_data(s):
         curr = s.recv(1)
         curr = curr.decode()
     return data
+
+
+def parse_start_finish(node_dict):
+    node = Nodes.StartFinish(node_dict['id'], node_dict['title'])
+    Database.addNode(node, node_dict['op_code'])
+    return node
 
 
 def parse_Questionnaire(node_dict):
@@ -176,8 +183,12 @@ def new_workflow(data_dict):
     nodes = {}
     outputs = {}
     inputs = {}
+    first_node = None
     for node in data_dict['nodes']:
-        if node['op_code'] == OP_NODE_QUESTIONNAIRE:
+        if node['op_code'] == OP_NODE_START:
+            nodes[node['id']] = parse_start_finish(node)
+            first_node = nodes[node['id']]
+        elif node['op_code'] == OP_NODE_QUESTIONNAIRE:
             nodes[node['id']] = parse_Questionnaire(node)
         elif node['op_code'] == OP_NODE_DATA_ENTRY:
             nodes[node['id']] = parse_Test(node)
@@ -187,11 +198,12 @@ def new_workflow(data_dict):
             nodes[node['id']] = parse_String_Node(node)
         elif node['op_code'] == OP_NODE_COMPLEX:
             nodes[node['id']] = parse_Complex_Node(node)
+        elif node['op_code'] == OP_NODE_FINISH:
+            nodes[node['id']] = parse_start_finish(node)
         for out in node['outputs']:
             outputs[out['id']] = node['id']
         for inp in node['inputs']:
             inputs[inp['id']] = node['id']
-    first_node = data_dict['nodes'][0]['id']
     for edge in data_dict['edges']:
         first_id = outputs[edge['start']]
         second_id = inputs[edge['end']]
