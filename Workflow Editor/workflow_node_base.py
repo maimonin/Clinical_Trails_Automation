@@ -7,6 +7,7 @@ from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
+from workflow_conf import OP_NODE_START, OP_NODE_FINISH, OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -565,7 +566,7 @@ class WorkflowNode(Node):
             self.data = data['content']
             self.op_code = data['op_code']
             # TODO : add to each node his specific attribues. e.g. color \ text
-            if self.op_code in [1,2,4]:
+            if self.op_code in [OP_NODE_QUESTIONNAIRE,OP_NODE_Test,OP_NODE_STRING]:
                 self.color = data['content']['content']['node_details']['color']
             self.attributes_dock_callback(self.get_tree_build())
 

@@ -6,6 +6,7 @@ from nodeeditor.node_graphics_scene import QDMGraphicsScene
 from nodeeditor.node_scene import Scene, InvalidFile
 from nodeeditor.utils import dumpException
 
+from workflow_conf import OP_NODE_START, OP_NODE_FINISH
 from workflow_edge import WorkflowEdge
 from workflow_graphics_scene import WFGraphicsScene
 
@@ -173,7 +174,7 @@ class WorkflowScene(Scene):
         while all_nodes != []:
             node = all_nodes.pop()
             # patch for deleting init start and finish nodes
-            if node.op_code == 7 or  node.op_code == 8:
+            if node.op_code == OP_NODE_START or  node.op_code == OP_NODE_FINISH:
                 node.remove(True)
             else:
                 node.remove()
