@@ -7,7 +7,6 @@ from workflow_graphics_edge import WFGraphicsEdgeText, WFGraphicsRegularEdgeWith
 
 NORMAL = 0
 RELATIVE = 1
-FIXED = 2
 
 
 class WorkflowEdge(Edge):
@@ -17,13 +16,14 @@ class WorkflowEdge(Edge):
                  edge_type=EDGE_TYPE_DIRECT, text="No Title", attributes_dock_callback=None):
         self._text = text
         super().__init__(scene, start_socket, end_socket, edge_type)
+        # data for engine
         self.data = {
             "content": {
                 "edge_details": {
                     "title": "",
                     "type": NORMAL,
                     "min": "",
-                    "max": ""
+                    "max": "",
                 },
                 "callback": self.callback_from_dock,
 
@@ -70,6 +70,8 @@ class WorkflowEdge(Edge):
             input_max = content["Edge Details"][1]["items"][1]["value"]
             self.update_label(input_title, input_min, input_max)
 
+            self.edge_type = NORMAL if (input_min == "" or input_max == "") else RELATIVE
+
             self.data["content"]["edge_details"]["title"] = input_title
             self.data["content"]["edge_details"]["min"] = input_min
             self.data["content"]["edge_details"]["max"] = input_max
@@ -81,15 +83,12 @@ class WorkflowEdge(Edge):
             self.text = "No Title"
             if input_min != "" and input_max != "":
                 self.text += " : " + input_min + " - " + input_max
-                # self.edge_type = 1
         else:
             self.text = input_title
             if input_min != "" and input_max != "":
                 self.text += " : " + input_min + " - " + input_max
-                # self.edge_type = 1
 
     def get_tree_build(self):
-        # TODO: add edge timing types (None, Relative (implemented), Fixed)
         to_send = {
             "Edge Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["edge_details"]["title"]},
@@ -106,7 +105,6 @@ class WorkflowEdge(Edge):
 
     def serialize(self) -> OrderedDict:
         # FIXME: save what the engine needs.(also fix open)
-        # FIXME: edge type for engine(relative fixed etc)
         return OrderedDict([
             ('id', self.id),
             ('type', self.edge_type),
