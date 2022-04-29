@@ -301,7 +301,7 @@ class WorkflowNode_Decision(WorkflowNode):
                     if field["name"].lower() == "time":
                         self.data["content"]["node_details"][field["name"].lower()] = field["value"].toString()
                 self.data["content"]["condition"] = []
-                # FIXME: change "accepted answers" implementation
+                # TODO: check implementation of save of the content, (maybe delete "id" key?)
                 for condition in content["Condition"][0]["value"]:
                     self.data["content"]["condition"].append(condition)
 
@@ -391,21 +391,7 @@ class WorkflowNode_Decision(WorkflowNode):
 
     def get_tree_build(self):
         # TODO: connect questionnaries and tests data to condition, also update when deleted
-        nodes_content = []
-
-        for node in self.scene.nodes:
-            if node.op_code == OP_NODE_QUESTIONNAIRE:
-                new_questions = []
-                for question in node.data["content"]["questions"]:
-                    if question["type"] != "open":
-                        new_questions.append({"type": question["type"], "question": question["text"], "answers": question["options"]})
-                nodes_content.append(
-                    {"node": OP_NODE_QUESTIONNAIRE, "content": {"id": node.QNum, "questions": new_questions}})
-            elif node.op_code == OP_NODE_Test:
-                tests_names = []
-                for test in node.data["content"]["tests"]:
-                    tests_names.append(test["name"])
-                nodes_content.append({"node": OP_NODE_Test, "content": tests_names})
+        nodes_content = self.get_nodes_from_scene()
 
         to_send = {
             "Node Details": [
@@ -422,6 +408,25 @@ class WorkflowNode_Decision(WorkflowNode):
         }
 
         return to_send
+
+    def get_nodes_from_scene(self):
+        nodes_content = []
+
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_QUESTIONNAIRE:
+                new_questions = []
+                for question in node.data["content"]["questions"]:
+                    if question["type"] != "open":
+                        new_questions.append({"type": question["type"], "question": question["text"], "answers": question["options"]})
+                nodes_content.append(
+                    {"node": OP_NODE_QUESTIONNAIRE, "content": {"id": node.QNum, "questions": new_questions}})
+            elif node.op_code == OP_NODE_Test:
+                tests_names = []
+                for test in node.data["content"]["tests"]:
+                    tests_names.append(test["name"])
+                nodes_content.append({"node": OP_NODE_Test, "content": tests_names})
+
+        return nodes_content
 
 
 @register_node(OP_NODE_STRING)

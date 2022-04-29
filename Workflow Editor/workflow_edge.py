@@ -104,7 +104,7 @@ class WorkflowEdge(Edge):
         return to_send
 
     def serialize(self) -> OrderedDict:
-        # FIXME: save what the engine needs.(also fix open)
+        # FIXME: save what the engine needs from edge.(also fix open)
         return OrderedDict([
             ('id', self.id),
             ('type', self.edge_type),
