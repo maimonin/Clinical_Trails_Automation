@@ -715,10 +715,11 @@ class ConditionTree:
         self.dock.setItemWidget(id_item, 0, id_label)
 
         id_widget = QComboBox()
+        id_widget.addItem("")
         for questionnaire in self.questionniares:
             id_widget.addItem(questionnaire["id"])
         id_widget.activated.connect(
-            lambda index: self.combo_questionnaire_changed(self.questionniares[index], data, parent))
+            lambda index: self.combo_questionnaire_changed(self.questionniares[index-1], data, parent))
         self.dock.setItemWidget(id_item, 1, id_widget)
 
         # id_widget = QLineEdit()
@@ -870,20 +871,20 @@ class ConditionTree:
             self.call_dock()
 
     def combo_questionnaire_changed(self, chosen, data, parent):
-        # TODO implement
         data["questionnaireNumber"] = chosen["id"]
 
         # combobox for choosing a question
         question_item = QtWidgets.QTreeWidgetItem(parent)
         question_item.setText(0, "Question:")
         question_widget = QComboBox()
+        question_widget.addItem("")
         for question in chosen["questions"]:
             question_widget.addItem(question["question"])
 
-        question_widget.activated.connect(lambda index: self.selector(chosen["questions"][index], data, parent))
+        question_widget.activated.connect(lambda index: self.question_type_selector(chosen["questions"][index - 1], data, parent))
         self.dock.setItemWidget(question_item, 1, question_widget)
 
-    def selector(self, chosen, data, parent):
+    def question_type_selector(self, chosen, data, parent):
         if chosen["type"] == "multi":
             self.build_multi_questions(chosen, data, parent)
         elif chosen["type"] == "one choice":
