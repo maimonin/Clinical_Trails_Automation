@@ -1,0 +1,6 @@
+17:05:41 created workflow
+17:05:41 nurse registered
+17:05:41 investigator registered
+17:05:41 lab registered
+17:05:41 doctor registered
+17:05:48 participant 20 registered

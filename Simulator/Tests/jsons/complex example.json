@@ -1,0 +1,55 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 2453429713072,
+            "title": "Sub Workflow",
+            "inputs": [
+                {
+                    "id": 2453429744976
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2453429745024
+                }
+            ],
+            "content": {
+                "type": "complex",
+                "flow": {
+                    "id": 2453429745072,
+                    "nodes": [
+                        {
+                            "id": 2453429801216,
+                            "title": "Simple String",
+                            "inputs": [
+                                {
+                                    "id": 2453429801504
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 2453429801552
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "actors": [
+                                        "Doctor",
+                                        "Nurse"
+                                    ],
+                                    "title": ""
+                                },
+                                "text": "hi"
+                            },
+                            "op_code": 4
+                        }
+                    ],
+                    "edges": []
+                }
+            },
+            "op_code": 5
+        }
+    ],
+    "edges": []
+}
