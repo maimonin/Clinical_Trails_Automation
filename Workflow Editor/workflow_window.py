@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_window import NodeEditorWindow
 from nodeeditor.utils import dumpException
+
+from workflow_dynamic_dock import QDynamicDock
 from workflow_sub_window import WorkflowSubWindow
 from workflow_drag_listbox import QDMDragListbox
 from nodeeditor.utils import pp
@@ -40,10 +42,18 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.updateMenus()
 
         self.createNodesDock()
+        self.createAttributesDock()
 
         self.readSettings()
 
         self.setWindowTitle("Workflow Editor")
+        self.center()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -95,7 +105,8 @@ class WorkflowEditorWindow(NodeEditorWindow):
             dumpException(e)
 
     def createMdiChild(self, child_widget=None):
-        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow()
+        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow(self.attributes.change_data)
+        # gives callback for injecting data to attributes dock
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         # nodeeditor.addCloseEventListener(self.onSubWndClose)
@@ -138,7 +149,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
                         self.mdiArea.setActiveSubWindow(existing)
                     else:
                         # we need to create new subWindow and open the file
-                        nodeeditor = WorkflowSubWindow()
+                        nodeeditor = WorkflowSubWindow(self.attributes.change_data)
                         if nodeeditor.fileLoad(fname):
                             self.statusBar().showMessage("File %s loaded" % fname, 5000)
                             nodeeditor.setTitle()
@@ -158,14 +169,43 @@ class WorkflowEditorWindow(NodeEditorWindow):
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
+    # left dock
     def createNodesDock(self):
         self.nodesListWidget = QDMDragListbox()
 
         self.items = QDockWidget("Nodes")
         self.items.setWidget(self.nodesListWidget)
         self.items.setFloating(False)
+        # change the title background color of the dock
+        # self.items.setStyleSheet("""
+        #         QDockWidget::title
+        #        {
+        #        background : #f1c40f;
+        #        }
+        # """)
 
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
+
+    # right dock
+    def createAttributesDock(self):
+
+        self.attributes = QDynamicDock()
+        self.attributes.setFloating(True)
+        self.attributes.setMinimumWidth(400)
+        # self.attributes.setMinimumWidth(400)
+        self.attributes.setMaximumWidth(400)
+        self.attributes.setMaximumHeight(1000)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.attributes)
+        #
+        # self.attributes2 = QDynamicDock()
+        # self.attributes2.setFloating(True)
+        # self.attributes2.setMinimumWidth(400)
+        # # self.attributes.setMinimumWidth(400)
+        # self.attributes2.setMaximumWidth(400)
+        # self.attributes2.setMaximumHeight(500)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.attributes2)
+
+        # self.attributes.set_child(self.attributes2.change_data)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

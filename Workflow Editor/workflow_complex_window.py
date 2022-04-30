@@ -22,17 +22,11 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
             self.load_data()
 
     def initUI(self):
-
         super().initUI()
 
-        # self.setWindowTitle("SubFlow")
-        # subwnd = self.createMdiChild()
-        # subwnd.show()
-        # if self.data is not None:
-        #     self.load_data()
-
+    # create grid(middle window) section
     def createMdiChild(self, child_widget=None):
-        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow()
+        nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow(self.attributes.change_data)
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
         # nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
         # nodeeditor.addCloseEventListener(self.onSubWndClose)
@@ -50,7 +44,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         if self.getCurrentNodeEditorWidget() is None:
             try:
                 if self.data is not None:
-                    nodeeditor = WorkflowSubWindow()
+                    nodeeditor = WorkflowSubWindow(self.attributes.change_data)        # grid window
                     nodeeditor.data_load(self.data, name=self.name)
                     subwnd = self.createMdiChild(nodeeditor)
                     subwnd.show()
@@ -129,14 +123,14 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
-    def createNodesDock(self):
-        self.nodesListWidget = QDMDragListbox()
-
-        self.items = QDockWidget("Nodes")
-        self.items.setWidget(self.nodesListWidget)
-        self.items.setFloating(False)
-
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items)
+    # def createNodesDock(self):
+    #     self.nodesListWidget = QDMDragListbox()
+    #
+    #     self.items = QDockWidget("Nodes")
+    #     self.items.setWidget(self.nodesListWidget)
+    #     self.items.setFloating(False)
+    #
+    #     self.addDockWidget(Qt.RightDockWidgetArea, self.items)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()
