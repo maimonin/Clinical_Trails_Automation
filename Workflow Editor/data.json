@@ -22,8 +22,8 @@
                     "id": 2316219216272,
                     "index": 0,
                     "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
+                    "position": 5,
+                    "socket_type": 2
                 }
             ],
             "content": {
@@ -47,11 +47,9 @@
                     "id": 2316219256064,
                     "index": 0,
                     "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
-                }
-            ],
-            "outputs": [
+                    "position": 2,
+                    "socket_type": "F"
+                },
                 {
                     "id": 2316219256112,
                     "index": 0,
@@ -81,7 +79,7 @@
                     "id": 2316219313120,
                     "index": 0,
                     "multi_edges": true,
-                    "position": 3,
+                    "position": 2,
                     "socket_type": 1
                 }
             ],
@@ -90,7 +88,7 @@
                     "id": 2316219313168,
                     "index": 0,
                     "multi_edges": true,
-                    "position": 4,
+                    "position": 5,
                     "socket_type": 1
                 }
             ],
@@ -103,7 +101,7 @@
                 },
                 "text": "world2"
             },
-            "op_code": 4
+            "op_code": 1
         }
     ],
     "edges": [
