@@ -1,3 +1,5 @@
+import React from "react";
+import { Button,Stack } from "@mui/material";
 
 
 export default function TestNotification(props){
@@ -17,13 +19,7 @@ export default function TestNotification(props){
         
                     </Stack>
         
-                    <Button variant="contained" onClick={handleClick}>Submit</Button>
+                    <Button variant="contained" onClick={props.dimiss}>Done</Button>
             </div>)
 }
 
-export default function MockTestNotification(props){
-
-
-
-    return (<div></div>)
-}

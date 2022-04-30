@@ -373,3 +373,146 @@ export const flow_1 = {
         }
     ]
 }
+export const flow_2 ={
+    "type": "add workflow",
+        "id": 2111561603920,
+        "nodes": [
+            {
+                "id": 1892803023680,
+                "title": "Simple String",
+                "inputs": [
+                    {
+                        "id": 1892803055520
+                    }
+                ],
+                "outputs": [
+                    {
+                        "id": 1892803055568
+                    }
+                ],
+                "content": {
+                    "node_details": {
+                        "actors": [
+                            "Doctor"
+                        ],
+                        "title": "hello"
+                    },
+                    "text": "hello"
+                },
+                "op_code": 4
+            },
+            {
+                "id": 1892803102752,
+                "title": "New Start Node",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "id": 1892803103088
+                    }
+                ],
+                "op_code": 0
+            },
+            {
+                "id": 1892803134944,
+                "title": "Simple String",
+                "inputs": [
+                    {
+                        "id": 1892803135232
+                    }
+                ],
+                "outputs": [
+                    {
+                        "id": 1892803135280
+                    }
+                ],
+                "content": {
+                    "node_details": {
+                        "actors": [
+                            "Participant"
+                        ],
+                        "title": "world"
+                    },
+                    "text": "world"
+                },
+                "op_code": 4
+            },
+            {
+                "id": 1892803136192,
+                "title": "Simple String",
+                "inputs": [
+                    {
+                        "id": 1892803136480
+                    }
+                ],
+                "outputs": [
+                    {
+                        "id": 1892803136528
+                    }
+                ],
+                "content": {
+                    "node_details": {
+                        "actors": [
+                            "Participant"
+                        ],
+                        "title": "world2"
+                    },
+                    "text": "world2"
+                },
+                "op_code": 4
+            },
+            {
+                "id": 1892817027280,
+                "title": "New Finish Node",
+                "inputs": [
+                    {
+                        "id": 1892817027520
+                    }
+                ],
+                "outputs": [],
+                "op_code": 6
+            },
+            {
+                "id": 1892817030064,
+                "title": "New Finish Node",
+                "inputs": [
+                    {
+                        "id": 1892817030304
+                    }
+                ],
+                "outputs": [],
+                "op_code": 6
+            }
+        ],
+        "edges": [
+            {
+                "id": 1892803102992,
+                "type": 0,
+                "start": 1892803103088,
+                "end": 1892803055520
+            },
+            {
+                "id": 1892803135472,
+                "type": 0,
+                "start": 1892803055568,
+                "end": 1892803135232
+            },
+            {
+                "id": 1892803136624,
+                "type": 0,
+                "start": 1892803055568,
+                "end": 1892803136480
+            },
+            {
+                "id": 1892817027760,
+                "type": 0,
+                "start": 1892803136528,
+                "end": 1892817027520
+            },
+            {
+                "id": 1892817028480,
+                "type": 0,
+                "start": 1892803135280,
+                "end": 1892817030304
+            }
+        ]
+    }

@@ -14,6 +14,8 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import RegisterScreen from '../RegisterScreen/RegisterScreen';
 import Questionnaire from '../Question/Question';
 import UserNotification from '../UserNotification/UserNotification';
+import TestNotification from '../TestNotification/TestNotification';
+import TestDataEntry from '../TestDataEntry/TestDataEntry';
 export const blankUser = {"name": "", "role": "",
 "sex": "", "age": -1,"id": -1};
 
@@ -98,6 +100,10 @@ export default function UserWindow(props) {
             return (<Questionnaire questionnaire = {itemToAdd} send ={sendData}/>)
             case "notification":
             return (<UserNotification notification = {itemToAdd["text"]} dismiss = {dismiss_current}/>)
+            case "test":
+              return (<TestNotification test_notification = {itemToAdd} dismiss = {dismiss_current}/>)
+            case "test data entry":
+              return (<TestDataEntry test_data_entry = {itemToAdd} send ={sendData}/>)
           default:
             console.log("User::getComponent::default block ~ "  +JSON.stringify(itemToAdd))
             // code block

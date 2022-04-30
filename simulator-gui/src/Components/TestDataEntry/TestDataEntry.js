@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react"
-import {test_data_entry_1} from "../../Mock/MockTests"
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 export default function TestEntryData(props){
 
@@ -14,10 +12,11 @@ export default function TestEntryData(props){
     // const client = new W3CWebSocket('ws://127.0.0.1:7890');
 
     const handleClick = ()=>{
-        // console.log(JSON.stringify(client))
-    //    console.log({"type":"add results","id": patient, "test":test_data.name , "result":answer})
-
-        // props.send(answers)
+    props.send({
+        "type":"add results",
+        "test":test_data["name"],
+        "id":patient,
+        "result":answer})
     }
     const onChange = (e)=>{
         setAnswer(e.target.value)
@@ -39,7 +38,3 @@ export default function TestEntryData(props){
     </div>)
 }
 
-export function MockTestDataEntry(props){
-
-    return (<TestEntryData test_data_entry={test_data_entry_1}/>)
-}
