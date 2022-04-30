@@ -1,0 +1,62 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 2111599926624,
+            "title": "Questionnaire",
+            "pos_x": 95.0,
+            "pos_y": -161.0,
+            "inputs": [
+                {
+                    "id": 2111599950336,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 3,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2111599950384,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 4,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "0",
+                    "actor in charge": "Nurse",
+                    "time": "0"
+                },
+                "questions": [
+                    {
+                        "text": "aaaaa",
+                        "options": [
+                            "1",
+                            "2"
+                        ],
+                        "type": "multi"
+                    },
+                    {
+                        "text": "bbbbb",
+                        "options": [
+                            "1",
+                            "2"
+                        ],
+                        "type": "one choice"
+                    },
+                    {
+                        "text": "ccccc",
+                        "type": "open"
+                    }
+                ],
+                "questionnaire_number": 1
+            },
+            "op_code": 1
+        }
+    ],
+    "edges": []
+}

@@ -1,0 +1,22 @@
+{
+    "nurse": {
+
+    },
+    "investigator": {
+
+    },
+    "lab": {
+
+    },
+    "doctor": {
+
+    },
+    "participant1": [
+        {
+            "aaaaa": [0],
+            "bbbbb": [0],
+            "ccccc": "hi"
+        }
+
+    ]
+}
