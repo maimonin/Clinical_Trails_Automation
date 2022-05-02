@@ -641,10 +641,11 @@ class ConditionTree:
         condition_item.setText(0, "Test:")
         condition_widget = QComboBox()
         options = self.tests
+        condition_widget.addItem("")
         for opt in options:
-            condition_widget.addItem(opt[0])
+            condition_widget.addItem(opt)
         condition_widget.activated.connect(
-            lambda index: self.combo_test_changed(data, options[index]))
+            lambda index, lst=options: self.combo_test_changed(data, lst, index))
         self.dock.setItemWidget(condition_item, 1, condition_widget)
 
         satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
@@ -762,8 +763,11 @@ class ConditionTree:
         #     id_widget.setText(data["acceptedAnswers"])
         # self.dock.setItemWidget(answers_item, 1, answers_widget)
 
-    def combo_test_changed(self, data, chosen):
-        data["test"] = chosen
+    def combo_test_changed(self, data, options, index):
+        if index == 0 :
+            return
+
+        data["test"] = options[index-1]
 
         self.call_dock()
 

@@ -390,7 +390,7 @@ class WorkflowNode_Decision(WorkflowNode):
         return [x, y]
 
     def get_tree_build(self):
-        # TODO: connect questionnaries and tests data to condition, also update when deleted
+        # TODO: in a case a Test\Questionnaire node has been deleted and its related to this data, update(delete).
         nodes_content = self.get_nodes_from_scene()
 
         to_send = {
@@ -423,8 +423,7 @@ class WorkflowNode_Decision(WorkflowNode):
             elif node.op_code == OP_NODE_Test:
                 tests_names = []
                 for test in node.data["content"]["tests"]:
-                    tests_names.append(test["name"])
-                nodes_content.append({"node": OP_NODE_Test, "content": tests_names})
+                    nodes_content.append({"node": OP_NODE_Test, "content": test["name"]})
 
         return nodes_content
 

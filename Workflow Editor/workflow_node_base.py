@@ -546,7 +546,6 @@ class WorkflowNode(Node):
             # remove features that's for node_UI
             if engine_save:
                 # TODO: check again what is unnecessary
-                # TODO: remove "content" from start and finish
                 del res['pos_x']
                 del res['pos_y']
 
@@ -555,6 +554,9 @@ class WorkflowNode(Node):
                 except TypeError:
                     # not a node serialization
                     pass
+
+                if res["op_code"] == OP_NODE_START or OP_NODE_FINISH:
+                    del res["content"]
 
         except Exception as e:
             dumpException(e)
