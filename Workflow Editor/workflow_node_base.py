@@ -568,9 +568,12 @@ class WorkflowNode(Node):
             res = super().deserialize(data, hashmap, restore_id)
             self.data = data['content']
             self.op_code = data['op_code']
-            # TODO : add to each node his specific attribues. e.g. color \ text
-            if self.op_code in [OP_NODE_QUESTIONNAIRE,OP_NODE_Test,OP_NODE_STRING]:
+
+            # recovering node specific attributes
+            if self.op_code in [OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING]:
                 self.color = data['content']['content']['node_details']['color']
+            if self.op_code == OP_NODE_QUESTIONNAIRE:
+                self.QNum = data["content"]["content"]["questionnaire_number"]
             self.attributes_dock_callback(self.get_tree_build())
 
         except Exception as e:

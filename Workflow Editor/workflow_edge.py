@@ -105,7 +105,7 @@ class WorkflowEdge(Edge):
 
     def serialize(self) -> OrderedDict:
         # FIXME: save what the engine needs from edge.(also fix open)
-        #   also make sure edge_type is enging type and not the drawing type
+        #   also make sure edge_type is engine type and not the drawing type
         return OrderedDict([
             ('id', self.id),
             ('type', self.edge_type),

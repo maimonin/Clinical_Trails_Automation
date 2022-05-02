@@ -180,10 +180,9 @@ class QDynamicDock(QDockWidget):
         QuestionnaireTree(self.treeWidget, father, field["value"], self.update_dynamic)
 
     def create_condition_subtree_widget(self, father, field):
-        ConditionTree(self.treeWidget, father, field["value"], field["known"], self.update_dynamic)
+        DecisionTree(self.treeWidget, father, field["value"], field["known"], self.update_dynamic)
 
     def update_dynamic(self, data=None):
-        # FIXME: why it receives data?
         self.callback(self.data)
 
 
@@ -298,7 +297,6 @@ class TestTree:
             option_title.setWordWrap(True)
             self.dock.setItemWidget(option_item, 0, option_title)
 
-            # FIXME not aligned properly
             option_widget = QCheckBox()
             option_widget.setChecked(option in test_data[title.lower()])
             option_widget.stateChanged.connect(
@@ -467,7 +465,7 @@ class QuestionnaireTree:
         return self.next_question_id
 
 
-class ConditionTree:
+class DecisionTree:
     tests = []
     questionniares = []
 
@@ -725,6 +723,13 @@ class ConditionTree:
         id_widget.activated.connect(
             lambda index, old_index=id_widget.currentIndex(): self.combo_questionnaire_changed(
                 index, old_index, data, parent))
+        # in case of loaded data
+        if data["questionnaireNumber"] != "0":
+            for idx, questionnaire in enumerate(self.questionniares):
+                if questionnaire["id"] == data["questionnaireNumber"]:
+                    id_widget.setCurrentIndex(idx+1)
+                    break
+            self.combo_questionnaire_changed(idx, 0, data, parent)
         self.dock.setItemWidget(id_item, 1, id_widget)
 
         # id_widget = QLineEdit()
@@ -764,10 +769,10 @@ class ConditionTree:
         # self.dock.setItemWidget(answers_item, 1, answers_widget)
 
     def combo_test_changed(self, data, options, index):
-        if index == 0 :
+        if index == 0:
             return
 
-        data["test"] = options[index-1]
+        data["test"] = options[index - 1]
 
         self.call_dock()
 
@@ -818,7 +823,7 @@ class ConditionTree:
                 "title": old_title,
                 "type": "questionnaire condition",
                 "questionnaireNumber": "0",
-                "questionNumber": "0",
+                "question": "",
                 "acceptedAnswers": [],
             }
             self.conditions.append(data)
@@ -894,12 +899,20 @@ class ConditionTree:
         question_widget.addItem("")
         for question in chosen["questions"]:
             question_widget.addItem(question["question"])
-
         question_widget.activated.connect(
             lambda index, old_index=question_widget.currentIndex(): self.question_type_selector(index, old_idx,
                                                                                                 chosen["questions"],
                                                                                                 data,
                                                                                                 parent))
+        # in case of loaded data
+        if data["question"] != "":
+            for idx,question in enumerate(chosen["questions"]):
+                if data["question"] == question["question"]:
+                    found = idx
+                    break
+            idx = found + 1
+            question_widget.setCurrentIndex(idx)
+            self.question_type_selector(idx, 0, chosen["questions"], data, parent)
         self.dock.setItemWidget(question_item, 1, question_widget)
 
     def question_type_selector(self, new_idx, old_idx, chosen, data, parent):
@@ -911,6 +924,7 @@ class ConditionTree:
             return
 
         chosen = chosen[new_idx - 1]
+        data["question"] = chosen["question"]
         if chosen["type"] == "multi":
             self.build_multi_questions(chosen, data, parent)
         elif chosen["type"] == "one choice":
@@ -924,8 +938,11 @@ class ConditionTree:
                 answer_item = QtWidgets.QTreeWidgetItem(answers_item)
                 answer_widget = QCheckBox()
                 answer_widget.toggled.connect(
-                    lambda checked, chosen=idx: self.update_data(checked, chosen + 1, data, True))
+                    lambda checked, chosen=idx: self.update_data(checked, chosen, data, True))
                 self.dock.setItemWidget(answer_item, 0, answer_widget)
+                # loaded data
+                if idx in data["acceptedAnswers"]:
+                    answer_widget.setChecked(True)
 
                 answer_label = QLabel(answer)
                 self.dock.setItemWidget(answer_item, 1, answer_label)
@@ -938,8 +955,11 @@ class ConditionTree:
                 answer_item = QtWidgets.QTreeWidgetItem(answers_item)
                 answer_widget = QRadioButton()
                 answer_widget.toggled.connect(
-                    lambda checked, chosen=idx: self.update_data(checked, chosen + 1, data))
+                    lambda checked, chosen=idx: self.update_data(checked, chosen, data))
                 self.dock.setItemWidget(answer_item, 0, answer_widget)
+                # loaded data
+                if idx in data["acceptedAnswers"]:
+                    answer_widget.setChecked(True)
 
                 answer_label = QLabel(answer)
                 self.dock.setItemWidget(answer_item, 1, answer_label)

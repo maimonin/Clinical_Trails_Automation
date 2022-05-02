@@ -116,6 +116,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 self.data["content"]["questions"] = []
                 self.data["content"]["questions"] = content["Content"][1]["value"]
                 self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
+                self.QNum = content["Content"][0]["value"]
 
         except Exception as e:
             dumpException(e)
@@ -136,11 +137,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             "callback": self.callback_from_window
         }
         return to_send
-
-    # template for questions:
-    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
-    # "One Choice": { "text":"","options":[],"type":"one choice"}
-    # "Open": {"text":"","type":"open"}
 
     def export_to_UI(self, export):
         result = []
