@@ -8,6 +8,10 @@ from nodeeditor.node_scene import InvalidFile
 from qtpy import QtWidgets, QtCore
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
+from workflow_conf_nodes import WorkflowNode_Start, WorkflowNode_Finish
+from workflow_edge import WorkflowEdge
+from workflow_graphics_socket import WFGraphicsSocket
+from workflow_graphics_view import WFGraphicsView
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
@@ -15,10 +19,15 @@ from PyQt5.QtCore import pyqtSlot
 import time
 import threading
 
+from workflow_scene import WorkflowScene
+
 DEBUG = False
 
-
+# Grid Window
 class WorkflowSubWindow(NodeEditorWidget):
+    Scene_class = WorkflowScene
+    GraphicsView_class = WFGraphicsView
+
     def initUI(self):
         super().initUI()
         button = QPushButton('Start', self)
@@ -26,26 +35,40 @@ class WorkflowSubWindow(NodeEditorWidget):
         button.move(100, 70)
         button.clicked.connect(self.on_click)
 
-    def __init__(self):
+    def __init__(self, dockCallback=None):
         super().__init__()
+        self.dockCallback = dockCallback
+        self.scene.addAttributesDockCallback(self.dockCallback)     # TODO: should we delete?
+        WorkflowNode.attributes_dock_callback = self.dockCallback
+        WorkflowEdge.attributes_dock_callback = self.dockCallback
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
+        self.add_start_finish_nodes()
+        Socket.Socket_GR_Class = WFGraphicsSocket
+
+    # add permanent start and finish nodes
+    def add_start_finish_nodes(self):
+        start_node = WorkflowNode_Start(self.scene, "Start")
+        finish_node = WorkflowNode_Finish(self.scene, "Finish")
+        start_node.setPos(-350, -250)
+        finish_node.setPos(200, 0)
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
 
     def setTitle(self):
-        self.setWindowTitle(self.getUserFriendlyFilename())
+        self.setWindowTitle(self.getUserFriendlyFilename())  # "New Graph" title
 
     def onDragEnter(self, event):
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             event.acceptProposedAction()
         else:
             event.setAccepted(False)
+
     def contextMenuEvent(self, event):
         try:
             item = self.scene.getItemAt(event.pos())
@@ -57,7 +80,9 @@ class WorkflowSubWindow(NodeEditorWidget):
                 self.handleEdgeContextMenu(event)
 
             return super().contextMenuEvent(event)
-        except Exception as e: dumpException(e)
+        except Exception as e:
+            dumpException(e)
+
     def handleEdgeContextMenu(self, event):
         context_menu = QMenu(self)
         bezierAct = context_menu.addAction("Bezier Edge")
@@ -90,6 +115,8 @@ class WorkflowSubWindow(NodeEditorWidget):
             try:
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
+                node.set_attributes_dock_callback(self.dockCallback)
+
                 node.drop_action()
             except Exception as e:
                 dumpException(e)
@@ -102,7 +129,7 @@ class WorkflowSubWindow(NodeEditorWidget):
     def fileLoad(self, filename):
         return super().fileLoad(filename)
 
-    def data_load(self, json_data, name):  # used to load data from complex node data
+    def data_load(self, json_data, name):
         try:
             self.filename = name
             self.scene.deserialize(json_data)
@@ -112,36 +139,6 @@ class WorkflowSubWindow(NodeEditorWidget):
         except Exception as e:
             dumpException(e)
 
-    # TODO serialize, and send the json to server
-
-    # def get_node_by_socket(self,socket):
-    #     for node in self.scene.nodes:
-    #         if len(node.inputs[0].edges) > 0 and node.inputs[0].edges[0].end_socket == socket:
-    #             return node
-    #     return None
-    # def all_logic(self):
-    #     try:
-    #         current_node = None
-    #
-    #         for node in self.scene.nodes:
-    #             if len(node.inputs[0].edges) == 0:
-    #                 current_node = node
-    #                 break
-    #         x=current_node.content.edit.text().split('/')
-    #         print(x[0])
-    #         time.sleep(int(x[1]))
-    #         while current_node is not None and len(current_node.outputs[0].edges) != 0:
-    #             current_node = self.get_node_by_socket(current_node.outputs[0].edges[0].end_socket)
-    #             x = current_node.content.edit.text().split('/')
-    #             print(x[0])
-    #             time.sleep(int(x[1]))
-    #         # while (len(current_node.outputs[0]) != 0 ):
-    #         #     print(current_node.outputs[0].edges)
-    #         #     print('PyQt5 button click')
-    #     except Exception as e:
-    #         dumpException(e)
-    #     # doing something........
-    # @pyqtSlot()
     def on_click(self):
         print("clicked")
         try:

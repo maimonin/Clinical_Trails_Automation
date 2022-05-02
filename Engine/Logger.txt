@@ -1,12 +1,6 @@
-17:51:42 created workflow
-17:51:42 nurse registered
-17:51:42 investigator registered
-17:51:42 lab registered
-17:51:42 doctor registered
-17:51:42 participant 1 registered
-17:51:42 sending questionnaire
-17:51:42 adding questionnaire of participant with id 1
-17:51:42 participant 1 answers: 
-	aaaaa: [0]
-	bbbbb: [0]
-	ccccc: hi
+20:08:57 created workflow
+20:08:57 nurse registered
+20:08:57 investigator registered
+20:08:57 lab registered
+20:08:57 doctor registered
+20:09:03 participant 1 registered

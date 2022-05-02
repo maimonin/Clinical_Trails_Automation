@@ -2,6 +2,17 @@
     "id": 2111561603920,
     "nodes": [
         {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
             "id": 2225378966112,
             "title": "Questionnaire",
             "inputs": [
@@ -110,9 +121,37 @@
                 "text": "you have been found negative"
             },
             "op_code": 4
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1892817027281,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027521
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
         }
     ],
     "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 2225379002112
+        },
         {
             "id": 2225379076512,
             "type": 0,
@@ -130,6 +169,18 @@
             "type": 0,
             "start": 2225379078000,
             "end": 2225389268416
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 2225389267888,
+            "end": 1892817027520
+        },
+        {
+            "id": 1892817028481,
+            "type": 0,
+            "start": 2225389268464,
+            "end": 1892817027521
         }
     ]
 }

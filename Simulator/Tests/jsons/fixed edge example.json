@@ -2,26 +2,27 @@
     "id": 2111561603920,
     "nodes": [
         {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
             "id": 1890421255808,
             "title": "Simple String",
-            "pos_x": -9.0,
-            "pos_y": -168.0,
             "inputs": [
                 {
-                    "id": 1890421256096,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
+                    "id": 1890421256096
                 }
             ],
             "outputs": [
                 {
-                    "id": 1890421256144,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
+                    "id": 1890421256144
                 }
             ],
             "content": {
@@ -38,24 +39,14 @@
         {
             "id": 1890421255856,
             "title": "Simple String",
-            "pos_x": 28.0,
-            "pos_y": 65.0,
             "inputs": [
                 {
-                    "id": 1890421297408,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 3,
-                    "socket_type": 1
+                    "id": 1890421297408
                 }
             ],
             "outputs": [
                 {
-                    "id": 1890421297456,
-                    "index": 0,
-                    "multi_edges": true,
-                    "position": 4,
-                    "socket_type": 1
+                    "id": 1890421297456
                 }
             ],
             "content": {
@@ -68,9 +59,26 @@
                 "text": "world"
             },
             "op_code": 4
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
         }
     ],
     "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 1890421256096
+        },
         {
             "id": 1890421297696,
             "type": 2,
@@ -80,6 +88,12 @@
                 "min": "03/04/22 17:53:00",
                 "max": "30/04/22 00:17:40"
             }
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 1890421297456,
+            "end": 1892817027520
         }
     ]
 }
