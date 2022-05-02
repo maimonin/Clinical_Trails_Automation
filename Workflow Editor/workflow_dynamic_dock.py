@@ -492,7 +492,9 @@ class ConditionTree:
             self.rebuild_tree(tree_widget_item)
 
     def load_known(self, known):
-        # FIXME: after deselect and select, it loads the same data again. (getting the data twice)
+        self.tests = []
+        self.questionniares = []
+
         for node in known:
             if node["node"] == OP_NODE_Test:
                 self.tests.append(node["content"])
