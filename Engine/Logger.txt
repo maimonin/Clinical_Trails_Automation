@@ -1,17 +1,6 @@
-11:38:47 created workflow
-11:38:47 created workflow
-11:38:47 nurse registered
-11:38:47 investigator registered
-11:38:47 lab registered
-11:38:47 doctor registered
-11:38:52 participant 1 registered
-11:38:53 sending questionnaire
-11:38:57 adding questionnaire of participant with id 1
-11:38:57 participant 1 answers: 
-	If you join, you will have injections, blood draws, saliva samples, and nasal swabs of your nose.: [1]
-	-The most common risks are symptoms are fever, muscle aches and headaches after getting the study vaccine. 
--There are other, less serious risks. We will tell you more about them later in this consent form. : [1]
-	Full Name: drgv
-11:39:02 participant with id 1 taking a test
-11:39:05 getting results of test Antigen Test of participant 1
-11:39:13 participant 1 results of test Antigen Test: positive
+13:31:06 created workflow
+13:31:06 nurse registered
+13:31:06 investigator registered
+13:31:06 lab registered
+13:31:06 doctor registered
+13:31:10 participant 1 registered

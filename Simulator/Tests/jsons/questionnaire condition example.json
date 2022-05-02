@@ -65,7 +65,7 @@
                         "title": "questionnaire condition 1",
                         "type": "questionnaire condition",
                         "questionnaireNumber": 1,
-                        "questionNumber": 0,
+                        "questionNumber": 1,
                         "acceptedAnswers": [
                             1
                         ]
