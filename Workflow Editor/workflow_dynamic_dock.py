@@ -873,9 +873,10 @@ class ConditionTree:
             self.call_dock()
 
     def combo_questionnaire_changed(self, new_idx, old_idx, data, parent):
-        # fixme: currentIndex() gives the old one?
-        if new_idx == old_idx:
-            return
+        # reset questionnaire ui
+        counter = parent.childCount()
+        for i in range(counter - 1, 1, -1):
+            parent.removeChild(parent.child(i))
 
         chosen = self.questionniares[new_idx - 1]
         data["questionnaireNumber"] = chosen["id"]
@@ -890,15 +891,20 @@ class ConditionTree:
 
         question_widget.activated.connect(
             lambda index, old_index=question_widget.currentIndex(): self.question_type_selector(index, old_idx,
-                                                                                                chosen["questions"][
-                                                                                                    index - 1], data,
+                                                                                                chosen["questions"],
+                                                                                                data,
                                                                                                 parent))
         self.dock.setItemWidget(question_item, 1, question_widget)
 
     def question_type_selector(self, new_idx, old_idx, chosen, data, parent):
-        if new_idx == old_idx:
+        # reset question ui
+        counter = parent.childCount()
+        for i in range(counter - 1, 2, -1):
+            parent.removeChild(parent.child(i))
+        if new_idx == 0:
             return
 
+        chosen = chosen[new_idx - 1]
         if chosen["type"] == "multi":
             self.build_multi_questions(chosen, data, parent)
         elif chosen["type"] == "one choice":
