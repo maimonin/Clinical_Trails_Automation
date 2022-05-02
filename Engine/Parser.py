@@ -205,9 +205,7 @@ def new_workflow(data_dict):
             outputs[out['id']] = node['id']
         for inp in node['inputs']:
             inputs[inp['id']] = node['id']
-    print(outputs)
     for edge in data_dict['edges']:
-        print(edge['start'])
         first_id = outputs[edge['start']]
         second_id = inputs[edge['end']]
         if edge['type'] == 0:

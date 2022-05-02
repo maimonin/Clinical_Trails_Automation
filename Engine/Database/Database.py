@@ -449,9 +449,6 @@ def getAnswer(form_id, question_number, participant_id):
                                   (form_id, question_number, participant_id))[0]
     q_type = extract_one_from_table("""SELECT type FROM Questions WHERE form_id=? AND number=?""",
                                     (form_id, question_number))[0]
-    print(form_id)
-    print(question_number)
-    print(participant_id)
     if q_type == "open":
         return rows
     rows = rows[1:-1].split(', ')

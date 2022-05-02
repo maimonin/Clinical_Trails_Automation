@@ -44,7 +44,6 @@ class RelativeTimeEdge(Edge):
         self.participants.append(participant)
 
     def can_exec(self, participant):
-        self.next_node = getNode(self.id)
         if len(Database.getWaitList(self.next_node.id, participant.id)) == 1:
             Database.releaseWaiter(self.next_node.id, participant.id)
             return True
@@ -52,6 +51,7 @@ class RelativeTimeEdge(Edge):
             Database.addWaiter(self.next_node.id, self.id, participant.id)
 
     async def exec(self) -> None:
+        self.next_node = getNode(self.id)
         if self.next_node is not None:
             await self.notify()
 
@@ -75,18 +75,14 @@ class RelativeTimeEdge(Edge):
             sleep_time = (started + datetime.timedelta(seconds=self.min_time)
                           - datetime.datetime.now()).total_seconds()
             if sleep_time > 0:
-                self.next_node.attach(participant)
                 await sleep(sleep_time)
             elif sleep_time < 0 and (self.max_time - self.min_time + sleep_time < 0):
-                print("error node is late")
-                Database.releasePosition(participant.id, self.id, "edge")
-            else:
-                if self.can_exec(participant):
-                    self.next_node.attach(participant)
-                    Database.releasePosition(participant.id, self.id, "edge")
-                    await self.next_node.exec()
-                else:
-                    Database.releasePosition(participant.id, self.id, "edge")
+                print("error, node is late")
+                return
+            Database.releasePosition(participant.id, self.id, "edge")
+            if self.can_exec(participant):
+                self.next_node.attach(participant)
+                await self.next_node.exec()
 
     def has_actors(self):
         return len(self.participants) != 0
