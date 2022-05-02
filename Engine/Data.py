@@ -60,7 +60,6 @@ async def get_test_result(participant_id, test_name):
     for test in reversed(tests[participant_id]):
         if test[0] == test_name:
             await test[1].wait()
-            print("im here")
     return Database.getTestResult(participant_id, test_name)
 
 

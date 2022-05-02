@@ -129,27 +129,81 @@
         },
         {
             "id": 1530917076272,
-            "type": 0,
+            "type": 1,
             "start": 1530917012672,
-            "end": 1530917055504
+            "end": 1530917055504,
+            "content": {
+                "min": {
+                    "seconds": 1,
+                    "minutes": 0,
+                    "hours": 0
+                },
+                "max": {
+                    "seconds": 2,
+                    "minutes": 0,
+                    "hours": 0
+                }
+            }
         },
         {
             "id": 1530917076848,
-            "type": 0,
+            "type": 1,
             "start": 1530917012672,
-            "end": 1530917076608
+            "end": 1530917076608,
+            "content": {
+                "min": {
+                    "seconds": 2,
+                    "minutes": 0,
+                    "hours": 0
+                },
+                "max": {
+                    "seconds": 3,
+                    "minutes": 0,
+                    "hours": 0
+                }
+            }
         },
         {
             "id": 1530921538032,
-            "type": 0,
+            "type": 1,
             "start": 1530917055600,
-            "end": 1530921537792
+            "end": 1530921537792,
+            "content": {
+                "min": {
+                    "seconds": 1,
+                    "minutes": 0,
+                    "hours": 0
+                },
+                "max": {
+                    "seconds": 6,
+                    "minutes": 0,
+                    "hours": 0
+                }
+            }
+        },
+        {
+            "id": 1530921538033,
+            "type": 1,
+            "start": 1530917076656,
+            "end": 1530921537792,
+            "content": {
+                "min": {
+                    "seconds": 2,
+                    "minutes": 0,
+                    "hours": 0
+                },
+                "max": {
+                    "seconds": 3,
+                    "minutes": 0,
+                    "hours": 0
+                }
+            }
         },
         {
             "id": 1530917076224,
             "type": 0,
             "start": 1530921537840,
-            "end": 1530921537792
+            "end": 1892817027520
         }
     ]
 }

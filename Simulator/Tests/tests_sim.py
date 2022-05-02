@@ -17,7 +17,7 @@ lock = threading.Lock()
 def handle_questionnaire(questions, user_answers):
     answers = []
     for q in questions:
-        answers.append({"question": q, "answer": user_answers[q]})
+        answers.append({"question": q, "answer": user_answers[q['text']]})
     return answers
 
 
@@ -26,13 +26,14 @@ async def get_data(s):
 
 
 async def actor_simulation(user, s, answers):
+    print("hole")
     output = []
     try:
         while True:
             try:
                 data = await get_data(s)
-            except:
-                break
+            except Exception as e:
+                dumpException(e)
             data_json = json.loads(data)
             output.append(data_json)
             if data_json['type'] == 'questionnaire':
@@ -45,6 +46,7 @@ async def actor_simulation(user, s, answers):
                 await s.send(json.dumps(
                     {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
+                print("terminated")
                 await s.close()
                 break
 
@@ -85,18 +87,16 @@ async def run(path, ans_path, participant_id, gender, age):
     user = {"name": "participant " + str(participant_id), "role": "participant", "workflow": 2111561603920,
             "sex": gender, "age": str(age),
             "id": participant_id}
-    is_cn = True
-    while is_cn:
+
         # noinspection PyBroadException
-        try:
-            s = await websockets.connect(url)
-            await register_user(user, s)
-            user['s'] = s
-            u, out = await actor_simulation(user, user['s'], answers[user['name']])
-            outputs[u] = out
-            is_cn = False
-        except:
-            continue
+    try:
+        s = await websockets.connect(url)
+        await register_user(user, s)
+        user['s'] = s
+        u, out = await actor_simulation(user, user['s'], answers[user['name']])
+        outputs[u] = out
+    except Exception as e:
+        dumpException(e)
     for t in tasks:
         u, out = await t
         outputs[u] = out

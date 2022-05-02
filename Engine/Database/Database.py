@@ -449,9 +449,6 @@ def getAnswer(form_id, question_number, participant_id):
                                   (form_id, question_number, participant_id))[0]
     q_type = extract_one_from_table("""SELECT type FROM Questions WHERE form_id=? AND number=?""",
                                     (form_id, question_number))[0]
-    print(form_id)
-    print(question_number)
-    print(participant_id)
     if q_type == "open":
         return rows
     rows = rows[1:-1].split(', ')
@@ -522,7 +519,7 @@ def getNode(node_id):
     op_code = node_data[1]
     title = node_data[0]
     if op_code == 0:
-        return buildDALNodes([op_code, node_id, "new start node"])
+        return buildDALNodes([op_code, node_id, "New Start Node"])
     elif op_code == 1:
         form_id = extract_one_from_table("""SELECT form_id FROM Questionnaires WHERE id=?""", (node_id,))[0]
         form = getForm(form_id)
@@ -550,7 +547,7 @@ def getNode(node_id):
         flow_node = getNode(first_id)
         return buildDALNodes([op_code, node_id, title, flow_node])
     elif op_code == 6:
-        return buildDALNodes([op_code, node_id, "new finish node"])
+        return buildDALNodes([op_code, node_id, "New Finish Node"])
 
 
 def getStaff(role):
