@@ -555,7 +555,7 @@ class WorkflowNode(Node):
                     # not a node serialization
                     pass
 
-                if res["op_code"] == OP_NODE_START or OP_NODE_FINISH:
+                if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
                     del res["content"]
 
         except Exception as e:
