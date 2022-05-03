@@ -86,11 +86,11 @@ class WorkflowEdge(Edge):
     def update_label(self, input_title, input_min, input_max):
         if input_title == "":
             self.text = "No Title"
-            if input_min != "" and input_max != "":
-                self.text += " : " + input_min + " - " + input_max
+            if input_min != "" and input_min != "00:00:00" and input_max != "" and input_max != "00:00:00":
+                self.text = input_min + " - " + input_max
         else:
             self.text = input_title
-            if input_min != "" and input_max != "":
+            if input_min != "" and input_min != "00:00:00" and input_max != "" and input_max != "00:00:00":
                 self.text += " : " + input_min + " - " + input_max
 
     def get_tree_build(self):
