@@ -563,7 +563,7 @@ class WorkflowNode(Node):
                         del res["outputs"][idx]["socket_type"]
                         del res["outputs"][idx]["multi_edges"]
                 try:
-                    res["content"]["content"]["node_details"].pop("color", None)
+                    res["content"]["node_details"].pop("color", None)
                 except TypeError:
                     # not a node serialization
                     pass
@@ -579,14 +579,14 @@ class WorkflowNode(Node):
     def deserialize(self, data, hashmap={}, restore_id=True):
         try:
             res = super().deserialize(data, hashmap, restore_id)
-            self.data = data['content']
+            self.data = data["content"]
             self.op_code = data['op_code']
 
             # recovering node specific attributes
             if self.op_code in [OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING]:
-                self.color = data['content']['content']['node_details']['color']
+                self.color = data["content"]['node_details']['color']
             if self.op_code == OP_NODE_QUESTIONNAIRE:
-                self.QNum = data["content"]["content"]["questionnaire_number"]
+                self.QNum = data["content"]["questionnaire_number"]
             self.attributes_dock_callback(self.get_tree_build())
 
         except Exception as e:
