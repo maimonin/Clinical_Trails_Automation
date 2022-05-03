@@ -47,8 +47,8 @@ class WorkflowSubWindow(NodeEditorWidget):
 
     # add permanent start and finish nodes
     def add_start_finish_nodes(self):
-        start_node = WorkflowNode_Start(self.scene, "Start")
-        finish_node = WorkflowNode_Finish(self.scene, "Finish")
+        start_node = WorkflowNode_Start(self.scene)
+        finish_node = WorkflowNode_Finish(self.scene)
         start_node.setPos(-350, -250)
         finish_node.setPos(200, 0)
 

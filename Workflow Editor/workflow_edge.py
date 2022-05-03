@@ -120,5 +120,5 @@ class WorkflowEdge(Edge):
         self.end_socket = hashmap[data['end']]
         self.edge_type = data['edge_type']
         self.data['content']['edge_details'] = data['edge_details']
-        self.update_label(data['edge_details']["title"],data['edge_details']["min"],data['edge_details']["max"])
+        self.update_label(data['edge_details']["title"], data['edge_details']["min"], data['edge_details']["max"])
         self.doSelect()  # reload the data when opening a new file
