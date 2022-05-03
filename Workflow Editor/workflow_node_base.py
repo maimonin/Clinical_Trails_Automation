@@ -549,21 +549,27 @@ class WorkflowNode(Node):
                 del res['pos_x']
                 del res['pos_y']
 
+                if len(res["inputs"]) > 0:
+                    for idx,input in enumerate(res["inputs"]):
+                        del res["inputs"][idx]["index"]
+                        del res["inputs"][idx]["position"]
+                        del res["inputs"][idx]["socket_type"]
+                        del res["inputs"][idx]["multi_edges"]
+
+                if len(res["outputs"]) > 0:
+                    for idx,output in enumerate(res["outputs"]):
+                        del res["outputs"][idx]["index"]
+                        del res["outputs"][idx]["position"]
+                        del res["outputs"][idx]["socket_type"]
+                        del res["outputs"][idx]["multi_edges"]
                 try:
                     res["content"]["content"]["node_details"].pop("color", None)
                 except TypeError:
                     # not a node serialization
                     pass
 
-                if res["op_code"] == OP_NODE_START:
+                if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
                     del res["content"]
-                    del res["outputs"][0]["multi_edges"]
-                elif res["op_code"] == OP_NODE_FINISH:
-                    del res["content"]
-                    del res["inputs"][0]["multi_edges"]
-                else:
-                    del res["inputs"][0]["multi_edges"]
-                    del res["outputs"][0]["multi_edges"]
 
         except Exception as e:
             dumpException(e)
