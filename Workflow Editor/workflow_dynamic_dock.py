@@ -108,6 +108,8 @@ class QDynamicDock(QDockWidget):
 
     def create_time_input_widget(self, father, field):
         widget = QTimeEdit()
+        if "format" in field.keys():
+            widget.setDisplayFormat(field["format"])
         widget.setTime(field["value"])
         self.treeWidget.setItemWidget(father, 1, widget)
 

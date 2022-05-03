@@ -555,8 +555,15 @@ class WorkflowNode(Node):
                     # not a node serialization
                     pass
 
-                if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
+                if res["op_code"] == OP_NODE_START:
                     del res["content"]
+                    del res["outputs"][0]["multi_edges"]
+                elif res["op_code"] == OP_NODE_FINISH:
+                    del res["content"]
+                    del res["inputs"][0]["multi_edges"]
+                else:
+                    del res["inputs"][0]["multi_edges"]
+                    del res["outputs"][0]["multi_edges"]
 
         except Exception as e:
             dumpException(e)

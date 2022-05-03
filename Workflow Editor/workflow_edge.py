@@ -1,9 +1,8 @@
 from collections import OrderedDict
-
 from nodeeditor.node_edge import Edge, EDGE_TYPE_DIRECT
 from nodeeditor.utils import dumpException
-
 from workflow_graphics_edge import WFGraphicsEdgeText, WFGraphicsRegularEdgeWithText
+from PyQt5.QtCore import QTime
 
 NORMAL = 0
 RELATIVE = 1
@@ -21,14 +20,14 @@ class WorkflowEdge(Edge):
             "content": {
                 "edge_details": {
                     "title": "",
-                    "type": NORMAL,
-                    "min": "",
-                    "max": "",
+                    "min": {"Hours": "00", "Minutes": "00", "Seconds": "00"},
+                    "max": {"Hours": "00", "Minutes": "00", "Seconds": "00"},
                 },
                 "callback": self.callback_from_dock,
 
             }}
         self.text = text
+        self.type = NORMAL
         # self.attributes_dock_callback = attributes_dock_callback
 
     @property
@@ -66,15 +65,21 @@ class WorkflowEdge(Edge):
     def callback_from_dock(self, content):
         try:
             input_title = content["Edge Details"][0]["value"]
-            input_min = content["Edge Details"][1]["items"][0]["value"]
-            input_max = content["Edge Details"][1]["items"][1]["value"]
+            input_min = QTime.toString(content["Edge Details"][1]["items"][0]["value"])
+            input_max = QTime.toString(content["Edge Details"][1]["items"][1]["value"])
             self.update_label(input_title, input_min, input_max)
 
-            self.edge_type = NORMAL if (input_min == "" or input_max == "") else RELATIVE
+            self.type = NORMAL if (input_min == "" or input_max == "") else RELATIVE
 
             self.data["content"]["edge_details"]["title"] = input_title
-            self.data["content"]["edge_details"]["min"] = input_min
-            self.data["content"]["edge_details"]["max"] = input_max
+            if input_min != "":
+                self.data["content"]["edge_details"]["min"]["Hours"] = input_min[:2]
+                self.data["content"]["edge_details"]["min"]["Minutes"] = input_min[3:5]
+                self.data["content"]["edge_details"]["min"]["Seconds"] = input_min[6:]
+            if input_max != "":
+                self.data["content"]["edge_details"]["max"]["Hours"] = input_max[:2]
+                self.data["content"]["edge_details"]["max"]["Minutes"] = input_max[3:5]
+                self.data["content"]["edge_details"]["max"]["Seconds"] = input_max[6:]
         except Exception as e:
             dumpException(e)
 
@@ -93,32 +98,55 @@ class WorkflowEdge(Edge):
             "Edge Details": [
                 {"name": "Title", "type": "text", "value": self.data["content"]["edge_details"]["title"]},
                 {"name": "Accepted Delay", "type": "tree", "items": [
-                    {"name": "Min", "type": "text", "value": self.data["content"]["edge_details"]["min"],
-                     "placeholder": "Enter Min Delay"},
-                    {"name": "Max", "type": "text", "value": self.data["content"]["edge_details"]["max"],
-                     "placeholder": "Enter Max Delay"}
+                    {"name": "Min", "type": "time",
+                     "value": self.convert_to_time(self.data["content"]["edge_details"]["min"]),
+                     "placeholder": "Enter Min Delay", "format": "hh:mm:ss"},
+                    {"name": "Max", "type": "time",
+                     "value": self.convert_to_time(self.data["content"]["edge_details"]["max"]),
+                     "placeholder": "Enter Max Delay", "format": "hh:mm:ss"}
                 ]}
             ],
             "callback": self.callback_from_dock
         }
         return to_send
 
-    def serialize(self) -> OrderedDict:
-        # FIXME: save what the engine needs from edge.(also fix open)
-        #   also make sure edge_type is engine type and not the drawing type
-        return OrderedDict([
-            ('id', self.id),
-            ('type', self.edge_type),
-            ('start', self.start_socket.id if self.start_socket is not None else None),
-            ('end', self.end_socket.id if self.end_socket is not None else None),
-            ('content', self.data['content']['edge_details'])
-        ])
+    def convert_to_time(self, time_dict):
+        dict_to_string = time_dict["Hours"] + ":" + time_dict["Minutes"] + ":" + time_dict["Seconds"]
+        result = QTime.fromString(dict_to_string, "hh:mm:ss")
+        return result
+
+    def serialize(self, engine_save=False) -> OrderedDict:
+        if self.type == NORMAL:
+            result = OrderedDict([
+                ('id', self.id),
+                ('start', self.start_socket.id if self.start_socket is not None else None),
+                ('end', self.end_socket.id if self.end_socket is not None else None),
+                ('type', self.type),
+                ('edge_type', self.edge_type)
+            ])
+        elif self.type == RELATIVE:
+            result = OrderedDict([
+                ('id', self.id),
+                ('type', self.type),
+                ('start', self.start_socket.id if self.start_socket is not None else None),
+                ('end', self.end_socket.id if self.end_socket is not None else None),
+                ('content', self.data['content']['edge_details']),
+                ('edge_type', self.edge_type)
+            ])
+        if engine_save:
+            del result["edge_type"]
+        return result
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
         if restore_id: self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
-        self.edge_type = data['edge_type']
-        self.data['content']['edge_details'] = data['edge_details']
-        self.update_label(data['edge_details']["title"], data['edge_details']["min"], data['edge_details']["max"])
+        self.type = data['type']
+        self.edge_type = data["edge_type"]
+        self.data['content']['edge_details'] = data['content']
+        min_string = data['content']["min"]["Hours"] + ":" + data['content']["min"]["Minutes"] + ":" + \
+                     data['content']["min"]["Seconds"]
+        max_string = data['content']["max"]["Hours"] + ":" + data['content']["max"]["Minutes"] + ":" + \
+                     data['content']["max"]["Seconds"]
+        self.update_label(data['content']["title"], min_string, max_string)
         self.doSelect()  # reload the data when opening a new file
