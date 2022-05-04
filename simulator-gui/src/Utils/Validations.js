@@ -5,11 +5,11 @@ export const isValidUserData = (userDetails) =>
 {
 return (
 isNotEmptyString(userDetails.name)  && isNotEmptyString(userDetails.sex) &&
- isNumericString(userDetails.age) && isNumericString(userDetails.id) && isNotEmptyString(userDetails.role))
+ greaterThanZero(userDetails.age) && greaterThanZero(userDetails.id) && isNotEmptyString(userDetails.role))
 }
 
-const isString = (value) => typeof(value) ==="string"
-const isNumericString = (value) => isString(value) && !isNaN(+value)
+const isString = (value) =>typeof(value) ==="string"
+const greaterThanZero = (value) => value>0
 const isNotEmptyString = (value) => isString(value) & value !== ""
 
 export const isValidAnswersToQuestionnaire = (answers) =>{

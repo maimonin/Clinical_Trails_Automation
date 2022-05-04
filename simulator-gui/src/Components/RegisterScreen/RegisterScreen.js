@@ -19,6 +19,10 @@ function RegisterScreen(props){
         const value = e.target.value;   
         setUserDetails((prev)=>({ ...prev,[e.target.name]: value }));
     }
+    const set_integer = (e) =>{
+      const value = parseInt(e.target.value);   
+      setUserDetails((prev)=>({ ...prev,[e.target.name]: value }));
+  }
     return (<>
        <Box
       component="form"
@@ -32,8 +36,8 @@ function RegisterScreen(props){
       <Input name="name" placeholder="Name" onChange={set_value} inputProps={ariaLabel} />
       <Input name="role" placeholder="Role" onChange={set_value} inputProps={ariaLabel} />
       <Input name="sex" placeholder="Sex" onChange={set_value} inputProps={ariaLabel} />
-      <Input name ="age" placeholder="Age" onChange={set_value} inputProps={ariaLabel} />
-      <Input name="id" placeholder="ID" onChange={set_value} inputProps={ariaLabel} />
+      <Input name ="age" placeholder="Age" onChange={set_integer} inputProps={ariaLabel} />
+      <Input name="id" placeholder="ID" onChange={set_integer} inputProps={ariaLabel} />
       <Button onClick={handle_send}>Register</Button>
     </Box></>)
 }

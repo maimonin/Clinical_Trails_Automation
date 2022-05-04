@@ -118,6 +118,11 @@ export default function UserWindow(props) {
     
           return valid_types.includes(message["type"])
       }
+
+      const handle_delete = ()=>{
+        webSocket.current.close()
+        props.delete(props.id)
+      }
 return (
     <div>
     <Card sx={{ maxWidth: 345 , minHeight:300, maxHeight:300 }} >
@@ -127,18 +132,20 @@ return (
             
           </PersonIcon>
         }
+        
         action={
-          <IconButton aria-label="settings" >
-            <MoreVertIcon  /> {/* change it to dynamically */}
+          <IconButton aria-label="settings" onClick={handle_delete} >
+            <MoreVertIcon /> {/* change it to dynamically */}
 
           </IconButton>
         }
-        title={userDetails.name}
+        title={userDetails.name + props.id}
         subheader={props.role}
       />
 
 {/* Same as */}
       <CardContent >
+        
         <div  style={ {scrollBehavior: "smooth", overflowY: "scroll" , maxHeight:210}}>
 
         {userDetails == blankUser? <RegisterScreen sendRegister={sendRegister}/> 
