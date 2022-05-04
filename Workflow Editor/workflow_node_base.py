@@ -545,7 +545,6 @@ class WorkflowNode(Node):
 
             # remove features that's for node_UI
             if engine_save:
-                # TODO: check again what is unnecessary
                 del res['pos_x']
                 del res['pos_y']
 

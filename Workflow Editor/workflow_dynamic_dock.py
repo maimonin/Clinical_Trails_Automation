@@ -633,7 +633,7 @@ class DecisionTree:
         for opt in options:
             combo_widget.addItem(opt)
         combo_widget.activated.connect(
-            lambda index: self.combo_condition_changed(options, index, data, parent))
+            lambda index, options = options: self.combo_condition_changed(options, index, data, parent))
         combo_widget.setCurrentIndex(1)
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 
@@ -646,6 +646,7 @@ class DecisionTree:
             condition_widget.addItem(opt)
         condition_widget.activated.connect(
             lambda index, lst=options: self.combo_test_changed(data, lst, index))
+        # TODO condition_widget.setcurrentindex
         self.dock.setItemWidget(condition_item, 1, condition_widget)
 
         satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
@@ -703,7 +704,7 @@ class DecisionTree:
         for opt in options:
             combo_widget.addItem(opt)
         combo_widget.activated.connect(
-            lambda index: self.combo_condition_changed(options, index, data, parent))
+            lambda index, options=options: self.combo_condition_changed(options, index, data, parent))
         combo_widget.setCurrentIndex(2)
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 

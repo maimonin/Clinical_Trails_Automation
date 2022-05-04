@@ -213,7 +213,6 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
                 self.data["tests"] = []
                 for test in content["Content"][0]["value"]:
-                    # FIXME : need to delete id key from dict (coupled with the dock data)
                     self.data["tests"].append(test)
 
         except Exception as e:
@@ -291,7 +290,6 @@ class WorkflowNode_Decision(WorkflowNode):
                     if field["name"].lower() == "time":
                         self.data["node_details"][field["name"].lower()] = field["value"].toString()
                 self.data["condition"] = []
-                # TODO: check implementation of save of the content, (maybe delete "id" key?)
                 for condition in content["Condition"][0]["value"]:
                     self.data["condition"].append(condition)
 
@@ -671,6 +669,8 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
+
+    # FIXME: sub workflow override the dock callback to all nodes.
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
