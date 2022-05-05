@@ -158,6 +158,13 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
         return result
 
+    def remove(self):
+        super().remove()
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_DECISION:
+                node.data["condition"] = [condition for condition in node.data["condition"] if self.QNum != condition["questionnaireNumber"]]
+
+
 
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
@@ -236,6 +243,10 @@ class WorkflowNode_DataEntry(WorkflowNode):
             "callback": self.callback_from_window
         }
         return to_send
+
+    def remove(self):
+        super().remove()
+        # TODO update all decisions to remove.
 
 
 @register_node(OP_NODE_DECISION)
@@ -378,7 +389,6 @@ class WorkflowNode_Decision(WorkflowNode):
         return [x, y]
 
     def get_tree_build(self):
-        # TODO: in a case a Test\Questionnaire node has been deleted and its related to this data, update(delete).
         nodes_content = self.get_nodes_from_scene()
 
         to_send = {

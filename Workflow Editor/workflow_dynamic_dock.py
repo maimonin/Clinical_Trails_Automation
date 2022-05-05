@@ -645,7 +645,7 @@ class DecisionTree:
         for opt in options:
             condition_widget.addItem(opt)
         condition_widget.activated.connect(
-            lambda index, lst=options: self.combo_test_changed(data, lst, index))
+            lambda index, options=options: self.combo_test_changed(data, options, index))
         if data["test"] != "":
             condition_widget.setCurrentIndex(options.index(data["test"])+1)
         self.dock.setItemWidget(condition_item, 1, condition_widget)
