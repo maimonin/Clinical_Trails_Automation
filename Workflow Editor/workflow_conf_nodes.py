@@ -162,7 +162,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         super().remove()
         for node in self.scene.nodes:
             if node.op_code == OP_NODE_DECISION:
-                node.data["condition"] = [condition for condition in node.data["condition"] if self.QNum != condition["questionnaireNumber"]]
+                node.data["condition"] = [condition for condition in node.data["condition"] if condition["type"] != "questionnaire condition" or self.QNum != condition["questionnaireNumber"]]
 
 
 
@@ -246,7 +246,11 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
     def remove(self):
         super().remove()
-        # TODO update all decisions to remove.
+
+        deleted_tests = [test["name"] for test in self.data["tests"]]
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_DECISION:
+                node.data["condition"] = [condition for condition in node.data["condition"] if condition["type"] != "test condition" or condition["test"] not in deleted_tests]
 
 
 @register_node(OP_NODE_DECISION)
