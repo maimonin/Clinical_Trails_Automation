@@ -646,7 +646,8 @@ class DecisionTree:
             condition_widget.addItem(opt)
         condition_widget.activated.connect(
             lambda index, lst=options: self.combo_test_changed(data, lst, index))
-        # TODO condition_widget.setcurrentindex
+        if data["test"] != "":
+            condition_widget.setCurrentIndex(options.index(data["test"])+1)
         self.dock.setItemWidget(condition_item, 1, condition_widget)
 
         satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
