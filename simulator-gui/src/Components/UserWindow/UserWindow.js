@@ -73,10 +73,11 @@ export default function UserWindow(props) {
     {
       console.log("UserWindow::dismiss_current ")
 
-      let newArr = [items];
+      let newArr = items;
       newArr.splice(currentComponent-1,1)
-      setCurrentComponent((currentComponent) => (currentComponent-1))
       setItems(newArr)
+
+      setCurrentComponent((currentComponent) => (currentComponent-1))
     }
       const isNotification = (item) => false
 
@@ -96,7 +97,6 @@ export default function UserWindow(props) {
         // return (<TestNotification test={1}/>)
         switch(itemToAdd["type"]) {
           case "questionnaire":
-    
             return (<Questionnaire questionnaire = {itemToAdd} send ={sendData}/>)
             case "notification":
             return (<UserNotification notification = {itemToAdd["text"]} dismiss = {dismiss_current}/>)
@@ -113,7 +113,7 @@ export default function UserWindow(props) {
       }
     
        const isComponent = (message) => {
-        const valid_types = ["questionnaire","notification"]  
+        const valid_types = ["questionnaire","notification","test data entry","test"]  
         
     
           return valid_types.includes(message["type"])

@@ -17,7 +17,6 @@ import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
 import ReactFileReader from 'react-file-reader';
   
-const flow = flow_2
 
 
 const theme = createTheme();
@@ -26,11 +25,13 @@ export default function MainWindow() {
   const [flowSent,setFlowSent] = useState(false)
   const [screens,setScreens] = useState([])
   const [screensNumber,setScreensNumber] = useState(0)
-  
+  const [flow,setFlow] = useState({})
 const handle_send_flow = ()=>{
   const ws = new W3CWebSocket('ws://127.0.0.1:7890');
   ws.onopen = ()=>{
-  ws.send(JSON.stringify(flow))
+  const newFlow=flow
+  newFlow["type"] = "add workflow"
+  ws.send(JSON.stringify(newFlow))
   console.log("MainWindow::handle_send_flow ~ sent flow to server")
   setFlowSent(true)
   }
@@ -48,10 +49,18 @@ const deleteScreen = (delete_id) =>
   const newScreens = screens.filter((id) => id !== delete_id);
   setScreens(newScreens)
 }
-const handleFiles = files => {
-  console.log(files)
-}
 
+const  handleFile = (file) => {
+  var file = file[0];
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    // The file's text will be printed here
+    setFlow(JSON.parse(event.target.result))
+    
+  };
+
+  reader.readAsText(file);
+}
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -69,7 +78,7 @@ const handleFiles = files => {
         {flowSent?
         <IconButton color="primary" aria-label="add" onClick={addUser}>
         <AddIcon/>
-        </IconButton>:<div><ReactFileReader handleFiles={handleFiles} fileTypes={[".json"]} multipleFiles={false} >
+        </IconButton>:<div><ReactFileReader handleFiles={handleFile} fileTypes={[".json"]} >
   <button className='btn'>Upload</button>
 </ReactFileReader><Button onClick={handle_send_flow}>Send</Button></div> }
           <Grid container spacing={4}>
