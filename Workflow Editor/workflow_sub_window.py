@@ -30,15 +30,11 @@ class WorkflowSubWindow(NodeEditorWidget):
 
     def initUI(self):
         super().initUI()
-        button = QPushButton('Start', self)
-        button.setToolTip('This is an example button')
-        button.move(100, 70)
-        button.clicked.connect(self.on_click)
 
     def __init__(self, dockCallback=None):
         super().__init__()
         self.dockCallback = dockCallback
-        self.scene.addAttributesDockCallback(self.dockCallback)     # TODO: should we delete?
+        self.scene.addAttributesDockCallback(self.dockCallback)
         WorkflowNode.attributes_dock_callback = self.dockCallback
         WorkflowEdge.attributes_dock_callback = self.dockCallback
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -51,8 +47,8 @@ class WorkflowSubWindow(NodeEditorWidget):
 
     # add permanent start and finish nodes
     def add_start_finish_nodes(self):
-        start_node = WorkflowNode_Start(self.scene, "Start")
-        finish_node = WorkflowNode_Finish(self.scene, "Finish")
+        start_node = WorkflowNode_Start(self.scene)
+        finish_node = WorkflowNode_Finish(self.scene)
         start_node.setPos(-350, -250)
         finish_node.setPos(200, 0)
 

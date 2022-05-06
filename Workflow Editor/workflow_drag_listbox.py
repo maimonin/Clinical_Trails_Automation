@@ -20,7 +20,7 @@ class QDMDragListbox(QListWidget):
         keys = list(WORKFLOW_NODES.keys())
         keys.sort()
         for key in keys:
-            if key == 7 or key == 8:
+            if key == OP_NODE_START or key == OP_NODE_FINISH:
                 continue
             node = get_class_from_opcode(key)
             self.addMyItem(node.op_title, node.op_icon, node.op_code)

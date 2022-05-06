@@ -73,15 +73,13 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.QNum = str(scene.getNextQuestionnaireNumber())
         # @data to send to engine.
         self.data = {
-            "content": {
-                "node_details": {
-                    "time": QTime.toString(QTime(0, 0)),
-                    "title": "New Questionnaire Node",
-                    "color": self.color
-                },
-                "questions": [],
-                "questionnaire_number": self.QNum
-            }
+            "node_details": {
+                "time": QTime.toString(QTime(0, 0)),
+                "title": "New Questionnaire Node",
+                "color": self.color
+            },
+            "questions": [],
+            "questionnaire_number": self.QNum
         }
 
     def initInnerClasses(self):
@@ -107,22 +105,15 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             if content is None:
                 self.remove()  # remove node
             else:
-                # for field in content["Node Details"]:
-                #     self.data["content"]["node_details"][field["name"].lower()] = field["value"]
-                #     if field["name"].lower() == "title":
-                #         self.title = field["value"]
-                #     if field["name"].lower() == "color":
-                #         self.grNode.change_background(field["value"].lower())
-                #         self.color = field["value"]
-                self.data["content"]["node_details"]["title"] = content["Node Details"][0]["value"]
+                self.data["node_details"]["title"] = content["Node Details"][0]["value"]
                 self.title = content["Node Details"][0]["value"]
-                self.data["content"]["node_details"]["time"] = content["Node Details"][1]["value"].toString()
-                self.data["content"]["node_details"]["color"] = content["Node Details"][2]["value"]
-                self.color = content["Node Details"][2]["value"]
-                self.grNode.change_background(content["Node Details"][2]["value"].lower())
-                self.data["content"]["questions"] = []
-                self.data["content"]["questions"] = content["Content"][1]["value"]
-                self.data["content"]["questionnaire_number"] = content["Content"][0]["value"]
+                self.data["node_details"]["color"] = content["Node Details"][1]["value"]
+                self.color = content["Node Details"][1]["value"]
+                self.grNode.change_background(content["Node Details"][1]["value"].lower())
+                self.data["questions"] = []
+                self.data["questions"] = content["Content"][1]["value"]
+                self.data["questionnaire_number"] = content["Content"][0]["value"]
+                self.QNum = content["Content"][0]["value"]
 
         except Exception as e:
             dumpException(e)
@@ -130,24 +121,17 @@ class WorkflowNode_Questionnaire(WorkflowNode):
     def get_tree_build(self):
         to_send = {
             "Node Details": [
-                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time",
-                 "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
+                {"name": "Title", "type": "text", "value": self.data["node_details"]["title"]},
                 {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Content": [
-                {"name": "Questionnaire #", "type": "text", "value": self.data["content"]["questionnaire_number"]},
-                {"name": "Questions", "type": "q sub tree", "value": self.data["content"]["questions"]}
+                {"name": "Questionnaire #", "type": "text", "value": self.data["questionnaire_number"]},
+                {"name": "Questions", "type": "q sub tree", "value": self.data["questions"]}
             ],
             "callback": self.callback_from_window
         }
         return to_send
-
-    # template for questions:
-    # "Multiple Choice" :{"text":"","options":[],"type":"multi"}
-    # "One Choice": { "text":"","options":[],"type":"one choice"}
-    # "Open": {"text":"","type":"open"}
 
     def export_to_UI(self, export):
         result = []
@@ -170,6 +154,14 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
         return result
 
+    def remove(self):
+        super().remove()
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_DECISION:
+                node.data["condition"] = [condition for condition in node.data["condition"] if
+                                          condition["type"] != "questionnaire condition" or self.QNum != condition[
+                                              "questionnaireNumber"]]
+
 
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
@@ -183,15 +175,13 @@ class WorkflowNode_DataEntry(WorkflowNode):
         self.color = "Grey"
         # @data to send to engine.
         self.data = {
-            "content": {
-                "node_details": {
-                    "time": QTime.toString(QTime(0, 0)),
-                    "title": "New Test Node",
-                    "actor in charge": "Nurse",
-                    "color": self.color
-                },
-                "tests": []
-            }
+            "node_details": {
+                "time": QTime.toString(QTime(0, 0)),
+                "title": "New Test Node",
+                "actor in charge": "Nurse",
+                "color": self.color
+            },
+            "tests": []
         }
 
     def initInnerClasses(self):
@@ -216,42 +206,48 @@ class WorkflowNode_DataEntry(WorkflowNode):
                 self.remove()  # remove node
             else:
                 for field in content["Node Details"]:
-                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    self.data["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
                     if field["name"].lower() == "color":
                         self.grNode.change_background(field["value"].lower())
                         self.color = field["value"]
-                    if field["name"].lower() == "time":
-                        self.data["content"]["node_details"][field["name"].lower()] = field["value"].toString()
 
-                self.data["content"]["tests"] = []
+                self.data["tests"] = []
                 for test in content["Content"][0]["value"]:
-                    # FIXME : need to delete id key from dict (coupled with the dock data)
-                    self.data["content"]["tests"].append(test)
-                print(self.data["content"]["tests"])
+                    # if none selected, add Nurse as default.
+                    if len(test["staff"]) == 0:
+                        test["staff"].append("Nurse")
+                    self.data["tests"].append(test)
 
         except Exception as e:
             dumpException(e)
 
     def get_tree_build(self):
-
         to_send = {
             "Node Details": [
-                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time",
-                 "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
+                {"name": "Title", "type": "text", "value": self.data["node_details"]["title"]},
                 {"name": "Actor In Charge", "type": "combobox",
-                 "value": self.data["content"]["node_details"]["actor in charge"],
+                 "value": self.data["node_details"]["actor in charge"],
                  "options": ["Nurse", "Doctor", "Investigator", "Lab Technician"]},
                 {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Content": [
-                {"name": "Tests", "type": "test sub tree", "value": self.data["content"]["tests"]}],
+                {"name": "Tests", "type": "test sub tree", "value": self.data["tests"]}],
             "callback": self.callback_from_window
         }
         return to_send
+
+    def remove(self):
+        super().remove()
+
+        deleted_tests = [test["name"] for test in self.data["tests"]]
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_DECISION:
+                node.data["condition"] = [condition for condition in node.data["condition"] if
+                                          condition["type"] != "test condition" or condition[
+                                              "test"] not in deleted_tests]
 
 
 @register_node(OP_NODE_DECISION)
@@ -267,14 +263,12 @@ class WorkflowNode_Decision(WorkflowNode):
         # self.color = "Green"
         # @data to send to engine.
         self.data = {
-            "content": {
-                "node_details": {
-                    "time": QTime.toString(QTime(0, 0)),
-                    "title": "New Decision Node",
-                    # "color": self.color
-                },
-                "condition": [],
-            }
+            "node_details": {
+                "time": QTime.toString(QTime(0, 0)),
+                "title": "New Decision Node",
+                # "color": self.color
+            },
+            "condition": [],
         }
 
     def initInnerClasses(self):
@@ -299,18 +293,15 @@ class WorkflowNode_Decision(WorkflowNode):
                 self.remove()  # remove node
             else:
                 for field in content["Node Details"]:
-                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    self.data["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
                     # if field["name"].lower() == "color":
                     #     self.grNode.change_background(field["value"].lower())
                     #     self.color = field["value"]
-                    if field["name"].lower() == "time":
-                        self.data["content"]["node_details"][field["name"].lower()] = field["value"].toString()
-                self.data["content"]["condition"] = []
-                # FIXME: change "accepted answers" implementation
+                self.data["condition"] = []
                 for condition in content["Condition"][0]["value"]:
-                    self.data["content"]["condition"].append(condition)
+                    self.data["condition"].append(condition)
 
         except Exception as e:
             dumpException(e)
@@ -397,31 +388,41 @@ class WorkflowNode_Decision(WorkflowNode):
         return [x, y]
 
     def get_tree_build(self):
-        # TODO: connect questionnaries and tests data to condition
-        # nodes_content = []
-        #
-        # for node in self.scene.nodes:
-        #     if node.op_code == OP_NODE_QUESTIONNAIRE:
-        #         nodes_content.append(
-        #             {"node": OP_NODE_QUESTIONNAIRE, "content": {"ID": node.QNum, "questions": node.content}})
-        #     elif node.op_code == OP_NODE_Test:
-        #         nodes_content.append({"node": OP_NODE_Test, "content": node.content})
+        nodes_content = self.get_nodes_from_scene()
 
         to_send = {
             "Node Details": [
-                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
-                {"name": "Time", "type": "time",
-                 "value": QTime.fromString(self.data["content"]["node_details"]["time"])},
+                {"name": "Title", "type": "text", "value": self.data["node_details"]["title"]},
                 # {"name": "Color", "type": "combobox icons", "value": self.color,
                 #  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
             "Condition": [
-                {"name": "Conditions", "type": "cond sub tree", "value": self.data["content"]["condition"]},
+                {"name": "Conditions", "type": "cond sub tree", "value": self.data["condition"],
+                 "known": nodes_content},
             ],
             "callback": self.callback_from_window
         }
 
         return to_send
+
+    def get_nodes_from_scene(self):
+        nodes_content = []
+
+        for node in self.scene.nodes:
+            if node.op_code == OP_NODE_QUESTIONNAIRE:
+                new_questions = []
+                for question in node.data["questions"]:
+                    if question["type"] != "open":
+                        new_questions.append(
+                            {"type": question["type"], "questionNumber": question["id"], "question": question["text"],
+                             "answers": question["options"]})
+                nodes_content.append(
+                    {"node": OP_NODE_QUESTIONNAIRE, "content": {"id": node.QNum, "questions": new_questions}})
+            elif node.op_code == OP_NODE_Test:
+                for test in node.data["tests"]:
+                    nodes_content.append({"node": OP_NODE_Test, "content": test["name"]})
+
+        return nodes_content
 
 
 @register_node(OP_NODE_STRING)
@@ -436,14 +437,12 @@ class WorkflowNode_SimpleString(WorkflowNode):
         self.color = "Grey"
         # @data to send to engine.
         self.data = {
-            "content": {
-                "node_details": {
-                    "actors": [],
-                    "title": "New Notification Node",
-                    "color": self.color
-                },
-                "text": ""
-            }
+            "node_details": {
+                "actors": [],
+                "title": "New Notification Node",
+                "color": self.color
+            },
+            "text": ""
         }
 
     def initInnerClasses(self):
@@ -473,14 +472,14 @@ class WorkflowNode_SimpleString(WorkflowNode):
             else:
 
                 for field in content["Node Details"]:
-                    self.data["content"]["node_details"][field["name"].lower()] = field["value"]
+                    self.data["node_details"][field["name"].lower()] = field["value"]
                     if field["name"].lower() == "title":
                         self.title = field["value"]
                     if field["name"].lower() == "color":
                         self.grNode.change_background(field["value"].lower())
                         self.color = field["value"]
 
-                self.data["content"]["text"] = content["Notification"][0]["value"]
+                self.data["text"] = content["Notification"][0]["value"]
 
         except Exception as e:
             dumpException(e)
@@ -488,14 +487,14 @@ class WorkflowNode_SimpleString(WorkflowNode):
     def get_tree_build(self):
         to_send = {
             "Node Details": [
-                {"name": "Title", "type": "text", "value": self.data["content"]["node_details"]["title"]},
+                {"name": "Title", "type": "text", "value": self.data["node_details"]["title"]},
                 {"name": "Actors", "type": "checklist",
                  "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"],
-                 "value": self.data["content"]["node_details"]["actors"]},
+                 "value": self.data["node_details"]["actors"]},
                 {"name": "Color", "type": "combobox icons", "value": self.color,
                  "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
             ],
-            "Notification": [{"name": "Text", "type": "text", "value": self.data["content"]["text"]}],
+            "Notification": [{"name": "Text", "type": "text", "value": self.data["text"]}],
             "callback": self.callback_from_window
         }
         return to_send
@@ -679,6 +678,8 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
+
+    # FIXME: sub workflow override the dock callback to all nodes.
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
