@@ -1,0 +1,99 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1890421255808,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1890421256096
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1890421256144
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "hello"
+                },
+                "text": "hello"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1890421255856,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1890421297408
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1890421297456
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "world"
+                },
+                "text": "world"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 1890421256096
+        },
+        {
+            "id": 1890421297696,
+            "type": 2,
+            "start": 1890421256144,
+            "end": 1890421297408,
+            "content": {
+                "min": "03/04/22 17:53:00",
+                "max": "30/05/22 00:17:40"
+            }
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 1890421297456,
+            "end": 1892817027520
+        }
+    ]
+}

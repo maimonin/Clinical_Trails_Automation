@@ -1,0 +1,151 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2225389267504,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 2225390863504
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225390865424
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "decision"
+                },
+                "condition": [
+                    {
+                        "title": "trait condition 1",
+                        "type": "trait condition    ",
+                        "test": "gender",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "male"
+                        }
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2225390864224,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2225390865520
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225390865616
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1"
+                },
+                "text": "you're a boy"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2225390865664,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2225390866096
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225390866144
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2"
+                },
+                "text": "you're a girl"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1892817027281,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027521
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 2225390863504
+        },
+        {
+            "id": 2225390865808,
+            "edge_type": 2,
+            "start": 2225390865424,
+            "type": 0,
+            "end": 2225390865520
+        },
+        {
+            "id": 2225390866384,
+            "edge_type": 2,
+            "start": 2225390865424,
+            "type": 0,
+            "end": 2225390866096
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 2225390865616,
+            "end": 1892817027520
+        },
+        {
+            "id": 1892817028481,
+            "type": 0,
+            "start": 2225390866144,
+            "end": 1892817027521
+        }
+    ]
+}
