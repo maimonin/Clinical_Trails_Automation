@@ -72,6 +72,7 @@ class WorkflowEdge(Edge):
             self.type = NORMAL if (input_min == "" or input_max == "") else RELATIVE
 
             self.data["content"]["edge_details"]["title"] = input_title
+            # TODO: make sure min is smaller than max
             if input_min != "":
                 self.data["content"]["edge_details"]["min"]["hours"] = input_min[:2]
                 self.data["content"]["edge_details"]["min"]["minutes"] = input_min[3:5]
@@ -139,6 +140,7 @@ class WorkflowEdge(Edge):
                 del result["content"]
             elif self.type == RELATIVE:
                 del result["content"]["title"]
+                # FIXME: make sure the string is a number.
                 for time in result["content"]["min"]:
                     time["hours"] = int(time["hours"])
                     time["minutes"] = int(time["minutes"])
