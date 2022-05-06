@@ -222,8 +222,7 @@ class TestTree:
             "name": "",
             "instructions": "",
             "staff": [],
-            "duration": "",
-            "facility": ""
+            "duration": ""
         }
         self.tests.append(test_data)
 
@@ -239,7 +238,6 @@ class TestTree:
         self.add_line_edit(new_widget, test_data, "Instructions")
         self.add_checklist(new_widget, test_data)
         self.add_line_edit(new_widget, test_data, "Duration")
-        self.add_line_edit(new_widget, test_data, "Facility")
 
     # @root - the container who holds all the tests items. (Called: Tests)
     # @remove_id - remove specific item
@@ -265,7 +263,6 @@ class TestTree:
             self.add_line_edit(new_widget, test_data, "Instructions")
             self.add_checklist(new_widget, test_data)
             self.add_line_edit(new_widget, test_data, "Duration")
-            self.add_line_edit(new_widget, test_data, "Facility")
 
     def add_line_edit(self, new_widget, test_data, title):
         name_item = QtWidgets.QTreeWidgetItem(new_widget)
@@ -469,7 +466,7 @@ class QuestionnaireTree:
 
 class DecisionTree:
     tests = []
-    questionniares = []
+    questionnaires = []
 
     def __init__(self, dock, tree_widget_item, data, known, update_dock):
         self.conditions = data
@@ -491,15 +488,16 @@ class DecisionTree:
             self.next_condition_id = self.conditions[-1]["id"]
             self.rebuild_tree(tree_widget_item)
 
+    # load all the tests and questionnaires options to choose from
     def load_known(self, known):
         self.tests = []
-        self.questionniares = []
+        self.questionnaires = []
 
         for node in known:
             if node["node"] == OP_NODE_Test:
                 self.tests.append(node["content"])
             elif node["node"] == OP_NODE_QUESTIONNAIRE:
-                self.questionniares.append(node["content"])
+                self.questionnaires.append(node["content"])
 
     def add_condition(self, root):
         id = self.get_next_id()
@@ -633,7 +631,7 @@ class DecisionTree:
         for opt in options:
             combo_widget.addItem(opt)
         combo_widget.activated.connect(
-            lambda index, options = options: self.combo_condition_changed(options, index, data, parent))
+            lambda index, options=options: self.combo_condition_changed(options, index, data, parent))
         combo_widget.setCurrentIndex(1)
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 
@@ -647,7 +645,7 @@ class DecisionTree:
         condition_widget.activated.connect(
             lambda index, options=options: self.combo_test_changed(data, options, index))
         if data["test"] != "":
-            condition_widget.setCurrentIndex(options.index(data["test"])+1)
+            condition_widget.setCurrentIndex(options.index(data["test"]) + 1)
         self.dock.setItemWidget(condition_item, 1, condition_widget)
 
         satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
@@ -664,12 +662,24 @@ class DecisionTree:
 
             satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
             satisfy_value_item.setText(0, "Satisfy Value:")
-            value_widget = QLineEdit()
-            value_widget.setPlaceholderText("Enter Value")
-            value_widget.setText(data["satisfy"]["value"])
-            value_widget.editingFinished.connect(
-                lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+
+            value_widget = QComboBox()
+            options = ["Positive", "Negative"]
+            value_widget.addItems(options)
+            value_widget.activated.connect(
+                lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
+                                                                                    data["satisfy"]))
+            if data["satisfy"]["type"] == "one_choice":
+                option = data["satisfy"]["value"].title()
+                value_widget.setCurrentIndex(options.index(option))
             self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+
+            # value_widget = QLineEdit()
+            # value_widget.setPlaceholderText("Enter Value")
+            # value_widget.setText(data["satisfy"]["value"])
+            # value_widget.editingFinished.connect(
+            #     lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+            # self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
             return
 
         satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
@@ -709,12 +719,6 @@ class DecisionTree:
         combo_widget.setCurrentIndex(2)
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 
-        # id_item = QtWidgets.QTreeWidgetItem(parent)
-        # # id_item.setText(0, "Questionnaire ID:")
-        # id_label = QLabel("Questionnaire ID:")
-        # id_label.setWordWrap(True)
-        # self.dock.setItemWidget(id_item, 0, id_label)
-
         id_item = QtWidgets.QTreeWidgetItem(parent)
         id_label = QLabel("Questionnaire ID:")
         id_label.setWordWrap(True)
@@ -722,55 +726,19 @@ class DecisionTree:
 
         id_widget = QComboBox()
         id_widget.addItem("")
-        for questionnaire in self.questionniares:
+        for questionnaire in self.questionnaires:
             id_widget.addItem(questionnaire["id"])
         id_widget.activated.connect(
             lambda index, old_index=id_widget.currentIndex(): self.combo_questionnaire_changed(
                 index, old_index, data, parent))
         # in case of loaded data
         if data["questionnaireNumber"] != "0":
-            for idx, questionnaire in enumerate(self.questionniares):
+            for idx, questionnaire in enumerate(self.questionnaires):
                 if questionnaire["id"] == data["questionnaireNumber"]:
-                    id_widget.setCurrentIndex(idx+1)
+                    id_widget.setCurrentIndex(idx + 1)
                     break
             self.combo_questionnaire_changed(idx, 0, data, parent)
         self.dock.setItemWidget(id_item, 1, id_widget)
-
-        # id_widget = QLineEdit()
-        # id_widget.setPlaceholderText("Enter Questionnaire ID")
-        # id_widget.editingFinished.connect(
-        #     lambda widget=id_widget: self.line_changed(widget, data, "questionnaireNumber"))
-        # if data["questionnaireNumber"] != "0":
-        #     id_widget.setText(data["questionnaireNumber"])
-        # self.dock.setItemWidget(id_item, 1, id_widget)
-
-        # question_item = QtWidgets.QTreeWidgetItem(parent)
-        # # question_item.setText(0, "Question Number:")
-        # question_label = QLabel("Question Number:")
-        # question_label.setWordWrap(True)
-        # self.dock.setItemWidget(question_item, 0, question_label)
-
-        # question_widget = QLineEdit()
-        # question_widget.setPlaceholderText("Enter Question #")
-        # question_widget.editingFinished.connect(
-        #     lambda widget=question_widget: self.line_changed(widget, data, "questionNumber"))
-        # if data["questionNumber"] != "0":
-        #     id_widget.setText(data["questionNumber"])
-        # self.dock.setItemWidget(question_item, 1, question_widget)
-
-        # answers_item = QtWidgets.QTreeWidgetItem(parent)
-        # # answers_item.setText(0, "Accepted Answers:")
-        # answers_label = QLabel("Accepted Answers:")
-        # answers_label.setWordWrap(True)
-        # self.dock.setItemWidget(answers_item, 0, answers_label)
-
-        # answers_widget = QLineEdit()
-        # answers_widget.setPlaceholderText("Enter Accepted Answers")
-        # answers_widget.editingFinished.connect(
-        #     lambda widget=answers_widget: self.line_changed(widget, data, "acceptedAnswers"))
-        # if data["acceptedAnswers"] == "":
-        #     id_widget.setText(data["acceptedAnswers"])
-        # self.dock.setItemWidget(answers_item, 1, answers_widget)
 
     def combo_test_changed(self, data, options, index):
         if index == 0:
@@ -827,6 +795,7 @@ class DecisionTree:
                 "title": old_title,
                 "type": "questionnaire condition",
                 "questionnaireNumber": "0",
+                "questionNumber": 0,
                 "question": "",
                 "acceptedAnswers": [],
             }
@@ -839,6 +808,7 @@ class DecisionTree:
 
     def combo_satisfy_changed(self, options, index_changed, data, parent):
         state = parent.childCount()  # know state by children number, 4 = one choice, 5 = range
+        # return if the same as selected.
         if (options[index_changed] == "Range" and state == 5) or (
                 options[index_changed] == "One Choice" and state == 4):
             return
@@ -877,23 +847,34 @@ class DecisionTree:
                 satisfy_value_label.setWordWrap(True)
                 self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
 
-                value_widget = QLineEdit()
-                value_widget.setPlaceholderText("Enter Value")
-                value_widget.editingFinished.connect(
-                    lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+                value_widget = QComboBox()
+                options = ["Positive", "Negative"]
+                value_widget.addItems(options)
+                value_widget.activated.connect(
+                    lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
+                                                                                        data["satisfy"]))
+                if data["satisfy"]["type"] == "one_choice":
+                    option = data["satisfy"]["value"].title()
+                    value_widget.setCurrentIndex(options.index(option))
                 self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
                 data["satisfy"]["type"] = "one_choice"
                 data["satisfy"]["value"] = "0"
             self.call_dock()
 
+    def combo_satisfy_oneChoice_changed(self, index_changed, options, data):
+        data["value"] = options[index_changed].lower()
+
+        self.call_dock()
+
+    # questionnaire number changed.
     def combo_questionnaire_changed(self, new_idx, old_idx, data, parent):
         # reset questionnaire ui
         counter = parent.childCount()
         for i in range(counter - 1, 1, -1):
             parent.removeChild(parent.child(i))
 
-        chosen = self.questionniares[new_idx - 1]
+        chosen = self.questionnaires[new_idx - 1]
         data["questionnaireNumber"] = chosen["id"]
 
         # combobox for choosing a question
@@ -910,7 +891,7 @@ class DecisionTree:
                                                                                                 parent))
         # in case of loaded data
         if data["question"] != "":
-            for idx,question in enumerate(chosen["questions"]):
+            for idx, question in enumerate(chosen["questions"]):
                 if data["question"] == question["question"]:
                     found = idx
                     break
@@ -929,11 +910,13 @@ class DecisionTree:
 
         chosen = chosen[new_idx - 1]
         data["question"] = chosen["question"]
+        data["questionNumber"] = chosen["questionNumber"]
         if chosen["type"] == "multi":
             self.build_multi_questions(chosen, data, parent)
         elif chosen["type"] == "one choice":
             self.build_oneChoice_questions(chosen, data, parent)
 
+    # question type multi
     def build_multi_questions(self, question, data, parent):
         answers_item = QtWidgets.QTreeWidgetItem(parent)
         answers_item.setText(0, "Accepted Answers:")
@@ -951,6 +934,7 @@ class DecisionTree:
                 answer_label = QLabel(answer)
                 self.dock.setItemWidget(answer_item, 1, answer_label)
 
+    # question type one choice
     def build_oneChoice_questions(self, question, data, parent):
         answers_item = QtWidgets.QTreeWidgetItem(parent)
         answers_item.setText(0, "Accepted Answers:")

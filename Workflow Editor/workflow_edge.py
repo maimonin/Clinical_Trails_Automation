@@ -20,8 +20,8 @@ class WorkflowEdge(Edge):
             "content": {
                 "edge_details": {
                     "title": "",
-                    "min": {"Hours": "00", "Minutes": "00", "Seconds": "00"},
-                    "max": {"Hours": "00", "Minutes": "00", "Seconds": "00"},
+                    "min": {"hours": "00", "minutes": "00", "seconds": "00"},
+                    "max": {"hours": "00", "minutes": "00", "seconds": "00"},
                 },
                 "callback": self.callback_from_dock,
 
@@ -73,13 +73,13 @@ class WorkflowEdge(Edge):
 
             self.data["content"]["edge_details"]["title"] = input_title
             if input_min != "":
-                self.data["content"]["edge_details"]["min"]["Hours"] = input_min[:2]
-                self.data["content"]["edge_details"]["min"]["Minutes"] = input_min[3:5]
-                self.data["content"]["edge_details"]["min"]["Seconds"] = input_min[6:]
+                self.data["content"]["edge_details"]["min"]["hours"] = input_min[:2]
+                self.data["content"]["edge_details"]["min"]["minutes"] = input_min[3:5]
+                self.data["content"]["edge_details"]["min"]["seconds"] = input_min[6:]
             if input_max != "":
-                self.data["content"]["edge_details"]["max"]["Hours"] = input_max[:2]
-                self.data["content"]["edge_details"]["max"]["Minutes"] = input_max[3:5]
-                self.data["content"]["edge_details"]["max"]["Seconds"] = input_max[6:]
+                self.data["content"]["edge_details"]["max"]["hours"] = input_max[:2]
+                self.data["content"]["edge_details"]["max"]["minutes"] = input_max[3:5]
+                self.data["content"]["edge_details"]["max"]["seconds"] = input_max[6:]
         except Exception as e:
             dumpException(e)
 
@@ -111,7 +111,7 @@ class WorkflowEdge(Edge):
         return to_send
 
     def convert_to_time(self, time_dict):
-        dict_to_string = time_dict["Hours"] + ":" + time_dict["Minutes"] + ":" + time_dict["Seconds"]
+        dict_to_string = time_dict["hours"] + ":" + time_dict["minutes"] + ":" + time_dict["seconds"]
         result = QTime.fromString(dict_to_string, "hh:mm:ss")
         return result
 
@@ -135,6 +135,18 @@ class WorkflowEdge(Edge):
             ])
         if engine_save:
             del result["edge_type"]
+            if self.type == NORMAL:
+                del result["content"]
+            elif self.type == RELATIVE:
+                del result["content"]["title"]
+                for time in result["content"]["min"]:
+                    time["hours"] = int(time["hours"])
+                    time["minutes"] = int(time["minutes"])
+                    time["seconds"] = int(time["seconds"])
+                for time in result["content"]["max"]:
+                    time["hours"] = int(time["hours"])
+                    time["minutes"] = int(time["minutes"])
+                    time["seconds"] = int(time["seconds"])
         return result
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
@@ -144,9 +156,9 @@ class WorkflowEdge(Edge):
         self.type = data['type']
         self.edge_type = data["edge_type"]
         self.data['content']['edge_details'] = data['content']
-        min_string = data['content']["min"]["Hours"] + ":" + data['content']["min"]["Minutes"] + ":" + \
-                     data['content']["min"]["Seconds"]
-        max_string = data['content']["max"]["Hours"] + ":" + data['content']["max"]["Minutes"] + ":" + \
-                     data['content']["max"]["Seconds"]
+        min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
+                     data['content']["min"]["seconds"]
+        max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
+                     data['content']["max"]["seconds"]
         self.update_label(data['content']["title"], min_string, max_string)
         self.doSelect()  # reload the data when opening a new file
