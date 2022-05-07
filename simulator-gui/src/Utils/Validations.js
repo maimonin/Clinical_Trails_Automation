@@ -1,7 +1,13 @@
 import { element } from "prop-types";
 import { empty_singlechoice_answer } from "../Components/Question/Question";
 
-export const isValidUserData = (userDetails) =>
+export const isValidRegisterUserData = (userDetails) =>
+{
+return (
+isNotEmptyString(userDetails.name)  && isNotEmptyString(userDetails.sex) &&
+ greaterThanZero(userDetails.age) && greaterThanZero(userDetails.id) && isNotEmptyString(userDetails.role))
+}
+export const isValidLoginUserData = (userDetails) =>
 {
 return (
 isNotEmptyString(userDetails.name)  && isNotEmptyString(userDetails.sex) &&
