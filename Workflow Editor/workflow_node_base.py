@@ -7,7 +7,8 @@ from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
-from workflow_conf import OP_NODE_START, OP_NODE_FINISH, OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING
+from workflow_conf import OP_NODE_START, OP_NODE_FINISH, OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING, \
+    OP_NODE_DECISION
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -543,17 +544,43 @@ class WorkflowNode(Node):
                 'content'] = self.data if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
 
-            # remove features that's for node_UI
+            # remove features that is for node editor
             if engine_save:
-                # TODO: check again what is unnecessary
                 del res['pos_x']
                 del res['pos_y']
 
-                try:
-                    res["content"]["content"]["node_details"].pop("color", None)
-                except TypeError:
-                    # not a node serialization
-                    pass
+                if len(res["inputs"]) > 0:
+                    for idx,input in enumerate(res["inputs"]):
+                        del res["inputs"][idx]["index"]
+                        del res["inputs"][idx]["position"]
+                        del res["inputs"][idx]["socket_type"]
+                        del res["inputs"][idx]["multi_edges"]
+
+                if len(res["outputs"]) > 0:
+                    for idx,output in enumerate(res["outputs"]):
+                        del res["outputs"][idx]["index"]
+                        del res["outputs"][idx]["position"]
+                        del res["outputs"][idx]["socket_type"]
+                        del res["outputs"][idx]["multi_edges"]
+
+                if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
+                    del res["content"]
+                elif res["op_code"] == OP_NODE_DECISION:
+                    for condition in res["content"]["condition"]:
+                        del condition["id"]
+                        if condition["type"] == "questionnaire condition":
+                            del condition["question"]
+                elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
+                    del res["content"]["node_details"]["color"]
+                    # remove null answers from questionnairs
+                    for question in res["content"]["questions"]:
+                        answers = question["options"]
+                        question["options"] = []
+                        for opt in answers:
+                            if opt is not None:
+                                question["options"].append(opt)
+                elif res["op_code"] == OP_NODE_Test or OP_NODE_STRING:
+                    del res["content"]["node_details"]["color"]
 
         except Exception as e:
             dumpException(e)
@@ -563,11 +590,14 @@ class WorkflowNode(Node):
     def deserialize(self, data, hashmap={}, restore_id=True):
         try:
             res = super().deserialize(data, hashmap, restore_id)
-            self.data = data['content']
+            self.data = data["content"]
             self.op_code = data['op_code']
-            # TODO : add to each node his specific attribues. e.g. color \ text
-            if self.op_code in [OP_NODE_QUESTIONNAIRE,OP_NODE_Test,OP_NODE_STRING]:
-                self.color = data['content']['content']['node_details']['color']
+
+            # recovering node specific attributes
+            if self.op_code in [OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING]:
+                self.color = data["content"]['node_details']['color']
+            if self.op_code == OP_NODE_QUESTIONNAIRE:
+                self.QNum = data["content"]["questionnaire_number"]
             self.attributes_dock_callback(self.get_tree_build())
 
         except Exception as e:

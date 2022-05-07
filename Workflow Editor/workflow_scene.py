@@ -123,14 +123,22 @@ class WorkflowScene(Scene):
     def serialize(self, engine_save=False) -> OrderedDict:
         nodes, edges = [], []
         for node in self.nodes: nodes.append(node.serialize(engine_save))
-        for edge in self.edges: edges.append(edge.serialize())
-        return OrderedDict([
+        for edge in self.edges: edges.append(edge.serialize(engine_save))
+        if engine_save:
+            result = OrderedDict([
             ('id', self.id),
-            ('scene_width', self.scene_width),
-            ('scene_height', self.scene_height),
             ('nodes', nodes),
             ('edges', edges),
         ])
+        else:
+            result =OrderedDict([
+                ('id', self.id),
+                ('scene_width', self.scene_width),
+                ('scene_height', self.scene_height),
+                ('nodes', nodes),
+                ('edges', edges),
+            ])
+        return result
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
         hashmap = {}
