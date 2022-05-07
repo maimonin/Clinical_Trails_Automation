@@ -2,3 +2,4 @@ pyqt5~=5.15.6
 nodeeditor~=0.9.13
 qt_material
 QtPy~=2.0.1
+websockets~=10.2
