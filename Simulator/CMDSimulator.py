@@ -93,6 +93,7 @@ async def actor_simulation(user, s):
                 lock.release()
             elif data_json['type'] == 'test data entry':
                 lock.acquire()
+                print(data_json)
                 val = input(
                     f"{user['name']}:  patient with id {data_json['patient']} has taken test: "
                     f"{data_json['test']['name']}  \nplease enter the results:")

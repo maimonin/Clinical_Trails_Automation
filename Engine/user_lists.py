@@ -54,5 +54,5 @@ async def take_test(user_id, test, in_charge):
     log(datetime.now().strftime("%H:%M:%S") + " participant with id " + str(user_id) + " taking a test")
     await sleep(int(test.duration))
     form = {'type': 'test data entry', 'test': test.to_json(), 'patient': user_id}
-    # r = get_role(in_charge)
-    await send_notification_by_id(user_id, form)
+    in_charge_id = get_role(in_charge).id
+    await send_notification_by_id(in_charge_id, form)
