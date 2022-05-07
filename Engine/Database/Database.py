@@ -23,7 +23,6 @@ def delete_db():
 
 def create_connection():
     db_name = read_config()
-    print(db_name)
     conn = None
     try:
         conn = sqlite3.connect(db_name)
@@ -36,7 +35,6 @@ def create_connection():
 
 def read_config():
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    print(ROOT_DIR)
     f = open(ROOT_DIR+'\\config.json')
     data = json.load(f)
     return ROOT_DIR+'\\'+data['db_name']

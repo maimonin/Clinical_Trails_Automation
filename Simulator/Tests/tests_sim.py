@@ -26,11 +26,13 @@ async def get_data(s):
 
 
 async def actor_simulation(user, s, answers):
+    outs=[]
     try:
         while True:
             data = None
             try:
                 data = await get_data(s)
+                outs.append(data)
             except Exception as e:
                 dumpException(e)
             data_json = json.loads(data)
@@ -45,6 +47,7 @@ async def actor_simulation(user, s, answers):
                     {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
                 await s.close()
+                return outs
                 break
 
     except Exception as e:
@@ -69,16 +72,21 @@ async def login_user(log_id, s):
 async def run(path, ans_path, participant_id, gender, age):
     url = "ws://127.0.0.1:7890"
     await send_json(url, path)
+    first_run=True
     for user in users:
+        if 's' in user:
+            first_run = False
+            break
         s = await websockets.connect(url)
         await register_user(user, s)
         user['s'] = s
     f = open(ans_path)
     answers = json.load(f)
     tasks = []
-    for user in users:
-        t = asyncio.create_task(actor_simulation(user, user['s'], answers[user['name']]))
-        tasks.append(t)
+    if first_run:
+        for user in users:
+            t = asyncio.create_task(actor_simulation(user, user['s'], answers[user['name']]))
+            tasks.append(t)
     user = {"name": "participant " + str(participant_id), "role": "participant", "workflow": 2111561603920,
             "sex": gender, "age": str(age),
             "id": participant_id}
@@ -88,7 +96,7 @@ async def run(path, ans_path, participant_id, gender, age):
         s = await websockets.connect(url)
         await register_user(user, s)
         user['s'] = s
-        await actor_simulation(user, user['s'], answers[user['name']])
+        return await actor_simulation(user, user['s'], answers[user['name']])
     except Exception as e:
         dumpException(e)
     # for t in tasks:
