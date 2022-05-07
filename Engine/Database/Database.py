@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 
@@ -7,30 +8,22 @@ from Form import Form
 from Test import Test
 from Users import User
 
-workflows = {}
-questionnaires = {}
-testNodes = {}
-decisionNodes = {}
-stringNodes = {}
-complexNodes = {}
-forms = {}
-db_name = ""
-
-
 def set_name(name):
     # noinspection PyGlobalUndefined
     global db_name
     db_name = name
 
 
-def delete_db(name):
-    if os.path.exists(name):
-        os.remove(name)
+def delete_db():
+    if os.path.exists(read_config()):
+        os.remove(read_config())
     else:
         print("The file does not exist")
 
 
 def create_connection():
+    db_name = read_config()
+    print(db_name)
     conn = None
     try:
         conn = sqlite3.connect(db_name)
@@ -39,6 +32,14 @@ def create_connection():
         print(e)
 
     return conn
+
+
+def read_config():
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    print(ROOT_DIR)
+    f = open(ROOT_DIR+'\\config.json')
+    data = json.load(f)
+    return ROOT_DIR+'\\'+data['db_name']
 
 
 def create_table(conn, query):
@@ -330,7 +331,6 @@ def addForm(form):
                     continue
         conn.commit()
     conn.close()
-    forms[form.questionnaire_number] = form
 
 
 def addNode(node, op_code):
@@ -361,7 +361,6 @@ def addQuestionnaire(node_id, form_id, node):
                    (?, ?);"""
     node_data = (node_id, form_id)
     change_table(query, node_data)
-    questionnaires[node_id] = node
 
 
 def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
@@ -409,7 +408,6 @@ def addTestNode(node):
                 VALUES (?, ?, ?);"""
     node_data = (node.id, node.title, node.in_charge)
     change_table(query, node_data)
-    testNodes[node.id] = node
 
 
 def addTestResults(test_name, user_id, time_taken, result):
@@ -435,7 +433,6 @@ def addWorkflow(workflow_id, first):
                 VALUES (?, ?);"""
     data = (workflow_id, first)
     change_table(query, data)
-    workflows[workflow_id] = first
 
 
 def getAllActives(participant_id):
@@ -480,8 +477,6 @@ def getEdges(from_id):
 
 
 def getForm(form_id):
-    if form_id in forms:
-        return forms.get(form_id)
 
     conn = create_connection()
     cur = conn.cursor()
@@ -506,7 +501,6 @@ def getForm(form_id):
                           "type": "open"})
     conn.close()
     form = Form(form_id, questions)
-    forms[form_id] = form
 
     return form
 
@@ -595,12 +589,8 @@ def getWaitList(node_id, participant_id):
 
 
 def getWorkflow(workflow_id):
-    if workflow_id in workflows:
-        return [workflow_id, workflows[workflow_id]]
     query = """SELECT * FROM Workflows WHERE id=?"""
     workflow = extract_one_from_table(query, (workflow_id,))
-    if workflow is not None:
-        workflows[workflow_id] = [workflow[1]]
     return workflow
 
 

@@ -4,10 +4,10 @@ from Database import Database
 
 
 async def test():
-    Database.delete_db(r"C:\Users\Owner\Desktop\Clinical_Trails_Automation\Engine\Database\test_data.db")
+    Database.delete_db()
+    print('here')
     await tests_sim.run('jsons/questionnaire_example.json', 'Answers/questionnaire_example_answers1.json',
                         1, 'female', 20)
-    Database.set_name()
     print(Database.getUser(1))
     assert Database.getUser(1).role == "participant", "user sghoulf be participant"
     assert Database.getUser(1).sex == "female", "user should be fdemale"
