@@ -578,7 +578,7 @@ def getToNode(edge_id):
 
 def getUser(user_id):
     user_data = extract_one_from_table("SELECT * FROM Participants WHERE id=?", (user_id,))
-    return User(user_data[1], user_data[2], user_data[3], user_id)
+    return User('participant', user_data[2], user_data[3], user_id)
 
 
 def getWaitList(node_id, participant_id):
