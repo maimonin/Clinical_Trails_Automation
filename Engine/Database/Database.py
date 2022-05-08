@@ -8,6 +8,7 @@ from Form import Form
 from Test import Test
 from Users import User
 
+
 def set_name(name):
     # noinspection PyGlobalUndefined
     global db_name
@@ -77,6 +78,18 @@ def extract_many_from_table(query, data):
     cur = conn.cursor()
     try:
         cur.execute(query, data)
+        result = cur.fetchall()
+        conn.close()
+        return result
+    except sqlite3.Error as e:
+        print(e)
+
+
+def fetch_all(query):
+    conn = create_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(query)
         result = cur.fetchall()
         conn.close()
         return result
@@ -450,6 +463,10 @@ def getAnswer(form_id, question_number, participant_id):
     return rows
 
 
+def getAnswerOptions():
+    return fetch_all("""SELECT * FROM Answer_Options""")
+
+
 def getCurrentPositions(participant_id):
     positions = extract_many_from_table("SELECT position_id, type FROM Current_Position WHERE participant_id=?",
                                         (participant_id,))
@@ -475,7 +492,6 @@ def getEdges(from_id):
 
 
 def getForm(form_id):
-
     conn = create_connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM Questions WHERE form_id=?", (form_id,))
@@ -541,6 +557,14 @@ def getNode(node_id):
         return buildDALNodes([op_code, node_id, "New Finish Node"])
 
 
+def getQuestionnaires():
+    return fetch_all("""SELECT * FROM Questionnaires""")
+
+
+def getQuestions():
+    return fetch_all("""SELECT * FROM Questions""")
+
+
 def getStaff(role):
     user_data = extract_one_from_table("""SELECT * FROM Staff WHERE role=? AND available="yes" """, (role.lower(),))
     if len(user_data) == 0:
@@ -592,6 +616,12 @@ def getWorkflow(workflow_id):
     return workflow
 
 
+def getWorkflowsIds():
+    ids = fetch_all("""SELECT id FROM Workflows""")
+    ids = list(map(unpack, ids))
+    return ids
+
+
 def releasePosition(participant_id, position_id, position_type):
     change_table("""UPDATE current_position SET active = "no" WHERE participant_id=? AND position_id=? AND type=?""",
                  (participant_id, position_id, position_type))
@@ -603,3 +633,8 @@ def releaseStaff(user_id):
 
 def releaseWaiter(node_id, participant_id):
     change_table("""DELETE FROM Wait_List WHERE node_id=? AND participant_id=?""", (node_id, participant_id))
+
+
+def unpack(tup):
+    (x,) = tup
+    return x
