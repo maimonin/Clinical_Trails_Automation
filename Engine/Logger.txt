@@ -1,6 +1,20 @@
-18:05:04 created workflow
-18:05:04 nurse registered
-18:05:04 investigator registered
-18:05:04 lab registered
-18:05:04 doctor registered
-18:05:04 participant 1 registered
+18:52:03 created workflow
+18:52:03 nurse registered
+18:52:03 investigator registered
+18:52:03 lab registered
+18:52:03 doctor registered
+18:52:03 participant 1 registered
+18:52:03 sending questionnaire
+18:52:03 adding questionnaire of participant with id 1
+18:52:03 participant 1 answers: 
+	Ok?: [0]
+18:52:14 created workflow
+18:52:14 nurse registered
+18:52:14 investigator registered
+18:52:14 lab registered
+18:52:14 doctor registered
+18:52:14 participant 1 registered
+18:52:14 sending questionnaire
+18:52:14 adding questionnaire of participant with id 1
+18:52:14 participant 1 answers: 
+	Ok?: [1]

@@ -430,7 +430,6 @@ def addTraitCond(decision_id, title, test, sat_type, gender, min_val, max_val):
     query = """INSERT OR IGNORE INTO Conditions_Trait (decision_id, title, test, type, gender, min, max)
                 VALUES (?, ?, ?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, gender, min_val, max_val)
-    print(cond_data)
     change_table(query, cond_data)
 
 
@@ -480,10 +479,11 @@ def getCurrentPositions(participant_id):
                                         (participant_id,))
     output = []
     for position in positions:
-        if position[2] == "edge":
-            output.append(("edge", getEdge(position[1])))
+        if position[1] == "edge":
+            output.append(("edge", getEdge(position[0])))
         else:
-            output.append(("node", getNode(position[1])))
+            output.append(("node", getNode(position[0])))
+    return output
 
 
 def getEdge(edge_id):
