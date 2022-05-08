@@ -91,7 +91,9 @@ const  handleFile = (file) => {
               </Grid>
             )) :<div></div>
           }
+          
           </Grid>
+          
         </Container>
       </main>
       {/* Footer */}
@@ -110,6 +112,7 @@ const  handleFile = (file) => {
         <Copyright />
       </Box> */}
       {/* End footer */}
+      
     </ThemeProvider>
   );
 }

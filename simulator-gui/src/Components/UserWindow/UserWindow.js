@@ -15,7 +15,8 @@ import UserNotification from '../UserNotification/UserNotification';
 import TestNotification from '../TestNotification/TestNotification';
 import TestDataEntry from '../TestDataEntry/TestDataEntry';
 import GuestMenu from '../Menus/GuestMenu';
-
+import { CardActions } from '@mui/material';
+import './UserWindow.css'
 export const blankUser = {"name": "", "role": "",
 "sex": "", "age": -1,"id": -1};
 
@@ -147,32 +148,30 @@ export default function UserWindow(props) {
       const isAuthenticated = () =>userDetails != blankUser
 return (
     <div>
+      
     <Card sx={{ maxWidth: 345 , minHeight:300, maxHeight:300 }} >
       <CardHeader
         avatar={ // TODO: Change according to userDetails.role
-          <PersonIcon>
+          <PersonIcon/>
             
-          </PersonIcon>
         }
         
         action={
           <GuestMenu/>
         }
-        title={userDetails.name + props.id}
+        title={"name: " + userDetails.name + ", role: " + userDetails.role}
         subheader={props.role}
       />
 
 {/* Same as */}
       <CardContent >
         
-        <div  style={ {scrollBehavior: "smooth", overflowY: "scroll" , maxHeight:210}}>
+        <div  style={ {scrollBehavior: "smooth", overflowY: "auto", maxHeight:210}}>
 
         {isAuthenticated()?  
         <div>
         {currentComponent>0 && currentComponent -1 <items.length? getComponent(items[currentComponent-1]): undefined}
 
-
-     <Pagination count={items.length} page={currentComponent} onChange={handlePaginationChange} size="small"/>
 
    </div>:
         <div> 
@@ -186,6 +185,7 @@ return (
 
 
       </CardContent>
+
       <ToastContainer style={styles}
   position="top-right"
   autoClose={5000}
@@ -200,8 +200,9 @@ return (
   enableMultiContainer
   limit ={1}
 />
-
+{items.length>0?<Pagination  count={items.length} page={currentComponent} onChange={handlePaginationChange} size="small"/>:<></>}
     </Card>
+
     </div>
 )
 }
