@@ -85,8 +85,10 @@ export default function UserWindow(props) {
       
       };
     const sendData = (object_to_send) =>{
+      if(!("id" in object_to_send)){
         object_to_send.id = userDetails.id   
-        object_to_send.workflow_id = props.workflow_id     
+      }
+      object_to_send.workflow_id = props.workflow_id     
         dismiss_current()
         webSocket.current.send(JSON.stringify(object_to_send))
       }

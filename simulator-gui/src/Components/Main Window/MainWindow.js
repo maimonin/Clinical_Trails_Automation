@@ -68,7 +68,7 @@ const  handleFile = (file) => {
         <Toolbar>
           <ScienceIcon sx={{ mr: 2 }} />
           <Typography variant="h6" color="inherit" noWrap>
-            Trial
+            Clinical Trial Simulator
           </Typography>
         </Toolbar>
       </AppBar>
