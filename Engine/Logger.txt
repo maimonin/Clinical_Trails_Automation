@@ -1,18 +1,6 @@
-21:33:55 created workflow
-21:33:55 nurse registered
-21:33:55 investigator registered
-21:33:55 lab registered
-21:33:55 doctor registered
-21:33:55 participant 1 registered
-21:33:55 participant with id 1 taking a test
-21:33:58 getting results of test hemoglobin of participant 1
-21:33:58 participant 1 results of test hemoglobin: 80
-21:34:09 created workflow
-21:34:09 nurse registered
-21:34:09 investigator registered
-21:34:09 lab registered
-21:34:09 doctor registered
-21:34:09 participant 1 registered
-21:34:09 participant with id 1 taking a test
-21:34:12 getting results of test hemoglobin of participant 1
-21:34:12 participant 1 results of test hemoglobin: 20
+12:50:53 created workflow
+12:50:53 nurse registered
+12:50:53 investigator registered
+12:50:53 lab registered
+12:50:53 doctor registered
+12:50:53 participant 1 registered

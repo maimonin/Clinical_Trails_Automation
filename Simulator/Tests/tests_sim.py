@@ -6,7 +6,6 @@ from nodeeditor.utils import dumpException
 
 user_id = 0
 
-
 app = None
 lock = threading.Lock()
 
@@ -23,7 +22,7 @@ async def get_data(s):
 
 
 async def actor_simulation(user, s, answers):
-    outs=[]
+    outs = []
     try:
         while True:
             data = None
@@ -41,11 +40,11 @@ async def actor_simulation(user, s, answers):
             elif data_json['type'] == 'test data entry':
                 val = answers[data_json['test']['name']]
                 await s.send(json.dumps(
-                    {'type': 'add results', 'id': data_json['patient'], "test": data_json['test']['name'], 'result': val}))
+                    {'type': 'add results', 'id': data_json['patient'], "test": data_json['test']['name'],
+                     'result': val}))
             elif data_json['type'] == 'terminate':
                 await s.close()
                 return outs
-                break
 
     except Exception as e:
         dumpException(e)
@@ -95,8 +94,6 @@ async def run(path, ans_path, participant_id, gender, age):
         return await actor_simulation(user, user['s'], answers[user['name']])
     except Exception as e:
         dumpException(e)
-    # for t in tasks:
-    #     await t
 
 
 async def send_json(url, path):

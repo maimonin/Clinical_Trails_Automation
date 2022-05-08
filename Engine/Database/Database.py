@@ -451,6 +451,10 @@ def getAllActives(participant_id):
                                         WHERE participant_id=? AND active ="yes" """, (participant_id,))
 
 
+def getActorsToNofity():
+    return fetch_all("""SELECT * FROM Actors_To_Notify""")
+
+
 def getAnswer(form_id, question_number, participant_id):
     rows = extract_one_from_table("""SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? """,
                                   (form_id, question_number, participant_id))[0]
@@ -465,6 +469,10 @@ def getAnswer(form_id, question_number, participant_id):
 
 def getAnswerOptions():
     return fetch_all("""SELECT * FROM Answer_Options""")
+
+
+def getComplexNodes():
+    return fetch_all("""SELECT * FROM Complex_Nodes""")
 
 
 def getCurrentPositions(participant_id):
@@ -571,6 +579,10 @@ def getStaff(role):
         return None
     # change_table("""UPDATE Staff SET available = "no" WHERE id=?""", (user_data[0],))
     return User(user_data[2], user_data[3], user_data[4], user_data[0])
+
+
+def getStringNodes():
+    return fetch_all("""SELECT * FROM String_Nodes""")
 
 
 def getTestResult(user_id, test_name):
