@@ -14,6 +14,7 @@ decisionNodes = {}
 stringNodes = {}
 complexNodes = {}
 forms = {}
+db_name = ""
 
 
 def set_name(name):
@@ -26,12 +27,10 @@ def delete_db(name):
     if os.path.exists(name):
         os.remove(name)
     else:
-        print(name)
+        print("The file does not exist")
 
 
 def create_connection():
-    # noinspection PyGlobalUndefined
-    global db_name
     conn = None
     try:
         conn = sqlite3.connect(db_name)

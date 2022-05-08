@@ -26,16 +26,14 @@ async def get_data(s):
 
 
 async def actor_simulation(user, s, answers):
-    print("hole")
-    output = []
     try:
         while True:
+            data = None
             try:
                 data = await get_data(s)
             except Exception as e:
                 dumpException(e)
             data_json = json.loads(data)
-            output.append(data_json)
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], answers)
                 await s.send(json.dumps(
@@ -46,13 +44,11 @@ async def actor_simulation(user, s, answers):
                 await s.send(json.dumps(
                     {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
-                print("terminated")
                 await s.close()
                 break
 
     except Exception as e:
         dumpException(e)
-    return user['name'], output
 
 
 async def register_user(user, s):
@@ -80,7 +76,6 @@ async def run(path, ans_path, participant_id, gender, age):
     f = open(ans_path)
     answers = json.load(f)
     tasks = []
-    outputs = {}
     for user in users:
         t = asyncio.create_task(actor_simulation(user, user['s'], answers[user['name']]))
         tasks.append(t)
@@ -88,19 +83,16 @@ async def run(path, ans_path, participant_id, gender, age):
             "sex": gender, "age": str(age),
             "id": participant_id}
 
-        # noinspection PyBroadException
+    # noinspection PyBroadException
     try:
         s = await websockets.connect(url)
         await register_user(user, s)
         user['s'] = s
-        u, out = await actor_simulation(user, user['s'], answers[user['name']])
-        outputs[u] = out
+        await actor_simulation(user, user['s'], answers[user['name']])
     except Exception as e:
         dumpException(e)
-    for t in tasks:
-        u, out = await t
-        outputs[u] = out
-    return outputs
+    # for t in tasks:
+    #     await t
 
 
 async def send_json(url, path):
@@ -110,6 +102,7 @@ async def send_json(url, path):
         data['type'] = "add workflow"
         data['workflow_id'] = 2111561603920
         s = await websockets.connect(url)
+        await s.send(json.dumps({'type': 'change db'}))
         await s.send(json.dumps(data))
     except Exception as e:
         dumpException(e)

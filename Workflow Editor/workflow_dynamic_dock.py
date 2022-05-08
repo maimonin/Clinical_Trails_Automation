@@ -3,8 +3,9 @@ import copy
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
-    QCheckBox
+    QCheckBox, QRadioButton
 from nodeeditor.utils import dumpException
+from workflow_conf import OP_NODE_Test, OP_NODE_QUESTIONNAIRE
 
 
 class QDynamicDock(QDockWidget):
@@ -107,6 +108,8 @@ class QDynamicDock(QDockWidget):
 
     def create_time_input_widget(self, father, field):
         widget = QTimeEdit()
+        if "format" in field.keys():
+            widget.setDisplayFormat(field["format"])
         widget.setTime(field["value"])
         self.treeWidget.setItemWidget(father, 1, widget)
 
@@ -179,10 +182,9 @@ class QDynamicDock(QDockWidget):
         QuestionnaireTree(self.treeWidget, father, field["value"], self.update_dynamic)
 
     def create_condition_subtree_widget(self, father, field):
-        ConditionTree(self.treeWidget, father, field["value"], self.update_dynamic)
+        DecisionTree(self.treeWidget, father, field["value"], field["known"], self.update_dynamic)
 
     def update_dynamic(self, data=None):
-        # FIXME: why it receives data?
         self.callback(self.data)
 
 
@@ -220,8 +222,7 @@ class TestTree:
             "name": "",
             "instructions": "",
             "staff": [],
-            "duration": "",
-            "facility": ""
+            "duration": ""
         }
         self.tests.append(test_data)
 
@@ -237,7 +238,6 @@ class TestTree:
         self.add_line_edit(new_widget, test_data, "Instructions")
         self.add_checklist(new_widget, test_data)
         self.add_line_edit(new_widget, test_data, "Duration")
-        self.add_line_edit(new_widget, test_data, "Facility")
 
     # @root - the container who holds all the tests items. (Called: Tests)
     # @remove_id - remove specific item
@@ -263,7 +263,6 @@ class TestTree:
             self.add_line_edit(new_widget, test_data, "Instructions")
             self.add_checklist(new_widget, test_data)
             self.add_line_edit(new_widget, test_data, "Duration")
-            self.add_line_edit(new_widget, test_data, "Facility")
 
     def add_line_edit(self, new_widget, test_data, title):
         name_item = QtWidgets.QTreeWidgetItem(new_widget)
@@ -297,7 +296,6 @@ class TestTree:
             option_title.setWordWrap(True)
             self.dock.setItemWidget(option_item, 0, option_title)
 
-            # FIXME not aligned properly
             option_widget = QCheckBox()
             option_widget.setChecked(option in test_data[title.lower()])
             option_widget.stateChanged.connect(
@@ -434,7 +432,7 @@ class QuestionnaireTree:
             if options[index_changed] == "Multiple Choice":
                 data["type"] = "multi"
             elif options[index_changed] == "One Choice":
-                data["type"] = "once choice"
+                data["type"] = "one choice"
 
             if parent.childCount() == 2:
                 parent.removeChild(parent.child(1))
@@ -466,9 +464,11 @@ class QuestionnaireTree:
         return self.next_question_id
 
 
-class ConditionTree:
+class DecisionTree:
+    tests = []
+    questionnaires = []
 
-    def __init__(self, dock, tree_widget_item, data, update_dock):
+    def __init__(self, dock, tree_widget_item, data, known, update_dock):
         self.conditions = data
         self.next_question_id = 0
         self.dock = dock
@@ -478,6 +478,8 @@ class ConditionTree:
         add_button.clicked.connect(lambda: self.add_condition(tree_widget_item))
         add_button.setStyleSheet("background-color: rgba(255, 255, 255, 0);border: none;")
 
+        self.load_known(known)
+
         tree_widget_item.setText(0, "Conditions")
         self.dock.setItemWidget(tree_widget_item, 1, add_button)
 
@@ -485,6 +487,17 @@ class ConditionTree:
             # self.load_data()      - in case of deleting "id" key
             self.next_condition_id = self.conditions[-1]["id"]
             self.rebuild_tree(tree_widget_item)
+
+    # load all the tests and questionnaires options to choose from
+    def load_known(self, known):
+        self.tests = []
+        self.questionnaires = []
+
+        for node in known:
+            if node["node"] == OP_NODE_Test:
+                self.tests.append(node["content"])
+            elif node["node"] == OP_NODE_QUESTIONNAIRE:
+                self.questionnaires.append(node["content"])
 
     def add_condition(self, root):
         id = self.get_next_id()
@@ -548,7 +561,7 @@ class ConditionTree:
         for opt in options:
             combo_widget.addItem(opt)
         combo_widget.activated.connect(
-            lambda index: self.combo_changed(options, index, data, parent))
+            lambda index: self.combo_condition_changed(options, index, data, parent))
 
         self.dock.setItemWidget(combo_item, 1, combo_widget)
         condition_item = QtWidgets.QTreeWidgetItem(parent)
@@ -568,7 +581,7 @@ class ConditionTree:
         satisfy_type_widget.addItem("Range")
         satisfy_type_widget.addItem("One Choice")
         satisfy_type_widget.activated.connect(
-            lambda index: self.combo2_changed(["Range", "One Choice"], index, data, parent))
+            lambda index: self.combo_satisfy_changed(["Range", "One Choice"], index, data, parent))
         self.dock.setItemWidget(satisfy_type_item, 1, satisfy_type_widget)
 
         if data["satisfy"]["type"] == "one_choice":
@@ -618,19 +631,21 @@ class ConditionTree:
         for opt in options:
             combo_widget.addItem(opt)
         combo_widget.activated.connect(
-            lambda index: self.combo_changed(options, index, data, parent))
+            lambda index, options=options: self.combo_condition_changed(options, index, data, parent))
         combo_widget.setCurrentIndex(1)
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 
         condition_item = QtWidgets.QTreeWidgetItem(parent)
         condition_item.setText(0, "Test:")
-        condition_widget = QLineEdit()
-        condition_widget.setPlaceholderText("Enter Test")
-        condition_widget.setMinimumWidth(100)
-        if "condition" not in data["test"]:
-            condition_widget.setText(data["test"])
-        condition_widget.editingFinished.connect(
-            lambda widget=condition_widget: self.line_changed(widget, data, "test"))
+        condition_widget = QComboBox()
+        options = self.tests
+        condition_widget.addItem("")
+        for opt in options:
+            condition_widget.addItem(opt)
+        condition_widget.activated.connect(
+            lambda index, options=options: self.combo_test_changed(data, options, index))
+        if data["test"] != "":
+            condition_widget.setCurrentIndex(options.index(data["test"]) + 1)
         self.dock.setItemWidget(condition_item, 1, condition_widget)
 
         satisfy_type_item = QtWidgets.QTreeWidgetItem(parent)
@@ -639,7 +654,7 @@ class ConditionTree:
         satisfy_type_widget.addItem("Range")
         satisfy_type_widget.addItem("One Choice")
         satisfy_type_widget.activated.connect(
-            lambda index: self.combo2_changed(["Range", "One Choice"], index, data, parent))
+            lambda index: self.combo_satisfy_changed(["Range", "One Choice"], index, data, parent))
         self.dock.setItemWidget(satisfy_type_item, 1, satisfy_type_widget)
 
         if data["satisfy"]["type"] == "one_choice":
@@ -647,12 +662,24 @@ class ConditionTree:
 
             satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
             satisfy_value_item.setText(0, "Satisfy Value:")
-            value_widget = QLineEdit()
-            value_widget.setPlaceholderText("Enter Value")
-            value_widget.setText(data["satisfy"]["value"])
-            value_widget.editingFinished.connect(
-                lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+
+            value_widget = QComboBox()
+            options = ["Positive", "Negative"]
+            value_widget.addItems(options)
+            value_widget.activated.connect(
+                lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
+                                                                                    data["satisfy"]))
+            if data["satisfy"]["type"] == "one_choice":
+                option = data["satisfy"]["value"].title()
+                value_widget.setCurrentIndex(options.index(option))
             self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+
+            # value_widget = QLineEdit()
+            # value_widget.setPlaceholderText("Enter Value")
+            # value_widget.setText(data["satisfy"]["value"])
+            # value_widget.editingFinished.connect(
+            #     lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+            # self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
             return
 
         satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
@@ -688,53 +715,40 @@ class ConditionTree:
         for opt in options:
             combo_widget.addItem(opt)
         combo_widget.activated.connect(
-            lambda index: self.combo_changed(options, index, data, parent))
+            lambda index, options=options: self.combo_condition_changed(options, index, data, parent))
         combo_widget.setCurrentIndex(2)
         self.dock.setItemWidget(combo_item, 1, combo_widget)
 
         id_item = QtWidgets.QTreeWidgetItem(parent)
-        # id_item.setText(0, "Questionnaire ID:")
         id_label = QLabel("Questionnaire ID:")
         id_label.setWordWrap(True)
         self.dock.setItemWidget(id_item, 0, id_label)
 
-        id_widget = QLineEdit()
-        id_widget.setPlaceholderText("Enter Questionnaire ID")
-        id_widget.editingFinished.connect(
-            lambda widget=id_widget: self.line_changed(widget, data, "questionnaireNumber"))
+        id_widget = QComboBox()
+        id_widget.addItem("")
+        for questionnaire in self.questionnaires:
+            id_widget.addItem(questionnaire["id"])
+        id_widget.activated.connect(
+            lambda index, old_index=id_widget.currentIndex(): self.combo_questionnaire_changed(
+                index, old_index, data, parent))
+        # in case of loaded data
         if data["questionnaireNumber"] != "0":
-            id_widget.setText(data["questionnaireNumber"])
+            for idx, questionnaire in enumerate(self.questionnaires):
+                if questionnaire["id"] == data["questionnaireNumber"]:
+                    id_widget.setCurrentIndex(idx + 1)
+                    break
+            self.combo_questionnaire_changed(idx, 0, data, parent)
         self.dock.setItemWidget(id_item, 1, id_widget)
 
-        question_item = QtWidgets.QTreeWidgetItem(parent)
-        # question_item.setText(0, "Question Number:")
-        question_label = QLabel("Question Number:")
-        question_label.setWordWrap(True)
-        self.dock.setItemWidget(question_item, 0, question_label)
+    def combo_test_changed(self, data, options, index):
+        if index == 0:
+            return
 
-        question_widget = QLineEdit()
-        question_widget.setPlaceholderText("Enter Question #")
-        question_widget.editingFinished.connect(
-            lambda widget=question_widget: self.line_changed(widget, data, "questionNumber"))
-        if data["questionNumber"] != "0":
-            id_widget.setText(data["questionNumber"])
-        self.dock.setItemWidget(question_item, 1, question_widget)
+        data["test"] = options[index - 1]
 
-        answers_item = QtWidgets.QTreeWidgetItem(parent)
-        # answers_item.setText(0, "Accepted Answers:")
-        answers_label = QLabel("Accepted Answers:")
-        answers_label.setWordWrap(True)
-        self.dock.setItemWidget(answers_item, 0, answers_label)
+        self.call_dock()
 
-        answers_widget = QLineEdit()
-        answers_widget.setPlaceholderText("Enter Accepted Answers")
-        answers_widget.editingFinished.connect(
-            lambda widget=answers_widget: self.line_changed(widget, data, "acceptedAnswers"))
-        if data["acceptedAnswers"] == "":
-            id_widget.setText(data["acceptedAnswers"])
-        self.dock.setItemWidget(answers_item, 1, answers_widget)
-
-    def combo_changed(self, options, index_changed, data, parent):
+    def combo_condition_changed(self, options, index_changed, data, parent):
         old_type = data["type"]
         if options[index_changed].lower() in old_type.lower():  # same
             return
@@ -781,8 +795,9 @@ class ConditionTree:
                 "title": old_title,
                 "type": "questionnaire condition",
                 "questionnaireNumber": "0",
-                "questionNumber": "0",
-                "acceptedAnswers": "",
+                "questionNumber": 0,
+                "question": "",
+                "acceptedAnswers": [],
             }
             self.conditions.append(data)
 
@@ -791,8 +806,9 @@ class ConditionTree:
 
         self.call_dock()
 
-    def combo2_changed(self, options, index_changed, data, parent):
+    def combo_satisfy_changed(self, options, index_changed, data, parent):
         state = parent.childCount()  # know state by children number, 4 = one choice, 5 = range
+        # return if the same as selected.
         if (options[index_changed] == "Range" and state == 5) or (
                 options[index_changed] == "One Choice" and state == 4):
             return
@@ -831,21 +847,130 @@ class ConditionTree:
                 satisfy_value_label.setWordWrap(True)
                 self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
 
-                value_widget = QLineEdit()
-                value_widget.setPlaceholderText("Enter Value")
-                value_widget.editingFinished.connect(
-                    lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+                value_widget = QComboBox()
+                options = ["Positive", "Negative"]
+                value_widget.addItems(options)
+                value_widget.activated.connect(
+                    lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
+                                                                                        data["satisfy"]))
+                if data["satisfy"]["type"] == "one_choice":
+                    option = data["satisfy"]["value"].title()
+                    value_widget.setCurrentIndex(options.index(option))
                 self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
                 data["satisfy"]["type"] = "one_choice"
                 data["satisfy"]["value"] = "0"
             self.call_dock()
 
+    def combo_satisfy_oneChoice_changed(self, index_changed, options, data):
+        data["value"] = options[index_changed].lower()
+
+        self.call_dock()
+
+    # questionnaire number changed.
+    def combo_questionnaire_changed(self, new_idx, old_idx, data, parent):
+        # reset questionnaire ui
+        counter = parent.childCount()
+        for i in range(counter - 1, 1, -1):
+            parent.removeChild(parent.child(i))
+
+        chosen = self.questionnaires[new_idx - 1]
+        data["questionnaireNumber"] = chosen["id"]
+
+        # combobox for choosing a question
+        question_item = QtWidgets.QTreeWidgetItem(parent)
+        question_item.setText(0, "Question:")
+        question_widget = QComboBox()
+        question_widget.addItem("")
+        for question in chosen["questions"]:
+            question_widget.addItem(question["question"])
+        question_widget.activated.connect(
+            lambda index, old_index=question_widget.currentIndex(): self.question_type_selector(index, old_idx,
+                                                                                                chosen["questions"],
+                                                                                                data,
+                                                                                                parent))
+        # in case of loaded data
+        if data["question"] != "":
+            for idx, question in enumerate(chosen["questions"]):
+                if data["question"] == question["question"]:
+                    found = idx
+                    break
+            idx = found + 1
+            question_widget.setCurrentIndex(idx)
+            self.question_type_selector(idx, 0, chosen["questions"], data, parent)
+        self.dock.setItemWidget(question_item, 1, question_widget)
+
+    def question_type_selector(self, new_idx, old_idx, chosen, data, parent):
+        # reset question ui
+        counter = parent.childCount()
+        for i in range(counter - 1, 2, -1):
+            parent.removeChild(parent.child(i))
+        if new_idx == 0:
+            return
+
+        chosen = chosen[new_idx - 1]
+        data["question"] = chosen["question"]
+        data["questionNumber"] = chosen["questionNumber"]
+        if chosen["type"] == "multi":
+            self.build_multi_questions(chosen, data, parent)
+        elif chosen["type"] == "one choice":
+            self.build_oneChoice_questions(chosen, data, parent)
+
+    # question type multi
+    def build_multi_questions(self, question, data, parent):
+        answers_item = QtWidgets.QTreeWidgetItem(parent)
+        answers_item.setText(0, "Accepted Answers:")
+        for idx, answer in enumerate(question["answers"]):
+            if answer != None:
+                answer_item = QtWidgets.QTreeWidgetItem(answers_item)
+                answer_widget = QCheckBox()
+                answer_widget.toggled.connect(
+                    lambda checked, chosen=idx: self.update_data(checked, chosen, data, True))
+                self.dock.setItemWidget(answer_item, 0, answer_widget)
+                # loaded data
+                if idx in data["acceptedAnswers"]:
+                    answer_widget.setChecked(True)
+
+                answer_label = QLabel(answer)
+                self.dock.setItemWidget(answer_item, 1, answer_label)
+
+    # question type one choice
+    def build_oneChoice_questions(self, question, data, parent):
+        answers_item = QtWidgets.QTreeWidgetItem(parent)
+        answers_item.setText(0, "Accepted Answers:")
+        for idx, answer in enumerate(question["answers"]):
+            if answer != None:
+                answer_item = QtWidgets.QTreeWidgetItem(answers_item)
+                answer_widget = QRadioButton()
+                answer_widget.toggled.connect(
+                    lambda checked, chosen=idx: self.update_data(checked, chosen, data))
+                self.dock.setItemWidget(answer_item, 0, answer_widget)
+                # loaded data
+                if idx in data["acceptedAnswers"]:
+                    answer_widget.setChecked(True)
+
+                answer_label = QLabel(answer)
+                self.dock.setItemWidget(answer_item, 1, answer_label)
+
     def line_changed(self, widget, data, field, field2=None):
         if field2 is None:
             data[field] = widget.text()
         else:
             data[field][field2] = widget.text()
+
+        self.call_dock()
+
+    def update_data(self, checked, updated, data, multi=False):
+        if multi:
+            # convert to set to make sure there's no duplicates.
+            data["acceptedAnswers"] = set(data["acceptedAnswers"])
+            if checked:
+                data["acceptedAnswers"].add(updated)
+            else:
+                data["acceptedAnswers"].remove(updated)
+            data["acceptedAnswers"] = list(data["acceptedAnswers"])
+        else:
+            data["acceptedAnswers"] = [updated]
 
         self.call_dock()
 
