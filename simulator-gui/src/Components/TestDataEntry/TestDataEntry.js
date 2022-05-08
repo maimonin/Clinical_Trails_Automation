@@ -26,7 +26,7 @@ export default function TestEntryData(props){
         
         <div>
           <span>  Name:{test_data.name} <br/>
-            Insturction:{test_data.instruction} <br/>
+            Insturctions:{test_data.instructions} <br/>
             <TextField id="outlined-basic" label="Outlined" variant="outlined"  onChange={onChange}/><br/><br/>
         </span>
             </div>
