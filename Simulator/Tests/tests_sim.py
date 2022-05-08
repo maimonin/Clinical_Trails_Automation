@@ -5,10 +5,7 @@ import websockets
 from nodeeditor.utils import dumpException
 
 user_id = 0
-users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
-         {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
-         {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
-         {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
+
 
 app = None
 lock = threading.Lock()
@@ -44,7 +41,7 @@ async def actor_simulation(user, s, answers):
             elif data_json['type'] == 'test data entry':
                 val = answers[data_json['test']['name']]
                 await s.send(json.dumps(
-                    {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
+                    {'type': 'add results', 'id': data_json['patient'], "test": data_json['test']['name'], 'result': val}))
             elif data_json['type'] == 'terminate':
                 await s.close()
                 return outs
@@ -70,23 +67,22 @@ async def login_user(log_id, s):
 
 # noinspection PyTypeChecker
 async def run(path, ans_path, participant_id, gender, age):
+    users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
+             {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
+             {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
+             {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
     url = "ws://127.0.0.1:7890"
     await send_json(url, path)
-    first_run=True
     for user in users:
-        if 's' in user:
-            first_run = False
-            break
         s = await websockets.connect(url)
         await register_user(user, s)
         user['s'] = s
     f = open(ans_path)
     answers = json.load(f)
     tasks = []
-    if first_run:
-        for user in users:
-            t = asyncio.create_task(actor_simulation(user, user['s'], answers[user['name']]))
-            tasks.append(t)
+    for user in users:
+        t = asyncio.create_task(actor_simulation(user, user['s'], answers[user['name']]))
+        tasks.append(t)
     user = {"name": "participant " + str(participant_id), "role": "participant", "workflow": 2111561603920,
             "sex": gender, "age": str(age),
             "id": participant_id}

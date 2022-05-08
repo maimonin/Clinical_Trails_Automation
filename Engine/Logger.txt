@@ -1,12 +1,18 @@
-11:45:21 created workflow
-11:45:21 nurse registered
-11:45:21 investigator registered
-11:45:21 lab registered
-11:45:21 doctor registered
-11:45:21 participant 1 registered
-11:45:21 sending questionnaire
-11:45:21 adding questionnaire of participant with id 1
-11:45:21 participant 1 answers: 
-	aaaaa: [0]
-	bbbbb: [0]
-	ccccc: hi
+21:33:55 created workflow
+21:33:55 nurse registered
+21:33:55 investigator registered
+21:33:55 lab registered
+21:33:55 doctor registered
+21:33:55 participant 1 registered
+21:33:55 participant with id 1 taking a test
+21:33:58 getting results of test hemoglobin of participant 1
+21:33:58 participant 1 results of test hemoglobin: 80
+21:34:09 created workflow
+21:34:09 nurse registered
+21:34:09 investigator registered
+21:34:09 lab registered
+21:34:09 doctor registered
+21:34:09 participant 1 registered
+21:34:09 participant with id 1 taking a test
+21:34:12 getting results of test hemoglobin of participant 1
+21:34:12 participant 1 results of test hemoglobin: 20

@@ -22,5 +22,6 @@ async def test_gender_male():
     assert Database.getUser(2).sex == "male", "user should be male"
     assert Database.getUser(2).age == 20, "user should be 20"
     print("test_gender_male passed")
+
 asyncio.run(test_gender_female())
 asyncio.run(test_gender_male())
