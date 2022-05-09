@@ -1,0 +1,186 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2225378966112,
+            "title": "Questionnaire",
+            "inputs": [
+                {
+                    "id": 2225379002112
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225379002160
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "questionnaire"
+                },
+                "questions": [
+                    {
+                        "text": "Ok?",
+                        "options": [
+                            "yes",
+                            "no"
+                        ],
+                        "type": "one choice"
+                    }
+                ],
+                "questionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2225379076560,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 2225379078048
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225379078000
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "decision"
+                },
+                "condition": [
+                    {
+                        "title": "questionnaire condition 1",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": 1,
+                        "questionNumber": 1,
+                        "acceptedAnswers": [
+                            1
+                        ]
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2225389267360,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2225389267840
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225389267888
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "string"
+                },
+                "text": "you have been found positive"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2225389267984,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2225389268416
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2225389268464
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "string"
+                },
+                "text": "you have been found negative"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1892817027281,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027521
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 2225379002112
+        },
+        {
+            "id": 2225379076512,
+            "type": 0,
+            "start": 2225379002160,
+            "end": 2225379078048
+        },
+        {
+            "id": 2225389268032,
+            "type": 0,
+            "start": 2225379078000,
+            "end": 2225389267840
+        },
+        {
+            "id": 2225389268560,
+            "type": 0,
+            "start": 2225379078000,
+            "end": 2225389268416
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 2225389267888,
+            "end": 1892817027520
+        },
+        {
+            "id": 1892817028481,
+            "type": 0,
+            "start": 2225389268464,
+            "end": 1892817027521
+        }
+    ]
+}

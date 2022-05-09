@@ -1,0 +1,65 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1869994756272,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1869994784080
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1869994784128
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "string"
+                },
+                "text": "hello world"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 1869994784080
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 1869994784128,
+            "end": 1892817027520
+        }
+    ]
+}

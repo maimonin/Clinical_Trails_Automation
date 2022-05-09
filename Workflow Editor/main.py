@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # widget.setFixedWidth(800)
     # widget.show()
     wnd = WorkflowEditorWindow()
-    wnd.show()
+    wnd.showMaximized()
     # wnd.nodeeditor.addNodes()
     # wnd.addCustomNode()
     module_path = os.path.dirname(inspect.getfile(wnd.__class__))

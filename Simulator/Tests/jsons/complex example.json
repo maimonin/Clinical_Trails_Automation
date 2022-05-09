@@ -1,0 +1,125 @@
+{
+    "id": 2111561603920,
+    "nodes": [
+        {
+            "id": 1892803102752,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1892803103088
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2453429713072,
+            "title": "Sub Workflow",
+            "inputs": [
+                {
+                    "id": 2453429744976
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2453429745024
+                }
+            ],
+            "content": {
+                "type": "complex",
+                "flow": {
+                    "id": 2453429745072,
+                    "nodes": [
+                        {
+                            "id": 1892803102753,
+                            "title": "New Start Node",
+                            "inputs": [],
+                            "outputs": [
+                                {
+                                    "id": 1892803103089
+                                }
+                            ],
+                            "op_code": 0
+                        },
+                        {
+                            "id": 2453429801216,
+                            "title": "Simple String",
+                            "inputs": [
+                                {
+                                    "id": 2453429801504
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 2453429801552
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "actors": [
+                                        "Doctor",
+                                        "Nurse"
+                                    ],
+                                    "title": ""
+                                },
+                                "text": "hi"
+                            },
+                            "op_code": 4
+                        },
+                        {
+                            "id": 1892817027281,
+                            "title": "New Finish Node",
+                            "inputs": [
+                                {
+                                    "id": 1892817027521
+                                }
+                            ],
+                            "outputs": [],
+                            "op_code": 6
+                        }
+                    ],
+                    "edges": [
+                        {
+                            "id": 1892817027761,
+                            "type": 0,
+                            "start": 1892803103089,
+                            "end": 2453429801504
+                        },
+                        {
+                            "id": 1892817028481,
+                            "type": 0,
+                            "start": 2453429801552,
+                            "end": 1892817027521
+                        }
+                    ]
+                }
+            },
+            "op_code": 5
+        },
+        {
+            "id": 1892817027280,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1892817027520
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 1892817027760,
+            "type": 0,
+            "start": 1892803103088,
+            "end": 2453429744976
+        },
+        {
+            "id": 1892817028480,
+            "type": 0,
+            "start": 2453429745024,
+            "end": 1892817027520
+        }
+    ]
+}

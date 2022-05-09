@@ -47,6 +47,13 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.readSettings()
 
         self.setWindowTitle("Workflow Editor")
+        self.center()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -142,7 +149,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
                         self.mdiArea.setActiveSubWindow(existing)
                     else:
                         # we need to create new subWindow and open the file
-                        nodeeditor = WorkflowSubWindow()
+                        nodeeditor = WorkflowSubWindow(self.attributes.change_data)
                         if nodeeditor.fileLoad(fname):
                             self.statusBar().showMessage("File %s loaded" % fname, 5000)
                             nodeeditor.setTitle()
@@ -162,6 +169,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
+    # left dock
     def createNodesDock(self):
         self.nodesListWidget = QDMDragListbox()
 
@@ -178,6 +186,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
 
         self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
 
+    # right dock
     def createAttributesDock(self):
 
         self.attributes = QDynamicDock()
@@ -185,8 +194,18 @@ class WorkflowEditorWindow(NodeEditorWindow):
         self.attributes.setMinimumWidth(400)
         # self.attributes.setMinimumWidth(400)
         self.attributes.setMaximumWidth(400)
-        self.attributes.setMaximumHeight(500)
+        self.attributes.setMaximumHeight(1000)
         self.addDockWidget(Qt.RightDockWidgetArea, self.attributes)
+        #
+        # self.attributes2 = QDynamicDock()
+        # self.attributes2.setFloating(True)
+        # self.attributes2.setMinimumWidth(400)
+        # # self.attributes.setMinimumWidth(400)
+        # self.attributes2.setMaximumWidth(400)
+        # self.attributes2.setMaximumHeight(500)
+        # self.addDockWidget(Qt.RightDockWidgetArea, self.attributes2)
+
+        # self.attributes.set_child(self.attributes2.change_data)
 
     def activeMdiChild(self):
         activeSubWindow = self.mdiArea.activeSubWindow()

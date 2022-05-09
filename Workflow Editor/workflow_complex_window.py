@@ -22,15 +22,9 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
             self.load_data()
 
     def initUI(self):
-
         super().initUI()
 
-        # self.setWindowTitle("SubFlow")
-        # subwnd = self.createMdiChild()
-        # subwnd.show()
-        # if self.data is not None:
-        #     self.load_data()
-
+    # create grid(middle window) section
     def createMdiChild(self, child_widget=None):
         nodeeditor = child_widget if child_widget is not None else WorkflowSubWindow(self.attributes.change_data)
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
@@ -50,7 +44,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         if self.getCurrentNodeEditorWidget() is None:
             try:
                 if self.data is not None:
-                    nodeeditor = WorkflowSubWindow()
+                    nodeeditor = WorkflowSubWindow(self.attributes.change_data)        # grid window
                     nodeeditor.data_load(self.data, name=self.name)
                     subwnd = self.createMdiChild(nodeeditor)
                     subwnd.show()

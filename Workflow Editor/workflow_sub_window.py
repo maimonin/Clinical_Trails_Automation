@@ -8,6 +8,10 @@ from nodeeditor.node_scene import InvalidFile
 from qtpy import QtWidgets, QtCore
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from workflow_conf import *
+from workflow_conf_nodes import WorkflowNode_Start, WorkflowNode_Finish
+from workflow_edge import WorkflowEdge
+from workflow_graphics_socket import WFGraphicsSocket
+from workflow_graphics_view import WFGraphicsView
 from workflow_node_base import *
 from nodeeditor.utils import dumpException
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
@@ -19,21 +23,34 @@ from workflow_scene import WorkflowScene
 
 DEBUG = False
 
-
+# Grid Window
 class WorkflowSubWindow(NodeEditorWidget):
     Scene_class = WorkflowScene
+    GraphicsView_class = WFGraphicsView
 
     def initUI(self):
         super().initUI()
 
     def __init__(self, dockCallback=None):
         super().__init__()
+        self.dockCallback = dockCallback
+        self.scene.addAttributesDockCallback(self.dockCallback)
+        WorkflowNode.attributes_dock_callback = self.dockCallback
+        WorkflowEdge.attributes_dock_callback = self.dockCallback
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
-        self.dockCallback = dockCallback
+        self.add_start_finish_nodes()
+        Socket.Socket_GR_Class = WFGraphicsSocket
+
+    # add permanent start and finish nodes
+    def add_start_finish_nodes(self):
+        start_node = WorkflowNode_Start(self.scene)
+        finish_node = WorkflowNode_Finish(self.scene)
+        start_node.setPos(-350, -250)
+        finish_node.setPos(200, 0)
 
     def getNodeClassFromData(self, data):
         if 'op_code' not in data: return Node
@@ -108,7 +125,7 @@ class WorkflowSubWindow(NodeEditorWidget):
     def fileLoad(self, filename):
         return super().fileLoad(filename)
 
-    def data_load(self, json_data, name):  # used to load data from complex node data
+    def data_load(self, json_data, name):
         try:
             self.filename = name
             self.scene.deserialize(json_data)
@@ -118,36 +135,6 @@ class WorkflowSubWindow(NodeEditorWidget):
         except Exception as e:
             dumpException(e)
 
-    # TODO serialize, and send the json to server
-
-    # def get_node_by_socket(self,socket):
-    #     for node in self.scene.nodes:
-    #         if len(node.inputs[0].edges) > 0 and node.inputs[0].edges[0].end_socket == socket:
-    #             return node
-    #     return None
-    # def all_logic(self):
-    #     try:
-    #         current_node = None
-    #
-    #         for node in self.scene.nodes:
-    #             if len(node.inputs[0].edges) == 0:
-    #                 current_node = node
-    #                 break
-    #         x=current_node.content.edit.text().split('/')
-    #         print(x[0])
-    #         time.sleep(int(x[1]))
-    #         while current_node is not None and len(current_node.outputs[0].edges) != 0:
-    #             current_node = self.get_node_by_socket(current_node.outputs[0].edges[0].end_socket)
-    #             x = current_node.content.edit.text().split('/')
-    #             print(x[0])
-    #             time.sleep(int(x[1]))
-    #         # while (len(current_node.outputs[0]) != 0 ):
-    #         #     print(current_node.outputs[0].edges)
-    #         #     print('PyQt5 button click')
-    #     except Exception as e:
-    #         dumpException(e)
-    #     # doing something........
-    # @pyqtSlot()
     def on_click(self):
         print("clicked")
         try:
