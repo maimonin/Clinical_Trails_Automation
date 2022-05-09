@@ -574,15 +574,12 @@ class WorkflowNode(Node):
                     del res["content"]["node_details"]["color"]
                     # remove null answers from questionnairs
                     for question in res["content"]["questions"]:
-                        # FIXME: make sure the deletion of null answers,
-                        #   doesn't change the object too.
                         answers = question["options"]
                         question["options"] = []
                         for opt in answers:
                             if opt is not None:
                                 question["options"].append(opt)
                 elif res["op_code"] == OP_NODE_Test or OP_NODE_STRING:
-                    # FIXME: why test doesn't have color key?
                     del res["content"]["node_details"]["color"]
 
         except Exception as e:

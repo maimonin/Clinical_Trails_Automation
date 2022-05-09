@@ -69,7 +69,7 @@ class WorkflowEdge(Edge):
             input_max = QTime.toString(content["Edge Details"][1]["items"][1]["value"])
             self.update_label(input_title, input_min, input_max)
 
-            self.type = NORMAL if (input_min == "" or input_max == "") else RELATIVE
+            self.type = NORMAL if (input_min == "00:00:00" and input_max == "00:00:00") else RELATIVE
 
             self.data["content"]["edge_details"]["title"] = input_title
             # TODO: make sure min is smaller than max
@@ -136,9 +136,7 @@ class WorkflowEdge(Edge):
             ])
         if engine_save:
             del result["edge_type"]
-            if self.type == NORMAL:
-                del result["content"]
-            elif self.type == RELATIVE:
+            if self.type == RELATIVE:
                 del result["content"]["title"]
 
                 result["content"]["min"]["hours"] = int(result["content"]["min"]["hours"])
@@ -156,10 +154,11 @@ class WorkflowEdge(Edge):
         self.end_socket = hashmap[data['end']]
         self.type = data['type']
         self.edge_type = data["edge_type"]
-        self.data['content']['edge_details'] = data['content']
-        min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
-                     data['content']["min"]["seconds"]
-        max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
-                     data['content']["max"]["seconds"]
-        self.update_label(data['content']["title"], min_string, max_string)
+        if data['type'] == RELATIVE:
+            self.data['content']['edge_details'] = data['content']
+            min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
+                         data['content']["min"]["seconds"]
+            max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
+                         data['content']["max"]["seconds"]
+            self.update_label(data['content']["title"], min_string, max_string)
         self.doSelect()  # reload the data when opening a new file
