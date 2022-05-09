@@ -39,6 +39,8 @@ class WorkflowScene(Scene):
         # if len(self.getSelectedItems()) > 0:
         #     self.getSelectedItems()[0].call_dock()
 
+    def getDockCallback(self):
+        return self.dockCallback
     def onItemsDeselected(self, silent: bool = False):
         """
         Handle Items deselection and trigger event `Items Deselected`

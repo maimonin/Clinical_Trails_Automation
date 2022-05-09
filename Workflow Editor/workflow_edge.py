@@ -9,7 +9,6 @@ RELATIVE = 1
 
 
 class WorkflowEdge(Edge):
-    attributes_dock_callback = None
 
     def __init__(self, scene: 'Scene', start_socket: 'Socket' = None, end_socket: 'Socket' = None,
                  edge_type=EDGE_TYPE_DIRECT, text="No Title", attributes_dock_callback=None):
@@ -28,7 +27,6 @@ class WorkflowEdge(Edge):
             }}
         self.text = text
         self.type = NORMAL
-        # self.attributes_dock_callback = attributes_dock_callback
 
     @property
     def text(self):
@@ -45,8 +43,7 @@ class WorkflowEdge(Edge):
         self._text = value
         self.grEdge.text = self._text
 
-    def set_attributes_dock_callback(self, callback):
-        self.attributes_dock_callback = callback
+
 
     def getGraphicsEdgeClass(self):
         """Returns the class representing Graphics Edge"""
@@ -56,9 +53,9 @@ class WorkflowEdge(Edge):
         self.grEdge.text = self.text
         try:
             if new_state:
-                self.attributes_dock_callback(self.get_tree_build())
+                self.get_dock_callback()(self.get_tree_build())
             else:
-                self.attributes_dock_callback(None)
+                self.scene.get_dock_callback()(None)
         except Exception as e:
             dumpException(e)
 
@@ -115,6 +112,9 @@ class WorkflowEdge(Edge):
         dict_to_string = time_dict["hours"] + ":" + time_dict["minutes"] + ":" + time_dict["seconds"]
         result = QTime.fromString(dict_to_string, "hh:mm:ss")
         return result
+
+    def get_dock_callback(self):
+        return self.scene.getDockCallback()
 
     def serialize(self, engine_save=False) -> OrderedDict:
         if self.type == NORMAL:

@@ -35,15 +35,13 @@ class WorkflowSubWindow(NodeEditorWidget):
         super().__init__()
         self.dockCallback = dockCallback
         self.scene.addAttributesDockCallback(self.dockCallback)
-        WorkflowNode.attributes_dock_callback = self.dockCallback
-        WorkflowEdge.attributes_dock_callback = self.dockCallback
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setTitle()
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
-        self.add_start_finish_nodes()
         Socket.Socket_GR_Class = WFGraphicsSocket
+        self.add_start_finish_nodes()
 
     # add permanent start and finish nodes
     def add_start_finish_nodes(self):
@@ -111,7 +109,6 @@ class WorkflowSubWindow(NodeEditorWidget):
             try:
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
-                node.set_attributes_dock_callback(self.dockCallback)
 
                 node.drop_action()
             except Exception as e:

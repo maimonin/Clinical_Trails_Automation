@@ -88,15 +88,14 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     def doSelect(self, new_state: bool = True):
         try:
             if new_state:
-                self.attributes_dock_callback(self.get_tree_build())
+                self.get_dock_callback()(self.get_tree_build())
             else:
-                self.attributes_dock_callback(None)
+                self.get_dock_callback()(None)
         except Exception as e:
             dumpException(e)
 
@@ -192,13 +191,12 @@ class WorkflowNode_DataEntry(WorkflowNode):
     def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
         else:
-            self.attributes_dock_callback(None)
+            self.get_dock_callback()(None)
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     def callback_from_window(self, content):
         try:
@@ -279,13 +277,12 @@ class WorkflowNode_Decision(WorkflowNode):
     def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
         else:
-            self.attributes_dock_callback(None)
+            self.get_dock_callback()(None)
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     def callback_from_window(self, content):
         try:
@@ -454,16 +451,15 @@ class WorkflowNode_SimpleString(WorkflowNode):
         self.data = text
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     # for dock build
     def doSelect(self, new_state: bool = True):
         print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
         else:
-            self.attributes_dock_callback(None)
+            self.get_dock_callback()(None)
 
     def callback_from_window(self, content):
         try:

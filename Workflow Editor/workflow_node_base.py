@@ -431,7 +431,6 @@ class WorkflowNode(Node):
     op_title = "Undefined"
     content_label = ""
     content_label_objname = "calc_node_bg"
-    attributes_dock_callback = None
 
     @property
     def type(self):
@@ -471,7 +470,6 @@ class WorkflowNode(Node):
         self.type = self.__class__.op_title
         self.icon = self.op_icon
         self.data = None
-        # self.attributes_dock_callback = None
 
     def initInnerClasses(self):
         # self.content = WorkflowContent(self)
@@ -533,9 +531,6 @@ class WorkflowNode(Node):
     def callback_from_window(self, content):
         pass
 
-    def set_attributes_dock_callback(self, callback):
-        # self.attributes_dock_callback = callback
-        pass
 
     def serialize(self, engine_save=False):
         try:
@@ -601,7 +596,7 @@ class WorkflowNode(Node):
                 self.color = data["content"]['node_details']['color']
             if self.op_code == OP_NODE_QUESTIONNAIRE:
                 self.QNum = data["content"]["questionnaire_number"]
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
 
         except Exception as e:
             dumpException(e)
@@ -615,12 +610,14 @@ class WorkflowNode(Node):
 
     def remove(self):
         super().remove()
-        self.attributes_dock_callback(None)
+        self.get_dock_callback()(None)
 
     def emit_select_dock(self):
         pass
-        self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
+    def get_dock_callback(self):
+        return self.scene.getDockCallback()
     def get_tree_build(self):
         pass
 
