@@ -140,15 +140,14 @@ class WorkflowEdge(Edge):
                 del result["content"]
             elif self.type == RELATIVE:
                 del result["content"]["title"]
-                # FIXME: make sure the string is a number.
-                for time in result["content"]["min"]:
-                    time["hours"] = int(time["hours"])
-                    time["minutes"] = int(time["minutes"])
-                    time["seconds"] = int(time["seconds"])
-                for time in result["content"]["max"]:
-                    time["hours"] = int(time["hours"])
-                    time["minutes"] = int(time["minutes"])
-                    time["seconds"] = int(time["seconds"])
+
+                result["content"]["min"]["hours"] = int(result["content"]["min"]["hours"])
+                result["content"]["min"]["minutes"] = int(result["content"]["min"]["minutes"])
+                result["content"]["min"]["seconds"] = int(result["content"]["min"]["seconds"])
+
+                result["content"]["max"]["hours"] = int(result["content"]["max"]["hours"])
+                result["content"]["max"]["minutes"] = int(result["content"]["max"]["minutes"])
+                result["content"]["max"]["seconds"] = int(result["content"]["max"]["seconds"])
         return result
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
