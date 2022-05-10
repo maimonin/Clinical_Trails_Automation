@@ -8,6 +8,7 @@ from Form import Form
 from Test import Test
 from Users import User
 
+
 def set_name(name):
     # noinspection PyGlobalUndefined
     global db_name
@@ -77,6 +78,18 @@ def extract_many_from_table(query, data):
     cur = conn.cursor()
     try:
         cur.execute(query, data)
+        result = cur.fetchall()
+        conn.close()
+        return result
+    except sqlite3.Error as e:
+        print(e)
+
+
+def fetch_all(query):
+    conn = create_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(query)
         result = cur.fetchall()
         conn.close()
         return result
@@ -438,6 +451,10 @@ def getAllActives(participant_id):
                                         WHERE participant_id=? AND active ="yes" """, (participant_id,))
 
 
+def getActorsToNofity():
+    return fetch_all("""SELECT * FROM Actors_To_Notify""")
+
+
 def getAnswer(form_id, question_number, participant_id):
     rows = extract_one_from_table("""SELECT answer FROM Answers WHERE form_id=? AND question_num=? AND user_id=? """,
                                   (form_id, question_number, participant_id))[0]
@@ -448,6 +465,14 @@ def getAnswer(form_id, question_number, participant_id):
     rows = rows[1:-1].split(', ')
     rows = [int(i) for i in rows]
     return rows
+
+
+def getAnswerOptions():
+    return fetch_all("""SELECT * FROM Answer_Options""")
+
+
+def getComplexNodes():
+    return fetch_all("""SELECT * FROM Complex_Nodes""")
 
 
 def getCurrentPositions(participant_id):
@@ -475,7 +500,6 @@ def getEdges(from_id):
 
 
 def getForm(form_id):
-
     conn = create_connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM Questions WHERE form_id=?", (form_id,))
@@ -541,12 +565,24 @@ def getNode(node_id):
         return buildDALNodes([op_code, node_id, "New Finish Node"])
 
 
+def getQuestionnaires():
+    return fetch_all("""SELECT * FROM Questionnaires""")
+
+
+def getQuestions():
+    return fetch_all("""SELECT * FROM Questions""")
+
+
 def getStaff(role):
     user_data = extract_one_from_table("""SELECT * FROM Staff WHERE role=? AND available="yes" """, (role.lower(),))
     if len(user_data) == 0:
         return None
     # change_table("""UPDATE Staff SET available = "no" WHERE id=?""", (user_data[0],))
     return User(user_data[2], user_data[3], user_data[4], user_data[0])
+
+
+def getStringNodes():
+    return fetch_all("""SELECT * FROM String_Nodes""")
 
 
 def getTestResult(user_id, test_name):
@@ -592,6 +628,12 @@ def getWorkflow(workflow_id):
     return workflow
 
 
+def getWorkflowsIds():
+    ids = fetch_all("""SELECT id FROM Workflows""")
+    ids = list(map(unpack, ids))
+    return ids
+
+
 def releasePosition(participant_id, position_id, position_type):
     change_table("""UPDATE current_position SET active = "no" WHERE participant_id=? AND position_id=? AND type=?""",
                  (participant_id, position_id, position_type))
@@ -603,3 +645,8 @@ def releaseStaff(user_id):
 
 def releaseWaiter(node_id, participant_id):
     change_table("""DELETE FROM Wait_List WHERE node_id=? AND participant_id=?""", (node_id, participant_id))
+
+
+def unpack(tup):
+    (x,) = tup
+    return x
