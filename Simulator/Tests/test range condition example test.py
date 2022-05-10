@@ -24,7 +24,7 @@ async def test_condition_not_in_range():
     assert Database.getUser(1).role == "participant", "user should be participant"
     assert Database.getUser(1).sex == "female", "user should be female"
     assert Database.getUser(1).age == 20, "user should be 20"
-    print("test_condition_in_range passed")
+    print("test_condition_not_in_range passed")
 
 
 asyncio.run(test_condition_in_range())
