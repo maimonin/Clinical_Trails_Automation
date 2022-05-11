@@ -1,20 +1,55 @@
-18:52:03 created workflow
-18:52:03 nurse registered
-18:52:03 investigator registered
-18:52:03 lab registered
-18:52:03 doctor registered
-18:52:03 participant 1 registered
-18:52:03 sending questionnaire
-18:52:03 adding questionnaire of participant with id 1
-18:52:03 participant 1 answers: 
-	Ok?: [0]
-18:52:14 created workflow
-18:52:14 nurse registered
-18:52:14 investigator registered
-18:52:14 lab registered
-18:52:14 doctor registered
-18:52:14 participant 1 registered
-18:52:14 sending questionnaire
-18:52:14 adding questionnaire of participant with id 1
-18:52:14 participant 1 answers: 
-	Ok?: [1]
+12:27:35 created workflow
+12:27:35 created workflow
+12:27:35 nurse registered
+12:27:35 investigator registered
+12:27:35 lab registered
+12:27:35 doctor registered
+12:27:35 participant 1 registered
+12:27:35 sending questionnaire
+12:27:35 adding questionnaire of participant with id 1
+12:27:35 participant 1 answers: 
+	If you join, you will have injections, blood draws, saliva samples, and nasal swabs of your nose.: [0]
+	-The most common risks are symptoms are fever, muscle aches and headaches after getting the study vaccine. 
+-There are other, less serious risks. We will tell you more about them later in this consent form. : [0]
+	Full Name: Alice Bob
+12:27:40 participant with id 1 taking a test
+12:27:43 getting results of test Antigen Test of participant 1
+12:27:43 participant 1 results of test Antigen Test: negative
+12:27:45 participant with id 1 taking a test
+12:27:47 participant 1 results of test Vaccine: 
+12:27:52 sending questionnaire
+12:27:52 adding questionnaire of participant with id 1
+12:27:52 participant 1 answers: 
+	Choose your symptoms: [0, 1]
+	Any side effect not mentioned you experienced?: no
+12:28:02 created workflow
+12:28:03 created workflow
+12:28:03 nurse registered
+12:28:03 investigator registered
+12:28:03 lab registered
+12:28:03 doctor registered
+12:28:03 participant 1 registered
+12:28:03 sending questionnaire
+12:28:03 adding questionnaire of participant with id 1
+12:28:03 participant 1 answers: 
+	If you join, you will have injections, blood draws, saliva samples, and nasal swabs of your nose.: [0]
+	-The most common risks are symptoms are fever, muscle aches and headaches after getting the study vaccine. 
+-There are other, less serious risks. We will tell you more about them later in this consent form. : [0]
+	Full Name: Alice Bob
+12:28:08 participant with id 1 taking a test
+12:28:11 getting results of test Antigen Test of participant 1
+12:28:11 participant 1 results of test Antigen Test: positive
+12:28:22 created workflow
+12:28:22 created workflow
+12:28:22 nurse registered
+12:28:22 investigator registered
+12:28:22 lab registered
+12:28:22 doctor registered
+12:28:22 participant 1 registered
+12:28:22 sending questionnaire
+12:28:22 adding questionnaire of participant with id 1
+12:28:22 participant 1 answers: 
+	If you join, you will have injections, blood draws, saliva samples, and nasal swabs of your nose.: [1]
+	-The most common risks are symptoms are fever, muscle aches and headaches after getting the study vaccine. 
+-There are other, less serious risks. We will tell you more about them later in this consent form. : [1]
+	Full Name: Alice Bob

@@ -600,6 +600,10 @@ def getTests(node_id):
     return tests
 
 
+def getTestsData():
+    return fetch_all("""SELECT * FROM Test_Nodes""")
+
+
 def getTimeStarted(participant_id, edge_id):
     return extract_one_from_table("""SELECT start_time FROM Current_Position 
                                   WHERE participant_id=? AND position_id=? AND type = "edge" """,
@@ -629,9 +633,7 @@ def getWorkflow(workflow_id):
 
 
 def getWorkflowsIds():
-    ids = fetch_all("""SELECT id FROM Workflows""")
-    ids = list(map(unpack, ids))
-    return ids
+    return list(map(unpack, fetch_all("""SELECT id FROM Workflows""")))
 
 
 def releasePosition(participant_id, position_id, position_type):
