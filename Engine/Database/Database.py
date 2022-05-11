@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 
@@ -7,15 +8,6 @@ from Form import Form
 from Test import Test
 from Users import User
 
-workflows = {}
-questionnaires = {}
-testNodes = {}
-decisionNodes = {}
-stringNodes = {}
-complexNodes = {}
-forms = {}
-db_name = ""
-
 
 def set_name(name):
     # noinspection PyGlobalUndefined
@@ -23,14 +15,15 @@ def set_name(name):
     db_name = name
 
 
-def delete_db(name):
-    if os.path.exists(name):
-        os.remove(name)
+def delete_db():
+    if os.path.exists(read_config()):
+        os.remove(read_config())
     else:
         print("The file does not exist")
 
 
 def create_connection():
+    db_name = read_config()
     conn = None
     try:
         conn = sqlite3.connect(db_name)
@@ -39,6 +32,13 @@ def create_connection():
         print(e)
 
     return conn
+
+
+def read_config():
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    f = open(ROOT_DIR+'\\config.json')
+    data = json.load(f)
+    return ROOT_DIR+'\\'+data['db_name']
 
 
 def create_table(conn, query):
@@ -78,6 +78,18 @@ def extract_many_from_table(query, data):
     cur = conn.cursor()
     try:
         cur.execute(query, data)
+        result = cur.fetchall()
+        conn.close()
+        return result
+    except sqlite3.Error as e:
+        print(e)
+
+
+def fetch_all(query):
+    conn = create_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(query)
         result = cur.fetchall()
         conn.close()
         return result
@@ -330,7 +342,6 @@ def addForm(form):
                     continue
         conn.commit()
     conn.close()
-    forms[form.questionnaire_number] = form
 
 
 def addNode(node, op_code):
@@ -361,7 +372,6 @@ def addQuestionnaire(node_id, form_id, node):
                    (?, ?);"""
     node_data = (node_id, form_id)
     change_table(query, node_data)
-    questionnaires[node_id] = node
 
 
 def addQuestionnaireCond(decision_id, title, form_id, question_num, answers):
@@ -409,7 +419,6 @@ def addTestNode(node):
                 VALUES (?, ?, ?);"""
     node_data = (node.id, node.title, node.in_charge)
     change_table(query, node_data)
-    testNodes[node.id] = node
 
 
 def addTestResults(test_name, user_id, time_taken, result):
@@ -421,7 +430,6 @@ def addTraitCond(decision_id, title, test, sat_type, gender, min_val, max_val):
     query = """INSERT OR IGNORE INTO Conditions_Trait (decision_id, title, test, type, gender, min, max)
                 VALUES (?, ?, ?, ?, ?, ?, ?);"""
     cond_data = (decision_id, title, test, sat_type, gender, min_val, max_val)
-    print(cond_data)
     change_table(query, cond_data)
 
 
@@ -435,12 +443,15 @@ def addWorkflow(workflow_id, first):
                 VALUES (?, ?);"""
     data = (workflow_id, first)
     change_table(query, data)
-    workflows[workflow_id] = first
 
 
 def getAllActives(participant_id):
     return extract_many_from_table("""SELECT position_id FROM Current_Position 
                                         WHERE participant_id=? AND active ="yes" """, (participant_id,))
+
+
+def getActorsToNofity():
+    return fetch_all("""SELECT * FROM Actors_To_Notify""")
 
 
 def getAnswer(form_id, question_number, participant_id):
@@ -455,15 +466,24 @@ def getAnswer(form_id, question_number, participant_id):
     return rows
 
 
+def getAnswerOptions():
+    return fetch_all("""SELECT * FROM Answer_Options""")
+
+
+def getComplexNodes():
+    return fetch_all("""SELECT * FROM Complex_Nodes""")
+
+
 def getCurrentPositions(participant_id):
     positions = extract_many_from_table("SELECT position_id, type FROM Current_Position WHERE participant_id=?",
                                         (participant_id,))
     output = []
     for position in positions:
-        if position[2] == "edge":
-            output.append(("edge", getEdge(position[1])))
+        if position[1] == "edge":
+            output.append(("edge", getEdge(position[0])))
         else:
-            output.append(("node", getNode(position[1])))
+            output.append(("node", getNode(position[0])))
+    return output
 
 
 def getEdge(edge_id):
@@ -480,9 +500,6 @@ def getEdges(from_id):
 
 
 def getForm(form_id):
-    if form_id in forms:
-        return forms.get(form_id)
-
     conn = create_connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM Questions WHERE form_id=?", (form_id,))
@@ -506,7 +523,6 @@ def getForm(form_id):
                           "type": "open"})
     conn.close()
     form = Form(form_id, questions)
-    forms[form_id] = form
 
     return form
 
@@ -549,12 +565,24 @@ def getNode(node_id):
         return buildDALNodes([op_code, node_id, "New Finish Node"])
 
 
+def getQuestionnaires():
+    return fetch_all("""SELECT * FROM Questionnaires""")
+
+
+def getQuestions():
+    return fetch_all("""SELECT * FROM Questions""")
+
+
 def getStaff(role):
     user_data = extract_one_from_table("""SELECT * FROM Staff WHERE role=? AND available="yes" """, (role.lower(),))
     if len(user_data) == 0:
         return None
     # change_table("""UPDATE Staff SET available = "no" WHERE id=?""", (user_data[0],))
     return User(user_data[2], user_data[3], user_data[4], user_data[0])
+
+
+def getStringNodes():
+    return fetch_all("""SELECT * FROM String_Nodes""")
 
 
 def getTestResult(user_id, test_name):
@@ -572,6 +600,10 @@ def getTests(node_id):
     return tests
 
 
+def getTestsData():
+    return fetch_all("""SELECT * FROM Test_Nodes""")
+
+
 def getTimeStarted(participant_id, edge_id):
     return extract_one_from_table("""SELECT start_time FROM Current_Position 
                                   WHERE participant_id=? AND position_id=? AND type = "edge" """,
@@ -584,7 +616,7 @@ def getToNode(edge_id):
 
 def getUser(user_id):
     user_data = extract_one_from_table("SELECT * FROM Participants WHERE id=?", (user_id,))
-    return User(user_data[1], user_data[2], user_data[3], user_id)
+    return User('participant', user_data[2], user_data[3], user_id)
 
 
 def getWaitList(node_id, participant_id):
@@ -595,13 +627,13 @@ def getWaitList(node_id, participant_id):
 
 
 def getWorkflow(workflow_id):
-    if workflow_id in workflows:
-        return [workflow_id, workflows[workflow_id]]
     query = """SELECT * FROM Workflows WHERE id=?"""
     workflow = extract_one_from_table(query, (workflow_id,))
-    if workflow is not None:
-        workflows[workflow_id] = [workflow[1]]
     return workflow
+
+
+def getWorkflowsIds():
+    return list(map(unpack, fetch_all("""SELECT id FROM Workflows""")))
 
 
 def releasePosition(participant_id, position_id, position_type):
@@ -615,3 +647,8 @@ def releaseStaff(user_id):
 
 def releaseWaiter(node_id, participant_id):
     change_table("""DELETE FROM Wait_List WHERE node_id=? AND participant_id=?""", (node_id, participant_id))
+
+
+def unpack(tup):
+    (x,) = tup
+    return x

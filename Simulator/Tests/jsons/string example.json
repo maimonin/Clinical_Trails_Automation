@@ -28,7 +28,7 @@
             "content": {
                 "node_details": {
                     "actors": [
-                        "Doctor"
+                        "Participant"
                     ],
                     "title": "string"
                 },

@@ -1,5 +1,5 @@
 def buildDALEdge(edge_data):
-    if edge_data[3] is None and edge_data[5]:
+    if edge_data[3] is None and edge_data[5] is None:
         return DALNormalEdge(edge_data[0])
     if edge_data[3] is not None and edge_data[5] is None:
         return DALRelativeTimeEdge(edge_data[0], edge_data[3], edge_data[4])
