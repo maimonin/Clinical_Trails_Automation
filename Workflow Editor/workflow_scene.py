@@ -8,7 +8,7 @@ from nodeeditor.utils import dumpException
 
 from workflow_conf import OP_NODE_START, OP_NODE_FINISH
 from workflow_edge import WorkflowEdge
-from workflow_graphics_scene import WFGraphicsScene
+import workflow_graphics_scene #import WFGraphicsScene
 
 
 class WorkflowScene(Scene):
@@ -22,7 +22,7 @@ class WorkflowScene(Scene):
         self.dockCallback = callback
 
     def initUI(self):
-        self.grScene = WFGraphicsScene(self)
+        self.grScene = workflow_graphics_scene.WFGraphicsScene(self)
         self.grScene.setGrScene(self.scene_width, self.scene_height)
 
     def getEdgeClass(self):
