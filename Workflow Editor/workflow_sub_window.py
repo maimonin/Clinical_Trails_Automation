@@ -95,7 +95,6 @@ class WorkflowSubWindow(NodeEditorWidget):
 
     def onDrop(self, event):
         self.scene.serialize()
-        print("On drop")
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData = event.mimeData().data(LISTBOX_MIMETYPE)
             dataStream = QDataStream(eventData, QIODevice.ReadOnly)

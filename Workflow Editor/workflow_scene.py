@@ -35,7 +35,7 @@ class WorkflowScene(Scene):
     def onItemSelected(self, silent: bool = False):
         super().onItemSelected(silent)
 
-        print(f"WorkflowScene::onItemSelected::{self.getSelectedItems()}")
+        # print(f"WorkflowScene::onItemSelected::{self.getSelectedItems()}")
         # if len(self.getSelectedItems()) > 0:
         #     self.getSelectedItems()[0].call_dock()
 

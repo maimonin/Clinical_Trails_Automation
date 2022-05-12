@@ -167,7 +167,7 @@ class QDynamicDock(QDockWidget):
             field["value"].remove(option_text)
         else:
             field["value"].append(option_text)
-        print(f"QDynamicDock::change_checklist::data is :{self.data}")
+        # print(f"QDynamicDock::change_checklist::data is :{self.data}")
         self.callback(self.data)
 
     def change_value(self, field, value):

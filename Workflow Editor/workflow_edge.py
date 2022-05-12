@@ -136,27 +136,26 @@ class WorkflowEdge(Edge):
             ])
         if engine_save:
             del result["edge_type"]
-            if self.type == NORMAL:
-                del result["content"]
-            elif self.type == RELATIVE:
+            if self.type == RELATIVE:
                 del result["content"]["title"]
-                # FIXME: make sure the string is a number.
-                for time in result["content"]["min"]:
-                    time["hours"] = int(time["hours"])
-                    time["minutes"] = int(time["minutes"])
-                    time["seconds"] = int(time["seconds"])
-                for time in result["content"]["max"]:
-                    time["hours"] = int(time["hours"])
-                    time["minutes"] = int(time["minutes"])
-                    time["seconds"] = int(time["seconds"])
+                result["content"]["min"]["hours"] = int(result["content"]["min"]["hours"])
+                result["content"]["min"]["seconds"] = int(result["content"]["min"]["seconds"])
+                result["content"]["min"]["minutes"] = int(result["content"]["min"]["minutes"])
+
+                result["content"]["max"]["hours"] = int(result["content"]["max"]["hours"])
+                result["content"]["max"]["seconds"] = int(result["content"]["max"]["seconds"])
+                result["content"]["max"]["minutes"] = int(result["content"]["max"]["minutes"])
+
         return result
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
+        # FIXME: recovers only one edge
         if restore_id: self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
         self.type = data['type']
         self.edge_type = data["edge_type"]
+        # FIXME: in case of NORMAL edge, there's no content key.
         self.data['content']['edge_details'] = data['content']
         min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
                      data['content']["min"]["seconds"]

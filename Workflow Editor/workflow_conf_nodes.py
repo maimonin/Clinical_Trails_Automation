@@ -189,7 +189,6 @@ class WorkflowNode_DataEntry(WorkflowNode):
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
         if new_state:
             self.get_dock_callback()(self.get_tree_build())
         else:
@@ -275,7 +274,6 @@ class WorkflowNode_Decision(WorkflowNode):
         self.grNode = WorkflowGraphicSmallDiamond(self)
 
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
         if new_state:
             self.get_dock_callback()(self.get_tree_build())
         else:
@@ -455,7 +453,6 @@ class WorkflowNode_SimpleString(WorkflowNode):
 
     # for dock build
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
         if new_state:
             self.get_dock_callback()(self.get_tree_build())
         else:
@@ -674,8 +671,6 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
-
-    # FIXME: sub workflow override the dock callback to all nodes.
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )

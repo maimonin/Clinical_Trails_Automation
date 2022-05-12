@@ -8,7 +8,7 @@ from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
 from workflow_conf import OP_NODE_START, OP_NODE_FINISH, OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING, \
-    OP_NODE_DECISION
+    OP_NODE_DECISION, OP_NODE_COMPLEX
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -538,7 +538,7 @@ class WorkflowNode(Node):
             res[
                 'content'] = self.data if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
-
+            # TODO: res['title'] = self._type
             # remove features that is for node editor
             if engine_save:
                 del res['pos_x']
@@ -569,16 +569,27 @@ class WorkflowNode(Node):
                     del res["content"]["node_details"]["color"]
                     # remove null answers from questionnairs
                     for question in res["content"]["questions"]:
-                        # FIXME: make sure the deletion of null answers,
-                        #   doesn't change the object too.
                         answers = question["options"]
                         question["options"] = []
                         for opt in answers:
                             if opt is not None:
                                 question["options"].append(opt)
-                elif res["op_code"] == OP_NODE_Test or OP_NODE_STRING:
-                    # FIXME: why test doesn't have color key?
+                elif res["op_code"] == OP_NODE_Test:
+                    # FIXME: no color key?
+                    #   @staff is doubled?, probably default Nurse isn't deleted.
+                    # TODO: remove time key in node_details
+                    #   remove id key
                     del res["content"]["node_details"]["color"]
+                elif res["op_code"] == OP_NODE_STRING:
+                    del res["content"]["node_details"]["color"]
+                    del res["content"]["node_details"]["color"]
+                elif res["op_code"] == OP_NODE_COMPLEX:
+                    # TODO : add "edge_type" to edges serialization
+                    #   delete "content" and pos_x,pos_y keys from start and finish nodes
+                    #   delete in outputs (inputs) index,multi_edges,position,socket_type
+                    #   delete color key from nodes
+                    #   delete scene_height and scene_width keys
+                    pass
 
         except Exception as e:
             dumpException(e)
