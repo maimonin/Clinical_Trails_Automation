@@ -566,19 +566,18 @@ class WorkflowNode(Node):
                 elif res["op_code"] == OP_NODE_DECISION:
                     # TODO
                     #  change questionnaire number to int
-                    #  del time in node details
                     for condition in res["content"]["condition"]:
                         del condition["id"]
                         if condition["type"] == "questionnaire condition":
                             del condition["question"]
                 elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
                     # TODO
-                    #   del time in node details
                     #   change questionnaire number to int
+                    res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
                     del res["content"]["node_details"]["color"]
-                    # remove null answers from questionnairs
                     for question in res["content"]["questions"]:
-                        # TODO del id in questions
+                        del question["id"]
+                        # remove null answers from questionnaires
                         answers = question["options"]
                         question["options"] = []
                         for opt in answers:
