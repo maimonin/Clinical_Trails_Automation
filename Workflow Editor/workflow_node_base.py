@@ -578,10 +578,10 @@ class WorkflowNode(Node):
                                 question["options"].append(opt)
                 elif res["op_code"] == OP_NODE_Test:
                     # FIXME: no color key?
-                    #   @staff is doubled?, probably default Nurse isn't deleted.
-                    # TODO: remove time key in node_details
-                    #   remove id key
                     del res["content"]["node_details"]["color"]
+                    del res["content"]["node_details"]["time"]
+                    for test in res["content"]["tests"]:
+                        del test["id"]
                 elif res["op_code"] == OP_NODE_STRING:
                     del res["content"]["node_details"]["color"]
                 elif res["op_code"] == OP_NODE_COMPLEX:

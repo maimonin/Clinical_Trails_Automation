@@ -212,9 +212,9 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
                 self.data["tests"] = []
                 for test in content["Content"][0]["value"]:
-                    # if none selected, add Nurse as default.
-                    if len(test["staff"]) == 0:
-                        test["staff"].append("Nurse")
+                    # TODO: if none selected, add Nurse as default.
+                    # if len(test["staff"]) == 0:
+                    #     test["staff"].append("Nurse")
                     self.data["tests"].append(test)
 
         except Exception as e:
