@@ -1,0 +1,85 @@
+{
+    "id": 2196292682032,
+    "nodes": [
+        {
+            "id": 2196292666704,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2196292515440
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2196292585216,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 2196292515584
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 2196301313024,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 2196301224016
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2196301224064
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "hemoglobin",
+                    "actor in charge": "Lab Technician"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "hemoglobin",
+                        "instructions": "take a red tube of blood",
+                        "staff": [
+                            "Nurse",
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    },
+                    {
+                        "id": 2,
+                        "name": "AIC test",
+                        "instructions": "take blue tube",
+                        "staff": [
+                            "Nurse",
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 2196301153952,
+            "start": 2196292515440,
+            "end": 2196301224016,
+            "type": 0
+        },
+        {
+            "id": 2196301153712,
+            "start": 2196301224064,
+            "end": 2196292515584,
+            "type": 0
+        }
+    ]
+}

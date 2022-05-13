@@ -538,7 +538,9 @@ class WorkflowNode(Node):
             res[
                 'content'] = self.data if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
-            # TODO: res['title'] = self._type
+            # checkme: can we change in the engine the title of the node back to start\finish without "new node"
+            if res['op_code'] not in [OP_NODE_START, OP_NODE_FINISH]:
+                res['title'] = self._type
             # remove features that is for node editor
             if engine_save:
                 del res['pos_x']
@@ -581,7 +583,6 @@ class WorkflowNode(Node):
                     #   remove id key
                     del res["content"]["node_details"]["color"]
                 elif res["op_code"] == OP_NODE_STRING:
-                    del res["content"]["node_details"]["color"]
                     del res["content"]["node_details"]["color"]
                 elif res["op_code"] == OP_NODE_COMPLEX:
                     # TODO : add "edge_type" to edges serialization

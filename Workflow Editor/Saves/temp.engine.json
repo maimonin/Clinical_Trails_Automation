@@ -1,0 +1,97 @@
+{
+    "id": 1829165328944,
+    "nodes": [
+        {
+            "id": 1829165342288,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1829165371600
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1829165432784,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1829165371456
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1829165227168,
+            "title": "New Questionnaire Node",
+            "inputs": [
+                {
+                    "id": 1829165568304
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1829165568352
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Questionnaire Node"
+                },
+                "questions": [
+                    {
+                        "id": 1,
+                        "type": "multi",
+                        "text": "qwe",
+                        "options": [
+                            "q",
+                            "w",
+                            "e",
+                            null,
+                            null,
+                            null
+                        ]
+                    }
+                ],
+                "questionnaire_number": "1"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 1829165513840,
+            "title": "New Test Node",
+            "inputs": [
+                {
+                    "id": 1829165514176
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1829165514224
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Test Node",
+                    "actor in charge": "Nurse"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "assss",
+                        "instructions": "",
+                        "staff": [],
+                        "duration": "",
+                        "facility": ""
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": []
+}

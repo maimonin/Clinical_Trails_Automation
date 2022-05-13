@@ -1,0 +1,114 @@
+{
+    "id": 2196292682032,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2196292666704,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2196292515440,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 2196292585216,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 2196292515584,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 2196301313024,
+            "title": "Test",
+            "pos_x": -166.0,
+            "pos_y": -271.0,
+            "inputs": [
+                {
+                    "id": 2196301224016,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2196301224064,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "hemoglobin",
+                    "actor in charge": "Lab Technician",
+                    "color": "Grey"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "hemoglobin",
+                        "instructions": "take a red tube of blood",
+                        "staff": [
+                            "Nurse",
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    },
+                    {
+                        "id": 2,
+                        "name": "AIC test",
+                        "instructions": "take blue tube",
+                        "staff": [
+                            "Nurse",
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 2196301153952,
+            "start": 2196292515440,
+            "end": 2196301224016,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2196301153712,
+            "start": 2196301224064,
+            "end": 2196292515584,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

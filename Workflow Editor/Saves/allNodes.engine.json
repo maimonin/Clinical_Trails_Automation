@@ -1,0 +1,187 @@
+{
+    "id": 2058780998480,
+    "nodes": [
+        {
+            "id": 2058781118624,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2058781032304
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2058781093552,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 2058781032160
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 2058781224384,
+            "title": "New Questionnaire Node",
+            "inputs": [
+                {
+                    "id": 2058781246032
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781246080
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Questionnaire Node"
+                },
+                "questions": [
+                    {
+                        "id": 1,
+                        "type": "multi",
+                        "text": "What do you like?",
+                        "options": [
+                            "Bamba",
+                            "Bisli"
+                        ]
+                    }
+                ],
+                "questionnaire_number": "1"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2058781274848,
+            "title": "New Test Node",
+            "inputs": [
+                {
+                    "id": 2058781260960
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781261008
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Test Node",
+                    "actor in charge": "Nurse"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "Blood",
+                        "instructions": "Gloves",
+                        "staff": [
+                            "Nurse",
+                            "Nurse"
+                        ],
+                        "duration": ""
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2058781306944,
+            "title": "New Decision Node",
+            "inputs": [
+                {
+                    "id": 2058781307088
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781306992
+                },
+                {
+                    "id": 2353247392576
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Decision Node"
+                },
+                "condition": [
+                    {
+                        "title": "condition_2",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": "1",
+                        "questionNumber": 1,
+                        "acceptedAnswers": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "title": "condition_3",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "negative"
+                        },
+                        "test": "Blood"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2058781247184,
+            "title": "New Notification Node",
+            "inputs": [
+                {
+                    "id": 2058781308048
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781307376
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "New Notification Node"
+                },
+                "text": "Hello World"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2058781376720,
+            "type": 1,
+            "start": 2058781032304,
+            "end": 2058781246032,
+            "content": {
+                "min": {
+                    "hours": 0,
+                    "minutes": 0,
+                    "seconds": 2
+                },
+                "max": {
+                    "hours": 0,
+                    "minutes": 3,
+                    "seconds": 0
+                }
+            }
+        },
+        {
+            "id": 2353247392096,
+            "start": 2058781307376,
+            "end": 2058781032160,
+            "type": 0
+        }
+    ]
+}

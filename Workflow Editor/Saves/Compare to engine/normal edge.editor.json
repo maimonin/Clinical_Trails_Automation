@@ -1,0 +1,136 @@
+{
+    "id": 2341466186752,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2341466114080,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2341466585408,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 2341466081744,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 2341466585552,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 2341466499056,
+            "title": "Simple String",
+            "pos_x": -180.0,
+            "pos_y": -331.0,
+            "inputs": [
+                {
+                    "id": 2341466465184,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2341466465136,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "hello",
+                    "color": "Grey"
+                },
+                "text": "hello"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2341466427504,
+            "title": "Simple String",
+            "pos_x": -210.0,
+            "pos_y": -42.0,
+            "inputs": [
+                {
+                    "id": 2341466611776,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2341466611824,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "world",
+                    "color": "Grey"
+                },
+                "text": "world"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2341466427696,
+            "start": 2341466585408,
+            "end": 2341466465184,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2341466444656,
+            "start": 2341466465136,
+            "end": 2341466611776,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2341466611920,
+            "start": 2341466611824,
+            "end": 2341466585552,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

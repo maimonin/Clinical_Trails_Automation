@@ -424,7 +424,7 @@ class WorkflowNode_Decision(WorkflowNode):
 class WorkflowNode_SimpleString(WorkflowNode):
     op_icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
-    op_title = "Notification"
+    op_title = "Simple String"
     content_label_objname = "workflow_node_string"
 
     def __init__(self, scene):
