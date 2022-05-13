@@ -1,0 +1,144 @@
+{
+    "id": 3007550771504,
+    "nodes": [
+        {
+            "id": 3007550756176,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 3007550617200
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 3007550740224,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 3007550617344
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 3007559402496,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 3007559402640
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3007559402544
+                },
+                {
+                    "id": 3007559402688
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "New Decision Node"
+                },
+                "condition": [
+                    {
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": "18",
+                                "max": "30"
+                            }
+                        },
+                        "trait": "age"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 3007559274752,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 3007559235472
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3007559235424
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1"
+                },
+                "text": "in range"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 3007559296096,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 3007559237584
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 3007559206272
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2"
+                },
+                "text": "out of range"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 3007559274704,
+            "start": 3007550617200,
+            "end": 3007559402640,
+            "type": 0
+        },
+        {
+            "id": 3007550432688,
+            "start": 3007559402688,
+            "end": 3007559235472,
+            "type": 0
+        },
+        {
+            "id": 3007559205456,
+            "start": 3007559237584,
+            "end": 3007559402544,
+            "type": 0
+        },
+        {
+            "id": 3007559421040,
+            "start": 3007559206272,
+            "end": 3007550617344,
+            "type": 0
+        },
+        {
+            "id": 3007559422880,
+            "start": 3007559235424,
+            "end": 3007550617344,
+            "type": 0
+        }
+    ]
+}

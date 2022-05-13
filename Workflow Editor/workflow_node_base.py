@@ -544,80 +544,83 @@ class WorkflowNode(Node):
                 res['title'] = self.type
             # remove features that is for node editor
             if engine_save:
-                del res['pos_x']
-                del res['pos_y']
-
-                if len(res["inputs"]) > 0:
-                    for idx, input in enumerate(res["inputs"]):
-                        del res["inputs"][idx]["index"]
-                        del res["inputs"][idx]["position"]
-                        del res["inputs"][idx]["socket_type"]
-                        del res["inputs"][idx]["multi_edges"]
-
-                if len(res["outputs"]) > 0:
-                    for idx, output in enumerate(res["outputs"]):
-                        del res["outputs"][idx]["index"]
-                        del res["outputs"][idx]["position"]
-                        del res["outputs"][idx]["socket_type"]
-                        del res["outputs"][idx]["multi_edges"]
-
-                if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
-                    del res["content"]
-                elif res["op_code"] == OP_NODE_DECISION:
-                    for condition in res["content"]["condition"]:
-                        del condition["id"]
-                        if condition["type"] == "questionnaire condition":
-                            condition["title"] = "questionnaire " + condition["title"]
-                            condition["questionnaireNumber"] = int(condition["questionnaireNumber"])
-                            if condition["type"] == "questionnaire condition":
-                                del condition["question"]
-                        elif condition["type"] == "test condition":
-                            condition["title"] = "test " + condition["title"]
-                            if condition["satisfy"]["type"] == "range":
-                                condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
-                                condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
-                        elif condition["type"] == "trait condition" and condition["satisfy"]["type"] == "range":
-                            condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
-                            condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
-                elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
-                    res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
-                    del res["content"]["node_details"]["color"]
-                    for question in res["content"]["questions"]:
-                        del question["id"]
-                        # remove null answers from questionnaires
-                        answers = question["options"]
-                        question["options"] = []
-                        for opt in answers:
-                            if opt is not None:
-                                question["options"].append(opt)
-                elif res["op_code"] == OP_NODE_Test:
-                    # FIXME: no color key?
-                    del res["content"]["node_details"]["color"]
-                    for test in res["content"]["tests"]:
-                        del test["id"]
-                elif res["op_code"] == OP_NODE_STRING:
-                    del res["content"]["node_details"]["color"]
-                elif res["op_code"] == OP_NODE_COMPLEX:
-                    # TODO : add "edge_type" to edges serialization
-                    #   delete "content" and pos_x,pos_y keys from start and finish nodes
-                    #   delete in outputs (inputs) index,multi_edges,position,socket_type
-                    #   delete color key from nodes
-                    #   delete scene_height and scene_width keys
-                    #   each node\edge in the content/flow/ is OrderedDict, maybe deserialize and then serialize?
-                    nodes, edges = [], []
-                    # for node in res["content"]["flow"]["nodes"]:
-                    #     node = self.deserialize(node)
-                    #     nodes.append(node.super().serialize(engine_save))
-                    # for edge in res["content"]["flow"]["edges"]:
-                    #     edge = WorkflowEdge.deserialize(edge)
-                    #     edges.append(edge.super().serialize(engine_save))
-                    # res["content"]["flow"]["nodes"] = nodes
-                    # res["content"]["flow"]["edges"] = edges
-
+                res = self.serialize_to_engine(res)
 
         except Exception as e:
             dumpException(e)
 
+        return res
+
+    def serialize_to_engine(self, res):
+        del res['pos_x']
+        del res['pos_y']
+
+        if len(res["inputs"]) > 0:
+            for idx, input in enumerate(res["inputs"]):
+                del res["inputs"][idx]["index"]
+                del res["inputs"][idx]["position"]
+                del res["inputs"][idx]["socket_type"]
+                del res["inputs"][idx]["multi_edges"]
+
+        if len(res["outputs"]) > 0:
+            for idx, output in enumerate(res["outputs"]):
+                del res["outputs"][idx]["index"]
+                del res["outputs"][idx]["position"]
+                del res["outputs"][idx]["socket_type"]
+                del res["outputs"][idx]["multi_edges"]
+
+        if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
+            del res["content"]
+        elif res["op_code"] == OP_NODE_DECISION:
+            for condition in res["content"]["condition"]:
+                del condition["id"]
+                if condition["type"] == "questionnaire condition":
+                    condition["title"] = "questionnaire " + condition["title"]
+                    condition["questionnaireNumber"] = int(condition["questionnaireNumber"])
+                    if condition["type"] == "questionnaire condition":
+                        del condition["question"]
+                elif condition["type"] == "test condition":
+                    condition["title"] = "test " + condition["title"]
+                    if condition["satisfy"]["type"] == "range":
+                        condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
+                        condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
+                elif condition["type"] == "trait condition" and condition["satisfy"]["type"] == "range":
+                    condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
+                    condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
+        elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
+            res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
+            del res["content"]["node_details"]["color"]
+            for question in res["content"]["questions"]:
+                del question["id"]
+                # remove null answers from questionnaires
+                answers = question["options"]
+                question["options"] = []
+                for opt in answers:
+                    if opt is not None:
+                        question["options"].append(opt)
+        elif res["op_code"] == OP_NODE_Test:
+            # FIXME: no color key?
+            del res["content"]["node_details"]["color"]
+            for test in res["content"]["tests"]:
+                del test["id"]
+        elif res["op_code"] == OP_NODE_STRING:
+            del res["content"]["node_details"]["color"]
+        elif res["op_code"] == OP_NODE_COMPLEX:
+            # TODO : add "edge_type" to edges serialization
+            #   delete "content" and pos_x,pos_y keys from start and finish nodes
+            #   delete in outputs (inputs) index,multi_edges,position,socket_type
+            #   delete color key from nodes
+            #   delete scene_height and scene_width keys
+            #   each node\edge in the content/flow/ is OrderedDict, maybe deserialize and then serialize?
+            nodes, edges = [], []
+            # for node in res["content"]["flow"]["nodes"]:
+            #     node = self.deserialize(node)
+            #     nodes.append(node.super().serialize(engine_save))
+            # for edge in res["content"]["flow"]["edges"]:
+            #     edge = WorkflowEdge.deserialize(edge)
+            #     edges.append(edge.super().serialize(engine_save))
+            # res["content"]["flow"]["nodes"] = nodes
+            # res["content"]["flow"]["edges"] = edges
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
@@ -653,6 +656,7 @@ class WorkflowNode(Node):
 
     def get_dock_callback(self):
         return self.scene.getDockCallback()
+
     def get_tree_build(self):
         pass
 
