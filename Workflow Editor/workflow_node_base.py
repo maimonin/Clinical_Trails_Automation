@@ -541,7 +541,7 @@ class WorkflowNode(Node):
             res['op_code'] = self.__class__.op_code
             # checkme: can we change in the engine the title of the node back to start\finish without "new node"
             if res['op_code'] not in [OP_NODE_START, OP_NODE_FINISH]:
-                res['title'] = self._type
+                res['title'] = self.type
             # remove features that is for node editor
             if engine_save:
                 del res['pos_x']
@@ -564,15 +564,14 @@ class WorkflowNode(Node):
                 if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
                     del res["content"]
                 elif res["op_code"] == OP_NODE_DECISION:
-                    # TODO
-                    #  change questionnaire number to int
                     for condition in res["content"]["condition"]:
                         del condition["id"]
                         if condition["type"] == "questionnaire condition":
-                            del condition["question"]
+                            condition["title"] = "questionnaire " + condition["title"]
+                            condition["questionnaireNumber"] = int(condition["questionnaireNumber"])
+                            if condition["type"] == "questionnaire condition":
+                                del condition["question"]
                 elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
-                    # TODO
-                    #   change questionnaire number to int
                     res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
                     del res["content"]["node_details"]["color"]
                     for question in res["content"]["questions"]:

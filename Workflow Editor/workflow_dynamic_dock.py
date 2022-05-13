@@ -503,7 +503,7 @@ class DecisionTree:
         id = self.get_next_id()
         condition_data = {
             "id": id,
-            "title": "condition_" + str(id),
+            "title": "condition " + str(id),
             "type": "trait condition",  # default
             "satisfy": {
                 "type": "range",
