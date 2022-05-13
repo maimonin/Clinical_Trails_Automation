@@ -9,6 +9,7 @@ from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
 from workflow_conf import OP_NODE_START, OP_NODE_FINISH, OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING, \
     OP_NODE_DECISION, OP_NODE_COMPLEX
+from workflow_edge import WorkflowEdge
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -547,14 +548,14 @@ class WorkflowNode(Node):
                 del res['pos_y']
 
                 if len(res["inputs"]) > 0:
-                    for idx,input in enumerate(res["inputs"]):
+                    for idx, input in enumerate(res["inputs"]):
                         del res["inputs"][idx]["index"]
                         del res["inputs"][idx]["position"]
                         del res["inputs"][idx]["socket_type"]
                         del res["inputs"][idx]["multi_edges"]
 
                 if len(res["outputs"]) > 0:
-                    for idx,output in enumerate(res["outputs"]):
+                    for idx, output in enumerate(res["outputs"]):
                         del res["outputs"][idx]["index"]
                         del res["outputs"][idx]["position"]
                         del res["outputs"][idx]["socket_type"]
@@ -590,7 +591,17 @@ class WorkflowNode(Node):
                     #   delete in outputs (inputs) index,multi_edges,position,socket_type
                     #   delete color key from nodes
                     #   delete scene_height and scene_width keys
-                    pass
+                    #   each node\edge in the content/flow/ is OrderedDict, maybe deserialize and then serialize?
+                    nodes, edges = [], []
+                    # for node in res["content"]["flow"]["nodes"]:
+                    #     node = self.deserialize(node)
+                    #     nodes.append(node.super().serialize(engine_save))
+                    # for edge in res["content"]["flow"]["edges"]:
+                    #     edge = WorkflowEdge.deserialize(edge)
+                    #     edges.append(edge.super().serialize(engine_save))
+                    # res["content"]["flow"]["nodes"] = nodes
+                    # res["content"]["flow"]["edges"] = edges
+
 
         except Exception as e:
             dumpException(e)

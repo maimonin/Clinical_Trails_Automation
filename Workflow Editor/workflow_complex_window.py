@@ -139,7 +139,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         return None
 
     def onFileSave(self):
-        if self.complex_callback is None:  # means that this window is not a complex node, procceed as usual
+        if self.complex_callback is None:  # means that this window is not a complex node, proceed as usual
             print("problem: no callback provided for this window!")
             return False
         else:
