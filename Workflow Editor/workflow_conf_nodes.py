@@ -74,7 +74,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "time": QTime.toString(QTime(0, 0)),
                 "title": "New Questionnaire Node",
                 "color": self.color
             },
@@ -175,7 +174,6 @@ class WorkflowNode_DataEntry(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "time": QTime.toString(QTime(0, 0)),
                 "title": "New Test Node",
                 "actor in charge": "Nurse",
                 "color": self.color
@@ -261,7 +259,6 @@ class WorkflowNode_Decision(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "time": QTime.toString(QTime(0, 0)),
                 "title": "New Decision Node",
                 # "color": self.color
             },

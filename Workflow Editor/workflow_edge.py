@@ -149,7 +149,6 @@ class WorkflowEdge(Edge):
         return result
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
-        # FIXME: recovers only one edge
         if restore_id: self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
