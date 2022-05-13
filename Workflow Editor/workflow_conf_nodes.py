@@ -259,7 +259,7 @@ class WorkflowNode_Decision(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "title": "decision",
+                "title": "New Decision Node",
                 # "color": self.color
             },
             "condition": [],

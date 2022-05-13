@@ -571,6 +571,11 @@ class WorkflowNode(Node):
                             condition["questionnaireNumber"] = int(condition["questionnaireNumber"])
                             if condition["type"] == "questionnaire condition":
                                 del condition["question"]
+                        elif condition["type"] == "test condition":
+                            condition["title"] = "test " + condition["title"]
+                            if condition["satisfy"]["type"] == "range":
+                                condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
+                                condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
                 elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
                     res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
                     del res["content"]["node_details"]["color"]
