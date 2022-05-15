@@ -135,18 +135,21 @@ class WorkflowEdge(Edge):
                 ('edge_type', self.edge_type)
             ])
         if engine_save:
-            del result["edge_type"]
-            if self.type == RELATIVE:
-                del result["content"]["title"]
-                result["content"]["min"]["hours"] = int(result["content"]["min"]["hours"])
-                result["content"]["min"]["seconds"] = int(result["content"]["min"]["seconds"])
-                result["content"]["min"]["minutes"] = int(result["content"]["min"]["minutes"])
-
-                result["content"]["max"]["hours"] = int(result["content"]["max"]["hours"])
-                result["content"]["max"]["seconds"] = int(result["content"]["max"]["seconds"])
-                result["content"]["max"]["minutes"] = int(result["content"]["max"]["minutes"])
-
+            result = self.serialize_to_engine(result)
         return result
+
+    def serialize_to_engine(self, res):
+        del res["edge_type"]
+        if res["type"] == RELATIVE:
+            del res["content"]["title"]
+            res["content"]["min"]["hours"] = int(res["content"]["min"]["hours"])
+            res["content"]["min"]["seconds"] = int(res["content"]["min"]["seconds"])
+            res["content"]["min"]["minutes"] = int(res["content"]["min"]["minutes"])
+
+            res["content"]["max"]["hours"] = int(res["content"]["max"]["hours"])
+            res["content"]["max"]["seconds"] = int(res["content"]["max"]["seconds"])
+            res["content"]["max"]["minutes"] = int(res["content"]["max"]["minutes"])
+        return res
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
         if restore_id: self.id = data['id']

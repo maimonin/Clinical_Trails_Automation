@@ -99,6 +99,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             dumpException(e)
 
     def callback_from_window(self, content):
+        # TODO : add update for decision nodes
         try:
             if content is None:
                 self.remove()  # remove node
@@ -196,6 +197,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
         self.get_dock_callback()(self.get_tree_build())
 
     def callback_from_window(self, content):
+        # TODO : add update for decision nodes
         try:
             if content is None:
                 self.remove()  # remove node

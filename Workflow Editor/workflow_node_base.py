@@ -539,7 +539,6 @@ class WorkflowNode(Node):
             res[
                 'content'] = self.data if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
-            # checkme: can we change in the engine the title of the node back to start\finish without "new node"
             if res['op_code'] not in [OP_NODE_START, OP_NODE_FINISH]:
                 res['title'] = self.type
             # remove features that is for node editor
@@ -571,6 +570,7 @@ class WorkflowNode(Node):
 
         if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
             del res["content"]
+
         elif res["op_code"] == OP_NODE_DECISION:
             for condition in res["content"]["condition"]:
                 del condition["id"]
@@ -587,6 +587,7 @@ class WorkflowNode(Node):
                 elif condition["type"] == "trait condition" and condition["satisfy"]["type"] == "range":
                     condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
                     condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
+
         elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
             res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
             del res["content"]["node_details"]["color"]
@@ -598,29 +599,26 @@ class WorkflowNode(Node):
                 for opt in answers:
                     if opt is not None:
                         question["options"].append(opt)
+
         elif res["op_code"] == OP_NODE_Test:
-            # FIXME: no color key?
             del res["content"]["node_details"]["color"]
             for test in res["content"]["tests"]:
                 del test["id"]
+
         elif res["op_code"] == OP_NODE_STRING:
             del res["content"]["node_details"]["color"]
+
         elif res["op_code"] == OP_NODE_COMPLEX:
-            # TODO : add "edge_type" to edges serialization
-            #   delete "content" and pos_x,pos_y keys from start and finish nodes
-            #   delete in outputs (inputs) index,multi_edges,position,socket_type
-            #   delete color key from nodes
-            #   delete scene_height and scene_width keys
-            #   each node\edge in the content/flow/ is OrderedDict, maybe deserialize and then serialize?
+            del res["content"]["flow"]["scene_width"]
+            del res["content"]["flow"]["scene_height"]
             nodes, edges = [], []
-            # for node in res["content"]["flow"]["nodes"]:
-            #     node = self.deserialize(node)
-            #     nodes.append(node.super().serialize(engine_save))
-            # for edge in res["content"]["flow"]["edges"]:
-            #     edge = WorkflowEdge.deserialize(edge)
-            #     edges.append(edge.super().serialize(engine_save))
-            # res["content"]["flow"]["nodes"] = nodes
-            # res["content"]["flow"]["edges"] = edges
+            for node in res["content"]["flow"]["nodes"]:
+                nodes.append(self.serialize_to_engine(node))
+            for edge in res["content"]["flow"]["edges"]:
+                edges.append(WorkflowEdge.serialize_to_engine(WorkflowEdge,edge))
+            res["content"]["flow"]["nodes"] = nodes
+            res["content"]["flow"]["edges"] = edges
+
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
