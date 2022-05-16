@@ -118,8 +118,11 @@ class WorkflowSubWindow(NodeEditorWidget):
         else:
             event.ignore()
 
-    def fileLoad(self, filename):
-        return super().fileLoad(filename)
+    def fileLoad(self, path):
+        filename = path.split("/").pop()
+        filename_splits = filename.split(".")
+        if len(filename_splits) == 3 and filename_splits[1] == "editor":
+            return super().fileLoad(path)
 
     def data_load(self, json_data, name):
         try:
