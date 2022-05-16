@@ -626,11 +626,16 @@ class WorkflowNode(Node):
             res = super().deserialize(data, hashmap, restore_id)
             self.data = data["content"]
             self.op_code = data['op_code']
-
+            self.type = data["title"]
             # recovering node specific attributes
-            if self.op_code in [OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING]:
+            if self.op_code == OP_NODE_DECISION:
+                self.title = data["content"]["node_details"]["title"]
+            if self.op_code in [OP_NODE_Test, OP_NODE_STRING]:
+                self.title = data["content"]["node_details"]["title"]
                 self.color = data["content"]['node_details']['color']
             if self.op_code == OP_NODE_QUESTIONNAIRE:
+                self.title = data["content"]["node_details"]["title"]
+                self.color = data["content"]['node_details']['color']
                 self.QNum = data["content"]["questionnaire_number"]
             self.get_dock_callback()(self.get_tree_build())
 
@@ -661,21 +666,3 @@ class WorkflowNode(Node):
     def get_node_details(self):
         pass
 
-    # template:
-    '''   return  {
-                "name": "Node Details",
-                "fields": [
-                    {"name": "Title", "type": "Text", "value": self.title},
-                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
-                    {"name": "Actor in charge", "type": "combobox",
-                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
-                    {"name": "Actors", "type": "list",
-                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
-                               {"name": "Doctor", "value": 0, "type": "spinbox"},
-                               {"name": "Participant", "value": 0, "type": "spinbox"},
-                               {"name": "Investigator", "value": 0, "type": "spinbox"},
-                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]},
-                    {"name": "Actors", "type": "checklist",
-                     "options": ["Nurse","Doctor","Participant","Investigator","Lab Technician"],
-                     value:[]}
-                ]}  '''

@@ -157,11 +157,11 @@ class WorkflowEdge(Edge):
         self.end_socket = hashmap[data['end']]
         self.type = data['type']
         self.edge_type = data["edge_type"]
-        # FIXME: in case of NORMAL edge, there's no content key.
-        self.data['content']['edge_details'] = data['content']
-        min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
-                     data['content']["min"]["seconds"]
-        max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
-                     data['content']["max"]["seconds"]
-        self.update_label(data['content']["title"], min_string, max_string)
+        if self.type == RELATIVE:
+            self.data['content']['edge_details'] = data['content']
+            min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
+                         data['content']["min"]["seconds"]
+            max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
+                         data['content']["max"]["seconds"]
+            self.update_label(data['content']["title"], min_string, max_string)
         self.doSelect()  # reload the data when opening a new file

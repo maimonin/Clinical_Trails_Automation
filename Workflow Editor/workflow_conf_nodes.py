@@ -1,15 +1,9 @@
-import datetime
-from time import sleep
-
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import *
-from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_TOP, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER
 from qtpy import QtCore
 
 from workflow_conf import *
-from workflow_node_base import *
-from nodeeditor.utils import dumpException
 from workflow_graphics_socket import WFGraphicsSocketDecision, WFGraphicsSocket
+from workflow_node_base import *
 
 
 class WorkflowInputContent(QDMNodeContentWidget):
@@ -134,6 +128,8 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
     def export_to_UI(self, export):
         result = []
+        type_idx = -1
+
         for item in export:
             name = list(item.keys())[0]
 
