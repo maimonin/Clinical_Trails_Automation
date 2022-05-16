@@ -76,6 +76,7 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             "questions": [],
             "questionnaire_number": self.QNum
         }
+        self.old_questions = []
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -95,7 +96,6 @@ class WorkflowNode_Questionnaire(WorkflowNode):
             dumpException(e)
 
     def callback_from_window(self, content):
-        # TODO : add update for decision nodes
         try:
             if content is None:
                 self.remove()  # remove node
@@ -109,6 +109,9 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 self.data["questions"] = content["Content"][1]["value"]
                 self.data["questionnaire_number"] = content["Content"][0]["value"]
                 self.QNum = content["Content"][0]["value"]
+
+                self.update_scene(self.changed_questions(self.data["questions"]))
+                self.old_questions = self.data["questions"]
 
         except Exception as e:
             dumpException(e)
@@ -153,12 +156,34 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
     def remove(self):
         super().remove()
+
+        self.update_scene()
+
+    # if something has changed in a question, delete it from all decisions.
+    def changed_questions(self, new_questions):
+        result = set()
+
+        for old_question in self.old_questions:
+            if old_question["type"] != "open":
+                for new_question in new_questions:
+                    if old_question["id"] == new_question["id"] and old_question != new_question:
+                        result.add(old_question["id"])
+
+        return list(result)
+
+    def update_scene(self, remove_questions=None):
         for node in self.scene.nodes:
             if node.op_code == OP_NODE_DECISION:
-                node.data["condition"] = [condition for condition in node.data["condition"] if
-                                          condition["type"] != "questionnaire condition" or self.QNum != condition[
-                                              "questionnaireNumber"]]
-
+                node.data["condition"] = []
+                for condition in node.data["condition"]:
+                    if condition["type"] != "questionnaire condition":
+                        node.data["condition"].append(condition)
+                    elif self.QNum != condition["questionnaireNumber"]:
+                        node.data["condition"].append(condition)
+                    elif remove_questions is not None:
+                        for question in remove_questions:
+                            if question != node.data["condition"]["questionNumber"]:
+                                node.data["condition"].append(condition)
 
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
@@ -180,7 +205,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
             "tests": []
         }
 
-        self.prev_tests = []
+        self.old_tests = []
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -215,7 +240,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
                 # update all decision nodes, about changed tests.
                 self.update_scene(self.changed_tests(self.data["tests"]))
-                self.prev_tests = copy.deepcopy(self.data["tests"])
+                self.old_tests = copy.deepcopy(self.data["tests"])
 
         except Exception as e:
             dumpException(e)
@@ -245,7 +270,7 @@ class WorkflowNode_DataEntry(WorkflowNode):
     def changed_tests(self, new_tests):
         result = set()
 
-        for old_test in self.prev_tests:
+        for old_test in self.old_tests:
             for new_test in new_tests:
                 # if its the same test(by name), but now got different values, delete it.
                 if old_test["name"] == new_test["name"] and old_test != new_test:

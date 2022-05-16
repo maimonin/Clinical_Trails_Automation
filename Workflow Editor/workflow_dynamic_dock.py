@@ -686,7 +686,6 @@ class DecisionTree:
                                                                                     data["satisfy"]))
             if data["satisfy"]["type"] == "one_choice":
                 option = data["satisfy"]["value"].title()
-                # fixme: why options is '0' ?
                 value_widget.setCurrentIndex(options.index(option))
             self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
