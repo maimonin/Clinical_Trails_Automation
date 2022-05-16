@@ -9,7 +9,6 @@ RELATIVE = 1
 
 
 class WorkflowEdge(Edge):
-    attributes_dock_callback = None
 
     def __init__(self, scene: 'Scene', start_socket: 'Socket' = None, end_socket: 'Socket' = None,
                  edge_type=EDGE_TYPE_DIRECT, text="No Title", attributes_dock_callback=None):
@@ -28,7 +27,6 @@ class WorkflowEdge(Edge):
             }}
         self.text = text
         self.type = NORMAL
-        # self.attributes_dock_callback = attributes_dock_callback
 
     @property
     def text(self):
@@ -45,8 +43,7 @@ class WorkflowEdge(Edge):
         self._text = value
         self.grEdge.text = self._text
 
-    def set_attributes_dock_callback(self, callback):
-        self.attributes_dock_callback = callback
+
 
     def getGraphicsEdgeClass(self):
         """Returns the class representing Graphics Edge"""
@@ -56,9 +53,9 @@ class WorkflowEdge(Edge):
         self.grEdge.text = self.text
         try:
             if new_state:
-                self.attributes_dock_callback(self.get_tree_build())
+                self.get_dock_callback()(self.get_tree_build())
             else:
-                self.attributes_dock_callback(None)
+                self.scene.get_dock_callback()(None)
         except Exception as e:
             dumpException(e)
 
@@ -72,6 +69,7 @@ class WorkflowEdge(Edge):
             self.type = NORMAL if (input_min == "" or input_max == "") else RELATIVE
 
             self.data["content"]["edge_details"]["title"] = input_title
+            # TODO: make sure min is smaller than max
             if input_min != "":
                 self.data["content"]["edge_details"]["min"]["hours"] = input_min[:2]
                 self.data["content"]["edge_details"]["min"]["minutes"] = input_min[3:5]
@@ -115,6 +113,9 @@ class WorkflowEdge(Edge):
         result = QTime.fromString(dict_to_string, "hh:mm:ss")
         return result
 
+    def get_dock_callback(self):
+        return self.scene.getDockCallback()
+
     def serialize(self, engine_save=False) -> OrderedDict:
         if self.type == NORMAL:
             result = OrderedDict([
@@ -134,20 +135,21 @@ class WorkflowEdge(Edge):
                 ('edge_type', self.edge_type)
             ])
         if engine_save:
-            del result["edge_type"]
-            if self.type == NORMAL:
-                del result["content"]
-            elif self.type == RELATIVE:
-                del result["content"]["title"]
-                for time in result["content"]["min"]:
-                    time["hours"] = int(time["hours"])
-                    time["minutes"] = int(time["minutes"])
-                    time["seconds"] = int(time["seconds"])
-                for time in result["content"]["max"]:
-                    time["hours"] = int(time["hours"])
-                    time["minutes"] = int(time["minutes"])
-                    time["seconds"] = int(time["seconds"])
+            result = self.serialize_to_engine(result)
         return result
+
+    def serialize_to_engine(self, res):
+        del res["edge_type"]
+        if res["type"] == RELATIVE:
+            del res["content"]["title"]
+            res["content"]["min"]["hours"] = int(res["content"]["min"]["hours"])
+            res["content"]["min"]["seconds"] = int(res["content"]["min"]["seconds"])
+            res["content"]["min"]["minutes"] = int(res["content"]["min"]["minutes"])
+
+            res["content"]["max"]["hours"] = int(res["content"]["max"]["hours"])
+            res["content"]["max"]["seconds"] = int(res["content"]["max"]["seconds"])
+            res["content"]["max"]["minutes"] = int(res["content"]["max"]["minutes"])
+        return res
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
         if restore_id: self.id = data['id']
@@ -155,10 +157,11 @@ class WorkflowEdge(Edge):
         self.end_socket = hashmap[data['end']]
         self.type = data['type']
         self.edge_type = data["edge_type"]
-        self.data['content']['edge_details'] = data['content']
-        min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
-                     data['content']["min"]["seconds"]
-        max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
-                     data['content']["max"]["seconds"]
-        self.update_label(data['content']["title"], min_string, max_string)
+        if self.type == RELATIVE:
+            self.data['content']['edge_details'] = data['content']
+            min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
+                         data['content']["min"]["seconds"]
+            max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
+                         data['content']["max"]["seconds"]
+            self.update_label(data['content']["title"], min_string, max_string)
         self.doSelect()  # reload the data when opening a new file

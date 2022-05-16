@@ -1,0 +1,181 @@
+{
+    "id": 1461393478272,
+    "nodes": [
+        {
+            "id": 1461393462944,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1461393311680
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1461393373264,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1461393311824
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1461393651024,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 1461393635744
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393635792
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "test",
+                    "actor in charge": "Nurse"
+                },
+                "tests": [
+                    {
+                        "name": "hemoglobin",
+                        "instructions": "take blood",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 1461393635840,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 1461393600368
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393635936
+                },
+                {
+                    "id": 1461393594832
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "New Decision Node"
+                },
+                "condition": [
+                    {
+                        "title": "test condition 1",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 70,
+                                "max": 90
+                            }
+                        },
+                        "test": "hemoglobin"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1461393539280,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1461393731696
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393731744
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1"
+                },
+                "text": "in range"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1461393539472,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1461393732224
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393732272
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2"
+                },
+                "text": "out of range"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1461393539904,
+            "start": 1461393311680,
+            "end": 1461393635744,
+            "type": 0
+        },
+        {
+            "id": 1461393539520,
+            "start": 1461393635792,
+            "end": 1461393600368,
+            "type": 0
+        },
+        {
+            "id": 1461393539856,
+            "start": 1461393594832,
+            "end": 1461393731696,
+            "type": 0
+        },
+        {
+            "id": 1461393732176,
+            "start": 1461393635936,
+            "end": 1461393732224,
+            "type": 0
+        },
+        {
+            "id": 1461393732704,
+            "start": 1461393731744,
+            "end": 1461393311824,
+            "type": 0
+        },
+        {
+            "id": 1461393732944,
+            "start": 1461393732272,
+            "end": 1461393311824,
+            "type": 0
+        }
+    ]
+}

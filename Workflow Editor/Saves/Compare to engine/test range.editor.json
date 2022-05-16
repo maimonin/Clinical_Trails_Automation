@@ -1,0 +1,252 @@
+{
+    "id": 1461393478272,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1461393462944,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1461393311680,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1461393373264,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 1461393311824,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1461393651024,
+            "title": "Test",
+            "pos_x": 22.0,
+            "pos_y": -191.0,
+            "inputs": [
+                {
+                    "id": 1461393635744,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393635792,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "test",
+                    "actor in charge": "Nurse",
+                    "color": "Grey"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "hemoglobin",
+                        "instructions": "take blood",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 1461393635840,
+            "title": "Decision",
+            "pos_x": -283.0,
+            "pos_y": -33.0,
+            "inputs": [
+                {
+                    "id": 1461393600368,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393635936,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 1461393594832,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "New Decision Node"
+                },
+                "condition": [
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": "70",
+                                "max": "90"
+                            }
+                        },
+                        "test": "hemoglobin"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1461393539280,
+            "title": "Simple String",
+            "pos_x": -174.0,
+            "pos_y": 18.0,
+            "inputs": [
+                {
+                    "id": 1461393731696,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393731744,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1",
+                    "color": "Grey"
+                },
+                "text": "in range"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1461393539472,
+            "title": "Simple String",
+            "pos_x": -334.0,
+            "pos_y": 240.0,
+            "inputs": [
+                {
+                    "id": 1461393732224,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1461393732272,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2",
+                    "color": "Grey"
+                },
+                "text": "out of range"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1461393539904,
+            "start": 1461393311680,
+            "end": 1461393635744,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1461393539520,
+            "start": 1461393635792,
+            "end": 1461393600368,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1461393539856,
+            "start": 1461393594832,
+            "end": 1461393731696,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1461393732176,
+            "start": 1461393635936,
+            "end": 1461393732224,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1461393732704,
+            "start": 1461393731744,
+            "end": 1461393311824,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1461393732944,
+            "start": 1461393732272,
+            "end": 1461393311824,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

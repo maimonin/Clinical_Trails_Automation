@@ -167,7 +167,7 @@ class QDynamicDock(QDockWidget):
             field["value"].remove(option_text)
         else:
             field["value"].append(option_text)
-        print(f"QDynamicDock::change_checklist::data is :{self.data}")
+        # print(f"QDynamicDock::change_checklist::data is :{self.data}")
         self.callback(self.data)
 
     def change_value(self, field, value):
@@ -195,6 +195,8 @@ class TestTree:
         self.next_test_id = 0
         self.dock = dock
         self.call_dock = update_dock
+        # actors who's related to this test, saving for "at_least_one" function
+        self.staff = ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"]
 
         add_button = QPushButton("Add")
         add_button.clicked.connect(lambda: self.add_test(tree_widget_item))
@@ -221,7 +223,7 @@ class TestTree:
             "id": self.get_next_id(),
             "name": "",
             "instructions": "",
-            "staff": [],
+            "staff": ["Nurse"],
             "duration": ""
         }
         self.tests.append(test_data)
@@ -236,8 +238,8 @@ class TestTree:
 
         self.add_line_edit(new_widget, test_data, "Name")
         self.add_line_edit(new_widget, test_data, "Instructions")
-        self.add_checklist(new_widget, test_data)
         self.add_line_edit(new_widget, test_data, "Duration")
+        self.add_checklist(new_widget, test_data)
 
     # @root - the container who holds all the tests items. (Called: Tests)
     # @remove_id - remove specific item
@@ -261,14 +263,15 @@ class TestTree:
 
             self.add_line_edit(new_widget, test_data, "Name")
             self.add_line_edit(new_widget, test_data, "Instructions")
-            self.add_checklist(new_widget, test_data)
             self.add_line_edit(new_widget, test_data, "Duration")
+            self.add_checklist(new_widget, test_data)
 
     def add_line_edit(self, new_widget, test_data, title):
         name_item = QtWidgets.QTreeWidgetItem(new_widget)
         name_item.setText(0, title)
         name_widget = QLineEdit()
-        name_widget.editingFinished.connect(lambda: self.line_changed(test_data, title.lower(), name_widget.text()))
+        name_widget.editingFinished.connect(
+            lambda: self.line_changed(test_data, title.lower(), name_widget.text(), new_widget))
         name_widget.setPlaceholderText("Enter " + title)
 
         # in rebuild, load prev data
@@ -277,9 +280,10 @@ class TestTree:
 
         self.dock.setItemWidget(name_item, 1, name_widget)
 
-    def line_changed(self, data, key, new_text):
+    def line_changed(self, data, key, new_text, parent):
         data[key] = new_text
 
+        self.atleast_one_checked(data, parent)
         self.call_dock(self.tests)
 
     def add_checklist(self, parent, test_data):
@@ -288,7 +292,7 @@ class TestTree:
         staff_item.setText(0, title)
         staff_item.setExpanded(False)
 
-        for option in ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"]:
+        for option in self.staff:
             option_item = QtWidgets.QTreeWidgetItem(staff_item)
 
             option_title = QLabel(option)
@@ -299,17 +303,28 @@ class TestTree:
             option_widget = QCheckBox()
             option_widget.setChecked(option in test_data[title.lower()])
             option_widget.stateChanged.connect(
-                lambda checked, text=option: self.checklist_changed(checked, text, test_data))
+                lambda checked, text=option: self.checklist_changed(checked, text, test_data, parent))
             self.dock.setItemWidget(option_item, 1, option_widget)
+
+        staff_item.setExpanded(True)
+
+    def atleast_one_checked(self, test_data, parent):
+        if len(test_data["staff"]) == 0:
+            test_data["staff"].append(self.staff[0])
+
+        parent.removeChild(parent.child(parent.childCount() - 1))
+
+        self.add_checklist(parent, test_data)
 
     # @checked: 0 for unchecked.
     # @value:string the value that got checked.
-    def checklist_changed(self, checked, value, test_data):
+    def checklist_changed(self, checked, value, test_data, parent):
         if checked == 0:
             test_data["staff"].remove(value)
         else:
             test_data["staff"].append(value)
 
+        self.atleast_one_checked(test_data, parent)
         self.call_dock(self.tests)
 
 
@@ -503,7 +518,7 @@ class DecisionTree:
         id = self.get_next_id()
         condition_data = {
             "id": id,
-            "title": "condition_" + str(id),
+            "title": "condition " + str(id),
             "type": "trait condition",  # default
             "satisfy": {
                 "type": "range",
@@ -859,7 +874,7 @@ class DecisionTree:
                 self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
                 data["satisfy"]["type"] = "one_choice"
-                data["satisfy"]["value"] = "0"
+                data["satisfy"]["value"] = "positive"
             self.call_dock()
 
     def combo_satisfy_oneChoice_changed(self, index_changed, options, data):

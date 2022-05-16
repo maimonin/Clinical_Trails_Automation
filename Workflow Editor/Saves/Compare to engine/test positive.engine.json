@@ -1,0 +1,178 @@
+{
+    "id": 2512674562880,
+    "nodes": [
+        {
+            "id": 2512674580320,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2512674617472
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2512674703200,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 2512674728880
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674728928
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "test node",
+                    "actor in charge": "Nurse"
+                },
+                "tests": [
+                    {
+                        "name": "antigen",
+                        "instructions": "take test",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2512674747008,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 2512674729072
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674728976
+                },
+                {
+                    "id": 2512674281792
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "decision"
+                },
+                "condition": [
+                    {
+                        "title": "test condition 1",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "0"
+                        },
+                        "test": "antigen"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2512674281888,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2512674747056
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674301072
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1"
+                },
+                "text": "continue trail"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2512674281744,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 2512674465296
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674465344
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2"
+                },
+                "text": "you have been found positive and will not continue trail"
+            },
+            "op_code": 4
+        },
+		        {
+            "id": 2512674601232,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 2512674617616
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 2512674434304,
+            "start": 2512674617472,
+            "end": 2512674728880,
+            "type": 0
+        },
+        {
+            "id": 2512674434160,
+            "start": 2512674728928,
+            "end": 2512674729072,
+            "type": 0
+        },
+        {
+            "id": 2512674433920,
+            "start": 2512674281792,
+            "end": 2512674747056,
+            "type": 0
+        },
+        {
+            "id": 2512674433632,
+            "start": 2512674728976,
+            "end": 2512674465296,
+            "type": 0
+        },
+        {
+            "id": 2512674433248,
+            "start": 2512674301072,
+            "end": 2512674617616,
+            "type": 0
+        },
+        {
+            "id": 2512674433008,
+            "start": 2512674465344,
+            "end": 2512674617616,
+            "type": 0
+        }
+    ]
+}

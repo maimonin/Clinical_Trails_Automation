@@ -1,0 +1,260 @@
+{
+    "id": 2058780998480,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2058781118624,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2058781032304,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 2058781093552,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 2058781032160,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 2058781224384,
+            "title": "New Questionnaire Node",
+            "pos_x": -25.0,
+            "pos_y": -318.0,
+            "inputs": [
+                {
+                    "id": 2058781246032,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781246080,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Questionnaire Node",
+                    "color": "Grey"
+                },
+                "questions": [
+                    {
+                        "id": 1,
+                        "type": "multi",
+                        "text": "What do you like?",
+                        "options": [
+                            "Bamba",
+                            "Bisli",
+                            null,
+                            null,
+                            null,
+                            null
+                        ]
+                    }
+                ],
+                "questionnaire_number": "1"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2058781274848,
+            "title": "New Test Node",
+            "pos_x": -153.0,
+            "pos_y": -144.0,
+            "inputs": [
+                {
+                    "id": 2058781260960,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781261008,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Test Node",
+                    "actor in charge": "Nurse",
+                    "color": "Grey"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "Blood",
+                        "instructions": "Gloves",
+                        "staff": [
+                            "Nurse",
+                            "Nurse"
+                        ],
+                        "duration": ""
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2058781306944,
+            "title": "New Decision Node",
+            "pos_x": 267.0,
+            "pos_y": -203.0,
+            "inputs": [
+                {
+                    "id": 2058781307088,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781306992,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 2353247392576,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "time": "00:00:00",
+                    "title": "New Decision Node"
+                },
+                "condition": [
+                    {
+                        "id": 2,
+                        "title": "condition_2",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": "1",
+                        "questionNumber": 1,
+                        "question": "What do you like?",
+                        "acceptedAnswers": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "title": "condition_3",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "negative"
+                        },
+                        "test": "Blood"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2058781247184,
+            "title": "New Notification Node",
+            "pos_x": -347.0,
+            "pos_y": 44.0,
+            "inputs": [
+                {
+                    "id": 2058781308048,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2058781307376,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [],
+                    "title": "New Notification Node",
+                    "color": "Grey"
+                },
+                "text": "Hello World"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2058781376720,
+            "type": 1,
+            "start": 2058781032304,
+            "end": 2058781246032,
+            "content": {
+                "title": "",
+                "min": {
+                    "hours": "00",
+                    "minutes": "00",
+                    "seconds": "02"
+                },
+                "max": {
+                    "hours": "00",
+                    "minutes": "03",
+                    "seconds": "00"
+                }
+            },
+            "edge_type": 2
+        },
+        {
+            "id": 2353247392096,
+            "start": 2058781307376,
+            "end": 2058781032160,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

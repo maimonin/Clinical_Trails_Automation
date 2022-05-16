@@ -1,0 +1,178 @@
+{
+    "id": 1617979490944,
+    "nodes": [
+        {
+            "id": 1617979475616,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1617979340736
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1617979664032,
+            "title": "Questionnaire",
+            "inputs": [
+                {
+                    "id": 1617979640560
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1617979640608
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "questionnaire"
+                },
+                "questions": [
+                    {
+                        "type": "one choice",
+                        "text": "Ok?",
+                        "options": [
+                            "yes",
+                            "no"
+                        ]
+                    }
+                ],
+                "questionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 1617979640704,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 1617979591984
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1617979640752
+                },
+                {
+                    "id": 1617979592032
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "decision"
+                },
+                "condition": [
+                    {
+                        "title": "questionnaire condition 1",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": 1,
+                        "questionNumber": 1,
+                        "acceptedAnswers": [
+                            1
+                        ]
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1617979606976,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1617979607120
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1617979664080
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "string"
+                },
+                "text": "you have been found positive"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1617979515616,
+            "title": "Simple String",
+            "inputs": [
+                {
+                    "id": 1617979515376
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1617979515328
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "string"
+                },
+                "text": "you have been found negative"
+            },
+            "op_code": 4
+        },
+		        {
+            "id": 1617979402320,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1617979340880
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": [
+        {
+            "id": 1617979516048,
+            "start": 1617979640608,
+            "end": 1617979591984,
+            "type": 0
+        },
+        {
+            "id": 1617979515856,
+            "start": 1617979640560,
+            "end": 1617979340736,
+            "type": 0
+        },
+        {
+            "id": 1617979516336,
+            "start": 1617979592032,
+            "end": 1617979607120,
+            "type": 0
+        },
+        {
+            "id": 1617979548144,
+            "start": 1617979640752,
+            "end": 1617979515376,
+            "type": 0
+        },
+        {
+            "id": 1618019177184,
+            "start": 1617979664080,
+            "end": 1617979340880,
+            "type": 0
+        },
+        {
+            "id": 1618019177520,
+            "start": 1617979515328,
+            "end": 1617979340880,
+            "type": 0
+        }
+    ]
+}

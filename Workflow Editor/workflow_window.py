@@ -156,6 +156,7 @@ class WorkflowEditorWindow(NodeEditorWindow):
                             subwnd = self.createMdiChild(nodeeditor)
                             subwnd.show()
                         else:
+                            self.statusBar().showMessage(f"Load {fname} failed. can only load editor files.")
                             nodeeditor.close()
         except Exception as e:
             dumpException(e)

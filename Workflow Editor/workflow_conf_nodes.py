@@ -1,15 +1,11 @@
-import datetime
-from time import sleep
+import copy
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import *
-from nodeeditor.node_socket import LEFT_BOTTOM, RIGHT_TOP, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER
 from qtpy import QtCore
 
 from workflow_conf import *
-from workflow_node_base import *
-from nodeeditor.utils import dumpException
 from workflow_graphics_socket import WFGraphicsSocketDecision, WFGraphicsSocket
+from workflow_node_base import *
 
 
 class WorkflowInputContent(QDMNodeContentWidget):
@@ -74,13 +70,13 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "time": QTime.toString(QTime(0, 0)),
                 "title": "New Questionnaire Node",
                 "color": self.color
             },
             "questions": [],
             "questionnaire_number": self.QNum
         }
+        self.old_questions = []
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -88,15 +84,14 @@ class WorkflowNode_Questionnaire(WorkflowNode):
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     def doSelect(self, new_state: bool = True):
         try:
             if new_state:
-                self.attributes_dock_callback(self.get_tree_build())
+                self.get_dock_callback()(self.get_tree_build())
             else:
-                self.attributes_dock_callback(None)
+                self.get_dock_callback()(None)
         except Exception as e:
             dumpException(e)
 
@@ -114,6 +109,9 @@ class WorkflowNode_Questionnaire(WorkflowNode):
                 self.data["questions"] = content["Content"][1]["value"]
                 self.data["questionnaire_number"] = content["Content"][0]["value"]
                 self.QNum = content["Content"][0]["value"]
+
+                self.update_scene(self.changed_questions(self.data["questions"]))
+                self.old_questions = self.data["questions"]
 
         except Exception as e:
             dumpException(e)
@@ -135,6 +133,8 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
     def export_to_UI(self, export):
         result = []
+        type_idx = -1
+
         for item in export:
             name = list(item.keys())[0]
 
@@ -156,12 +156,34 @@ class WorkflowNode_Questionnaire(WorkflowNode):
 
     def remove(self):
         super().remove()
+
+        self.update_scene()
+
+    # if something has changed in a question, delete it from all decisions.
+    def changed_questions(self, new_questions):
+        result = set()
+
+        for old_question in self.old_questions:
+            if old_question["type"] != "open":
+                for new_question in new_questions:
+                    if old_question["id"] == new_question["id"] and old_question != new_question:
+                        result.add(old_question["id"])
+
+        return list(result)
+
+    def update_scene(self, remove_questions=None):
         for node in self.scene.nodes:
             if node.op_code == OP_NODE_DECISION:
-                node.data["condition"] = [condition for condition in node.data["condition"] if
-                                          condition["type"] != "questionnaire condition" or self.QNum != condition[
-                                              "questionnaireNumber"]]
-
+                node.data["condition"] = []
+                for condition in node.data["condition"]:
+                    if condition["type"] != "questionnaire condition":
+                        node.data["condition"].append(condition)
+                    elif self.QNum != condition["questionnaireNumber"]:
+                        node.data["condition"].append(condition)
+                    elif remove_questions is not None:
+                        for question in remove_questions:
+                            if question != node.data["condition"]["questionNumber"]:
+                                node.data["condition"].append(condition)
 
 @register_node(OP_NODE_Test)
 class WorkflowNode_DataEntry(WorkflowNode):
@@ -176,7 +198,6 @@ class WorkflowNode_DataEntry(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "time": QTime.toString(QTime(0, 0)),
                 "title": "New Test Node",
                 "actor in charge": "Nurse",
                 "color": self.color
@@ -184,21 +205,21 @@ class WorkflowNode_DataEntry(WorkflowNode):
             "tests": []
         }
 
+        self.old_tests = []
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
         else:
-            self.attributes_dock_callback(None)
+            self.get_dock_callback()(None)
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     def callback_from_window(self, content):
         try:
@@ -215,10 +236,11 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
                 self.data["tests"] = []
                 for test in content["Content"][0]["value"]:
-                    # if none selected, add Nurse as default.
-                    if len(test["staff"]) == 0:
-                        test["staff"].append("Nurse")
                     self.data["tests"].append(test)
+
+                # update all decision nodes, about changed tests.
+                self.update_scene(self.changed_tests(self.data["tests"]))
+                self.old_tests = copy.deepcopy(self.data["tests"])
 
         except Exception as e:
             dumpException(e)
@@ -243,11 +265,26 @@ class WorkflowNode_DataEntry(WorkflowNode):
         super().remove()
 
         deleted_tests = [test["name"] for test in self.data["tests"]]
+        self.update_scene(deleted_tests)
+
+    def changed_tests(self, new_tests):
+        result = set()
+
+        for old_test in self.old_tests:
+            for new_test in new_tests:
+                # if its the same test(by name), but now got different values, delete it.
+                if old_test["name"] == new_test["name"] and old_test != new_test:
+                    result.add(old_test["name"])
+                    break
+
+        return list(result)
+
+    def update_scene(self, remove_tests):
         for node in self.scene.nodes:
             if node.op_code == OP_NODE_DECISION:
                 node.data["condition"] = [condition for condition in node.data["condition"] if
                                           condition["type"] != "test condition" or condition[
-                                              "test"] not in deleted_tests]
+                                              "test"] not in remove_tests]
 
 
 @register_node(OP_NODE_DECISION)
@@ -264,7 +301,6 @@ class WorkflowNode_Decision(WorkflowNode):
         # @data to send to engine.
         self.data = {
             "node_details": {
-                "time": QTime.toString(QTime(0, 0)),
                 "title": "New Decision Node",
                 # "color": self.color
             },
@@ -277,15 +313,13 @@ class WorkflowNode_Decision(WorkflowNode):
         self.grNode = WorkflowGraphicSmallDiamond(self)
 
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
         else:
-            self.attributes_dock_callback(None)
+            self.get_dock_callback()(None)
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     def callback_from_window(self, content):
         try:
@@ -429,7 +463,7 @@ class WorkflowNode_Decision(WorkflowNode):
 class WorkflowNode_SimpleString(WorkflowNode):
     op_icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
-    op_title = "Notification"
+    op_title = "Simple String"
     content_label_objname = "workflow_node_string"
 
     def __init__(self, scene):
@@ -454,16 +488,14 @@ class WorkflowNode_SimpleString(WorkflowNode):
         self.data = text
 
     def drop_action(self):
-        if self.attributes_dock_callback is not None:
-            self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
 
     # for dock build
     def doSelect(self, new_state: bool = True):
-        print("WorkflowNode::doSelect")
         if new_state:
-            self.attributes_dock_callback(self.get_tree_build())
+            self.get_dock_callback()(self.get_tree_build())
         else:
-            self.attributes_dock_callback(None)
+            self.get_dock_callback()(None)
 
     def callback_from_window(self, content):
         try:
@@ -678,8 +710,6 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
-
-    # FIXME: sub workflow override the dock callback to all nodes.
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
