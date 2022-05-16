@@ -195,6 +195,8 @@ class TestTree:
         self.next_test_id = 0
         self.dock = dock
         self.call_dock = update_dock
+        # actors who's related to this test, saving for "at_least_one" function
+        self.staff = ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"]
 
         add_button = QPushButton("Add")
         add_button.clicked.connect(lambda: self.add_test(tree_widget_item))
@@ -280,6 +282,7 @@ class TestTree:
     def line_changed(self, data, key, new_text):
         data[key] = new_text
 
+        self.atleast_one_checked(data)
         self.call_dock(self.tests)
 
     def add_checklist(self, parent, test_data):
@@ -288,7 +291,7 @@ class TestTree:
         staff_item.setText(0, title)
         staff_item.setExpanded(False)
 
-        for option in ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"]:
+        for option in self.staff:
             option_item = QtWidgets.QTreeWidgetItem(staff_item)
 
             option_title = QLabel(option)
@@ -302,6 +305,10 @@ class TestTree:
                 lambda checked, text=option: self.checklist_changed(checked, text, test_data))
             self.dock.setItemWidget(option_item, 1, option_widget)
 
+    def atleast_one_checked(self, test_data):
+        if len(test_data["staff"]) == 0:
+            test_data["staff"].append(self.staff[0])
+
     # @checked: 0 for unchecked.
     # @value:string the value that got checked.
     def checklist_changed(self, checked, value, test_data):
@@ -310,6 +317,7 @@ class TestTree:
         else:
             test_data["staff"].append(value)
 
+        self.atleast_one_checked(test_data)
         self.call_dock(self.tests)
 
 
