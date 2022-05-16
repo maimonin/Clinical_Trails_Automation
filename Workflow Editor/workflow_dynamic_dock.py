@@ -223,7 +223,7 @@ class TestTree:
             "id": self.get_next_id(),
             "name": "",
             "instructions": "",
-            "staff": [],
+            "staff": ["Nurse"],
             "duration": ""
         }
         self.tests.append(test_data)
@@ -238,8 +238,8 @@ class TestTree:
 
         self.add_line_edit(new_widget, test_data, "Name")
         self.add_line_edit(new_widget, test_data, "Instructions")
-        self.add_checklist(new_widget, test_data)
         self.add_line_edit(new_widget, test_data, "Duration")
+        self.add_checklist(new_widget, test_data)
 
     # @root - the container who holds all the tests items. (Called: Tests)
     # @remove_id - remove specific item
@@ -263,14 +263,15 @@ class TestTree:
 
             self.add_line_edit(new_widget, test_data, "Name")
             self.add_line_edit(new_widget, test_data, "Instructions")
-            self.add_checklist(new_widget, test_data)
             self.add_line_edit(new_widget, test_data, "Duration")
+            self.add_checklist(new_widget, test_data)
 
     def add_line_edit(self, new_widget, test_data, title):
         name_item = QtWidgets.QTreeWidgetItem(new_widget)
         name_item.setText(0, title)
         name_widget = QLineEdit()
-        name_widget.editingFinished.connect(lambda: self.line_changed(test_data, title.lower(), name_widget.text()))
+        name_widget.editingFinished.connect(
+            lambda: self.line_changed(test_data, title.lower(), name_widget.text(), new_widget))
         name_widget.setPlaceholderText("Enter " + title)
 
         # in rebuild, load prev data
@@ -279,10 +280,10 @@ class TestTree:
 
         self.dock.setItemWidget(name_item, 1, name_widget)
 
-    def line_changed(self, data, key, new_text):
+    def line_changed(self, data, key, new_text, parent):
         data[key] = new_text
 
-        self.atleast_one_checked(data)
+        self.atleast_one_checked(data, parent)
         self.call_dock(self.tests)
 
     def add_checklist(self, parent, test_data):
@@ -302,22 +303,28 @@ class TestTree:
             option_widget = QCheckBox()
             option_widget.setChecked(option in test_data[title.lower()])
             option_widget.stateChanged.connect(
-                lambda checked, text=option: self.checklist_changed(checked, text, test_data))
+                lambda checked, text=option: self.checklist_changed(checked, text, test_data, parent))
             self.dock.setItemWidget(option_item, 1, option_widget)
 
-    def atleast_one_checked(self, test_data):
+        staff_item.setExpanded(True)
+
+    def atleast_one_checked(self, test_data, parent):
         if len(test_data["staff"]) == 0:
             test_data["staff"].append(self.staff[0])
 
+        parent.removeChild(parent.child(parent.childCount() - 1))
+
+        self.add_checklist(parent, test_data)
+
     # @checked: 0 for unchecked.
     # @value:string the value that got checked.
-    def checklist_changed(self, checked, value, test_data):
+    def checklist_changed(self, checked, value, test_data, parent):
         if checked == 0:
             test_data["staff"].remove(value)
         else:
             test_data["staff"].append(value)
 
-        self.atleast_one_checked(test_data)
+        self.atleast_one_checked(test_data, parent)
         self.call_dock(self.tests)
 
 
@@ -679,6 +686,7 @@ class DecisionTree:
                                                                                     data["satisfy"]))
             if data["satisfy"]["type"] == "one_choice":
                 option = data["satisfy"]["value"].title()
+                # fixme: why options is '0' ?
                 value_widget.setCurrentIndex(options.index(option))
             self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
