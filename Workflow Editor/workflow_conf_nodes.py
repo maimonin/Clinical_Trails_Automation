@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5 import QtWidgets
 from qtpy import QtCore
 
@@ -178,6 +180,8 @@ class WorkflowNode_DataEntry(WorkflowNode):
             "tests": []
         }
 
+        self.prev_tests = []
+
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
@@ -193,7 +197,6 @@ class WorkflowNode_DataEntry(WorkflowNode):
         self.get_dock_callback()(self.get_tree_build())
 
     def callback_from_window(self, content):
-        # TODO : add update for decision nodes
         try:
             if content is None:
                 self.remove()  # remove node
@@ -208,10 +211,11 @@ class WorkflowNode_DataEntry(WorkflowNode):
 
                 self.data["tests"] = []
                 for test in content["Content"][0]["value"]:
-                    # TODO: if none selected, add Nurse as default.
-                    # if len(test["staff"]) == 0:
-                    #     test["staff"].append("Nurse")
                     self.data["tests"].append(test)
+
+                # update all decision nodes, about changed tests.
+                self.update_scene(self.changed_tests(self.data["tests"]))
+                self.prev_tests = copy.deepcopy(self.data["tests"])
 
         except Exception as e:
             dumpException(e)
@@ -236,11 +240,26 @@ class WorkflowNode_DataEntry(WorkflowNode):
         super().remove()
 
         deleted_tests = [test["name"] for test in self.data["tests"]]
+        self.update_scene(deleted_tests)
+
+    def changed_tests(self, new_tests):
+        result = set()
+
+        for old_test in self.prev_tests:
+            for new_test in new_tests:
+                # if its the same test(by name), but now got different values, delete it.
+                if old_test["name"] == new_test["name"] and old_test != new_test:
+                    result.add(old_test["name"])
+                    break
+
+        return list(result)
+
+    def update_scene(self, remove_tests):
         for node in self.scene.nodes:
             if node.op_code == OP_NODE_DECISION:
                 node.data["condition"] = [condition for condition in node.data["condition"] if
                                           condition["type"] != "test condition" or condition[
-                                              "test"] not in deleted_tests]
+                                              "test"] not in remove_tests]
 
 
 @register_node(OP_NODE_DECISION)
