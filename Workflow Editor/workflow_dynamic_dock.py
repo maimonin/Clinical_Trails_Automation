@@ -875,7 +875,7 @@ class DecisionTree:
                 self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
                 data["satisfy"]["type"] = "one_choice"
-                data["satisfy"]["value"] = "0"
+                data["satisfy"]["value"] = "positive"
             self.call_dock()
 
     def combo_satisfy_oneChoice_changed(self, index_changed, options, data):
