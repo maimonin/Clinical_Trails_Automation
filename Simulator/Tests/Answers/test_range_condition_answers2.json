@@ -1,0 +1,24 @@
+{
+    "nurse": {
+        "hemoglobin": 20
+    },
+    "investigator": {
+
+    },
+    "lab": {
+
+    },
+    "doctor": {
+
+    },
+    "participant 1":
+        {
+         "hemoglobin": 20
+
+        },
+    "participant 2":
+        {
+        }
+
+
+}

@@ -19,7 +19,7 @@ export default function TestNotification(props){
         
                     </Stack>
         
-                    <Button variant="contained" onClick={props.dimiss}>Done</Button>
+                    <Button variant="contained" onClick={props.dismiss}>Done</Button>
             </div>)
 }
 

@@ -1,0 +1,24 @@
+{
+    "nurse": {
+        "antigen": "negative"
+    },
+    "investigator": {
+
+    },
+    "lab": {
+
+    },
+    "doctor": {
+
+    },
+    "participant 1":
+        {
+         "antigen": "negative"
+
+        },
+    "participant 2":
+        {
+        }
+
+
+}

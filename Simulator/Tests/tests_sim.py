@@ -5,10 +5,6 @@ import websockets
 from nodeeditor.utils import dumpException
 
 user_id = 0
-users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
-         {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
-         {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
-         {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
 
 app = None
 lock = threading.Lock()
@@ -26,16 +22,16 @@ async def get_data(s):
 
 
 async def actor_simulation(user, s, answers):
-    print("hole")
-    output = []
+    outs = []
     try:
         while True:
+            data = None
             try:
                 data = await get_data(s)
+                outs.append(data)
             except Exception as e:
                 dumpException(e)
             data_json = json.loads(data)
-            output.append(data_json)
             if data_json['type'] == 'questionnaire':
                 ans = handle_questionnaire(data_json['questions'], answers)
                 await s.send(json.dumps(
@@ -44,15 +40,14 @@ async def actor_simulation(user, s, answers):
             elif data_json['type'] == 'test data entry':
                 val = answers[data_json['test']['name']]
                 await s.send(json.dumps(
-                    {'type': 'add results', 'id': user['id'], "test": data_json['test']['name'], 'result': val}))
+                    {'type': 'add results', 'id': data_json['patient'], "test": data_json['test']['name'],
+                     'result': val}))
             elif data_json['type'] == 'terminate':
-                print("terminated")
                 await s.close()
-                break
+                return outs
 
     except Exception as e:
         dumpException(e)
-    return user['name'], output
 
 
 async def register_user(user, s):
@@ -71,6 +66,10 @@ async def login_user(log_id, s):
 
 # noinspection PyTypeChecker
 async def run(path, ans_path, participant_id, gender, age):
+    users = [{"name": "nurse", "role": "nurse", "sex": "male", "age": 30},
+             {"name": "investigator", "role": "investigator", "sex": "female", "age": 30},
+             {"name": "lab", "role": "lab technician", "sex": "male", "age": 30},
+             {"name": "doctor", "role": "doctor", "sex": "female", "age": 30}]
     url = "ws://127.0.0.1:7890"
     await send_json(url, path)
     for user in users:
@@ -80,7 +79,6 @@ async def run(path, ans_path, participant_id, gender, age):
     f = open(ans_path)
     answers = json.load(f)
     tasks = []
-    outputs = {}
     for user in users:
         t = asyncio.create_task(actor_simulation(user, user['s'], answers[user['name']]))
         tasks.append(t)
@@ -88,19 +86,14 @@ async def run(path, ans_path, participant_id, gender, age):
             "sex": gender, "age": str(age),
             "id": participant_id}
 
-        # noinspection PyBroadException
+    # noinspection PyBroadException
     try:
         s = await websockets.connect(url)
         await register_user(user, s)
         user['s'] = s
-        u, out = await actor_simulation(user, user['s'], answers[user['name']])
-        outputs[u] = out
+        return await actor_simulation(user, user['s'], answers[user['name']])
     except Exception as e:
         dumpException(e)
-    for t in tasks:
-        u, out = await t
-        outputs[u] = out
-    return outputs
 
 
 async def send_json(url, path):
@@ -110,6 +103,7 @@ async def send_json(url, path):
         data['type'] = "add workflow"
         data['workflow_id'] = 2111561603920
         s = await websockets.connect(url)
+        await s.send(json.dumps({'type': 'change db'}))
         await s.send(json.dumps(data))
     except Exception as e:
         dumpException(e)

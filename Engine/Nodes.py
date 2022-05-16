@@ -75,7 +75,6 @@ def buildNode(dal_node):
 async def end_test(node, participants):
     if len(node.edges) == 0:
         for participant in participants:
-            print(len(Database.getAllActives(participant.id)))
             if len(Database.getAllActives(participant.id)) == 0:
                 print("terminating")
                 await send_notification_by_id(participant.id, {'type': 'terminate'})
@@ -242,7 +241,6 @@ class StringNode(Node):
 
     async def exec(self) -> None:
         self.edges = getEdges(self.id)
-        print(self.edges)
         await self.notify()
         threads = []
         for edge in self.edges:

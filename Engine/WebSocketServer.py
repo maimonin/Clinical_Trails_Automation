@@ -35,6 +35,9 @@ async def get_notifications(websocket, path):
                 Data.add_questionnaire(data_dict, data_dict['id'])
             elif data_dict['type'] == 'add results':
                 Data.add_test(data_dict['test'], data_dict, data_dict['id'])
+            elif data_dict['type'] == 'change db':
+                Database.set_name('Database/test_data.db')
+                Database.init_tables()
     # Handle disconnecting clients
     except websockets.exceptions.ConnectionClosed as e:
         print("A client just disconnected")
@@ -42,7 +45,6 @@ async def get_notifications(websocket, path):
 
 def Main():
     open('Logger.txt', 'w').close()
-    Database.set_name('Database/data.db')
     user_lists.init()
     Data.init()
     parser_init()
