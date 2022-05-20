@@ -4,7 +4,7 @@ import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
 import { blankUser } from "../UserWindow/UserWindow";
 import {isValidRegisterUserData} from '../../Utils/Validations'
-
+import ShortuctsMenu from '../Shortcuts/Shortcuts'
 
 const ariaLabel = { 'aria-label': 'description' };
 
@@ -34,8 +34,12 @@ export function RegisterScreen(props){
     const set_integer = (e) =>{
       const value = parseInt(e.target.value);   
       setUserDetails((prev)=>({ ...prev,[e.target.name]: value }));
+  } 
+  const get_user_and_send = (user)=>{
+    props.sendRegister(user)
   }
     return (<>
+    <ShortuctsMenu set_user = {get_user_and_send}/>
        <Box
       component="form"
       sx={{

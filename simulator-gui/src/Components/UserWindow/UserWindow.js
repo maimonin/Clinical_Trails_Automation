@@ -3,6 +3,7 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import PersonIcon from '@mui/icons-material/Person';
+import BottomNavigation from '@mui/material/BottomNavigation';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -166,9 +167,9 @@ return (
       />
 
 {/* Same as */}
-      <CardContent >
+      <CardContent style={ {scrollBehavior: "smooth", overflowY: "auto", maxHeight:210}} >
         
-        <div  style={ {scrollBehavior: "smooth", overflowY: "auto", maxHeight:210}}>
+        <div >
 
         {isAuthenticated()?  
         <div>
@@ -202,8 +203,8 @@ return (
   enableMultiContainer
   limit ={1}
 />
-{items.length>0?<Pagination  count={items.length} page={currentComponent} onChange={handlePaginationChange} size="small"/>:<></>}
     </Card>
+    {items.length>0? <Pagination   style={{position: 'relative',bottom:'30px', width:"100%"}} count={items.length} page={currentComponent} onChange={handlePaginationChange} size="small"/>:<></>}
 
     </div>
 )
