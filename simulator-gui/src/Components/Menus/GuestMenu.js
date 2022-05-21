@@ -16,12 +16,12 @@ export default function GuestMenu() {
 
   return (
     <div>
-         <IconButton aria-label="settings"  onClick={handleClick} >
+         {/* <IconButton aria-label="settings"  onClick={handleClick} >
             <MoreVertIcon  id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
-       /> {/* change it to dynamically */}
+       />
 
           </IconButton>
       <Menu
@@ -36,7 +36,7 @@ export default function GuestMenu() {
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
+      </Menu> */}
     </div>
   );
 }

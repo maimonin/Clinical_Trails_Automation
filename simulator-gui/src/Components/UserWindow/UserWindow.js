@@ -2,7 +2,6 @@ import React, {useState, useEffect,useRef} from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import PersonIcon from '@mui/icons-material/Person';
 import BottomNavigation from '@mui/material/BottomNavigation';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -18,6 +17,7 @@ import TestDataEntry from '../TestDataEntry/TestDataEntry';
 import GuestMenu from '../Menus/GuestMenu';
 import { CardActions } from '@mui/material';
 import './UserWindow.css'
+import CostumizedIcon from '../CostumizedIcon/CostumizedIcon';
 export const blankUser = {"name": "", "role": "",
 "sex": "", "age": -1,"id": -1};
 
@@ -82,7 +82,7 @@ export default function UserWindow(props) {
       setUserDetails((prev)=>(registerDetails))
     }
     const styles = {
-        position: 'relative',
+         position: 'relative',
       
       };
     const sendData = (object_to_send) =>{
@@ -153,24 +153,41 @@ return (
     <div>
       
     <Card sx={{ maxWidth: 345 , minHeight:300, maxHeight:300 }} >
+   
       <CardHeader
         avatar={ // TODO: Change according to userDetails.role
-          <PersonIcon/>
+          <CostumizedIcon sex={userDetails["sex"]} role={userDetails["role"]}/>
             
         }
         
         action={
           <GuestMenu/>
         }
-        title={"name: " + userDetails.name + ", role: " + userDetails.role}
+        title={userDetails.name !="" && userDetails.role!=""?"name: " + userDetails.name + ", role: " + userDetails.role : ""}
         subheader={props.role}
       />
+  
+
 
 {/* Same as */}
       <CardContent style={ {scrollBehavior: "smooth", overflowY: "auto", maxHeight:210}} >
         
         <div >
-
+        <ToastContainer style={{...styles,width:"86%", paddingBottom:"5px"}}
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss={false}
+draggable={false}
+pauseOnHover={false}
+  containerId={props.id}
+  enableMultiContainer
+  limit ={1}
+  
+/>
         {isAuthenticated()?  
         <div>
         {currentComponent>0 && currentComponent -1 <items.length? getComponent(items[currentComponent-1]): undefined}
@@ -178,7 +195,8 @@ return (
 
    </div>:
         <div> 
-        <RegisterScreen  sendRegister={sendRegister}/>
+ 
+        <RegisterScreen containerId={props.id} sendRegister={sendRegister}/>
           </div>
     }
                                  
@@ -186,25 +204,12 @@ return (
       </div>
 
 
-
+  
+    
       </CardContent>
 
-      <ToastContainer style={styles}
-  position="top-right"
-  autoClose={5000}
-  hideProgressBar={false}
-  newestOnTop={false}
-  closeOnClick
-  rtl={false}
-  pauseOnFocusLoss
-  draggable
-  pauseOnHover
-  containerId={props.id}
-  enableMultiContainer
-  limit ={1}
-/>
     </Card>
-    {items.length>0? <Pagination   style={{position: 'relative',bottom:'30px', width:"100%"}} count={items.length} page={currentComponent} onChange={handlePaginationChange} size="small"/>:<></>}
+    {items.length>0? <Pagination   style={{position: 'relative',bottom:'30px', width:"50%"}} count={items.length} page={currentComponent} onChange={handlePaginationChange} size="small"/>:<></>}
 
     </div>
 )

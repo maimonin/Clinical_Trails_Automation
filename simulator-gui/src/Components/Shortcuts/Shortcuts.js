@@ -16,7 +16,9 @@ export default function ShortuctsMenu(props){
 
     return (
         <div>
-            <Box >
+            Fast Registeraion:
+
+            <Box sx={{marginTop:"10px"}}>
             <Stack sx={{flexWrap:"wrap"}} direction="row" spacing={1}>
                 <Box sx={{margin:"-10px"}}>
             {shortcuts.map(role =><Chip label={role} name={role} onClick={()=>handleClick(role)} sx={{flex: "1 1 160px",
