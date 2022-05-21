@@ -303,6 +303,8 @@ class TestNode(Node):
             for test in self.tests:
                 add_test_form(test.name, participant.id)
                 await take_test(participant.id, test, self.in_charge)
+            for test in self.tests:
+                await Data.get_test_result(participant.id,test.name)
             for edge in self.edges:
                 edge.attach(participant)
             Database.releasePosition(participant.id, self.id, "node")
