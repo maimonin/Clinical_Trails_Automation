@@ -1,4 +1,5 @@
 from PyQt5 import Qt
+from PyQt5.QtCore import QRectF, QPoint
 from PyQt5.QtGui import QPainter, QPainterPath, QPen, QBrush
 from nodeeditor.node_graphics_socket import QDMGraphicsSocket
 
@@ -43,6 +44,9 @@ class WFGraphicsSocket(QDMGraphicsSocket):
         #     path.lineTo(0, 0)
 
         painter.drawPath(path)
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(QPoint(- self.width,-self.width),QPoint(self.width,self.width))
 
 class WFGraphicsSocketDecision(WFGraphicsSocket):
     def __init__(self, socket: 'Socket'):
@@ -83,3 +87,6 @@ class WFGraphicsSocketDecision(WFGraphicsSocket):
             path.lineTo(0, 0)
 
         painter.drawPath(path)
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
+        return QRectF(QPoint(- self.width,-self.width),QPoint(self.width,self.width))
