@@ -47,6 +47,7 @@ async def take_test(user_id, test, in_charge):
         actor = get_role(role)
         if actor is None:
             return None
+        print(actor)
         await send_notification_by_id(actor.id, {'type': 'test', 'name': test.name,
                                                  'instructions': test.instructions,
                                                  'patient': user_id})

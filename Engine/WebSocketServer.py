@@ -19,6 +19,7 @@ async def get_notifications(websocket, path):
     try:
         async for message in websocket:
             data_dict = json.loads(message)
+            print(data_dict)
             if data_dict['type'] == 'register':
                 NotificationHandler.connections[data_dict['id']] = websocket
                 asyncio.create_task(register_user(data_dict))
