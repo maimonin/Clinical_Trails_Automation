@@ -9,7 +9,7 @@ import Nodes
 from Database import Database
 from EdgeGetter import edges, buildEdge
 from Edges import NormalEdge, RelativeTimeEdge, FixedTimeEdge
-from Engine.Nodes import Questionnaire, TestNode, Decision, StringNode, set_time, ComplexNode
+from Nodes import Questionnaire, TestNode, Decision, StringNode, set_time, ComplexNode
 from Form import buildFromJSON
 from Logger import log
 import user_lists

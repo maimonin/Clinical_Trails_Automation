@@ -7,7 +7,7 @@ import Data
 from Data import add_test_form, parse_test_condition
 from Database import Database
 from EdgeGetter import getEdges
-from Engine.Users import User
+from Users import User
 from Form import formToJSON
 from NotificationHandler import send_notification_by_id, send_questionnaire
 from user_lists import get_role, take_test
