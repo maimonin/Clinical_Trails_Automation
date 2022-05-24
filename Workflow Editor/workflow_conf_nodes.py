@@ -724,6 +724,12 @@ class WorkflowNode_ComplexNode(WorkflowNode):
         self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
         self.window.show()
 
+    def doSelect(self, new_state: bool = True):
+        from workflow_complex_window import Workflow_Complex_Window
+        self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
+        self.window.data = self.data["flow"]
+        self.window.show()
+
     def callback_from_window(self, content):
         try:
             self.window.close()
