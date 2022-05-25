@@ -463,7 +463,7 @@ class WorkflowNode_Decision(WorkflowNode):
 class WorkflowNode_SimpleString(WorkflowNode):
     op_icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
-    op_title = "Simple String"
+    op_title = "Notification"
     content_label_objname = "workflow_node_string"
 
     def __init__(self, scene):
@@ -710,6 +710,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
+    double_click = False
 
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
@@ -723,6 +724,19 @@ class WorkflowNode_ComplexNode(WorkflowNode):
         from workflow_complex_window import Workflow_Complex_Window
         self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
         self.window.show()
+
+    def doSelect(self, new_state: bool = True):
+
+        if self.double_click and not self.window.isVisible():
+            self.double_click = False
+
+            from workflow_complex_window import Workflow_Complex_Window
+            self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
+            self.window.data = self.data["flow"]
+            self.window.show()
+
+        else:
+            self.double_click = True
 
     def callback_from_window(self, content):
         try:

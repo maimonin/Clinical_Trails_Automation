@@ -11,7 +11,7 @@ RELATIVE = 1
 class WorkflowEdge(Edge):
 
     def __init__(self, scene: 'Scene', start_socket: 'Socket' = None, end_socket: 'Socket' = None,
-                 edge_type=EDGE_TYPE_DIRECT, text="No Title", attributes_dock_callback=None):
+                 edge_type=EDGE_TYPE_DIRECT, text="", attributes_dock_callback=None):
         self._text = text
         super().__init__(scene, start_socket, end_socket, edge_type)
         # data for engine
@@ -83,7 +83,7 @@ class WorkflowEdge(Edge):
 
     def update_label(self, input_title, input_min, input_max):
         if input_title == "":
-            self.text = "No Title"
+            self.text = ""
             if input_min != "" and input_min != "00:00:00" and input_max != "" and input_max != "00:00:00":
                 self.text = input_min + " - " + input_max
         else:
