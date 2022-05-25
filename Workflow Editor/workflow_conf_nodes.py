@@ -463,7 +463,7 @@ class WorkflowNode_Decision(WorkflowNode):
 class WorkflowNode_SimpleString(WorkflowNode):
     op_icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
-    op_title = "Simple String"
+    op_title = "Notification"
     content_label_objname = "workflow_node_string"
 
     def __init__(self, scene):
@@ -734,7 +734,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
             self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
             self.window.data = self.data["flow"]
             self.window.show()
-            
+
         else:
             self.double_click = True
 
