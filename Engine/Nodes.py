@@ -264,6 +264,7 @@ class StringNode(Node):
                     continue
                 r = get_role(role)
                 if r is not None:
+                    print(self.text)
                     await send_notification_by_id(r.id, {'type': 'notification', 'text': self.text})
 
     def has_actors(self):
