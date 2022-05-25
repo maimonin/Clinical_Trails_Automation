@@ -121,7 +121,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         return None
 
     def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
+        self.statusBar().showMessage("Ready. To discard press exit.")
 
     # def createNodesDock(self):
     #     self.nodesListWidget = QDMDragListbox()
