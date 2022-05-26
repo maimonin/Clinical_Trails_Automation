@@ -534,7 +534,6 @@ class WorkflowNode(Node):
     def callback_from_window(self, content):
         pass
 
-
     def serialize(self, engine_save=False):
         try:
             res = super().serialize()
@@ -595,12 +594,13 @@ class WorkflowNode(Node):
             del res["content"]["node_details"]["color"]
             for question in res["content"]["questions"]:
                 del question["id"]
-                # remove null answers from questionnaires
-                answers = question["options"]
-                question["options"] = []
-                for opt in answers:
-                    if opt is not None:
-                        question["options"].append(opt)
+                if question["type"] != "open":
+                    # remove null answers from questionnaires
+                    answers = question["options"]
+                    question["options"] = []
+                    for opt in answers:
+                        if opt is not None:
+                            question["options"].append(opt)
 
         elif res["op_code"] == OP_NODE_Test:
             del res["content"]["node_details"]["color"]
@@ -611,13 +611,14 @@ class WorkflowNode(Node):
             del res["content"]["node_details"]["color"]
 
         elif res["op_code"] == OP_NODE_COMPLEX:
+            del res["content"]["node_details"]
             del res["content"]["flow"]["scene_width"]
             del res["content"]["flow"]["scene_height"]
             nodes, edges = [], []
             for node in res["content"]["flow"]["nodes"]:
                 nodes.append(self.serialize_to_engine(node))
             for edge in res["content"]["flow"]["edges"]:
-                edges.append(WorkflowEdge.serialize_to_engine(WorkflowEdge,edge))
+                edges.append(WorkflowEdge.serialize_to_engine(WorkflowEdge, edge))
             res["content"]["flow"]["nodes"] = nodes
             res["content"]["flow"]["edges"] = edges
 
@@ -666,4 +667,3 @@ class WorkflowNode(Node):
 
     def get_node_details(self):
         pass
-
