@@ -728,8 +728,6 @@ class WorkflowNode_ComplexNode(WorkflowNode):
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
-    def save_data_when_changed(self, text):
-        self.data = text
 
     def drop_action(self):
         from workflow_complex_window import Workflow_Complex_Window

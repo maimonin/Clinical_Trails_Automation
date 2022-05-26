@@ -121,7 +121,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         return None
 
     def createStatusBar(self):
-        self.statusBar().showMessage("Ready. To discard press exit.")
+        self.statusBar().showMessage("To load existing press CTRL+N (or COMPLEX->New/Load Existing), To discard press exit.")
 
     # def createNodesDock(self):
     #     self.nodesListWidget = QDMDragListbox()

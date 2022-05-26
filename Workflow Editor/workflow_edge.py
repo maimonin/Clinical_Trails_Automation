@@ -1,3 +1,4 @@
+import copy
 from collections import OrderedDict
 from nodeeditor.node_edge import Edge, EDGE_TYPE_DIRECT
 from nodeeditor.utils import dumpException
@@ -131,7 +132,7 @@ class WorkflowEdge(Edge):
                 ('type', self.type),
                 ('start', self.start_socket.id if self.start_socket is not None else None),
                 ('end', self.end_socket.id if self.end_socket is not None else None),
-                ('content', self.data['content']['edge_details']),
+                ('content', copy.deepcopy(self.data['content']['edge_details'])),
                 ('edge_type', self.edge_type)
             ])
         if engine_save:
