@@ -27,6 +27,7 @@ class QDynamicDock(QDockWidget):
             "test sub tree": self.create_test_subtree_widget,
             "q sub tree": self.create_questionnaire_subtree_widget,
             "cond sub tree": self.create_condition_subtree_widget,
+            "button": self.create_button_widget,
         }
         self.setupUi()
 
@@ -187,7 +188,8 @@ class QDynamicDock(QDockWidget):
     def update_dynamic(self, data=None):
         self.callback(self.data)
 
-
+    def create_button_widget(self,father,field):
+        pass
 class TestTree:
 
     def __init__(self, dock, tree_widget_item, data, update_dock):
