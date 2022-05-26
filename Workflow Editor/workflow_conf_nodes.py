@@ -766,7 +766,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
             dumpException(e)
 
     def edit_nodes_details(self):
-        if self.window in None:
+        if self.window is None:
             try:
                 from workflow_complex_window import Workflow_Complex_Window
                 self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_editing_window(flow_json),

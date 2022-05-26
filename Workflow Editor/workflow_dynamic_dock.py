@@ -190,6 +190,9 @@ class QDynamicDock(QDockWidget):
 
     def create_button_widget(self,father,field):
         pass
+        button = QPushButton('Edit Workflow', self)
+        button.clicked.connect(field["value"])
+        self.treeWidget.setItemWidget(father, 1, button)
 class TestTree:
 
     def __init__(self, dock, tree_widget_item, data, update_dock):
