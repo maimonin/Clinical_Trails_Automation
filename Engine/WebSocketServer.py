@@ -8,7 +8,8 @@ import Parser
 import user_lists
 from Database import Database
 from Parser import register_user, new_workflow, parser_init
-
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 PORT = 7890
 
 
@@ -52,6 +53,7 @@ def Main():
     Database.init_tables()
     NotificationHandler.init()
     # Start the server
+    print('listening in url: ','ws://127.0.0.1:7890')
     start_server = websockets.serve(get_notifications, "localhost", PORT)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()

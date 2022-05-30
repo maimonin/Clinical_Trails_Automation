@@ -27,6 +27,7 @@ class QDynamicDock(QDockWidget):
             "test sub tree": self.create_test_subtree_widget,
             "q sub tree": self.create_questionnaire_subtree_widget,
             "cond sub tree": self.create_condition_subtree_widget,
+            "button": self.create_button_widget,
         }
         self.setupUi()
 
@@ -187,7 +188,11 @@ class QDynamicDock(QDockWidget):
     def update_dynamic(self, data=None):
         self.callback(self.data)
 
-
+    def create_button_widget(self,father,field):
+        pass
+        button = QPushButton('Edit Workflow', self)
+        button.clicked.connect(field["value"])
+        self.treeWidget.setItemWidget(father, 1, button)
 class TestTree:
 
     def __init__(self, dock, tree_widget_item, data, update_dock):
@@ -528,7 +533,6 @@ class DecisionTree:
         self.conditions.append(condition_data)
 
         new_widget = QtWidgets.QTreeWidgetItem(root)
-        # new_widget.setText(0, "New Condition #" + str(id))
         new_widget_label = QLabel("New Condition #" + str(id))
         new_widget_label.setWordWrap(True)
         self.dock.setItemWidget(new_widget, 0, new_widget_label)
@@ -596,7 +600,7 @@ class DecisionTree:
         satisfy_type_widget.addItem("Range")
         satisfy_type_widget.addItem("One Choice")
         satisfy_type_widget.activated.connect(
-            lambda index: self.combo_satisfy_changed(["Range", "One Choice"], index, data, parent))
+            lambda index: self.trait_satisfy_changed(["Range", "One Choice"], index, data, parent))
         self.dock.setItemWidget(satisfy_type_item, 1, satisfy_type_widget)
 
         if data["satisfy"]["type"] == "one_choice":
@@ -604,11 +608,14 @@ class DecisionTree:
 
             satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
             satisfy_value_item.setText(0, "Satisfy Value:")
-            value_widget = QLineEdit()
-            value_widget.setPlaceholderText("Enter Value")
-            value_widget.setText(data["satisfy"]["value"])
-            value_widget.editingFinished.connect(
-                lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
+            value_widget = QComboBox()
+            options = ["Male", "Female"]
+            value_widget.addItems(options)
+            value_widget.activated.connect(
+                lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
+                                                                                    data["satisfy"]))
+            option = data["satisfy"]["value"].title()
+            value_widget.setCurrentIndex(options.index(option))
             self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
             return
 
@@ -669,7 +676,7 @@ class DecisionTree:
         satisfy_type_widget.addItem("Range")
         satisfy_type_widget.addItem("One Choice")
         satisfy_type_widget.activated.connect(
-            lambda index: self.combo_satisfy_changed(["Range", "One Choice"], index, data, parent))
+            lambda index: self.test_satisfy_changed(["Range", "One Choice"], index, data, parent))
         self.dock.setItemWidget(satisfy_type_item, 1, satisfy_type_widget)
 
         if data["satisfy"]["type"] == "one_choice":
@@ -684,17 +691,10 @@ class DecisionTree:
             value_widget.activated.connect(
                 lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
                                                                                     data["satisfy"]))
-            if data["satisfy"]["type"] == "one_choice":
-                option = data["satisfy"]["value"].title()
-                value_widget.setCurrentIndex(options.index(option))
-            self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
 
-            # value_widget = QLineEdit()
-            # value_widget.setPlaceholderText("Enter Value")
-            # value_widget.setText(data["satisfy"]["value"])
-            # value_widget.editingFinished.connect(
-            #     lambda widget=value_widget: self.line_changed(widget, data["satisfy"], "value"))
-            # self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+            option = data["satisfy"]["value"].title()
+            value_widget.setCurrentIndex(options.index(option))
+            self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
             return
 
         satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
@@ -821,7 +821,7 @@ class DecisionTree:
 
         self.call_dock()
 
-    def combo_satisfy_changed(self, options, index_changed, data, parent):
+    def test_satisfy_changed(self, options, index_changed, data, parent):
         state = parent.childCount()  # know state by children number, 4 = one choice, 5 = range
         # return if the same as selected.
         if (options[index_changed] == "Range" and state == 5) or (
@@ -875,6 +875,62 @@ class DecisionTree:
 
                 data["satisfy"]["type"] = "one_choice"
                 data["satisfy"]["value"] = "positive"
+            self.call_dock()
+
+    def trait_satisfy_changed(self, options, index_changed, data, parent):
+        state = parent.childCount()  # know state by children number, 4 = one choice, 5 = range
+        # return if the same as selected.
+        if (options[index_changed] == "Range" and state == 5) or (
+                options[index_changed] == "One Choice" and state == 4):
+            return
+        else:
+            if options[index_changed] == "Range":
+                data["satisfy"]["type"] = "range"
+                data["satisfy"]["value"] = {"min": "-1", "max": "-1"}
+
+                parent.takeChild(state - 1)  # pop last children
+                satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+                # satisfy_value_item.setText(0, "Satisfy Value:")
+                satisfy_value_label = QLabel("Satisfy Value:")
+                satisfy_value_label.setWordWrap(True)
+                self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
+
+                min_value_widget = QLineEdit()
+                min_value_widget.setPlaceholderText("Min")
+                min_value_widget.editingFinished.connect(
+                    lambda widget=min_value_widget: self.line_changed(widget, data["satisfy"], "value", "min"))
+                self.dock.setItemWidget(satisfy_value_item, 1, min_value_widget)
+
+                satisfy_value_item2 = QtWidgets.QTreeWidgetItem(parent)
+                max_value_widget = QLineEdit()
+                max_value_widget.setPlaceholderText("Max")
+                max_value_widget.editingFinished.connect(
+                    lambda widget=max_value_widget: self.line_changed(widget, data["satisfy"], "value", "max"))
+                self.dock.setItemWidget(satisfy_value_item2, 1, max_value_widget)
+
+            else:
+                parent.takeChild(state - 1)
+                parent.takeChild(state - 2)
+
+                satisfy_value_item = QtWidgets.QTreeWidgetItem(parent)
+                # satisfy_value_item.setText(0, "Satisfy Value:")
+                satisfy_value_label = QLabel("Satisfy Value:")
+                satisfy_value_label.setWordWrap(True)
+                self.dock.setItemWidget(satisfy_value_item, 0, satisfy_value_label)
+
+                value_widget = QComboBox()
+                options = ["Male", "Female"]
+                value_widget.addItems(options)
+                value_widget.activated.connect(
+                    lambda index, options=options: self.combo_satisfy_oneChoice_changed(index, options,
+                                                                                        data["satisfy"]))
+                if data["satisfy"]["type"] == "one_choice":
+                    option = data["satisfy"]["value"].title()
+                    value_widget.setCurrentIndex(options.index(option))
+                self.dock.setItemWidget(satisfy_value_item, 1, value_widget)
+
+                data["satisfy"]["type"] = "one_choice"
+                data["satisfy"]["value"] = "male"
             self.call_dock()
 
     def combo_satisfy_oneChoice_changed(self, index_changed, options, data):
@@ -1002,3 +1058,5 @@ class DecisionTree:
     def get_next_id(self):
         self.next_question_id += 1
         return self.next_question_id
+
+

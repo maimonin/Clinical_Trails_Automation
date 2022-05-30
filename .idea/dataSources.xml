@@ -31,5 +31,12 @@
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:F:\university\2021-2022\final proj\Clinical_Trails_Automation\Engine\Database\test_data.db</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="data [5]" uuid="9ef4d460-8ebe-48d8-b92c-c85ac3456aca">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\Administrator\PycharmProjects\Clinical_Trails_Automation\Engine\Database\data.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
