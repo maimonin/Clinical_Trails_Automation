@@ -23,9 +23,16 @@ export const isValidAnswersToQuestionnaire = (answers) =>{
 
 }
 
-export const isValidAnswersSet = (answers) => {
+export const isValidAnswersSet = (questions,answers) => {
+    console.log(questions + "~~~" + answers)
+
+    for (let i =0; i<answers.length; i++){
+        if (questions[i]["type"] ===  "one choice" && answers[i] ==="")
+       { console.log(questions[i] + ";;;i is " + i +";;;" + answers[i])
+        return false
+    }
+    }
     return true;
-        //TODO : chheck empty_singlechoice_answer
-    //answers.every(element => (typeof element === "string" && element != "") | 
+        
     
 }
