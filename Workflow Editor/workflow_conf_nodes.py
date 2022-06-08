@@ -754,7 +754,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     def callback_from_editing_window(self, content):
         try:
             self.window.close()
-            if content is None:
+            if self.content_is_empty(content):
                 self.remove()
             else:
                 self.data["type"] = "complex"
@@ -801,3 +801,8 @@ class WorkflowNode_ComplexNode(WorkflowNode):
 
         except Exception as e:
             dumpException(e)
+    def content_is_empty(self,content):
+        if content is None:
+            return True
+
+        return False

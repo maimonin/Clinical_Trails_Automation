@@ -154,11 +154,11 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
 
     def OnClose(self):
         self.exit = True
-        self.complex_callback(None)
+        self.complex_callback(self.data)
 
     def closeEvent(self, event):  # used when pressing the X button
         if not self.saved and not self.exit:
-            self.complex_callback(None)
+            self.complex_callback(self.data)
 
 
     def load_data(self):
