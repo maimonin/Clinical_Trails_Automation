@@ -1,0 +1,104 @@
+{
+    "id": 1722753097248,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722753097200,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722753097680,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722753097152,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 1722753096624,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722753096576,
+            "title": "Test",
+            "pos_x": -177.0,
+            "pos_y": -155.0,
+            "inputs": [
+                {
+                    "id": 1722753094176,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722753094224,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Migrene Test",
+                    "actor in charge": "Nurse",
+                    "color": "Grey"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "Migrene Test",
+                        "instructions": "Insert Patient to CT machine",
+                        "staff": [
+                            "Nurse",
+                            "Doctor",
+                            "Participant"
+                        ],
+                        "duration": "120"
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722752826288,
+            "start": 1722753097680,
+            "end": 1722753094176,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752826912,
+            "start": 1722753094224,
+            "end": 1722753096624,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

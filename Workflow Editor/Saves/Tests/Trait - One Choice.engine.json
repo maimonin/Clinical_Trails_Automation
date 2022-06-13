@@ -1,0 +1,141 @@
+{
+    "id": 1722785005728,
+    "nodes": [
+        {
+            "id": 1722785223056,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722785243536
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722785243488,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722785243680
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722785243632,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 1722785244544
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722785243248
+                },
+                {
+                    "id": 1722785244592
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Gender split"
+                },
+                "condition": [
+                    {
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "male"
+                        },
+                        "trait": "Gender"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722785244640,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722751452112
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751452160
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Male Participant"
+                },
+                "text": "Continue trial"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722785244928,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722751452688
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751452064
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Female Participant"
+                },
+                "text": "This trial is for men."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722751452640,
+            "start": 1722785244592,
+            "end": 1722751452112,
+            "type": 0
+        },
+        {
+            "id": 1722751452304,
+            "start": 1722785243248,
+            "end": 1722751452688,
+            "type": 0
+        },
+        {
+            "id": 1722751453408,
+            "start": 1722751452064,
+            "end": 1722785243680,
+            "type": 0
+        },
+        {
+            "id": 1722785244112,
+            "start": 1722751452160,
+            "end": 1722785243680,
+            "type": 0
+        },
+        {
+            "id": 1722785244304,
+            "start": 1722785244544,
+            "end": 1722785243536,
+            "type": 0
+        }
+    ]
+}

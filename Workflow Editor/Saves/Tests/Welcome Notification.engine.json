@@ -1,0 +1,65 @@
+{
+    "id": 1722776604240,
+    "nodes": [
+        {
+            "id": 1722776576688,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722776429520
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722776499296,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722776429664
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722785223008,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722785135200
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722785135152
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Welcome"
+                },
+                "text": "Hello World"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722785081424,
+            "start": 1722776429520,
+            "end": 1722785135200,
+            "type": 0
+        },
+        {
+            "id": 1722785081952,
+            "start": 1722785135152,
+            "end": 1722776429664,
+            "type": 0
+        }
+    ]
+}

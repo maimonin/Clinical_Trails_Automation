@@ -1,0 +1,252 @@
+{
+    "id": 1722752046128,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722752046224,
+            "title": "New Start Node",
+            "pos_x": -488.0,
+            "pos_y": -339.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722752046032,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722752045456,
+            "title": "New Finish Node",
+            "pos_x": 426.0,
+            "pos_y": 153.0,
+            "inputs": [
+                {
+                    "id": 1722752132240,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722752135072,
+            "title": "Test",
+            "pos_x": -362.0,
+            "pos_y": -278.0,
+            "inputs": [
+                {
+                    "id": 1722752824464,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752824512,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Blood Test",
+                    "actor in charge": "Lab Technician",
+                    "color": "Grey"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "Iron In Blood",
+                        "instructions": "Use Magnets  to search for iron",
+                        "staff": [
+                            "Nurse",
+                            "Lab Technician",
+                            "Participant"
+                        ],
+                        "duration": "15"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 1722752826144,
+            "title": "Decision",
+            "pos_x": -62.0,
+            "pos_y": -191.0,
+            "inputs": [
+                {
+                    "id": 1722752826432,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752826384,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 1722752826480,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Iron People"
+                },
+                "condition": [
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "positive"
+                        },
+                        "test": "Iron In Blood"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722752134832,
+            "title": "Notification",
+            "pos_x": -108.0,
+            "pos_y": 39.0,
+            "inputs": [
+                {
+                    "id": 1722752825856,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752826000,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Normal People",
+                    "color": "Grey"
+                },
+                "text": "Youre not interesting."
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722752825952,
+            "title": "Notification",
+            "pos_x": 84.0,
+            "pos_y": -132.0,
+            "inputs": [
+                {
+                    "id": 1722752826624,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752826720,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Lab Technician",
+                        "Doctor"
+                    ],
+                    "title": "Aliens",
+                    "color": "Grey"
+                },
+                "text": "Alien was found."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722752825184,
+            "start": 1722752046032,
+            "end": 1722752824464,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752826192,
+            "start": 1722752824512,
+            "end": 1722752826432,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752825760,
+            "start": 1722752826384,
+            "end": 1722752825856,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752825040,
+            "start": 1722752826000,
+            "end": 1722752132240,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752825808,
+            "start": 1722752826480,
+            "end": 1722752826624,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752825328,
+            "start": 1722752826720,
+            "end": 1722752132240,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}
