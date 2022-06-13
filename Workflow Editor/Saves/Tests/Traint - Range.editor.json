@@ -1,0 +1,202 @@
+{
+    "id": 1722751596480,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722751597872,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722751598256,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722751598208,
+            "title": "New Finish Node",
+            "pos_x": 467.0,
+            "pos_y": 36.0,
+            "inputs": [
+                {
+                    "id": 1722751598400,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722751454944,
+            "title": "Decision",
+            "pos_x": -218.0,
+            "pos_y": -175.0,
+            "inputs": [
+                {
+                    "id": 1722776604240,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751454896,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 1722785005680,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Age Split"
+                },
+                "condition": [
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": "21",
+                                "max": "30"
+                            }
+                        },
+                        "trait": "Age"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722785243968,
+            "title": "Notification",
+            "pos_x": 39.0,
+            "pos_y": -191.0,
+            "inputs": [
+                {
+                    "id": 1722751597104,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751596576,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "Young Adults",
+                    "color": "Grey"
+                },
+                "text": "Young Adult has found"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722751596672,
+            "title": "Notification",
+            "pos_x": -72.0,
+            "pos_y": -10.0,
+            "inputs": [
+                {
+                    "id": 1722751597344,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751596912,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Kids and adults",
+                    "color": "Grey"
+                },
+                "text": "Stop trial."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722785244064,
+            "start": 1722751598256,
+            "end": 1722776604240,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722751597488,
+            "start": 1722785005680,
+            "end": 1722751597104,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722751595808,
+            "start": 1722751596576,
+            "end": 1722751598400,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722751596336,
+            "start": 1722751454896,
+            "end": 1722751597344,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722751595856,
+            "start": 1722751596912,
+            "end": 1722751598400,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

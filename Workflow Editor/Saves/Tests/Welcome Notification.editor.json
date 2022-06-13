@@ -1,0 +1,94 @@
+{
+    "id": 1722776604240,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722776576688,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722776429520,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722776499296,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 1722776429664,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722785223008,
+            "title": "Notification",
+            "pos_x": -142.0,
+            "pos_y": -140.0,
+            "inputs": [
+                {
+                    "id": 1722785135200,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722785135152,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Welcome",
+                    "color": "Grey"
+                },
+                "text": "Hello World"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722785081424,
+            "start": 1722776429520,
+            "end": 1722785135200,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722785081952,
+            "start": 1722785135152,
+            "end": 1722776429664,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

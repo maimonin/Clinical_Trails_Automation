@@ -1,0 +1,199 @@
+{
+    "id": 1722785005728,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722785223056,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722785243536,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722785243488,
+            "title": "New Finish Node",
+            "pos_x": 353.0,
+            "pos_y": 146.0,
+            "inputs": [
+                {
+                    "id": 1722785243680,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722785243632,
+            "title": "Decision",
+            "pos_x": -200.0,
+            "pos_y": -156.0,
+            "inputs": [
+                {
+                    "id": 1722785244544,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722785243248,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 1722785244592,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Gender split"
+                },
+                "condition": [
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "male"
+                        },
+                        "trait": "Gender"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722785244640,
+            "title": "Notification",
+            "pos_x": 0.0,
+            "pos_y": -68.0,
+            "inputs": [
+                {
+                    "id": 1722751452112,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751452160,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Male Participant",
+                    "color": "Grey"
+                },
+                "text": "Continue trial"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722785244928,
+            "title": "Notification",
+            "pos_x": -75.0,
+            "pos_y": 61.0,
+            "inputs": [
+                {
+                    "id": 1722751452688,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751452064,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Female Participant",
+                    "color": "Grey"
+                },
+                "text": "This trial is for men."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722751452640,
+            "start": 1722785244592,
+            "end": 1722751452112,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722751452304,
+            "start": 1722785243248,
+            "end": 1722751452688,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722751453408,
+            "start": 1722751452064,
+            "end": 1722785243680,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722785244112,
+            "start": 1722751452160,
+            "end": 1722785243680,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722785244304,
+            "start": 1722785244544,
+            "end": 1722785243536,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

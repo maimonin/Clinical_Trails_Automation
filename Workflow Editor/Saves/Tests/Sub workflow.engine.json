@@ -1,0 +1,128 @@
+{
+    "id": 1722753094848,
+    "nodes": [
+        {
+            "id": 1722753292416,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722753292896
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722753292848,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722753293040
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722753292992,
+            "title": "Sub Workflow",
+            "inputs": [
+                {
+                    "id": 1722753293376
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722753293424
+                }
+            ],
+            "content": {
+                "flow": {
+                    "id": 1722753094560,
+                    "nodes": [
+                        {
+                            "id": 1722753094128,
+                            "title": "New Start Node",
+                            "inputs": [],
+                            "outputs": [
+                                {
+                                    "id": 1722753094800
+                                }
+                            ],
+                            "op_code": 0
+                        },
+                        {
+                            "id": 1722753093888,
+                            "title": "New Finish Node",
+                            "inputs": [
+                                {
+                                    "id": 1722752824992
+                                }
+                            ],
+                            "outputs": [],
+                            "op_code": 6
+                        },
+                        {
+                            "id": 1722752826528,
+                            "title": "Notification",
+                            "inputs": [
+                                {
+                                    "id": 1722752825904
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 1722752825376
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "actors": [
+                                        "Nurse",
+                                        "Doctor",
+                                        "Participant",
+                                        "Investigator",
+                                        "Lab Technician"
+                                    ],
+                                    "title": "Greetings"
+                                },
+                                "text": "Have a nice day."
+                            },
+                            "op_code": 4
+                        }
+                    ],
+                    "edges": [
+                        {
+                            "id": 1722753291744,
+                            "start": 1722753094800,
+                            "end": 1722752825904,
+                            "type": 0
+                        },
+                        {
+                            "id": 1722752826048,
+                            "start": 1722752825376,
+                            "end": 1722752824992,
+                            "type": 0
+                        }
+                    ]
+                },
+                "type": "complex"
+            },
+            "op_code": 5
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722753292176,
+            "start": 1722753292896,
+            "end": 1722753293376,
+            "type": 0
+        },
+        {
+            "id": 1722753290496,
+            "start": 1722753293424,
+            "end": 1722753293040,
+            "type": 0
+        }
+    ]
+}

@@ -1,0 +1,208 @@
+{
+    "id": 1722752045312,
+    "nodes": [
+        {
+            "id": 1722752046704,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722752047088
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722752047040,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722752047232
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722752047184,
+            "title": "Questionnaire",
+            "inputs": [
+                {
+                    "id": 1722752047568
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752047616
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Food preferences"
+                },
+                "questions": [
+                    {
+                        "type": "one choice",
+                        "text": "How often do you eat sweeities?",
+                        "options": [
+                            "Daily",
+                            "Some days in the week",
+                            "Once in a week",
+                            "Once in a while",
+                            "Never"
+                        ]
+                    },
+                    {
+                        "type": "open",
+                        "text": "ID:"
+                    },
+                    {
+                        "type": "multi",
+                        "text": "What is your daily nutrition?",
+                        "options": [
+                            "Meat",
+                            "Salad",
+                            "Dairy",
+                            "Fish",
+                            "Snacks"
+                        ]
+                    }
+                ],
+                "questionnaire_number": 1
+            },
+            "op_code": 1
+        },
+        {
+            "id": 1722752048528,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 1722752048000
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752048912
+                },
+                {
+                    "id": 1722752048864
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Junk Eaters Split"
+                },
+                "condition": [
+                    {
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": -1,
+                                "max": -1
+                            }
+                        },
+                        "trait": ""
+                    },
+                    {
+                        "title": "questionnaire condition 1",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": 1,
+                        "questionNumber": 3,
+                        "acceptedAnswers": [
+                            4
+                        ]
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722785244400,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722752048240
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752045744
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "Unhealthy nutrition"
+                },
+                "text": "There is Unhealthy habits in participants"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722752048480,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722752047280
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752046080
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Others"
+                },
+                "text": "Choclate is the best."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722752048336,
+            "start": 1722752047088,
+            "end": 1722752047568,
+            "type": 0
+        },
+        {
+            "id": 1722752047712,
+            "start": 1722752047616,
+            "end": 1722752048000,
+            "type": 0
+        },
+        {
+            "id": 1722752045552,
+            "start": 1722752048864,
+            "end": 1722752048240,
+            "type": 0
+        },
+        {
+            "id": 1722752045504,
+            "start": 1722752048912,
+            "end": 1722752047280,
+            "type": 0
+        },
+        {
+            "id": 1722752048960,
+            "start": 1722752046080,
+            "end": 1722752047232,
+            "type": 0
+        },
+        {
+            "id": 1722752131424,
+            "start": 1722752045744,
+            "end": 1722752047232,
+            "type": 0
+        }
+    ]
+}

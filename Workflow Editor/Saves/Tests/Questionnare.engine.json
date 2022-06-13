@@ -1,0 +1,68 @@
+{
+    "id": 1722753093696,
+    "nodes": [
+        {
+            "id": 1722753095376,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722753095760
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722753095712,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722753095904
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722753095856,
+            "title": "Questionnaire",
+            "inputs": [
+                {
+                    "id": 1722753096240
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722753096288
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Philosophic question"
+                },
+                "questions": [
+                    {
+                        "type": "open",
+                        "text": "To be or not to be?"
+                    }
+                ],
+                "questionnaire_number": 1
+            },
+            "op_code": 1
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722753097008,
+            "start": 1722753095760,
+            "end": 1722753096240,
+            "type": 0
+        },
+        {
+            "id": 1722753096720,
+            "start": 1722753096288,
+            "end": 1722753095904,
+            "type": 0
+        }
+    ]
+}

@@ -1,0 +1,181 @@
+{
+    "id": 1722752046128,
+    "nodes": [
+        {
+            "id": 1722752046224,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722752046032
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722752045456,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722752132240
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722752135072,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 1722752824464
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752824512
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Blood Test",
+                    "actor in charge": "Lab Technician"
+                },
+                "tests": [
+                    {
+                        "name": "Iron In Blood",
+                        "instructions": "Use Magnets  to search for iron",
+                        "staff": [
+                            "Nurse",
+                            "Lab Technician",
+                            "Participant"
+                        ],
+                        "duration": "15"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 1722752826144,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 1722752826432
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752826384
+                },
+                {
+                    "id": 1722752826480
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Iron People"
+                },
+                "condition": [
+                    {
+                        "title": "test condition 1",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "positive"
+                        },
+                        "test": "Iron In Blood"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722752134832,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722752825856
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752826000
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Normal People"
+                },
+                "text": "Youre not interesting."
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722752825952,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722752826624
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752826720
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Lab Technician",
+                        "Doctor"
+                    ],
+                    "title": "Aliens"
+                },
+                "text": "Alien was found."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722752825184,
+            "start": 1722752046032,
+            "end": 1722752824464,
+            "type": 0
+        },
+        {
+            "id": 1722752826192,
+            "start": 1722752824512,
+            "end": 1722752826432,
+            "type": 0
+        },
+        {
+            "id": 1722752825760,
+            "start": 1722752826384,
+            "end": 1722752825856,
+            "type": 0
+        },
+        {
+            "id": 1722752825040,
+            "start": 1722752826000,
+            "end": 1722752132240,
+            "type": 0
+        },
+        {
+            "id": 1722752825808,
+            "start": 1722752826480,
+            "end": 1722752826624,
+            "type": 0
+        },
+        {
+            "id": 1722752825328,
+            "start": 1722752826720,
+            "end": 1722752132240,
+            "type": 0
+        }
+    ]
+}

@@ -1,0 +1,285 @@
+{
+    "id": 1722752045312,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722752046704,
+            "title": "New Start Node",
+            "pos_x": -526.0,
+            "pos_y": -333.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722752047088,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722752047040,
+            "title": "New Finish Node",
+            "pos_x": 344.0,
+            "pos_y": 54.0,
+            "inputs": [
+                {
+                    "id": 1722752047232,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722752047184,
+            "title": "Questionnaire",
+            "pos_x": -323.0,
+            "pos_y": -217.0,
+            "inputs": [
+                {
+                    "id": 1722752047568,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752047616,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Food preferences",
+                    "color": "Grey"
+                },
+                "questions": [
+                    {
+                        "id": 1,
+                        "type": "one choice",
+                        "text": "How often do you eat sweeities?",
+                        "options": [
+                            "Daily",
+                            "Some days in the week",
+                            "Once in a week",
+                            "Once in a while",
+                            "Never",
+                            null
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "type": "open",
+                        "text": "ID:"
+                    },
+                    {
+                        "id": 3,
+                        "type": "multi",
+                        "text": "What is your daily nutrition?",
+                        "options": [
+                            "Meat",
+                            "Salad",
+                            "Dairy",
+                            "Fish",
+                            "Snacks",
+                            null
+                        ]
+                    }
+                ],
+                "questionnaire_number": "1"
+            },
+            "op_code": 1
+        },
+        {
+            "id": 1722752048528,
+            "title": "Decision",
+            "pos_x": -77.0,
+            "pos_y": -34.0,
+            "inputs": [
+                {
+                    "id": 1722752048000,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752048912,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 1722752048864,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Junk Eaters Split"
+                },
+                "condition": [
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": "-1",
+                                "max": "-1"
+                            }
+                        },
+                        "trait": ""
+                    },
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "questionnaire condition",
+                        "questionnaireNumber": "1",
+                        "questionNumber": 3,
+                        "question": "What is your daily nutrition?",
+                        "acceptedAnswers": [
+                            4
+                        ]
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722785244400,
+            "title": "Notification",
+            "pos_x": 57.0,
+            "pos_y": -131.0,
+            "inputs": [
+                {
+                    "id": 1722752048240,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752045744,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Doctor"
+                    ],
+                    "title": "Unhealthy nutrition",
+                    "color": "Grey"
+                },
+                "text": "There is Unhealthy habits in participants"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722752048480,
+            "title": "Notification",
+            "pos_x": -121.0,
+            "pos_y": 105.0,
+            "inputs": [
+                {
+                    "id": 1722752047280,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722752046080,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Others",
+                    "color": "Grey"
+                },
+                "text": "Choclate is the best."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722752048336,
+            "start": 1722752047088,
+            "end": 1722752047568,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752047712,
+            "start": 1722752047616,
+            "end": 1722752048000,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752045552,
+            "start": 1722752048864,
+            "end": 1722752048240,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752045504,
+            "start": 1722752048912,
+            "end": 1722752047280,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752048960,
+            "start": 1722752046080,
+            "end": 1722752047232,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722752131424,
+            "start": 1722752045744,
+            "end": 1722752047232,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

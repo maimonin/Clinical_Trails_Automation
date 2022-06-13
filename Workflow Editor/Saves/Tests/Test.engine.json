@@ -1,0 +1,74 @@
+{
+    "id": 1722753097248,
+    "nodes": [
+        {
+            "id": 1722753097200,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722753097680
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722753097152,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722753096624
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722753096576,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 1722753094176
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722753094224
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Migrene Test",
+                    "actor in charge": "Nurse"
+                },
+                "tests": [
+                    {
+                        "name": "Migrene Test",
+                        "instructions": "Insert Patient to CT machine",
+                        "staff": [
+                            "Nurse",
+                            "Doctor",
+                            "Participant"
+                        ],
+                        "duration": "120"
+                    }
+                ]
+            },
+            "op_code": 2
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722752826288,
+            "start": 1722753097680,
+            "end": 1722753094176,
+            "type": 0
+        },
+        {
+            "id": 1722752826912,
+            "start": 1722753094224,
+            "end": 1722753096624,
+            "type": 0
+        }
+    ]
+}
