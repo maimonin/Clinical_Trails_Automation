@@ -8,7 +8,8 @@ import Parser
 import user_lists
 from Database import Database
 from Parser import register_user, new_workflow, parser_init
-
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 PORT = 7890
 
 
@@ -19,6 +20,7 @@ async def get_notifications(websocket, path):
     try:
         async for message in websocket:
             data_dict = json.loads(message)
+            print(data_dict)
             if data_dict['type'] == 'register':
                 NotificationHandler.connections[data_dict['id']] = websocket
                 asyncio.create_task(register_user(data_dict))
@@ -35,6 +37,9 @@ async def get_notifications(websocket, path):
                 Data.add_questionnaire(data_dict, data_dict['id'])
             elif data_dict['type'] == 'add results':
                 Data.add_test(data_dict['test'], data_dict, data_dict['id'])
+            elif data_dict['type'] == 'change db':
+                Database.set_name('Database/test_data.db')
+                Database.init_tables()
     # Handle disconnecting clients
     except websockets.exceptions.ConnectionClosed as e:
         print("A client just disconnected")
@@ -42,13 +47,13 @@ async def get_notifications(websocket, path):
 
 def Main():
     open('Logger.txt', 'w').close()
-    Database.set_name('Database/data.db')
     user_lists.init()
     Data.init()
     parser_init()
     Database.init_tables()
     NotificationHandler.init()
     # Start the server
+    print('listening in url: ','ws://127.0.0.1:7890')
     start_server = websockets.serve(get_notifications, "localhost", PORT)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()

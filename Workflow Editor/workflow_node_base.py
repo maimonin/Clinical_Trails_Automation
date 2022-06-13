@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath, QPixmap
 from PyQt5.QtWidgets import *
@@ -8,7 +10,8 @@ from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
 from workflow_conf import OP_NODE_START, OP_NODE_FINISH, OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING, \
-    OP_NODE_DECISION
+    OP_NODE_DECISION, OP_NODE_COMPLEX
+from workflow_edge import WorkflowEdge
 
 
 class WorkflowGraphicNode(QDMGraphicsNode):
@@ -431,7 +434,6 @@ class WorkflowNode(Node):
     op_title = "Undefined"
     content_label = ""
     content_label_objname = "calc_node_bg"
-    attributes_dock_callback = None
 
     @property
     def type(self):
@@ -471,7 +473,6 @@ class WorkflowNode(Node):
         self.type = self.__class__.op_title
         self.icon = self.op_icon
         self.data = None
-        # self.attributes_dock_callback = None
 
     def initInnerClasses(self):
         # self.content = WorkflowContent(self)
@@ -533,60 +534,93 @@ class WorkflowNode(Node):
     def callback_from_window(self, content):
         pass
 
-    def set_attributes_dock_callback(self, callback):
-        # self.attributes_dock_callback = callback
-        pass
-
     def serialize(self, engine_save=False):
         try:
             res = super().serialize()
             res[
-                'content'] = self.data if self.data is not None else ""
+                'content'] = copy.deepcopy(self.data) if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
-
+            if res['op_code'] not in [OP_NODE_START, OP_NODE_FINISH]:
+                res['title'] = self.type
             # remove features that is for node editor
             if engine_save:
-                del res['pos_x']
-                del res['pos_y']
-
-                if len(res["inputs"]) > 0:
-                    for idx,input in enumerate(res["inputs"]):
-                        del res["inputs"][idx]["index"]
-                        del res["inputs"][idx]["position"]
-                        del res["inputs"][idx]["socket_type"]
-                        del res["inputs"][idx]["multi_edges"]
-
-                if len(res["outputs"]) > 0:
-                    for idx,output in enumerate(res["outputs"]):
-                        del res["outputs"][idx]["index"]
-                        del res["outputs"][idx]["position"]
-                        del res["outputs"][idx]["socket_type"]
-                        del res["outputs"][idx]["multi_edges"]
-
-                if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
-                    del res["content"]
-                elif res["op_code"] == OP_NODE_DECISION:
-                    for condition in res["content"]["condition"]:
-                        del condition["id"]
-                        if condition["type"] == "questionnaire condition":
-                            del condition["question"]
-                elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
-                    del res["content"]["node_details"]["color"]
-                    # remove null answers from questionnairs
-                    for question in res["content"]["questions"]:
-                        # FIXME: make sure the deletion of null answers,
-                        #   doesn't change the object too.
-                        answers = question["options"]
-                        question["options"] = []
-                        for opt in answers:
-                            if opt is not None:
-                                question["options"].append(opt)
-                elif res["op_code"] == OP_NODE_Test or OP_NODE_STRING:
-                    # FIXME: why test doesn't have color key?
-                    del res["content"]["node_details"]["color"]
+                res = self.serialize_to_engine(res)
 
         except Exception as e:
             dumpException(e)
+
+        return res
+
+    def serialize_to_engine(self, res):
+        del res['pos_x']
+        del res['pos_y']
+
+        if len(res["inputs"]) > 0:
+            for idx, input in enumerate(res["inputs"]):
+                del res["inputs"][idx]["index"]
+                del res["inputs"][idx]["position"]
+                del res["inputs"][idx]["socket_type"]
+                del res["inputs"][idx]["multi_edges"]
+
+        if len(res["outputs"]) > 0:
+            for idx, output in enumerate(res["outputs"]):
+                del res["outputs"][idx]["index"]
+                del res["outputs"][idx]["position"]
+                del res["outputs"][idx]["socket_type"]
+                del res["outputs"][idx]["multi_edges"]
+
+        if res["op_code"] == OP_NODE_START or res["op_code"] == OP_NODE_FINISH:
+            del res["content"]
+
+        elif res["op_code"] == OP_NODE_DECISION:
+            for condition in res["content"]["condition"]:
+                del condition["id"]
+                if condition["type"] == "questionnaire condition":
+                    condition["title"] = "questionnaire " + condition["title"]
+                    condition["questionnaireNumber"] = int(condition["questionnaireNumber"])
+                    if condition["type"] == "questionnaire condition":
+                        del condition["question"]
+                elif condition["type"] == "test condition":
+                    condition["title"] = "test " + condition["title"]
+                    if condition["satisfy"]["type"] == "range":
+                        condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
+                        condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
+                elif condition["type"] == "trait condition" and condition["satisfy"]["type"] == "range":
+                    condition["satisfy"]["value"]["max"] = int(condition["satisfy"]["value"]["max"])
+                    condition["satisfy"]["value"]["min"] = int(condition["satisfy"]["value"]["min"])
+
+        elif res["op_code"] == OP_NODE_QUESTIONNAIRE:
+            res["content"]["questionnaire_number"] = int(res["content"]["questionnaire_number"])
+            del res["content"]["node_details"]["color"]
+            for question in res["content"]["questions"]:
+                del question["id"]
+                if question["type"] != "open":
+                    # remove null answers from questionnaires
+                    answers = question["options"]
+                    question["options"] = []
+                    for opt in answers:
+                        if opt is not None:
+                            question["options"].append(opt)
+
+        elif res["op_code"] == OP_NODE_Test:
+            del res["content"]["node_details"]["color"]
+            for test in res["content"]["tests"]:
+                del test["id"]
+
+        elif res["op_code"] == OP_NODE_STRING:
+            del res["content"]["node_details"]["color"]
+
+        elif res["op_code"] == OP_NODE_COMPLEX:
+            del res["content"]["node_details"]
+            del res["content"]["flow"]["scene_width"]
+            del res["content"]["flow"]["scene_height"]
+            nodes, edges = [], []
+            for node in res["content"]["flow"]["nodes"]:
+                nodes.append(self.serialize_to_engine(node))
+            for edge in res["content"]["flow"]["edges"]:
+                edges.append(WorkflowEdge.serialize_to_engine(WorkflowEdge, edge))
+            res["content"]["flow"]["nodes"] = nodes
+            res["content"]["flow"]["edges"] = edges
 
         return res
 
@@ -595,13 +629,17 @@ class WorkflowNode(Node):
             res = super().deserialize(data, hashmap, restore_id)
             self.data = data["content"]
             self.op_code = data['op_code']
-
+            self.type = data["title"]
             # recovering node specific attributes
-            if self.op_code in [OP_NODE_QUESTIONNAIRE, OP_NODE_Test, OP_NODE_STRING]:
+            if self.op_code == OP_NODE_DECISION:
+                self.title = data["content"]["node_details"]["title"]
+            if self.op_code in [OP_NODE_Test, OP_NODE_STRING]:
+                self.title = data["content"]["node_details"]["title"]
                 self.color = data["content"]['node_details']['color']
             if self.op_code == OP_NODE_QUESTIONNAIRE:
+                self.title = data["content"]["node_details"]["title"]
+                self.color = data["content"]['node_details']['color']
                 self.QNum = data["content"]["questionnaire_number"]
-            self.attributes_dock_callback(self.get_tree_build())
 
         except Exception as e:
             dumpException(e)
@@ -615,33 +653,17 @@ class WorkflowNode(Node):
 
     def remove(self):
         super().remove()
-        self.attributes_dock_callback(None)
+        self.get_dock_callback()(None)
 
     def emit_select_dock(self):
         pass
-        self.attributes_dock_callback(self.get_tree_build())
+        self.get_dock_callback()(self.get_tree_build())
+
+    def get_dock_callback(self):
+        return self.scene.getDockCallback()
 
     def get_tree_build(self):
         pass
 
     def get_node_details(self):
         pass
-
-    # template:
-    '''   return  {
-                "name": "Node Details",
-                "fields": [
-                    {"name": "Title", "type": "Text", "value": self.title},
-                    {"name": "Time", "type": "time", "value": datetime.time(hour=1, minute=50)},
-                    {"name": "Actor in charge", "type": "combobox",
-                     "options": ["Nurse", "Doctor", "Participant", "Investigator", "Lab Technician"], "value": "Nurse"},
-                    {"name": "Actors", "type": "list",
-                     "items": [{"name": "Nurse", "value": 0, "type": "spinbox"},
-                               {"name": "Doctor", "value": 0, "type": "spinbox"},
-                               {"name": "Participant", "value": 0, "type": "spinbox"},
-                               {"name": "Investigator", "value": 0, "type": "spinbox"},
-                               {"name": "Lab Technician", "value": 0, "type": "spinbox"}]},
-                    {"name": "Actors", "type": "checklist",
-                     "options": ["Nurse","Doctor","Participant","Investigator","Lab Technician"],
-                     value:[]}
-                ]}  '''

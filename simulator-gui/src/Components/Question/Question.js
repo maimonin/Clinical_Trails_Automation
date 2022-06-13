@@ -47,7 +47,7 @@ export default function Questionnaire(props){
     // const 
     const handle_send = () => // we will get connection details in props so we can send it
     {
-      if(isValidAnswersSet(answers))
+      if(isValidAnswersSet(props["questionnaire"]["questions"],answers))
       {
     var questionnaire_answers =  {
           "type": "add answers",

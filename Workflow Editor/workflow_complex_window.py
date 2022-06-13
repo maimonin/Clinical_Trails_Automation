@@ -121,7 +121,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         return None
 
     def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
+        self.statusBar().showMessage("To load existing press CTRL+N (or COMPLEX->New/Load Existing), To discard press exit.")
 
     # def createNodesDock(self):
     #     self.nodesListWidget = QDMDragListbox()
@@ -139,7 +139,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         return None
 
     def onFileSave(self):
-        if self.complex_callback is None:  # means that this window is not a complex node, procceed as usual
+        if self.complex_callback is None:  # means that this window is not a complex node, proceed as usual
             print("problem: no callback provided for this window!")
             return False
         else:
@@ -154,11 +154,11 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
 
     def OnClose(self):
         self.exit = True
-        self.complex_callback(None)
+        self.complex_callback(self.data)
 
     def closeEvent(self, event):  # used when pressing the X button
         if not self.saved and not self.exit:
-            self.complex_callback(None)
+            self.complex_callback(self.data)
 
 
     def load_data(self):

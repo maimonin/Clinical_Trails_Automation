@@ -1,0 +1,26 @@
+{
+    "nurse": {
+        "Antigen Test": "negative"
+    },
+    "investigator": {
+
+    },
+    "lab": {
+        "Vaccine": ""
+    },
+    "doctor": {
+
+    },
+    "participant 1":
+        {
+            "If you join, you will have injections, blood draws, saliva samples, and nasal swabs of your nose.": [0],
+            "-The most common risks are symptoms are fever, muscle aches and headaches after getting the study vaccine. \n-There are other, less serious risks. We will tell you more about them later in this consent form. ": [0],
+            "Full Name": "Alice Bob",
+            "Antigen Test": "negative",
+            "Vaccine": "",
+            "Choose your symptoms": [0, 1],
+            "Any side effect not mentioned you experienced?": "no"
+        }
+
+
+}

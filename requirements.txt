@@ -4,3 +4,4 @@ qt_material
 QtPy~=2.0.1
 pytest
 pytest-qt
+websockets~=10.2

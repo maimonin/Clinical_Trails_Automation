@@ -1,0 +1,249 @@
+{
+    "id": 2512674562880,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2512674580320,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2512674617472,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 2512674601232,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 2512674617616,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 2512674703200,
+            "title": "Test",
+            "pos_x": -102.0,
+            "pos_y": -212.0,
+            "inputs": [
+                {
+                    "id": 2512674728880,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674728928,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "test node",
+                    "actor in charge": "Nurse",
+                    "color": "Grey"
+                },
+                "tests": [
+                    {
+                        "id": 1,
+                        "name": "antigen",
+                        "instructions": "take test",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2512674747008,
+            "title": "Decision",
+            "pos_x": -220.0,
+            "pos_y": 55.0,
+            "inputs": [
+                {
+                    "id": 2512674729072,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674728976,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 2512674281792,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "decision"
+                },
+                "condition": [
+                    {
+                        "id": 1,
+                        "title": "condition 1",
+                        "type": "test condition",
+                        "satisfy": {
+                            "type": "one_choice",
+                            "value": "0"
+                        },
+                        "test": "antigen"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 2512674281888,
+            "title": "Simple String",
+            "pos_x": 53.0,
+            "pos_y": 147.0,
+            "inputs": [
+                {
+                    "id": 2512674747056,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674301072,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s1",
+                    "color": "Grey"
+                },
+                "text": "continue trail"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2512674281744,
+            "title": "Simple String",
+            "pos_x": -355.0,
+            "pos_y": 259.0,
+            "inputs": [
+                {
+                    "id": 2512674465296,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2512674465344,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "s2",
+                    "color": "Grey"
+                },
+                "text": "you have been found positive and will not continue trail"
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2512674434304,
+            "start": 2512674617472,
+            "end": 2512674728880,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2512674434160,
+            "start": 2512674728928,
+            "end": 2512674729072,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2512674433920,
+            "start": 2512674281792,
+            "end": 2512674747056,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2512674433632,
+            "start": 2512674728976,
+            "end": 2512674465296,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2512674433248,
+            "start": 2512674301072,
+            "end": 2512674617616,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2512674433008,
+            "start": 2512674465344,
+            "end": 2512674617616,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

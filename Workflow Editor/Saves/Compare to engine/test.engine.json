@@ -1,0 +1,80 @@
+{
+    "id": 2867634834448,
+    "nodes": [
+        {
+            "id": 2867634950048,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2867634867888
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2867634717072,
+            "title": "Test",
+            "inputs": [
+                {
+                    "id": 2867635090192
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2867635090240
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "hemoglobin",
+                    "actor in charge": "Lab Technician"
+                },
+                "tests": [
+                    {
+                        "name": "hemoglobin",
+                        "instructions": "take a red tube of blood",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    },
+                    {
+                        "name": "A1C test",
+                        "instructions": "take blue tube",
+                        "staff": [
+                            "Nurse"
+                        ],
+                        "duration": "3"
+                    }
+                ]
+            },
+            "op_code": 2
+        },
+		{
+            "id": 2867634937328,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 2867634867744
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+    ],
+    "edges": [
+        {
+            "id": 2867634992032,
+            "start": 2867634867888,
+            "end": 2867635090192,
+            "type": 0
+        },
+        {
+            "id": 2867634993472,
+            "start": 2867635090240,
+            "end": 2867634867744,
+            "type": 0
+        }
+    ]
+}

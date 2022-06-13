@@ -79,7 +79,7 @@
                         "questionnaireNumber": 1,
                         "questionNumber": 1,
                         "acceptedAnswers": [
-                            1
+                            0
                         ]
                     },
                     {
@@ -88,7 +88,7 @@
                         "questionnaireNumber": 1,
                         "questionNumber": 2,
                         "acceptedAnswers": [
-                            1
+                            0
                         ]
                     }
                 ]

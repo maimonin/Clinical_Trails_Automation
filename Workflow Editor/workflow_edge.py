@@ -1,3 +1,4 @@
+import copy
 from collections import OrderedDict
 from nodeeditor.node_edge import Edge, EDGE_TYPE_DIRECT
 from nodeeditor.utils import dumpException
@@ -9,10 +10,9 @@ RELATIVE = 1
 
 
 class WorkflowEdge(Edge):
-    attributes_dock_callback = None
 
     def __init__(self, scene: 'Scene', start_socket: 'Socket' = None, end_socket: 'Socket' = None,
-                 edge_type=EDGE_TYPE_DIRECT, text="No Title", attributes_dock_callback=None):
+                 edge_type=EDGE_TYPE_DIRECT, text="", attributes_dock_callback=None):
         self._text = text
         super().__init__(scene, start_socket, end_socket, edge_type)
         # data for engine
@@ -28,7 +28,6 @@ class WorkflowEdge(Edge):
             }}
         self.text = text
         self.type = NORMAL
-        # self.attributes_dock_callback = attributes_dock_callback
 
     @property
     def text(self):
@@ -45,8 +44,7 @@ class WorkflowEdge(Edge):
         self._text = value
         self.grEdge.text = self._text
 
-    def set_attributes_dock_callback(self, callback):
-        self.attributes_dock_callback = callback
+
 
     def getGraphicsEdgeClass(self):
         """Returns the class representing Graphics Edge"""
@@ -56,9 +54,9 @@ class WorkflowEdge(Edge):
         self.grEdge.text = self.text
         try:
             if new_state:
-                self.attributes_dock_callback(self.get_tree_build())
+                self.get_dock_callback()(self.get_tree_build())
             else:
-                self.attributes_dock_callback(None)
+                self.scene.get_dock_callback()(None)
         except Exception as e:
             dumpException(e)
 
@@ -86,7 +84,7 @@ class WorkflowEdge(Edge):
 
     def update_label(self, input_title, input_min, input_max):
         if input_title == "":
-            self.text = "No Title"
+            self.text = ""
             if input_min != "" and input_min != "00:00:00" and input_max != "" and input_max != "00:00:00":
                 self.text = input_min + " - " + input_max
         else:
@@ -116,6 +114,9 @@ class WorkflowEdge(Edge):
         result = QTime.fromString(dict_to_string, "hh:mm:ss")
         return result
 
+    def get_dock_callback(self):
+        return self.scene.getDockCallback()
+
     def serialize(self, engine_save=False) -> OrderedDict:
         if self.type == NORMAL:
             result = OrderedDict([
@@ -131,24 +132,25 @@ class WorkflowEdge(Edge):
                 ('type', self.type),
                 ('start', self.start_socket.id if self.start_socket is not None else None),
                 ('end', self.end_socket.id if self.end_socket is not None else None),
-                ('content', self.data['content']['edge_details']),
+                ('content', copy.deepcopy(self.data['content']['edge_details'])),
                 ('edge_type', self.edge_type)
             ])
         if engine_save:
-            del result["edge_type"]
-            if self.type == NORMAL:
-                del result["content"]
-            elif self.type == RELATIVE:
-                del result["content"]["title"]
-
-                result["content"]["min"]["hours"] = int(result["content"]["min"]["hours"])
-                result["content"]["min"]["minutes"] = int(result["content"]["min"]["minutes"])
-                result["content"]["min"]["seconds"] = int(result["content"]["min"]["seconds"])
-
-                result["content"]["max"]["hours"] = int(result["content"]["max"]["hours"])
-                result["content"]["max"]["minutes"] = int(result["content"]["max"]["minutes"])
-                result["content"]["max"]["seconds"] = int(result["content"]["max"]["seconds"])
+            result = self.serialize_to_engine(result)
         return result
+
+    def serialize_to_engine(self, res):
+        del res["edge_type"]
+        if res["type"] == RELATIVE:
+            del res["content"]["title"]
+            res["content"]["min"]["hours"] = int(res["content"]["min"]["hours"])
+            res["content"]["min"]["seconds"] = int(res["content"]["min"]["seconds"])
+            res["content"]["min"]["minutes"] = int(res["content"]["min"]["minutes"])
+
+            res["content"]["max"]["hours"] = int(res["content"]["max"]["hours"])
+            res["content"]["max"]["seconds"] = int(res["content"]["max"]["seconds"])
+            res["content"]["max"]["minutes"] = int(res["content"]["max"]["minutes"])
+        return res
 
     def deserialize(self, data: dict, hashmap: dict = {}, restore_id: bool = True, *args, **kwargs) -> bool:
         if restore_id: self.id = data['id']
@@ -156,10 +158,11 @@ class WorkflowEdge(Edge):
         self.end_socket = hashmap[data['end']]
         self.type = data['type']
         self.edge_type = data["edge_type"]
-        self.data['content']['edge_details'] = data['content']
-        min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
-                     data['content']["min"]["seconds"]
-        max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
-                     data['content']["max"]["seconds"]
-        self.update_label(data['content']["title"], min_string, max_string)
+        if self.type == RELATIVE:
+            self.data['content']['edge_details'] = data['content']
+            min_string = data['content']["min"]["hours"] + ":" + data['content']["min"]["minutes"] + ":" + \
+                         data['content']["min"]["seconds"]
+            max_string = data['content']["max"]["hours"] + ":" + data['content']["max"]["minutes"] + ":" + \
+                         data['content']["max"]["seconds"]
+            self.update_label(data['content']["title"], min_string, max_string)
         self.doSelect()  # reload the data when opening a new file
