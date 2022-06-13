@@ -75,7 +75,8 @@ def get_matching_edge_from_second_flow_according_to_start_and_end_sockets(edges,
 
 def equals_edges(edge_in_first, edge_in_second):
     non_unified_keys = ["start", "end", "id"]
-    values_in_first_object_without_fields_equals_second(edge_in_first, edge_in_second, non_unified_keys)
+    return values_in_first_object_without_fields_equals_second(edge_in_first, edge_in_second, non_unified_keys) and \
+           values_in_first_object_without_fields_equals_second(edge_in_second, edge_in_first, non_unified_keys)
 
 
 def edges_in_first_exists_in_second(first_edges, second_edges, sockets_ids_pairs):
@@ -97,8 +98,39 @@ def equals_edges_in_both_flows_according_to_ids(flow1, flow2, sockets_ids_pairs)
         edges2, edges1, sockets_ids_pairs)
 
 
+def get_matching_node(node_to_be_matched, second_nodes):
+    complex_node_op_code = 5
+    stripped_to_be_matched_node = copy.deepcopy(node_to_be_matched)
+    stripped_to_be_matched_node.pop("id")
+    stripped_to_be_matched_node.pop("inputs")
+    stripped_to_be_matched_node.pop("outputs")
+    for node in second_nodes:
+        stripped_node = copy.deepcopy(node)
+        stripped_node.pop("id")
+        stripped_node.pop("inputs")
+        stripped_node.pop("outputs")
+        if stripped_node["op_code"] == stripped_to_be_matched_node["op_code"] and stripped_node[
+            "op_code"] != complex_node_op_code:
+            if stripped_to_be_matched_node == stripped_node:
+                return node
+        elif node["op_code"] == complex_node_op_code:
+            stripped_node["content"].pop("flow")
+            stripped_to_be_matched_node["content"].pop("flow")
+
+            if stripped_node == stripped_to_be_matched_node and \
+                    equals_flows(node_to_be_matched["content"]["flow"], node["content"]["flow"]):
+                return node
+    raise NonSharedElementExists
+
+
 def get_pairs_of_similar_sockets_ids_in_flows(flow1, flow2):
-    return []
+    output = []
+    first_nodes, second_nodes = flow1["nodes"], flow2["nodes"]
+    for node_in_first in first_nodes:
+        node_in_second = get_matching_node(node_in_first, second_nodes)
+        output.extend(zip(node_in_first["inputs"], node_in_second["inputs"]))
+        output.extend(zip(node_in_first["outputs"], node_in_second["outputs"]))
+    return output
 
 
 def values_in_first_object_without_fields_equals_second(first_flow, second_flow, exclude_fields=[]):
