@@ -734,6 +734,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
         self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_editing_window(flow_json))
         self.window.show()
 
+        self.window.onFileNew()
     # def doSelect(self, new_state: bool = True):
     #
     #     if self.double_click and not self.window.isVisible():
@@ -754,7 +755,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     def callback_from_editing_window(self, content):
         try:
             self.window.close()
-            if content is None:
+            if self.content_is_empty(content):
                 self.remove()
             else:
                 self.data["type"] = "complex"
@@ -771,6 +772,7 @@ class WorkflowNode_ComplexNode(WorkflowNode):
                                                       data=self.data["flow"], name="Subflow")
                 # self.window.load_data()
                 self.window.show()
+                self.window.onFileNew()
             except Exception as e:
                 dumpException(e)
 
@@ -801,3 +803,8 @@ class WorkflowNode_ComplexNode(WorkflowNode):
 
         except Exception as e:
             dumpException(e)
+    def content_is_empty(self,content):
+        if content is None:
+            return True
+
+        return False

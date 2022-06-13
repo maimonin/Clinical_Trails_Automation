@@ -3,7 +3,7 @@ import copy
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QIntValidator, QIcon
 from PyQt5.QtWidgets import QDockWidget, QPushButton, QFormLayout, QLabel, QLineEdit, QComboBox, QSpinBox, QTimeEdit, \
-    QCheckBox, QRadioButton
+    QCheckBox, QRadioButton, QWidget, QHBoxLayout, QButtonGroup
 from nodeeditor.utils import dumpException
 from workflow_conf import OP_NODE_Test, OP_NODE_QUESTIONNAIRE
 
@@ -1009,12 +1009,16 @@ class DecisionTree:
     def build_oneChoice_questions(self, question, data, parent):
         answers_item = QtWidgets.QTreeWidgetItem(parent)
         answers_item.setText(0, "Accepted Answers:")
+
+        grouped_widget = QWidget(self.dock)
+        grouped_buttons = QButtonGroup(grouped_widget)
         for idx, answer in enumerate(question["answers"]):
             if answer != None:
                 answer_item = QtWidgets.QTreeWidgetItem(answers_item)
                 answer_widget = QRadioButton()
                 answer_widget.toggled.connect(
                     lambda checked, chosen=idx: self.update_data(checked, chosen, data))
+                grouped_buttons.addButton(answer_widget)
                 self.dock.setItemWidget(answer_item, 0, answer_widget)
                 # loaded data
                 if idx in data["acceptedAnswers"]:
