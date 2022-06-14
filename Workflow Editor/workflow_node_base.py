@@ -1,3 +1,5 @@
+import copy
+
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QColor, QPen, QBrush, QPainterPath, QPixmap
 from PyQt5.QtWidgets import *
@@ -532,12 +534,11 @@ class WorkflowNode(Node):
     def callback_from_window(self, content):
         pass
 
-
     def serialize(self, engine_save=False):
         try:
             res = super().serialize()
             res[
-                'content'] = self.data if self.data is not None else ""
+                'content'] = copy.deepcopy(self.data) if self.data is not None else ""
             res['op_code'] = self.__class__.op_code
             if res['op_code'] not in [OP_NODE_START, OP_NODE_FINISH]:
                 res['title'] = self.type
@@ -593,12 +594,13 @@ class WorkflowNode(Node):
             del res["content"]["node_details"]["color"]
             for question in res["content"]["questions"]:
                 del question["id"]
-                # remove null answers from questionnaires
-                answers = question["options"]
-                question["options"] = []
-                for opt in answers:
-                    if opt is not None:
-                        question["options"].append(opt)
+                if question["type"] != "open":
+                    # remove null answers from questionnaires
+                    answers = question["options"]
+                    question["options"] = []
+                    for opt in answers:
+                        if opt is not None:
+                            question["options"].append(opt)
 
         elif res["op_code"] == OP_NODE_Test:
             del res["content"]["node_details"]["color"]
@@ -609,13 +611,14 @@ class WorkflowNode(Node):
             del res["content"]["node_details"]["color"]
 
         elif res["op_code"] == OP_NODE_COMPLEX:
+            del res["content"]["node_details"]
             del res["content"]["flow"]["scene_width"]
             del res["content"]["flow"]["scene_height"]
             nodes, edges = [], []
             for node in res["content"]["flow"]["nodes"]:
                 nodes.append(self.serialize_to_engine(node))
             for edge in res["content"]["flow"]["edges"]:
-                edges.append(WorkflowEdge.serialize_to_engine(WorkflowEdge,edge))
+                edges.append(WorkflowEdge.serialize_to_engine(WorkflowEdge, edge))
             res["content"]["flow"]["nodes"] = nodes
             res["content"]["flow"]["edges"] = edges
 
@@ -637,7 +640,6 @@ class WorkflowNode(Node):
                 self.title = data["content"]["node_details"]["title"]
                 self.color = data["content"]['node_details']['color']
                 self.QNum = data["content"]["questionnaire_number"]
-            self.get_dock_callback()(self.get_tree_build())
 
         except Exception as e:
             dumpException(e)
@@ -665,4 +667,3 @@ class WorkflowNode(Node):
 
     def get_node_details(self):
         pass
-

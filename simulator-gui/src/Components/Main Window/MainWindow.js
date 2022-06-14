@@ -17,7 +17,8 @@ import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
 import ReactFileReader from 'react-file-reader';
   
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme();
 
@@ -27,13 +28,19 @@ export default function MainWindow() {
   const [screensNumber,setScreensNumber] = useState(0)
   const [flow,setFlow] = useState({})
 const handle_send_flow = ()=>{
-  const ws = new W3CWebSocket('ws://127.0.0.1:7890');
-  ws.onopen = ()=>{
-  const newFlow=flow
-  newFlow["type"] = "add workflow"
-  ws.send(JSON.stringify(newFlow))
-  console.log("MainWindow::handle_send_flow ~ sent flow to server")
-  setFlowSent(true)
+  if (Object.keys(flow).length !=0){
+    const ws = new W3CWebSocket('ws://127.0.0.1:7890');
+    ws.onopen = ()=>{
+    const newFlow=flow
+    newFlow["type"] = "add workflow"
+    ws.send(JSON.stringify(newFlow))
+    console.log("MainWindow::handle_send_flow ~ sent flow to server")
+    setFlowSent(true)
+    }
+  }
+  else{
+    console.log("Main::handle_send_toast")
+    toast("Please Select a trial file");
   }
 }
   const addUser = ()=>
@@ -76,11 +83,10 @@ const  handleFile = (file) => {
 
         <Container sx={{ py: 8 }} maxWidth="xl">
         {flowSent?
-        <IconButton color="primary" aria-label="add" onClick={addUser}>
-        <AddIcon/>
-        </IconButton>:<div><ReactFileReader handleFiles={handleFile} fileTypes={[".json"]} >
+        <Button variant="outlined" onClick={addUser} sx={{marginBottom:"60px"}} >Add User</Button>
+        :<div><ReactFileReader handleFiles={handleFile} fileTypes={[".json"]} >
   <button className='btn'>Upload</button>
-</ReactFileReader><Button onClick={handle_send_flow}>Send</Button></div> }
+</ReactFileReader><Button onClick={handle_send_flow}>Start Trial</Button></div> }
           <Grid container spacing={4}>
             {
               flowSent?
@@ -93,7 +99,16 @@ const  handleFile = (file) => {
           }
           
           </Grid>
-          
+          {/* <ToastContainer
+  position="top-right"
+  autoClose={1000}
+  hideProgressBar={true}
+  newestOnTop={true}
+  closeOnClick
+  
+  rtl={false}
+  enableMultiContainer
+/> */}
         </Container>
       </main>
       {/* Footer */}

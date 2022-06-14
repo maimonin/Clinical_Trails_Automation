@@ -1,6 +1,3 @@
-23:12:20 created workflow
-23:12:20 nurse registered
-23:12:20 investigator registered
-23:12:20 lab registered
-23:12:20 doctor registered
-23:12:20 participant 1 registered
+16:29:20 created workflow
+16:29:22 Kellan Marik registered
+16:29:24 Cristina Krystal registered

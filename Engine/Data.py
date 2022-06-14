@@ -73,7 +73,7 @@ def parse_trait_condition(participant_id, satisfy, trait):
         values = satisfy['value']
         return True if values['min'] <= participant.get_traits()[trait] <= values['max'] else False
     else:
-        return True if participant.get_traits()[trait] == satisfy['value'] else False
+        return True if participant.get_traits()['gender'] == satisfy['value'] else False
 
 
 async def parse_test_condition(patient, satisfy, test_name):

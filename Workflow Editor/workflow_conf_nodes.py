@@ -463,7 +463,7 @@ class WorkflowNode_Decision(WorkflowNode):
 class WorkflowNode_SimpleString(WorkflowNode):
     op_icon = "assets/icons/notificationC.png"
     op_code = OP_NODE_STRING
-    op_title = "Simple String"
+    op_title = "Notification"
     content_label_objname = "workflow_node_string"
 
     def __init__(self, scene):
@@ -710,37 +710,101 @@ class WorkflowNode_ComplexNode(WorkflowNode):
     op_title = "Sub Workflow"
     content_label_objname = "workflow_node_complex"
     window = None
+    double_click = False
 
+    def __init__(self,scene):
+        super().__init__(scene)
+        self.color = "Grey"
+        # @data to send to engine.
+        self.data = {
+            "node_details": {
+                "title": "New Sub-Workflow Node",
+                "color": self.color
+            },
+            "flow": None
+        }
     def initInnerClasses(self):
         # self.content = WorkflowContent_with_button(self, )
         # self.content.connect_callback(self.edit_nodes_details)
         self.grNode = WorkflowGraphicWithIcon(self)
 
-    def save_data_when_changed(self, text):
-        self.data = text
 
     def drop_action(self):
         from workflow_complex_window import Workflow_Complex_Window
-        self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
+        self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_editing_window(flow_json))
         self.window.show()
 
-    def callback_from_window(self, content):
+        self.window.onFileNew()
+    # def doSelect(self, new_state: bool = True):
+    #
+    #     if self.double_click and not self.window.isVisible():
+    #         self.double_click = False
+    #
+    #         from workflow_complex_window import Workflow_Complex_Window
+    #         self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json))
+    #         self.window.data = self.data["flow"]
+    #         self.window.show()
+    #
+    #     else:
+    #         self.double_click = True
+    def doSelect(self, new_state: bool = True):
+        if new_state:
+            self.get_dock_callback()(self.get_tree_build())
+        else:
+            self.get_dock_callback()(None)
+    def callback_from_editing_window(self, content):
         try:
             self.window.close()
-            if content is None:
+            if self.content_is_empty(content):
                 self.remove()
             else:
-                self.data = {"type": "complex", "flow": content}
+                self.data["type"] = "complex"
+                self.data["flow"] =  content
             self.window = None
         except Exception as e:
             dumpException(e)
 
     def edit_nodes_details(self):
+        if self.window is None:
+            try:
+                from workflow_complex_window import Workflow_Complex_Window
+                self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_editing_window(flow_json),
+                                                      data=self.data["flow"], name="Subflow")
+                # self.window.load_data()
+                self.window.show()
+                self.window.onFileNew()
+            except Exception as e:
+                dumpException(e)
+
+    def get_tree_build(self):
+        to_send = {
+            "Node Details": [
+                {"name": "Title", "type": "text", "value": self.data["node_details"]["title"]},
+                {"name": "Color", "type": "combobox icons", "value": self.color,
+                 "options": ["Grey", "Yellow", "Orange", "Red", "Pink", "Green", "Blue"]}
+            ],
+            "Flow": [{"name": "Edit", "type": "button", "value": self.edit_nodes_details}],
+            "callback": self.callback_from_window
+        }
+        return to_send
+    def callback_from_window(self, content):
         try:
-            from workflow_complex_window import Workflow_Complex_Window
-            self.window = Workflow_Complex_Window(lambda flow_json: self.callback_from_window(flow_json),
-                                                  data=self.data["flow"], name="Subflow")
-            # self.window.load_data()
-            self.window.show()
+            if content is None:
+                self.remove()  # remove node
+            else:
+                for field in content["Node Details"]:
+                    self.data["node_details"][field["name"].lower()] = field["value"]
+                    if field["name"].lower() == "title":
+                        self.title = field["value"]
+                    if field["name"].lower() == "color":
+                        self.grNode.change_background(field["value"].lower())
+                        self.color = field["value"]
+
+
         except Exception as e:
             dumpException(e)
+    def content_is_empty(self,content):
+        if content is None:
+            return True
+
+        return False

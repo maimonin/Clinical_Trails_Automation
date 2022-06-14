@@ -7,7 +7,7 @@ import Data
 from Data import add_test_form, parse_test_condition
 from Database import Database
 from EdgeGetter import getEdges
-from Engine.Users import User
+from Users import User
 from Form import formToJSON
 from NotificationHandler import send_notification_by_id, send_questionnaire
 from user_lists import get_role, take_test
@@ -264,6 +264,7 @@ class StringNode(Node):
                     continue
                 r = get_role(role)
                 if r is not None:
+                    print(self.text)
                     await send_notification_by_id(r.id, {'type': 'notification', 'text': self.text})
 
     def has_actors(self):
@@ -303,6 +304,8 @@ class TestNode(Node):
             for test in self.tests:
                 add_test_form(test.name, participant.id)
                 await take_test(participant.id, test, self.in_charge)
+            for test in self.tests:
+                await Data.get_test_result(participant.id,test.name)
             for edge in self.edges:
                 edge.attach(participant)
             Database.releasePosition(participant.id, self.id, "node")
