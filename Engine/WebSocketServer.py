@@ -20,7 +20,6 @@ async def get_notifications(websocket, path):
     try:
         async for message in websocket:
             data_dict = json.loads(message)
-            print(data_dict)
             if data_dict['type'] == 'register':
                 NotificationHandler.connections[data_dict['id']] = websocket
                 asyncio.create_task(register_user(data_dict))
@@ -53,7 +52,6 @@ def Main():
     Database.init_tables()
     NotificationHandler.init()
     # Start the server
-    print('listening in url: ','ws://127.0.0.1:7890')
     start_server = websockets.serve(get_notifications, "localhost", PORT)
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()

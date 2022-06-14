@@ -64,7 +64,7 @@
                     {
                         "title": "test condition 1",
                         "type": "test condition",
-                        "test": "hemoglobin",
+                        "trait": "hemoglobin",
                         "satisfy": {
                             "type": "range",
                             "value": {

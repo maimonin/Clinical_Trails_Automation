@@ -64,7 +64,7 @@
                     {
                         "title": "test condition 1",
                         "type": "test condition",
-                        "test": "antigen",
+                        "trait": "antigen",
                         "satisfy": {
                             "type": "one_choice",
                             "value": "positive"

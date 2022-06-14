@@ -11,8 +11,6 @@ def init():
 
 
 async def send_notification_by_id(user_id, message):
-    print(connections)
-    print(user_id, message)
     if connections[user_id] is not None:
         await connections[user_id].send(json.dumps(message))
 
