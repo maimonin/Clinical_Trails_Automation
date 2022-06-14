@@ -195,9 +195,7 @@ def new_workflow(data_dict):
     outputs = {}
     inputs = {}
     first_node = None
-    print(data_dict['nodes'])
     for node in data_dict['nodes']:
-        print(node['id'])
         # noinspection PyTypeChecker
         if not valid(node['op_code']) or not valid(node['id']):
             continue
