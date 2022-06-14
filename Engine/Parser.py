@@ -1,10 +1,6 @@
 import asyncio
 import datetime
-import json
-import socket
-from _thread import *
 import threading
-import Data
 import Nodes
 from Database import Database
 from EdgeGetter import edges, buildEdge
@@ -33,6 +29,16 @@ def get_data(s):
         curr = s.recv(1)
         curr = curr.decode()
     return data
+
+
+def valid(s):
+    if s is None:
+        return False
+    if type(s) is str and s == "":
+        return False
+    if type(s) is int and s < 0:
+        return False
+    return True
 
 
 def parse_start_finish(node_dict):
@@ -85,14 +91,14 @@ def parse_Decision(node_dict):
         elif condition['type'] == "test condition":
             if condition['satisfy']['type'] == "one_choice":
                 Database.addTestCond(
-                    node.id, condition['title'], condition['test'],
+                    node.id, condition['title'], condition['trait'],
                     condition['satisfy']['type'],
                     condition['satisfy']['value'],
                     None, None
                 )
             else:
                 Database.addTestCond(
-                    node.id, condition['title'], condition['test'],
+                    node.id, condition['title'], condition['trait'],
                     condition['satisfy']['type'],
                     None, condition['satisfy']['value']['min'],
                     condition['satisfy']['value']['max']
@@ -145,6 +151,10 @@ def add_times(time_node, other_node):
 
 
 async def register_user(user_dict):
+    if not valid(user_dict['role']) or not valid(user_dict['name']) or not valid(user_dict['sex']) \
+            or not valid(user_dict['age'] or not valid(user_dict['id'])):
+        print("invalid attributes, try again.")
+        return
     log(datetime.datetime.now().strftime("%H:%M:%S") + " " + user_dict['name'] + " registered")
     user = user_lists.add_user(user_dict['role'], user_dict['sex'], user_dict['age'], user_dict['id'])
     if user.role == "participant":
@@ -185,7 +195,12 @@ def new_workflow(data_dict):
     outputs = {}
     inputs = {}
     first_node = None
+    print(data_dict['nodes'])
     for node in data_dict['nodes']:
+        print(node['id'])
+        # noinspection PyTypeChecker
+        if not valid(node['op_code']) or not valid(node['id']):
+            continue
         if node['op_code'] == OP_NODE_START:
             nodes[node['id']] = parse_start_finish(node)
             first_node = node['id']
@@ -233,9 +248,12 @@ def new_workflow(data_dict):
 
 
 def load_workflow(workflow_id):
+    if not valid(workflow_id):
+        return
     Database.getWorkflow(workflow_id)
 
 
+# noinspection PyGlobalUndefined
 def parser_init():
     global workflows
     global print_lock

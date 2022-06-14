@@ -33,7 +33,7 @@
                     {
                         "title": "trait condition 1",
                         "type": "trait condition    ",
-                        "test": "age",
+                        "trait": "age",
                         "satisfy": {
                             "type": "range",
                             "value": {

@@ -32,8 +32,8 @@
                 "condition": [
                     {
                         "title": "trait condition 1",
-                        "type": "trait condition    ",
-                        "test": "gender",
+                        "type": "trait condition",
+                        "trait": "gender",
                         "satisfy": {
                             "type": "one_choice",
                             "value": "male"

@@ -1,3 +1,9 @@
-16:29:20 created workflow
-16:29:22 Kellan Marik registered
-16:29:24 Cristina Krystal registered
+15:37:23 created workflow
+15:37:23 nurse registered
+15:37:23 investigator registered
+15:37:23 lab registered
+15:37:23 doctor registered
+15:37:23 participant 1 registered
+15:37:23 participant with id 1 taking a test
+15:37:26 participant with id 1 taking a test
+15:37:29 getting results of test hemoglobin of participant 1

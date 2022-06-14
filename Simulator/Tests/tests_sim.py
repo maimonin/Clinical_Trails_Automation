@@ -38,6 +38,7 @@ async def actor_simulation(user, s, answers):
                     {'type': 'add answers', 'questionnaire_number': data_json['questionnaire_number'], 'id': user['id'],
                      "answers": ans}))
             elif data_json['type'] == 'test data entry':
+                print(answers[data_json['test']])
                 val = answers[data_json['test']['name']]
                 await s.send(json.dumps(
                     {'type': 'add results', 'id': data_json['patient'], "test": data_json['test']['name'],
