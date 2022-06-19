@@ -1,0 +1,149 @@
+{
+    "id": 2215627456080,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2215627408048,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2215627920336,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 2215627945056,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 2215627920480,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 2215628099936,
+            "title": "Notification",
+            "pos_x": -448.0,
+            "pos_y": -30.0,
+            "inputs": [
+                {
+                    "id": 2215628121520,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2215628121568,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Red Light",
+                    "color": "Red"
+                },
+                "text": "Stop : Red light."
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2215627676352,
+            "title": "Notification",
+            "pos_x": 40.0,
+            "pos_y": -201.0,
+            "inputs": [
+                {
+                    "id": 2215627676208,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2215627676256,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Green Light",
+                    "color": "Green"
+                },
+                "text": "Go: Green light."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2215627675872,
+            "start": 2215627920336,
+            "end": 2215628121520,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 2215628139584,
+            "type": 1,
+            "start": 2215628121568,
+            "end": 2215627676208,
+            "content": {
+                "title": "",
+                "min": {
+                    "hours": "00",
+                    "minutes": "00",
+                    "seconds": "03"
+                },
+                "max": {
+                    "hours": "00",
+                    "minutes": "00",
+                    "seconds": "06"
+                }
+            },
+            "edge_type": 2
+        },
+        {
+            "id": 2215627677408,
+            "start": 2215627676256,
+            "end": 2215627920480,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

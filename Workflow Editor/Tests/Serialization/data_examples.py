@@ -131,7 +131,6 @@ engine_data_examples = {
                     "text": "changed notification value"
                 }
             },
-
         },
         "data entry": {
             "empty": {
@@ -1736,6 +1735,113 @@ engine_data_examples = {
             "id": 1326978218688,
             "start": 1327000740384,
             "end": 1327000566752,
+            "type": 0
+        }
+    ]
+},
+        "relative edge": {
+    "id": 2215627456080,
+    "nodes": [
+        {
+            "id": 2215627408048,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2215627920336
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2215627945056,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 2215627920480
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 2215628099936,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 2215628121520
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2215628121568
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Red Light"
+                },
+                "text": "Stop : Red light."
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2215627676352,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 2215627676208
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2215627676256
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Green Light"
+                },
+                "text": "Go: Green light."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 2215627675872,
+            "start": 2215627920336,
+            "end": 2215628121520,
+            "type": 0
+        },
+        {
+            "id": 2215628139584,
+            "type": 1,
+            "start": 2215628121568,
+            "end": 2215627676208,
+            "content": {
+                "min": {
+                    "hours": 0,
+                    "minutes": 0,
+                    "seconds": 3
+                },
+                "max": {
+                    "hours": 0,
+                    "minutes": 0,
+                    "seconds": 6
+                }
+            }
+        },
+        {
+            "id": 2215627677408,
+            "start": 2215627676256,
+            "end": 2215627920480,
             "type": 0
         }
     ]

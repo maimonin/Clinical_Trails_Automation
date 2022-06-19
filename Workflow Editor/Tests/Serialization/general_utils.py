@@ -157,6 +157,5 @@ def equals_flows(flow1, flow2):
     except (NonSharedElementExists, KeyError) as e:
         raise e
 
-
 class NonSharedElementExists(Exception):
     pass
