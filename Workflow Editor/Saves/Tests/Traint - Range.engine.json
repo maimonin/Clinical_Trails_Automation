@@ -1,0 +1,144 @@
+{
+    "id": 1722751596480,
+    "nodes": [
+        {
+            "id": 1722751597872,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722751598256
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 1722751598208,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 1722751598400
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        },
+        {
+            "id": 1722751454944,
+            "title": "Decision",
+            "inputs": [
+                {
+                    "id": 1722776604240
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751454896
+                },
+                {
+                    "id": 1722785005680
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Age Split"
+                },
+                "condition": [
+                    {
+                        "title": "condition 1",
+                        "type": "trait condition",
+                        "satisfy": {
+                            "type": "range",
+                            "value": {
+                                "min": 21,
+                                "max": 30
+                            }
+                        },
+                        "trait": "Age"
+                    }
+                ]
+            },
+            "op_code": 3
+        },
+        {
+            "id": 1722785243968,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722751597104
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751596576
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Nurse"
+                    ],
+                    "title": "Young Adults"
+                },
+                "text": "Young Adult has found"
+            },
+            "op_code": 4
+        },
+        {
+            "id": 1722751596672,
+            "title": "Notification",
+            "inputs": [
+                {
+                    "id": 1722751597344
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722751596912
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "actors": [
+                        "Participant"
+                    ],
+                    "title": "Kids and adults"
+                },
+                "text": "Stop trial."
+            },
+            "op_code": 4
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722785244064,
+            "start": 1722751598256,
+            "end": 1722776604240,
+            "type": 0
+        },
+        {
+            "id": 1722751597488,
+            "start": 1722785005680,
+            "end": 1722751597104,
+            "type": 0
+        },
+        {
+            "id": 1722751595808,
+            "start": 1722751596576,
+            "end": 1722751598400,
+            "type": 0
+        },
+        {
+            "id": 1722751596336,
+            "start": 1722751454896,
+            "end": 1722751597344,
+            "type": 0
+        },
+        {
+            "id": 1722751595856,
+            "start": 1722751596912,
+            "end": 1722751598400,
+            "type": 0
+        }
+    ]
+}

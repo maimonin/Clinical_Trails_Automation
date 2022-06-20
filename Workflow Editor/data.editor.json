@@ -1,0 +1,229 @@
+{
+    "id": 2793750566176,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 2793750575424,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2793759369824,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 2793750477552,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 2793759369968,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 2793759254560,
+            "title": "New Questionnaire Node",
+            "pos_x": -401.0,
+            "pos_y": -98.0,
+            "inputs": [
+                {
+                    "id": 2793759231040,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2793759231088,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "time": "00:00:00",
+                        "title": "New Questionnaire Node",
+                        "color": "Grey"
+                    },
+                    "questions": [],
+                    "questionnaire_number": "1"
+                }
+            },
+            "op_code": 1
+        },
+        {
+            "id": 2793759254608,
+            "title": "New Test Node",
+            "pos_x": -332.0,
+            "pos_y": 132.0,
+            "inputs": [
+                {
+                    "id": 2793759160736,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2793759160688,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "time": "00:00:00",
+                        "title": "New Test Node",
+                        "actor in charge": "Nurse",
+                        "color": "Grey"
+                    },
+                    "tests": []
+                }
+            },
+            "op_code": 2
+        },
+        {
+            "id": 2793759209744,
+            "title": "New Notification Node",
+            "pos_x": 335.0,
+            "pos_y": 301.0,
+            "inputs": [
+                {
+                    "id": 2793759176112,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2793759176064,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "actors": [],
+                        "title": "New Notification Node",
+                        "color": "Grey"
+                    },
+                    "text": ""
+                }
+            },
+            "op_code": 4
+        },
+        {
+            "id": 2793759160304,
+            "title": "New Decision Node",
+            "pos_x": 96.0,
+            "pos_y": 172.0,
+            "inputs": [
+                {
+                    "id": 2793759160400,
+                    "index": 0,
+                    "multi_edges": false,
+                    "position": 7,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 2793759160256,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 8,
+                    "socket_type": 4
+                },
+                {
+                    "id": 2793759160352,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": {
+                "content": {
+                    "node_details": {
+                        "time": "00:00:00",
+                        "title": "New Decision Node"
+                    },
+                    "condition": []
+                }
+            },
+            "op_code": 3
+        }
+    ],
+    "edges": [
+        {
+            "id": 2793759383456,
+            "type": 2,
+            "start": 2793759160688,
+            "end": 2793759369968,
+            "content": {
+                "title": "",
+                "type": 0,
+                "min": "",
+                "max": ""
+            }
+        },
+        {
+            "id": 2793759160592,
+            "type": 2,
+            "start": 2793759160352,
+            "end": 2793759176112,
+            "content": {
+                "title": "",
+                "type": 0,
+                "min": "",
+                "max": ""
+            }
+        },
+        {
+            "id": 2793759425248,
+            "type": 2,
+            "start": 2793759160256,
+            "end": 2793759160736,
+            "content": {
+                "title": "",
+                "type": 0,
+                "min": "",
+                "max": ""
+            }
+        }
+    ]
+}

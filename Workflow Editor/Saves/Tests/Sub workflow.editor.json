@@ -1,0 +1,189 @@
+{
+    "id": 1722753094848,
+    "scene_width": 64000,
+    "scene_height": 64000,
+    "nodes": [
+        {
+            "id": 1722753292416,
+            "title": "New Start Node",
+            "pos_x": -350.0,
+            "pos_y": -250.0,
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 1722753292896,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 2
+                }
+            ],
+            "content": "",
+            "op_code": 0
+        },
+        {
+            "id": 1722753292848,
+            "title": "New Finish Node",
+            "pos_x": 200.0,
+            "pos_y": 0.0,
+            "inputs": [
+                {
+                    "id": 1722753293040,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 2
+                }
+            ],
+            "outputs": [],
+            "content": "",
+            "op_code": 6
+        },
+        {
+            "id": 1722753292992,
+            "title": "Sub Workflow",
+            "pos_x": -217.0,
+            "pos_y": -134.0,
+            "inputs": [
+                {
+                    "id": 1722753293376,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 2,
+                    "socket_type": 1
+                }
+            ],
+            "outputs": [
+                {
+                    "id": 1722753293424,
+                    "index": 0,
+                    "multi_edges": true,
+                    "position": 5,
+                    "socket_type": 1
+                }
+            ],
+            "content": {
+                "node_details": {
+                    "title": "Sub-Workflow",
+                    "color": "Grey"
+                },
+                "flow": {
+                    "id": 1722753094560,
+                    "scene_width": 64000,
+                    "scene_height": 64000,
+                    "nodes": [
+                        {
+                            "id": 1722753094128,
+                            "title": "New Start Node",
+                            "pos_x": -350.0,
+                            "pos_y": -250.0,
+                            "inputs": [],
+                            "outputs": [
+                                {
+                                    "id": 1722753094800,
+                                    "index": 0,
+                                    "multi_edges": true,
+                                    "position": 5,
+                                    "socket_type": 2
+                                }
+                            ],
+                            "content": "",
+                            "op_code": 0
+                        },
+                        {
+                            "id": 1722753093888,
+                            "title": "New Finish Node",
+                            "pos_x": 200.0,
+                            "pos_y": 0.0,
+                            "inputs": [
+                                {
+                                    "id": 1722752824992,
+                                    "index": 0,
+                                    "multi_edges": true,
+                                    "position": 2,
+                                    "socket_type": 2
+                                }
+                            ],
+                            "outputs": [],
+                            "content": "",
+                            "op_code": 6
+                        },
+                        {
+                            "id": 1722752826528,
+                            "title": "Notification",
+                            "pos_x": -179.0,
+                            "pos_y": -120.0,
+                            "inputs": [
+                                {
+                                    "id": 1722752825904,
+                                    "index": 0,
+                                    "multi_edges": true,
+                                    "position": 2,
+                                    "socket_type": 1
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "id": 1722752825376,
+                                    "index": 0,
+                                    "multi_edges": true,
+                                    "position": 5,
+                                    "socket_type": 1
+                                }
+                            ],
+                            "content": {
+                                "node_details": {
+                                    "actors": [
+                                        "Nurse",
+                                        "Doctor",
+                                        "Participant",
+                                        "Investigator",
+                                        "Lab Technician"
+                                    ],
+                                    "title": "Greetings",
+                                    "color": "Grey"
+                                },
+                                "text": "Have a nice day."
+                            },
+                            "op_code": 4
+                        }
+                    ],
+                    "edges": [
+                        {
+                            "id": 1722753291744,
+                            "start": 1722753094800,
+                            "end": 1722752825904,
+                            "type": 0,
+                            "edge_type": 2
+                        },
+                        {
+                            "id": 1722752826048,
+                            "start": 1722752825376,
+                            "end": 1722752824992,
+                            "type": 0,
+                            "edge_type": 2
+                        }
+                    ]
+                },
+                "type": "complex"
+            },
+            "op_code": 5
+        }
+    ],
+    "edges": [
+        {
+            "id": 1722753292176,
+            "start": 1722753292896,
+            "end": 1722753293376,
+            "type": 0,
+            "edge_type": 2
+        },
+        {
+            "id": 1722753290496,
+            "start": 1722753293424,
+            "end": 1722753293040,
+            "type": 0,
+            "edge_type": 2
+        }
+    ]
+}

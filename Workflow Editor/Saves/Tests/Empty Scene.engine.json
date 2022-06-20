@@ -1,0 +1,28 @@
+{
+    "id": 2008280264512,
+    "nodes": [
+        {
+            "id": 2008280241056,
+            "title": "New Start Node",
+            "inputs": [],
+            "outputs": [
+                {
+                    "id": 2008280089792
+                }
+            ],
+            "op_code": 0
+        },
+        {
+            "id": 2008280159568,
+            "title": "New Finish Node",
+            "inputs": [
+                {
+                    "id": 2008280089936
+                }
+            ],
+            "outputs": [],
+            "op_code": 6
+        }
+    ],
+    "edges": []
+}
