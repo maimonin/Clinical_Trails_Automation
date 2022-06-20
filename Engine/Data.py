@@ -1,8 +1,17 @@
 import asyncio
 from datetime import datetime
-
 from Database import Database
 from Logger import log
+
+
+def valid(s):
+    if s is None:
+        return False
+    if type(s) is str and s == "":
+        return False
+    if type(s) is int and s < 0:
+        return False
+    return True
 
 
 def init():
@@ -15,10 +24,16 @@ def init():
 
 
 def add_questionnaire(results, participant):
+    if not valid(participant):
+        return
     log(datetime.now().strftime("%H:%M:%S") + " adding questionnaire of participant with id " + str(participant))
     message = 'participant ' + str(participant) + ' answers: '
     i = 1
+    if not valid(results['questionnaire_number']):
+        return
     for result in results['answers']:
+        if not valid(result['question']['text']) or not valid(str(result['answer'])):
+            return
         message += '\n\t' + result['question']['text'] + ": " + str(result['answer'])
         Database.addAnswer(results['questionnaire_number'], i, participant, datetime.now(), str(result['answer']))
         i = i + 1
@@ -36,6 +51,8 @@ def add_form(number, participant):
 
 
 def add_test(name, results, participant):
+    if not valid(name) or not valid(participant) or not valid(results['test']) or results['result'] is None:
+        return
     log(datetime.now().strftime("%H:%M:%S") + ' participant ' + str(participant) + ' results of test ' + results['test']
         + ': ' + str(results['result']))
     Database.addTestResults(name, participant, datetime.now(), results['result'])

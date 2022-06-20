@@ -11,7 +11,7 @@ export default function TestNotification(props){
                 
                 <div>
                   <span>  Name:{props.test_notification.name} <br/>
-                    Insturction:{props.test_notification.instruction} <br/>
+                    Insturctions:{props.test_notification.instructions} <br/>
                     Patient:{props.test_notification.patient} <br/><br/>
                 </span>
                     </div>
