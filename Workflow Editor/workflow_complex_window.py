@@ -38,6 +38,8 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         self.actSave = QAction('&Save', self, shortcut='Ctrl+S', statusTip="Save Complex Node",
                                triggered=self.onFileSave)
         self.actDiscard = QAction('&Exit', self, shortcut='Ctrl+W', statusTip="Discard", triggered=self.OnClose)
+        self.actDelete = QAction('&Delete', self, shortcut='Del', statusTip="Delete selected items", triggered=self.onEditDelete)
+
 
 
     def onFileNew(self):
@@ -64,7 +66,7 @@ class Workflow_Complex_Window(WorkflowEditorWindow):
         self.fileMenu.addAction(self.actSave)
         self.fileMenu.addAction(self.actDiscard)
         self.fileMenu.addAction(self.actNew)
-
+        self.fileMenu.addAction(self.actDelete)
     def updateWindowMenu(self):
         self.windowMenu.clear()
 
