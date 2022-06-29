@@ -397,6 +397,7 @@ class WorkflowNode_Decision(WorkflowNode):
             socket_type=outputs[0], multi_edges=self.output_multi_edged,
             count_on_this_node_side=len(outputs), is_input=False
         )
+        counter +=1
         try:
             bad_socket.grSocket.change_orientation(1)
 
