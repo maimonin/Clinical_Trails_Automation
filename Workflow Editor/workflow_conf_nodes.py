@@ -294,7 +294,7 @@ class WorkflowNode_Decision(WorkflowNode):
     op_title = "Decision"
     content_label_objname = "workflow_node_decision"
 
-    def __init__(self, scene, inputs=[1], outputs=[4, 2]):
+    def __init__(self, scene, inputs=[1], outputs=[2,4]):
         self.scene = scene
         super().__init__(scene, inputs, outputs)
         # self.color = "Green"
